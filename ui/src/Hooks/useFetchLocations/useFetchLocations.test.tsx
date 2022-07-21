@@ -18,13 +18,13 @@
 import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
-import LocationClient from 'Locations/LocationClient';
+import LocationClient from 'Services/Api/LocationClient';
 import useFetchLocations from './useFetchLocations';
 import TestUtils from '../../Utils/TestUtils';
 
 const wrapper = TestUtils.hookWrapper;
 
-jest.mock('Locations/LocationClient');
+jest.mock('Services/Api/LocationClient');
 
 const spaceUUID = 'space-uuid';
 

@@ -18,8 +18,8 @@
 import moment from 'moment';
 import {didAssignmentEndInThePast, getDurationWithRespectToToday} from '../AssignmentService';
 import React, {useEffect, useState} from 'react';
-import AssignmentClient from '../AssignmentClient';
-import ProductClient from 'Products/ProductClient';
+import AssignmentClient from '../../Services/Api/AssignmentClient';
+import ProductClient from 'Services/Api/ProductClient';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 import {Assignment} from 'Types/Assignment';

@@ -22,12 +22,12 @@ import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 import {MemoryRouter, Routes} from 'react-router-dom';
 import {Route} from 'react-router';
-import AccessTokenClient from '../Login/AccessTokenClient';
+import AccessTokenClient from '../Services/Api/AccessTokenClient';
 
 const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 const accessToken = 'TOTALLY_REAL_ACCESS_TOKEN';
 
-jest.mock('../Login/AccessTokenClient');
+jest.mock('Services/Api/AccessTokenClient');
 
 describe('AuthenticatedRoute.test.tsx', function() {
     let location: (string | Location) & Location;

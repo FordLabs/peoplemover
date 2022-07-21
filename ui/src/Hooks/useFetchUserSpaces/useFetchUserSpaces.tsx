@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import SpaceClient from 'Space/SpaceClient';
+import SpaceClient from 'Services/Api/SpaceClient';
 import {Space} from 'Types/Space';
 import {useRecoilState} from 'recoil';
 import {UserSpacesState} from 'State/UserSpacesState';

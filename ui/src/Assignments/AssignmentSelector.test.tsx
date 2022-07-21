@@ -18,7 +18,7 @@
 import React from 'react';
 import AssignmentForm from './AssignmentForm';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import AssignmentClient from './AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
@@ -28,7 +28,7 @@ import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('The Assignment Form', () => {
     it('renders the assignment form labels', () => {

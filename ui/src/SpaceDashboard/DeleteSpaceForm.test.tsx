@@ -19,7 +19,7 @@ import * as React from 'react';
 import {waitFor} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';
 import {fireEvent, screen} from '@testing-library/dom';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
 import {RecoilObserver} from '../Utils/RecoilObserver';
 import TransferOwnershipForm from './TransferOwnershipForm';

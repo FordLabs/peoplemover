@@ -20,11 +20,11 @@ import {MemoryRouter} from 'react-router-dom';
 import {act, renderHook} from '@testing-library/react-hooks';
 import {RecoilRoot} from 'recoil';
 import useFetchProducts from './useFetchProducts';
-import ProductClient from 'Products/ProductClient';
+import ProductClient from 'Services/Api/ProductClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import TestData from 'Utils/TestData';
 
-jest.mock('Products/ProductClient');
+jest.mock('Services/Api/ProductClient');
 
 const spaceUUID = 'space-uuid';
 const viewingDate = new Date();

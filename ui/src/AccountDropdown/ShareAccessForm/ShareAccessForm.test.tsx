@@ -19,13 +19,13 @@ import ShareAccessForm from './ShareAccessForm';
 import {renderWithRecoil} from '../../Utils/TestUtils';
 import React from 'react';
 import TestData from '../../Utils/TestData';
-import SpaceClient from '../../Space/SpaceClient';
+import SpaceClient from '../../Services/Api/SpaceClient';
 import {screen, waitFor} from '@testing-library/react';
 import {RecoilObserver} from '../../Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
 import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 
-jest.mock('Space/SpaceClient');
+jest.mock('Services/Api/SpaceClient');
 
 describe('Share Access Form', () => {
     let modalContent: ModalContents | null;

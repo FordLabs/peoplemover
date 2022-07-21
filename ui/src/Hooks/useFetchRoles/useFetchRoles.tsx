@@ -17,7 +17,7 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import RoleClient from 'Roles/RoleClient';
+import RoleClient from 'Services/Api/RoleClient';
 import {RolesState} from 'State/RolesState';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import {RoleTag} from '../../Types/Tag';

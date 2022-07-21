@@ -26,7 +26,7 @@ import {Space} from 'Types/Space';
 import {UserSpaceMapping} from '../Types/UserSpaceMapping';
 
 import './UserAccessList.scss';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import ConfirmationModal from 'Modal/ConfirmationModal/ConfirmationModal';
 import {dashboardUrl} from '../Routes';
 import RedirectClient from '../Utils/RedirectClient';

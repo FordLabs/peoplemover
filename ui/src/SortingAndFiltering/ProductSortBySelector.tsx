@@ -16,7 +16,7 @@
  */
 
 import React, {createRef, useCallback, useEffect, useState} from 'react';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoService from '../Services/MatomoService';
 import Dropdown from '../ReusableComponents/Dropdown';
 import NavigationSection from '../ReusableComponents/NavigationSection';
 import {useRecoilState, useRecoilValue} from 'recoil';
@@ -60,7 +60,7 @@ function ProductSortBySelector(): JSX.Element {
                 ref={createRef<HTMLButtonElement>()}
                 onClick={(): void => {
                     setProductSortBy(option.value);
-                    MatomoEvents.pushEvent(currentSpace.name, 'sort', option.label);
+                    MatomoService.pushEvent(currentSpace.name, 'sort', option.label);
                 }}>
                 {option.label}
                 {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}

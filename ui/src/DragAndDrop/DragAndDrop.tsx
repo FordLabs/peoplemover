@@ -20,7 +20,7 @@ import {DragDropContext, OnDragEndResponder} from 'react-beautiful-dnd';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import AssignmentClient from '../Assignments/AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import moment from 'moment';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';

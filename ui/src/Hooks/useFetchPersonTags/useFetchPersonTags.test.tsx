@@ -18,13 +18,13 @@
 import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
-import PersonTagClient from '../../Tags/PersonTag/PersonTagClient';
+import PersonTagClient from '../../Services/Api/PersonTagClient';
 import useFetchPersonTags from './useFetchPersonTags';
 import TestUtils from '../../Utils/TestUtils';
 
 const wrapper = TestUtils.hookWrapper;
 
-jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Services/Api/PersonTagClient');
 
 const spaceUUID = 'space-uuid';
 

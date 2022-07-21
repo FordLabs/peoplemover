@@ -19,14 +19,14 @@ import React, {RefObject, useRef, useState} from 'react';
 import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
 
 import NewBadge from '../ReusableComponents/NewBadge';
-import AssignmentClient from './AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import {calculateDuration} from './AssignmentService';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from 'Utils/ReactUtils';
-import MatomoEvents from 'Matomo/MatomoEvents';
-import PeopleClient from 'People/PeopleClient';
+import MatomoService from 'Services/MatomoService';
+import PeopleClient from 'Services/Api/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
@@ -113,11 +113,11 @@ function AssignmentCard({
             false)
             .then(() => {
                 const matomoAction = markedAsPlaceholder ? 'markAsPlaceholder' : 'unmarkAsPlaceholder';
-                MatomoEvents.pushEvent(currentSpace.name, matomoAction, assignment.person.name);
+                MatomoService.pushEvent(currentSpace.name, matomoAction, assignment.person.name);
 
                 if (fetchProducts) fetchProducts();
             }).catch((error) => {
-                MatomoEvents.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
+                MatomoService.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
                 return Promise.reject(error);
             });
     }
@@ -141,10 +141,10 @@ function AssignmentCard({
             assignment.person,
             false
         ).then(() => {
-            MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
+            MatomoService.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
             if (fetchProducts) fetchProducts();
         }).catch((error) => {
-            MatomoEvents.pushEvent(currentSpace.name, 'cancelAssignmentError', assignment.person.name, error.code);
+            MatomoService.pushEvent(currentSpace.name, 'cancelAssignmentError', assignment.person.name, error.code);
             return Promise.reject(error);
         });
     }

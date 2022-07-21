@@ -31,12 +31,12 @@ import {MutableSnapshot} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
-import ProductClient from '../Products/ProductClient';
+import ProductClient from '../Services/Api/ProductClient';
 import {RecoilObserver} from 'Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from '../People/PersonForm';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import {Space} from 'Types/Space';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import {Product} from '../Types/Product';
@@ -47,12 +47,12 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: () => mockedUsedNavigate,
 }));
-jest.mock('Products/ProductClient');
-jest.mock('Space/SpaceClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/ProductTagClient');
+jest.mock('Services/Api/PersonTagClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('TimeOnProduct', () => {
     let modalContent: ModalContents | null = null;

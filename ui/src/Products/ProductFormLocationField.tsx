@@ -17,7 +17,7 @@
 
 import {JSX} from '@babel/types';
 import {Option} from 'Types/Option';
-import LocationClient from 'Locations/LocationClient';
+import LocationClient from 'Services/Api/LocationClient';
 import {AxiosResponse} from 'axios';
 import React, {useEffect, useState} from 'react';
 import {TagRequest} from 'Types/TagRequest';

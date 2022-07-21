@@ -20,20 +20,20 @@ import React from 'react';
 import AssignmentCard from './AssignmentCard';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import PeopleClient from '../People/PeopleClient';
+import PeopleClient from '../Services/Api/PeopleClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {IsDraggingState} from '../State/IsDraggingState';
-import AssignmentClient from './AssignmentClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
 import moment from 'moment';
-import ProductClient from '../Products/ProductClient';
+import ProductClient from '../Services/Api/ProductClient';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {RoleTag} from '../Types/Tag';
 import {Color} from '../Types/Color';
 import {Assignment} from '../Types/Assignment';
 
-jest.mock('Products/ProductClient');
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('Assignment Card', () => {
     let assignmentToRender: Assignment;

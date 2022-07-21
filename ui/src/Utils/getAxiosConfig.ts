@@ -15,7 +15,7 @@
 * limitations under the License.
 */
 import {AxiosRequestConfig} from 'axios';
-import {getToken} from '../Auth/TokenProvider';
+import {getToken} from '../Services/TokenService';
 
 export function getAxiosConfig(): AxiosRequestConfig {
     return {

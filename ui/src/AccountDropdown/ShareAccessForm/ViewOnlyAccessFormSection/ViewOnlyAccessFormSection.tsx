@@ -18,8 +18,8 @@
 import React, {useState} from 'react';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import ReactSwitch from 'react-switch';
-import SpaceClient from 'Space/SpaceClient';
-import MatomoEvents from 'Matomo/MatomoEvents';
+import SpaceClient from 'Services/Api/SpaceClient';
+import MatomoService from 'Services/MatomoService';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 
 import './ViewOnlyAccessFormSection.scss';
@@ -41,7 +41,7 @@ function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
         event.preventDefault();
         await navigator.clipboard.writeText(linkToSpace);
         setCopiedLink(true);
-        MatomoEvents.pushEvent(currentSpace.name, 'readOnlyLinkCopied', '');
+        MatomoService.pushEvent(currentSpace.name, 'readOnlyLinkCopied', '');
 
         setTimeout(() => {setCopiedLink(false);}, 3000);
     };

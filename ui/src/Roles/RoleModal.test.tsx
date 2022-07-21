@@ -19,15 +19,15 @@ import React from 'react';
 import {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import {findByTestId, findByText, fireEvent, screen, waitFor} from '@testing-library/react';
-import RoleClient from './RoleClient';
+import RoleClient from '../Services/Api/RoleClient';
 import MyRolesForm from './MyRolesForm';
-import ColorClient from 'Roles/ColorClient';
+import ColorClient from 'Services/Api/ColorClient';
 import {RolesState} from 'State/RolesState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {RoleTagRequest} from '../Types/TagRequest';
 
-jest.mock('Roles/RoleClient');
-jest.mock('Roles/ColorClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/ColorClient');
 
 describe('My Roles Form', () => {
     beforeEach(async () => {

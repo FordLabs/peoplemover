@@ -20,9 +20,9 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {Space} from 'Types/Space';
-import LocationClient from '../Locations/LocationClient';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import ProductClient from '../Products/ProductClient';
+import LocationClient from '../Services/Api/LocationClient';
+import ProductTagClient from '../Services/Api/ProductTagClient';
+import ProductClient from '../Services/Api/ProductClient';
 import selectEvent from 'react-select-event';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
@@ -31,9 +31,9 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {MutableSnapshot} from 'recoil';
 import {Product} from '../Types/Product';
 
-jest.mock('Locations/LocationClient');
-jest.mock('Products/ProductClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/ProductTagClient');
 
 describe('ProductForm', function() {
     let modalContent: ModalContents | null;
