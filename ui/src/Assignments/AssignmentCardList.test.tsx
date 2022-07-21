@@ -38,7 +38,7 @@ const product: Product = {
     notes: '',
 };
 
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('Assignment card list', () => {
     describe('Filtering person by role and person tag',  () => {

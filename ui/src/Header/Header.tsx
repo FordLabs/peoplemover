@@ -19,7 +19,7 @@ import React, {useEffect, useState} from 'react';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link} from 'react-router-dom';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoService from '../Services/MatomoService';
 
 import './Headers.scss';
 import {useRecoilValue} from 'recoil';
@@ -77,9 +77,9 @@ function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element 
     const sendEventTimeOnProductClick = (clicked: boolean): void => {
         setTimeOnProductClicked(clicked);
         if (clicked) {
-            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
+            MatomoService.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
         } else  {
-            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
+            MatomoService.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
         }
     };
 

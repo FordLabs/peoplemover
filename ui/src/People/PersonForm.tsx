@@ -16,9 +16,9 @@
  */
 
 import React, {FormEvent, useCallback, useEffect, useState} from 'react';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import RoleClient from '../Roles/RoleClient';
-import PeopleClient from './PeopleClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import RoleClient from '../Services/Api/RoleClient';
+import PeopleClient from '../Services/Api/PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived} from './PersonService';
 import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
@@ -32,10 +32,10 @@ import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
 import FormTagsField from '../ReusableComponents/FormTagsField';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
+import PersonTagClient from '../Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
 import ToolTip from '../ReusableComponents/ToolTip';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoService from '../Services/MatomoService';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -157,9 +157,9 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
     const handleMatomoEventsForNewPersonCheckboxChange = (): void  => {
         if (hasNewPersonChanged) {
             if (person.newPerson) {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
+                MatomoService.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
             } else {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
+                MatomoService.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
             }
             setHasNewPersonChanged(false);
         }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {removeToken} from '../Auth/TokenProvider';
+import {removeToken} from '../Services/TokenService';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useSetRecoilState} from 'recoil';

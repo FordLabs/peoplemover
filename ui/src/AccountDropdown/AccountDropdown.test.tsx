@@ -22,7 +22,7 @@ import React from 'react';
 import Cookies from 'universal-cookie';
 import {RunConfig} from '../index';
 import AccountDropdown from './AccountDropdown';
-import ReportClient from '../Reports/ReportClient';
+import ReportClient from '../Services/Api/ReportClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from '../State/ModalContentsState';

@@ -23,9 +23,9 @@ import {RedirectToADFS} from './Auth/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
-import MatomoEvents from './Matomo/MatomoEvents';
+import MatomoService from './Services/MatomoService';
 import CacheBuster from './CacheBuster';
-import {removeToken} from './Auth/TokenProvider';
+import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
 import flagsmith, {IFlags} from 'flagsmith';
 
@@ -67,7 +67,7 @@ Axios.interceptors.response.use(
             RedirectToADFS();
         } else {
             const conventionizedErrorName = `${statusText} - ${status}`;
-            MatomoEvents.pushEvent(conventionizedErrorName, config.method, config.url, status);
+            MatomoService.pushEvent(conventionizedErrorName, config.method, config.url, status);
         }
         return Promise.reject(error);
     },
