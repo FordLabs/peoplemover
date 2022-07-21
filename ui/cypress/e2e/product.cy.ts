@@ -134,7 +134,7 @@ describe('Product', () => {
         let daysToSubtract = 1;
         if (isMonday) daysToSubtract = 3;
         const expectedCurrentDate = moment().subtract(daysToSubtract, 'days').format('D');
-        cy.contains(expectedCurrentDate).click();
+        cy.get('.react-datepicker__month').contains(expectedCurrentDate).click();
         cy.contains('Baguette Bakery').should('exist');
     });
 
