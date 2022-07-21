@@ -16,7 +16,7 @@
  */
 
 import React, {createRef, FormEvent, useEffect, useState} from 'react';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import {createEmptySpace, Space} from 'Types/Space';
 
 import FormButton from '../ModalFormComponents/FormButton';

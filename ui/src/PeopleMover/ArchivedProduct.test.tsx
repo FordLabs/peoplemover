@@ -21,13 +21,13 @@ import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {fireEvent, screen} from '@testing-library/react';
 
-jest.mock('Space/SpaceClient');
-jest.mock('Products/ProductClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Locations/LocationClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/PersonTagClient');
+jest.mock('Services/Api/ProductTagClient');
 
 describe('Archive Products', () => {
     describe('integration tests', () => {

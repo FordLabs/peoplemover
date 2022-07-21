@@ -18,13 +18,13 @@
 import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
-import SpaceClient from '../../Space/SpaceClient';
+import SpaceClient from '../../Services/Api/SpaceClient';
 import useFetchCurrentSpace from './useFetchCurrentSpace';
 import TestUtils from '../../Utils/TestUtils';
 
 const wrapper = TestUtils.hookWrapper;
 
-jest.mock('Space/SpaceClient');
+jest.mock('Services/Api/SpaceClient');
 
 const spaceUUID = 'space-uuid';
 

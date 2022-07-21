@@ -18,7 +18,7 @@
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {useCallback} from 'react';
 import {ProductsState} from 'State/ProductsState';
-import ProductClient from 'Products/ProductClient';
+import ProductClient from 'Services/Api/ProductClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {Product} from '../../Types/Product';
 

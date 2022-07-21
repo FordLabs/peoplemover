@@ -17,12 +17,12 @@
 
 import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import ProductClient from './ProductClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import ProductClient from '../Services/Api/ProductClient';
 import TestUtils, {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import LocationClient from '../Locations/LocationClient';
+import ProductTagClient from '../Services/Api/ProductTagClient';
+import LocationClient from '../Services/Api/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import ProductCard from './ProductCard';
@@ -31,13 +31,13 @@ import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {Product} from '../Types/Product';
 import {Person} from '../Types/Person';
 
-jest.mock('./ProductClient');
-jest.mock('Space/SpaceClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Locations/LocationClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/ProductTagClient');
+jest.mock('Services/Api/PersonTagClient');
 
 describe('Products', () => {
     const addProductButtonText = 'Add Product';

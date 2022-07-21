@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import ReportClient from '../Reports/ReportClient';
+import ReportClient from '../Services/Api/ReportClient';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';

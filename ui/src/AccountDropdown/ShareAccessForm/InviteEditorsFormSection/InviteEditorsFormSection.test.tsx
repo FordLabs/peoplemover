@@ -21,13 +21,13 @@ import React from 'react';
 import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {fireEvent, screen, waitFor, within} from '@testing-library/react';
 import Cookies from 'universal-cookie';
-import SpaceClient from 'Space/SpaceClient';
+import SpaceClient from 'Services/Api/SpaceClient';
 import RedirectClient from 'Utils/RedirectClient';
 import {Space} from 'Types/Space';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
 
-jest.mock('Space/SpaceClient');
+jest.mock('Services/Api/SpaceClient');
 
 describe('Invite Editors Form', function() {
     const cookies = new Cookies();

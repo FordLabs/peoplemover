@@ -20,7 +20,7 @@ import {useCallback} from 'react';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import {RoleTag, Tag} from 'Types/Tag';
 import {PersonTagsState} from 'State/PersonTagsState';
-import PersonTagClient from 'Tags/PersonTag/PersonTagClient';
+import PersonTagClient from 'Services/Api/PersonTagClient';
 
 interface UseFetchPersonTags {
     personTags: Tag[];

@@ -19,12 +19,12 @@ import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import useFetchPeople from './useFetchPeople';
-import PeopleClient from 'People/PeopleClient';
+import PeopleClient from 'Services/Api/PeopleClient';
 import TestUtils from '../../Utils/TestUtils';
 
 const wrapper = TestUtils.hookWrapper;
 
-jest.mock('People/PeopleClient');
+jest.mock('Services/Api/PeopleClient');
 
 const spaceUUID = 'space-uuid';
 

@@ -24,9 +24,9 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/AssignmentClient');
 
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('Calendar', () => {
     let resetCreateRange: () => void;
