@@ -16,7 +16,7 @@
  */
 
 import React, {ReactNode, useEffect} from 'react';
-import SpaceClient from '../Space/SpaceClient';
+import SpaceClient from '../Services/Api/SpaceClient';
 import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
 import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';

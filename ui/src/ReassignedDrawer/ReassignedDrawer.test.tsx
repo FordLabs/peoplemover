@@ -20,17 +20,17 @@ import React from 'react';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import ReassignedDrawer from './ReassignedDrawer';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import PeopleClient from '../People/PeopleClient';
-import ProductClient from '../Products/ProductClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import PeopleClient from '../Services/Api/PeopleClient';
+import ProductClient from '../Services/Api/ProductClient';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-jest.mock('Products/ProductClient');
-jest.mock('People/PeopleClient');
-jest.mock('Assignments/AssignmentClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/PeopleClient');
+jest.mock('Services/Api/AssignmentClient');
 
 describe('ReassignedDrawer', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);

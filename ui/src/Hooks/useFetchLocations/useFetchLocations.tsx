@@ -18,7 +18,7 @@
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
-import LocationClient from 'Locations/LocationClient';
+import LocationClient from 'Services/Api/LocationClient';
 import {LocationsState} from 'State/LocationsState';
 import {LocationTag} from '../../Types/Tag';
 

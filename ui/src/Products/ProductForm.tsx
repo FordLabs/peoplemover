@@ -18,7 +18,7 @@
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {JSX} from '@babel/types';
 import moment from 'moment';
-import ProductClient from './ProductClient';
+import ProductClient from '../Services/Api/ProductClient';
 import {emptyProduct} from './ProductService';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Tag} from 'Types/Tag';
@@ -30,7 +30,7 @@ import FormButton from 'ModalFormComponents/FormButton';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
 import {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
-import ProductTagClient from 'Tags/ProductTag/ProductTagClient';
+import ProductTagClient from 'Services/Api/ProductTagClient';
 import FormTagsField from 'ReusableComponents/FormTagsField';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';

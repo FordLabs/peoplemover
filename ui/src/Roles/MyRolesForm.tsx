@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
-import ColorClient from 'Roles/ColorClient';
+import ColorClient from 'Services/Api/ColorClient';
 import RoleTags from 'Roles/RoleTags';
 import {Color} from 'Types/Color';
 

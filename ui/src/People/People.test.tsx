@@ -17,8 +17,8 @@
 
 import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import PeopleClient from '../People/PeopleClient';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import PeopleClient from '../Services/Api/PeopleClient';
 import PersonForm from '../People/PersonForm';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
@@ -34,14 +34,14 @@ import {Person} from '../Types/Person';
 
 declare let window: MatomoWindow;
 
-jest.mock('Products/ProductClient');
-jest.mock('People/PeopleClient');
-jest.mock('Space/SpaceClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Locations/LocationClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/PeopleClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/PersonTagClient');
+jest.mock('Services/Api/ProductTagClient');
 
 describe('People actions', () => {
     const addPersonButtonText = 'Add Person';

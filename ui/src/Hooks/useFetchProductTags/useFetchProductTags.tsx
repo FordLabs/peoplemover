@@ -20,7 +20,7 @@ import {useCallback} from 'react';
 import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
 import {RoleTag, Tag} from 'Types/Tag';
 import {ProductTagsState} from 'State/ProductTagsState';
-import ProductTagClient from 'Tags/ProductTag/ProductTagClient';
+import ProductTagClient from 'Services/Api/ProductTagClient';
 
 interface UseFetchProductTags {
     productTags: Tag[];

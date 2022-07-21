@@ -24,7 +24,7 @@ import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import MatomoService from '../Services/MatomoService';
 import Counter from '../ReusableComponents/Counter';
 import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
@@ -63,7 +63,7 @@ function PeopleMover(): JSX.Element {
         if (currentSpace) {
             document.title = `${currentSpace.name} | PeopleMover`;
             if (isReadOnly) {
-                MatomoEvents.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
+                MatomoService.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
             }
         }
         return (): void => {

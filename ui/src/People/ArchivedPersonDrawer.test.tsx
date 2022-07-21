@@ -23,13 +23,13 @@ import ArchivedPersonDrawer from './ArchivedPersonDrawer';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {PeopleState} from '../State/PeopleState';
 
-jest.mock('Products/ProductClient');
-jest.mock('Space/SpaceClient');
-jest.mock('Roles/RoleClient');
-jest.mock('Assignments/AssignmentClient');
-jest.mock('Locations/LocationClient');
-jest.mock('Tags/ProductTag/ProductTagClient');
-jest.mock('Tags/PersonTag/PersonTagClient');
+jest.mock('Services/Api/ProductClient');
+jest.mock('Services/Api/SpaceClient');
+jest.mock('Services/Api/RoleClient');
+jest.mock('Services/Api/AssignmentClient');
+jest.mock('Services/Api/LocationClient');
+jest.mock('Services/Api/ProductTagClient');
+jest.mock('Services/Api/PersonTagClient');
 
 describe('Archived People', () => {
     const mayFourteen2020: Date = new Date(2020, 4, 14);
