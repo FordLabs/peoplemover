@@ -32,6 +32,7 @@ describe('The Space Dashboard', () => {
                 openDeleteSpaceModal(newSpaceName);
                 cy.get('[data-testid="confirmDeleteButton"]').click();
                 cy.contains('Ok').click({ force: true });
+                cy.wait('@getSpaceUsers');
             }
         })
 
@@ -105,7 +106,7 @@ function checkPresenceOfDashboardWelcomeMessage(isPresent : boolean) {
 }
 
 function openSpaceActionsDropdown() {
-    cy.get('[data-testid="ellipsisButton"]').click();
+    cy.get('[data-testid="ellipsisButton"]').should('exist').click();
 }
 
 function openDeleteSpaceModal(spaceName: string) {
