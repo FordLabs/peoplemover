@@ -20,6 +20,7 @@ describe('The Space Dashboard', () => {
 
     beforeEach(() => {
         cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
+        cy.intercept('GET', '/api/spaces/user').as('getSpaceForUser');
 
         cy.visit('/user/dashboard');
 
@@ -33,6 +34,7 @@ describe('The Space Dashboard', () => {
                 cy.get('[data-testid="confirmDeleteButton"]').click();
                 cy.contains('Ok').click({ force: true });
                 cy.wait('@getSpaceUsers');
+                cy.wait('@getSpaceForUser');
             }
         })
 
