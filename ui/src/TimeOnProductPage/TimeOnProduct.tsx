@@ -31,9 +31,10 @@ import Modal from 'Modal/Modal';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {useParams} from 'react-router-dom';
 import {Product} from 'Types/Product';
+import {Assignment} from 'Types/Assignment';
+import Branding from 'ReusableComponents/Branding';
 
 import './TimeOnProduct.scss';
-import {Assignment} from '../Types/Assignment';
 
 export const LOADING = 'Loading...';
 
@@ -184,6 +185,9 @@ function TimeOnProduct(): JSX.Element {
                         </div>
                     )
                 }
+                <footer>
+                    <Branding/>
+                </footer>
             </div>
         )
     );
