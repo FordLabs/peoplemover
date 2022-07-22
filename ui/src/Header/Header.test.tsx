@@ -27,6 +27,7 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import TestData from '../Utils/TestData';
 import {MutableSnapshot} from 'recoil';
 import {dashboardUrl} from '../Routes';
+import {createEmptySpace, Space} from '../Types/Space';
 
 const debounceTimeToWait = 100;
 
@@ -58,6 +59,10 @@ describe('Header', () => {
             expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
         });
 
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
+        });
+
         it('should show logo that is NOT a link', () => {
             const staticLogo = screen.getByTestId('peopleMoverStaticLogo');
             expect(staticLogo).not.toHaveAttribute('href');
@@ -72,7 +77,7 @@ describe('Header', () => {
 
     describe('Space Page', () => {
         beforeEach(() => {
-            ({container} = renderHeader(`/${TestData.space.uuid}`));
+            ({container} = renderHeader(`/${TestData.space.uuid}`, TestData.space));
         })
 
         it('should have no axe violations', async () => {
@@ -82,6 +87,10 @@ describe('Header', () => {
 
         it('should show header', () => {
             expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show space name', () => {
+            shouldShowSpaceName();
         });
 
         it('should render "Skip to main content" accessibility link', () => {
@@ -106,7 +115,7 @@ describe('Header', () => {
 
     describe('Time On Product Page', () => {
         beforeEach(() => {
-            ({container} = renderHeader(`/${TestData.space.uuid}/timeonproduct`));
+            ({container} = renderHeader(`/${TestData.space.uuid}/timeonproduct`, TestData.space));
         })
 
         it('should have no axe violations', async () => {
@@ -116,6 +125,10 @@ describe('Header', () => {
 
         it('should show header', () => {
             expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show space name', () => {
+            shouldShowSpaceName();
         });
 
         it('should show logo that links back to the dashboard', () => {
@@ -147,6 +160,10 @@ describe('Header', () => {
 
         it('should show header', () => {
             expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
         });
 
         it('should show logo that links back to the dashboard', () => {
@@ -195,13 +212,13 @@ describe('Header', () => {
     });
 });
 
-function renderHeader(initialRoute: string): RenderResult {
+function renderHeader(initialRoute: string, currentSpace: Space = createEmptySpace()): RenderResult {
     return renderWithRecoil(
         <MemoryRouter initialEntries={[initialRoute]}>
             <Header />
         </MemoryRouter>,
         ({set}: MutableSnapshot) => {
-            set(CurrentSpaceState, TestData.space)
+            set(CurrentSpaceState, currentSpace)
         }
     );
 }
@@ -231,4 +248,12 @@ function shouldOnlyShowSignoutButtonInAccountDropdown() {
     expect(screen.getByText('Sign Out')).toBeDefined();
     expect(screen.queryByText('Share Access')).toBeNull();
     expect(screen.queryByText('Download Report')).toBeNull();
+}
+
+function shouldNotShowSpaceName() {
+    expect(screen.queryByText(TestData.space.name)).toBeNull();
+}
+
+function shouldShowSpaceName() {
+    expect(screen.getByText(TestData.space.name)).toBeDefined();
 }

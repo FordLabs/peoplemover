@@ -39,10 +39,14 @@ function Header(): JSX.Element {
 
     const spaceName = currentSpace?.name;
 
+    function showSpaceName(): boolean {
+        return (isSpacePage || isTimeOnProductPage) && !!spaceName;
+    }
+
     return (
         isLandingPage ? <></>
             : <>
-                {uuid && isSpacePage && (
+                {isSpacePage && (
                     <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
                         Skip to main content
                     </a>
@@ -50,15 +54,15 @@ function Header(): JSX.Element {
                 <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={isDashboardPage ? '' : dashboardUrl}/>
-                        {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {uuid && isSpacePage && (
+                        {showSpaceName() && <h1 className="spaceName">{spaceName}</h1>}
+                        {isSpacePage && (
                             <Link
                                 className="timeOnProductLink"
                                 to={`/${uuid}/timeonproduct`}>
                                 <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
                             </Link>
                         )}
-                        {uuid && isTimeOnProductPage && (
+                        {isTimeOnProductPage && (
                             <Link
                                 className="timeOnProductLink"
                                 to={`/${uuid}`}>
