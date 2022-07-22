@@ -15,88 +15,60 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React from 'react';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link, useLocation} from 'react-router-dom';
-import MatomoService from '../Services/MatomoService';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 import {dashboardUrl} from '../Routes';
 
 import './Headers.scss';
 
-interface HeaderProps {
-    hideSpaceButtons?: boolean;
-    hideAllButtons?: boolean;
-}
-
-function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element {
+function Header(): JSX.Element {
     const location = useLocation();
 
     const currentSpace = useRecoilValue(CurrentSpaceState);
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
-    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(location.pathname.includes('timeonproduct'));
+    const isTimeOnProductPage = location.pathname.includes('timeonproduct');
+    const isSpacePage = location.pathname === `/${uuid}`;
+    const isLandingPage = location.pathname === '/';
+    const isErrorPage = location.pathname.includes('error');
+    const isDashboardPage = location.pathname === dashboardUrl;
 
-    const logoHref = location.pathname === dashboardUrl ? '' : dashboardUrl;
     const spaceName = currentSpace?.name;
 
-    const showAllDropDownOptions = (): boolean => {
-        return (location.pathname !== dashboardUrl);
-    };
-
-    const hideHeader = (): boolean => {
-        return (location.pathname === '/');
-    };
-
-    const showDropdown = () => {
-        return !location.pathname.includes('error')
-    }
-    
-    const sendEventTimeOnProductClick = (clicked: boolean): void => {
-        setTimeOnProductClicked(clicked);
-        if (clicked) {
-            MatomoService.pushEvent(spaceName, 'TimeOnProductClicked', 'Go to Time On Product page');
-        } else  {
-            MatomoService.pushEvent(spaceName, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
-        }
-    };
-
     return (
-        hideHeader() ? <></>
+        isLandingPage ? <></>
             : <>
-                {uuid && !timeOnProductClicked && (
+                {uuid && isSpacePage && (
                     <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
                         Skip to main content
                     </a>
                 )}
                 <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
                     <div className="headerLeftContainer">
-                        <PeopleMoverLogo href={logoHref}/>
+                        <PeopleMoverLogo href={isDashboardPage ? '' : dashboardUrl}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {uuid && !timeOnProductClicked && (
+                        {uuid && isSpacePage && (
                             <Link
                                 className="timeOnProductLink"
-                                to={`/${uuid}/timeonproduct`}
-                                onClick={(): void => sendEventTimeOnProductClick(true)}>
+                                to={`/${uuid}/timeonproduct`}>
                                 <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
                             </Link>
                         )}
-                        {uuid && timeOnProductClicked && (
+                        {uuid && isTimeOnProductPage && (
                             <Link
                                 className="timeOnProductLink"
-                                to={`/${uuid}`}
-                                onClick={(): void => sendEventTimeOnProductClick(false)}>
+                                to={`/${uuid}`}>
                                 &#60; Back
                             </Link>
                         )}
                     </div>
-                    {!hideAllButtons && showDropdown() && (
+                    {!isErrorPage && (
                         <div className="headerRightContainer">
-                            <AccountDropdown
-                                hideSpaceButtons={hideSpaceButtons}
-                                showAllDropDownOptions={showAllDropDownOptions()}/>
+                            <AccountDropdown showAllDropDownOptions={!isDashboardPage}/>
                         </div>
                     )}
                 </header>

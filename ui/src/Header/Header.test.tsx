@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {fireEvent, screen, waitFor} from '@testing-library/react';
+import {fireEvent, RenderResult, screen} from '@testing-library/react';
 import {axe} from 'jest-axe';
 import Header from './Header';
 import {renderWithRecoil} from '../Utils/TestUtils';
@@ -25,44 +25,140 @@ import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import TestData from '../Utils/TestData';
+import {MutableSnapshot} from 'recoil';
+import {dashboardUrl} from '../Routes';
 
 const debounceTimeToWait = 100;
 
 describe('Header', () => {
-    it('should have no axe violations', async () => {
-        const {container} = renderWithRecoil(
-            <MemoryRouter initialEntries={['/user/dashboard']}>
-                <Header/>
-            </MemoryRouter>,
-        );
-        const results = await axe(container);
-        expect(results).toHaveNoViolations();
+    let container: string | Element;
+
+    beforeEach(() => {
+        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+    })
+
+    describe('Landing Page', () => {
+        it('should not show header at all', () => {
+            renderHeader('/');
+            expect(screen.queryByTestId('peopleMoverHeader')).toBeNull();
+        });
     });
 
-    it('should hide space buttons', async () => {
-        renderWithRecoil(
-            <MemoryRouter initialEntries={['/user/dashboard']}>
-                <Header hideSpaceButtons={true}/>
-            </MemoryRouter>,
-        );
-        expect(screen.queryByTestId('filters')).toBeFalsy();
-        expect(screen.queryByTestId('sortBy')).toBeFalsy();
+    describe('Dashboard Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader('/user/dashboard'));
+        })
 
-        const userIconButton = await screen.findByTestId('accountDropdownToggle');
-        fireEvent.click(userIconButton);
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
 
-        await waitFor(() => expect(screen.queryByTestId('shareAccess')).toBeNull());
-        expect(screen.queryByTestId('downloadReport')).toBeNull();
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show logo that is NOT a link', () => {
+            const staticLogo = screen.getByTestId('peopleMoverStaticLogo');
+            expect(staticLogo).not.toHaveAttribute('href');
+            expect(staticLogo).toHaveTextContent('PEOPLEMOVER');
+            expect(screen.queryByTestId('peopleMoverLogoLink')).toBeNull();
+        });
+
+        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
+            shouldOnlyShowSignoutButtonInAccountDropdown();
+        });
     });
 
-    it('should not show the account dropdown when user is on the error page', () => {
-        renderWithRecoil(
-            <MemoryRouter initialEntries={['/error/404']}>
-                <Header hideSpaceButtons={true}/>
-            </MemoryRouter>,
-        );
+    describe('Space Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader(`/${TestData.space.uuid}`));
+        })
 
-        expect(screen.queryByText('bob')).toBeNull();
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should render "Skip to main content" accessibility link', () => {
+            expect(screen.getByText('Skip to main content')).toBeDefined();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should show "Time On Product" link and NOT "Back" link', () => {
+            const timeOnProductLink = screen.getByText('Time On Product >');
+            expect(timeOnProductLink).toBeDefined();
+            expect(timeOnProductLink).toHaveAttribute('href', `/${TestData.space.uuid}/timeonproduct`);
+            expect(screen.queryByText('< Back')).toBeNull();
+        });
+
+        it('should show all account dropdown options', () => {
+            shouldShowAllAccountDropdownOptions();
+        });
+    });
+
+    describe('Time On Product Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader(`/${TestData.space.uuid}/timeonproduct`));
+        })
+
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            const logoLink = screen.getByTestId('peopleMoverLogoLink');
+            expect(logoLink).toHaveAttribute('href', dashboardUrl);
+            expect(logoLink).toHaveTextContent('PEOPLEMOVER');
+        });
+
+        it('should show "Back" to space link and NOT "Time on Product" link', async () => {
+            const backToSpaceLink = screen.getByText('< Back');
+            expect(backToSpaceLink).toBeDefined();
+            expect(backToSpaceLink).toHaveAttribute('href', `/${TestData.space.uuid}`);
+            expect(screen.queryByText('Time On Product >')).toBeNull();
+        });
+
+        it('should show all account dropdown options', () => {
+            shouldShowAllAccountDropdownOptions();
+        });
+    })
+
+    describe('Error Page', () => {
+        beforeEach(() => {
+            renderHeader('/error/404');
+        })
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should not show the account dropdown at all when user is on the error page', () => {
+            expect(screen.queryByText('bob')).toBeNull();
+            expect(screen.queryByText('Sign Out')).toBeNull();
+            expect(screen.queryByText('Share Access')).toBeNull();
+            expect(screen.queryByText('Download Report')).toBeNull();
+        });
     });
 
     describe('Account Dropdown', () => {
@@ -70,35 +166,19 @@ describe('Header', () => {
             jest.useFakeTimers();
             flagsmith.hasFeature = jest.fn().mockReturnValue(true);
 
-            renderWithRecoil(
-                <MemoryRouter initialEntries={['/aaaaaaaaaaaaaa']}>
-                    <Header/>
-                </MemoryRouter>,
-                ({set}) => {
-                    set(CurrentSpaceState, TestData.space)
-                }
-            );
+            renderHeader(`/${TestData.space.uuid}`);
 
             await screen.findByTestId('accountDropdownToggle');
         });
 
         it('should show username', async () => {
-            expect(screen.queryByText('USER_ID')).not.toBeNull();
-        });
-
-        it('should show time On Product Link when user is in a space', async () => {
-            expect(screen.getByText('Time On Product >'));
-        });
-
-        it('should show Back to Space Link when user is in time on product page', async () => {
-            fireEvent.click(screen.getByText('Time On Product >'));
-            await waitFor(async () => expect(await screen.findByText('< Back')).toBeDefined());
+            expect(screen.getByText('USER_ID')).toBeDefined();
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
-            
-            screen.getByTestId('accountDropdownToggle').click();
+
+            openAccountDropdown();
             jest.advanceTimersByTime(debounceTimeToWait);
 
             expect(screen.queryByTestId('shareAccess')).toBeNull();
@@ -107,10 +187,48 @@ describe('Header', () => {
         it('should show invite users to space button when the feature flag is toggled on', async () => {
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
-            screen.getByTestId('accountDropdownToggle').click();
+            openAccountDropdown();
             jest.advanceTimersByTime(debounceTimeToWait);
 
             expect(await screen.findByTestId('shareAccess')).toBeDefined();
         });
     });
 });
+
+function renderHeader(initialRoute: string): RenderResult {
+    return renderWithRecoil(
+        <MemoryRouter initialEntries={[initialRoute]}>
+            <Header />
+        </MemoryRouter>,
+        ({set}: MutableSnapshot) => {
+            set(CurrentSpaceState, TestData.space)
+        }
+    );
+}
+
+function openAccountDropdown() {
+    const userIconButton = screen.getByTestId('accountDropdownToggle');
+    fireEvent.click(userIconButton);
+}
+
+function shouldShowAllAccountDropdownOptions() {
+    openAccountDropdown();
+    expect(screen.getByText('Sign Out')).toBeDefined();
+    expect(screen.getByText('Share Access')).toBeDefined();
+    expect(screen.getByText('Download Report')).toBeDefined();
+}
+
+function shouldRenderLogoAsDashboardLink() {
+    const logoLink = screen.getByTestId('peopleMoverLogoLink');
+    expect(logoLink).toHaveAttribute('href', dashboardUrl);
+    expect(logoLink).toHaveTextContent('PEOPLEMOVER');
+    expect(screen.queryByTestId('peopleMoverStaticLogo')).toBeNull();
+}
+
+function shouldOnlyShowSignoutButtonInAccountDropdown() {
+    openAccountDropdown();
+
+    expect(screen.getByText('Sign Out')).toBeDefined();
+    expect(screen.queryByText('Share Access')).toBeNull();
+    expect(screen.queryByText('Download Report')).toBeNull();
+}
