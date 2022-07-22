@@ -29,21 +29,9 @@ import TestData from '../Utils/TestData';
 const debounceTimeToWait = 100;
 
 describe('Header', () => {
-    let location: (string | Location) & Location;
-
-    beforeEach(() => {
-        location = window.location;
-        Reflect.deleteProperty(window, 'location');
-    });
-
-    afterEach(() => {
-        window.location = location;
-    });
-
     it('should have no axe violations', async () => {
-        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
         const {container} = renderWithRecoil(
-            <MemoryRouter>
+            <MemoryRouter initialEntries={['/user/dashboard']}>
                 <Header/>
             </MemoryRouter>,
         );
@@ -52,9 +40,8 @@ describe('Header', () => {
     });
 
     it('should hide space buttons', async () => {
-        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
         renderWithRecoil(
-            <MemoryRouter>
+            <MemoryRouter initialEntries={['/user/dashboard']}>
                 <Header hideSpaceButtons={true}/>
             </MemoryRouter>,
         );
@@ -69,9 +56,8 @@ describe('Header', () => {
     });
 
     it('should not show the account dropdown when user is on the error page', () => {
-        window.location = {origin: 'https://localhost', pathname: '/error/404'} as Location;
         renderWithRecoil(
-            <MemoryRouter>
+            <MemoryRouter initialEntries={['/error/404']}>
                 <Header hideSpaceButtons={true}/>
             </MemoryRouter>,
         );
@@ -80,14 +66,12 @@ describe('Header', () => {
     });
 
     describe('Account Dropdown', () => {
-
         beforeEach(async () => {
             jest.useFakeTimers();
             flagsmith.hasFeature = jest.fn().mockReturnValue(true);
-            window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
 
             renderWithRecoil(
-                <MemoryRouter>
+                <MemoryRouter initialEntries={['/aaaaaaaaaaaaaa']}>
                     <Header/>
                 </MemoryRouter>,
                 ({set}) => {
@@ -108,7 +92,7 @@ describe('Header', () => {
 
         it('should show Back to Space Link when user is in time on product page', async () => {
             fireEvent.click(screen.getByText('Time On Product >'));
-            expect(screen.getByText('< Back'));
+            await waitFor(async () => expect(await screen.findByText('< Back')).toBeDefined());
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {

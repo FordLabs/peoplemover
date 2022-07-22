@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import MatomoService from '../Services/MatomoService';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {dashboardUrl} from '../Routes';
 
 import './Headers.scss';
-import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface HeaderProps {
     hideSpaceButtons?: boolean;
@@ -31,62 +32,41 @@ interface HeaderProps {
 }
 
 function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element {
+    const location = useLocation();
+
     const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
-    const dashboardPathname = '/user/dashboard';
-    const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
+    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(location.pathname.includes('timeonproduct'));
+
+    const logoHref = location.pathname === dashboardUrl ? '' : dashboardUrl;
     const spaceName = currentSpace?.name;
-    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
-    const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
-
-    const useReactPath = (): string => {
-        const [reactPath, setReactPath] = useState(window.location.pathname);
-        const listenToPopstate = (): void => {
-            setReactPath(window.location.pathname);
-        };
-        useEffect(() => {
-            window.addEventListener('popstate', listenToPopstate);
-            return (): void => {
-                window.removeEventListener('popstate', listenToPopstate);
-            };
-        }, []);
-        return reactPath;
-    };
-
-    const path = useReactPath();
-
-    /* eslint-disable */
-    useEffect( () => {
-        setShowDropDown(!window.location.pathname.includes('error'));
-        if(window.location.pathname.includes('timeonproduct')) {
-            setTimeOnProductClicked(true);
-        } else {
-            setTimeOnProductClicked(false);
-        }
-    }, [window.location.pathname, path]);
-    /* eslint-enable */
 
     const showAllDropDownOptions = (): boolean => {
-        return (window.location.pathname !== dashboardPathname);
+        return (location.pathname !== dashboardUrl);
     };
 
-    const showHeader = (): boolean => {
-        return (window.location.pathname === '/');
+    const hideHeader = (): boolean => {
+        return (location.pathname === '/');
     };
+
+    const showDropdown = () => {
+        return !location.pathname.includes('error')
+    }
     
     const sendEventTimeOnProductClick = (clicked: boolean): void => {
         setTimeOnProductClicked(clicked);
         if (clicked) {
-            MatomoService.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
+            MatomoService.pushEvent(spaceName, 'TimeOnProductClicked', 'Go to Time On Product page');
         } else  {
-            MatomoService.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
+            MatomoService.pushEvent(spaceName, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
         }
     };
 
     return (
-        showHeader() ? <></>
+        hideHeader() ? <></>
             : <>
-                {currentSpace && currentSpace.uuid && !timeOnProductClicked && (
+                {uuid && !timeOnProductClicked && (
                     <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
                         Skip to main content
                     </a>
@@ -95,24 +75,24 @@ function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element 
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {currentSpace && currentSpace.uuid && !timeOnProductClicked && (
+                        {uuid && !timeOnProductClicked && (
                             <Link
                                 className="timeOnProductLink"
-                                to={`/${currentSpace.uuid}/timeonproduct`}
+                                to={`/${uuid}/timeonproduct`}
                                 onClick={(): void => sendEventTimeOnProductClick(true)}>
                                 <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
                             </Link>
                         )}
-                        {currentSpace && currentSpace.uuid && timeOnProductClicked && (
+                        {uuid && timeOnProductClicked && (
                             <Link
                                 className="timeOnProductLink"
-                                to={`/${currentSpace.uuid}`}
+                                to={`/${uuid}`}
                                 onClick={(): void => sendEventTimeOnProductClick(false)}>
                                 &#60; Back
                             </Link>
                         )}
                     </div>
-                    {!hideAllButtons && showDropDown && (
+                    {!hideAllButtons && showDropdown() && (
                         <div className="headerRightContainer">
                             <AccountDropdown
                                 hideSpaceButtons={hideSpaceButtons}
