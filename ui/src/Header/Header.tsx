@@ -86,19 +86,39 @@ function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element 
     return (
         showHeader() ? <></>
             : <>
-                {currentSpace && currentSpace.uuid && !timeOnProductClicked && <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
-                    main content</a>}
-                <header className="peopleMoverHeader">
+                {currentSpace && currentSpace.uuid && !timeOnProductClicked && (
+                    <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
+                        Skip to main content
+                    </a>
+                )}
+                <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
                     <div className="headerLeftContainer">
                         <PeopleMoverLogo href={logoHref}/>
                         {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;</Link>}
-                        {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>&#60; Back</Link>}
+                        {currentSpace && currentSpace.uuid && !timeOnProductClicked && (
+                            <Link
+                                className="timeOnProductLink"
+                                to={`/${currentSpace.uuid}/timeonproduct`}
+                                onClick={(): void => sendEventTimeOnProductClick(true)}>
+                                <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
+                            </Link>
+                        )}
+                        {currentSpace && currentSpace.uuid && timeOnProductClicked && (
+                            <Link
+                                className="timeOnProductLink"
+                                to={`/${currentSpace.uuid}`}
+                                onClick={(): void => sendEventTimeOnProductClick(false)}>
+                                &#60; Back
+                            </Link>
+                        )}
                     </div>
-                    {!hideAllButtons && showDropDown && <div className="headerRightContainer">
-                        <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
-                    </div>
-                    }
+                    {!hideAllButtons && showDropDown && (
+                        <div className="headerRightContainer">
+                            <AccountDropdown
+                                hideSpaceButtons={hideSpaceButtons}
+                                showAllDropDownOptions={showAllDropDownOptions()}/>
+                        </div>
+                    )}
                 </header>
             </>
     );

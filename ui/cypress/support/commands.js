@@ -21,6 +21,7 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
+import '@testing-library/cypress/add-commands';
 import moment from 'moment';
 
 const spaceUuid = Cypress.env('SPACE_UUID');
