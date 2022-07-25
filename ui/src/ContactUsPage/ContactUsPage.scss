@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+@import '../Styles/Breakpoints.scss';
+@import '../Styles/Colors';
+
 .contact-us-page {
   min-height: calc(100vh - 3.75rem);
   display: flex;
@@ -22,9 +25,41 @@
 
   .main-content {
     flex: 1 0 auto;
+
+    .contact-us-page-title {
+      color: $white;
+      font-weight: 700;
+      font-size: 52px;
+      line-height: 38px;
+      margin: 8rem 0 0 3rem;
+    }
+  }
+
+  .contact-us-background-image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: -1;
+    overflow-y: hidden;
+
+    @include phone {
+      display: none;
+    }
   }
 
   .footer {
     flex-shrink: 0;
+    width: 100%;
+    margin: 0 auto;
+
+    .brandingContainer {
+      justify-content: right;
+      margin-right: 5rem;
+
+      @include phone {
+        justify-content: center;
+      }
+    }
   }
 }

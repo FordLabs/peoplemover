@@ -17,6 +17,7 @@
 
 import React from 'react';
 import Branding from 'ReusableComponents/Branding';
+import PurpleGradientBackgroundImage from 'Assets/background-left-purple-gradient.svg';
 
 import './ContactUsPage.scss';
 
@@ -24,11 +25,12 @@ function ContactUsPage() {
     return (
         <div className="contact-us-page">
             <main className="main-content">
-                <h1>Contact Us</h1>
+                <h1 className="contact-us-page-title">Contact Us</h1>
             </main>
             <footer className="footer">
                 <Branding/>
             </footer>
+            <img className="contact-us-background-image" src={PurpleGradientBackgroundImage} alt="" role="presentation"/>
         </div>
     )
 }
