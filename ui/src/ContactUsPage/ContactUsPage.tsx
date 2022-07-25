@@ -39,18 +39,19 @@ function ContactUsPage() {
                     <PeopleMoverLogo/>
                     <h2>The People’s Feedback</h2>
                     <p>Getting started? Have questions? Let us know how we can help you with your PeopleMover space!</p>
+                    <div className="required-text">All fields required.</div>
                     <form className="contact-us-page-form" onSubmit={onSubmit}>
-                        <Input label="Name:" />
-                        <Input label="Email:" />
+                        <Input label="Name:" required />
+                        <Input label="Email:" required />
                         <fieldset className="fieldset">
                             <legend>I am:</legend>
                             <div>
-                                <Input label="New User" id="new-user" type="radio" name="user-type" />
-                                <Input label="Existing User" id="existing-user" type="radio" name="user-type" />
-                                <Input label="Other" id="other-user" type="radio" name="user-type" />
+                                <Input label="New User" id="new-user" type="radio" name="user-type" required />
+                                <Input label="Existing User" id="existing-user" type="radio" name="user-type" required />
+                                <Input label="Other" id="other-user" type="radio" name="user-type" required />
                             </div>
                         </fieldset>
-                        <Textarea label="How can we help?" id="textarea" />
+                        <Textarea label="How can we help?" id="textarea" required />
                         <button className="contact-us-page-submit-button">Send</button>
                     </form>
                 </div>

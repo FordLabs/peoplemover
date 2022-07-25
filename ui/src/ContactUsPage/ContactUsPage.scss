@@ -38,7 +38,6 @@
       flex: 1 0 auto;
     }
 
-
     .contact-us-page-title {
       display: none;
       color: $white;
@@ -86,9 +85,14 @@
         margin: 0 0 0 auto;
       }
 
-      .contact-us-page-form {
-        margin-top: 3rem;
+      .required-text {
+        color: $purple-title;
+        font-style: italic;
+        text-align: left;
+        margin: 2rem 0;
+      }
 
+      .contact-us-page-form {
         .input-group {
           text-align: initial;
         }
