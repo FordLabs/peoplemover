@@ -20,12 +20,18 @@ import Branding from 'ReusableComponents/Branding';
 import PurpleGradientBackgroundImage from 'Assets/background-left-purple-gradient.svg';
 
 import './ContactUsPage.scss';
+import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 
 function ContactUsPage() {
     return (
         <div className="contact-us-page">
             <main className="main-content">
                 <h1 className="contact-us-page-title">Contact Us</h1>
+                <div className="right-content">
+                    <PeopleMoverLogo/>
+                    <h2>The People’s Feedback</h2>
+                    <p>Getting started? Have questions? Let us know how we can help you with your PeopleMover space!</p>
+                </div>
             </main>
             <footer className="footer">
                 <Branding/>

@@ -25,6 +25,8 @@
 
   .main-content {
     flex: 1 0 auto;
+    display: flex;
+    justify-content: space-between;
 
     .contact-us-page-title {
       color: $white;
@@ -32,6 +34,34 @@
       font-size: 52px;
       line-height: 38px;
       margin: 8rem 0 0 3rem;
+    }
+
+    .right-content {
+      text-align: right;
+      margin: 8rem 5rem 0 0;
+
+      .peopleMoverLogo {
+        display: inline-block;
+      }
+
+      h2 {
+        background: $logo-gradient;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 34px;
+        line-height: 38px;
+        margin: 1rem 0;
+      }
+
+      p {
+        max-width: 28rem;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        color: $gray-1;
+      }
     }
   }
 
