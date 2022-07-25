@@ -24,11 +24,29 @@ import Textarea from 'ReusableComponents/Textarea/Textarea';
 
 import './ContactUsPage.scss';
 
+type TargetType = {
+    email: { value: string };
+    name: { value: string };
+    userType: { value: string };
+    message: { value: string };
+}
+
 function ContactUsPage() {
 
-    function onSubmit(event: { preventDefault: () => void; }) {
+    function onSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log('Send!');
+        const target = event.currentTarget.elements as unknown as TargetType;
+        const email = target.email.value;
+        const name = target.name.value;
+        const userType = target.userType.value;
+        const message = target.message.value;
+
+        console.log('Send!', {
+            email,
+            name,
+            userType,
+            message
+        });
     }
 
     return (
@@ -41,18 +59,20 @@ function ContactUsPage() {
                     <p>Getting started? Have questions? Let us know how we can help you with your PeopleMover space!</p>
                     <div className="required-text">All fields required.</div>
                     <form className="contact-us-page-form" onSubmit={onSubmit}>
-                        <Input label="Name:" required />
-                        <Input label="Email:" required />
+                        <Input label="Name:" name="name" id="name" required />
+                        <Input label="Email:" name="email" id="email" type="email" required />
                         <fieldset className="fieldset">
                             <legend>I am:</legend>
-                            <div>
-                                <Input label="New User" id="new-user" type="radio" name="user-type" required />
-                                <Input label="Existing User" id="existing-user" type="radio" name="user-type" required />
-                                <Input label="Other" id="other-user" type="radio" name="user-type" required />
-                            </div>
+                            <Input label="New User" value="New User" id="new-user" type="radio" name="userType" required />
+                            <Input
+                                label="Existing User" value="Existing User"
+                                id="existing-user" type="radio" name="userType"
+                                required
+                            />
+                            <Input label="Other" value="Other" id="other-user" type="radio" name="userType" required />
                         </fieldset>
-                        <Textarea label="How can we help?" id="textarea" required />
-                        <button className="contact-us-page-submit-button">Send</button>
+                        <Textarea label="How can we help?" id="textarea" name="message" required />
+                        <button className="contact-us-page-submit-button" type="submit">Send</button>
                     </form>
                 </div>
             </main>
