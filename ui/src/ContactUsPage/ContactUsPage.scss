@@ -29,24 +29,38 @@
   flex-direction: column;
 
   .main-content {
-    @include max-contact-us-page-width;
+    margin: 0 1rem;
 
-    flex: 1 0 auto;
-    display: flex;
-    justify-content: space-between;
+    @include desktop {
+      @include max-contact-us-page-width;
+      display: flex;
+      justify-content: space-between;
+      flex: 1 0 auto;
+    }
+
 
     .contact-us-page-title {
+      display: none;
       color: $white;
       font-weight: 700;
       font-size: 52px;
       line-height: 38px;
       margin: 6rem 0 0 3rem;
+
+      @include desktop {
+        display: initial;
+      }
     }
 
     .right-content {
-      text-align: right;
-      margin-top: 6rem;
-      width: 38.25rem;
+      text-align: center;
+      margin: 3rem 0;
+
+      @include desktop {
+        text-align: right;
+        width: 38.25rem;
+        margin-top: 6rem;
+      }
 
       .peopleMoverLogo {
         display: inline-block;
@@ -100,6 +114,7 @@
   }
 
   .contact-us-background-image {
+    display: none;
     position: absolute;
     left: 0;
     top: 0;
@@ -107,13 +122,18 @@
     z-index: -1;
     overflow-y: hidden;
 
-    @include phone {
-      display: none;
+    @include desktop {
+      display: initial;
     }
   }
 
   .footer {
-    @include max-contact-us-page-width;
+    margin: 0 1rem;
+
+    @include desktop {
+      @include max-contact-us-page-width;
+    }
+
     flex-shrink: 0;
 
     .brandingContainer {
