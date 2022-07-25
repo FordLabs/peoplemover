@@ -18,12 +18,19 @@
 @import '../Styles/Breakpoints.scss';
 @import '../Styles/Colors';
 
+@mixin max-contact-us-page-width {
+  max-width: 90rem;
+  margin: 0 1.5rem;
+}
+
 .contact-us-page {
   min-height: calc(100vh - 3.75rem);
   display: flex;
   flex-direction: column;
 
   .main-content {
+    @include max-contact-us-page-width;
+
     flex: 1 0 auto;
     display: flex;
     justify-content: space-between;
@@ -33,12 +40,13 @@
       font-weight: 700;
       font-size: 52px;
       line-height: 38px;
-      margin: 8rem 0 0 3rem;
+      margin: 6rem 0 0 3rem;
     }
 
     .right-content {
       text-align: right;
-      margin: 8rem 5rem 0 0;
+      margin-top: 6rem;
+      width: 38.25rem;
 
       .peopleMoverLogo {
         display: inline-block;
@@ -61,6 +69,32 @@
         font-size: 16px;
         line-height: 24px;
         color: $gray-1;
+        margin: 0 0 0 auto;
+      }
+
+      .contact-us-page-form {
+        margin-top: 3rem;
+
+        .input-group {
+          text-align: initial;
+        }
+
+        .contact-us-page-submit-button {
+          margin: 2rem 0 0 auto;
+          width: 135px;
+          height: 34px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: $prime-1;
+          color: $white;
+
+          font-style: normal;
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 18px;
+          white-space: nowrap;
+        }
       }
     }
   }
@@ -79,17 +113,31 @@
   }
 
   .footer {
+    @include max-contact-us-page-width;
     flex-shrink: 0;
-    width: 100%;
-    margin: 0 auto;
 
     .brandingContainer {
       justify-content: right;
-      margin-right: 5rem;
 
       @include phone {
         justify-content: center;
       }
     }
+  }
+}
+
+.fieldset {
+  border: 0;
+  position: relative;
+
+  legend {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    margin-left: 0.5rem;
+  }
+
+  .input-group {
+    margin-right: 1.5rem;
   }
 }
