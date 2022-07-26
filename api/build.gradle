@@ -64,6 +64,7 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'org.springframework.security:spring-security-test'
   testImplementation "io.mockk:mockk:1.11.0"
+  testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.33.2'
 }
 
 jacocoTestReport {
