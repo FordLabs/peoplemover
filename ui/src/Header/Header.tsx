@@ -15,108 +15,64 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
-import {Link} from 'react-router-dom';
-import MatomoService from '../Services/MatomoService';
+import {Link, useLocation} from 'react-router-dom';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {dashboardUrl} from '../Routes';
 
 import './Headers.scss';
-import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-interface HeaderProps {
-    hideSpaceButtons?: boolean;
-    hideAllButtons?: boolean;
-}
+function Header(): JSX.Element {
+    const location = useLocation();
 
-function Header({ hideSpaceButtons, hideAllButtons }: HeaderProps): JSX.Element {
     const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
-    const dashboardPathname = '/user/dashboard';
-    const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
+    const isTimeOnProductPage = location.pathname.includes('timeonproduct');
+    const isSpacePage = location.pathname === `/${uuid}`;
+    const isLandingPage = location.pathname === '/';
+    const isErrorPage = location.pathname.includes('error');
+    const isDashboardPage = location.pathname === dashboardUrl;
+
     const spaceName = currentSpace?.name;
-    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
-    const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
 
-    const useReactPath = (): string => {
-        const [reactPath, setReactPath] = useState(window.location.pathname);
-        const listenToPopstate = (): void => {
-            setReactPath(window.location.pathname);
-        };
-        useEffect(() => {
-            window.addEventListener('popstate', listenToPopstate);
-            return (): void => {
-                window.removeEventListener('popstate', listenToPopstate);
-            };
-        }, []);
-        return reactPath;
-    };
-
-    const path = useReactPath();
-
-    /* eslint-disable */
-    useEffect( () => {
-        setShowDropDown(!window.location.pathname.includes('error'));
-        if(window.location.pathname.includes('timeonproduct')) {
-            setTimeOnProductClicked(true);
-        } else {
-            setTimeOnProductClicked(false);
-        }
-    }, [window.location.pathname, path]);
-    /* eslint-enable */
-
-    const showAllDropDownOptions = (): boolean => {
-        return (window.location.pathname !== dashboardPathname);
-    };
-
-    const showHeader = (): boolean => {
-        return (window.location.pathname === '/');
-    };
-    
-    const sendEventTimeOnProductClick = (clicked: boolean): void => {
-        setTimeOnProductClicked(clicked);
-        if (clicked) {
-            MatomoService.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
-        } else  {
-            MatomoService.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
-        }
-    };
+    function showSpaceName(): boolean {
+        return (isSpacePage || isTimeOnProductPage) && !!spaceName;
+    }
 
     return (
-        showHeader() ? <></>
+        isLandingPage ? <></>
             : <>
-                {currentSpace && currentSpace.uuid && !timeOnProductClicked && (
+                {isSpacePage && (
                     <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
                         Skip to main content
                     </a>
                 )}
                 <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
                     <div className="headerLeftContainer">
-                        <PeopleMoverLogo href={logoHref}/>
-                        {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {currentSpace && currentSpace.uuid && !timeOnProductClicked && (
+                        <PeopleMoverLogo href={isDashboardPage ? '' : dashboardUrl}/>
+                        {showSpaceName() && <h1 className="spaceName">{spaceName}</h1>}
+                        {isSpacePage && (
                             <Link
                                 className="timeOnProductLink"
-                                to={`/${currentSpace.uuid}/timeonproduct`}
-                                onClick={(): void => sendEventTimeOnProductClick(true)}>
+                                to={`/${uuid}/timeonproduct`}>
                                 <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
                             </Link>
                         )}
-                        {currentSpace && currentSpace.uuid && timeOnProductClicked && (
+                        {isTimeOnProductPage && (
                             <Link
                                 className="timeOnProductLink"
-                                to={`/${currentSpace.uuid}`}
-                                onClick={(): void => sendEventTimeOnProductClick(false)}>
+                                to={`/${uuid}`}>
                                 &#60; Back
                             </Link>
                         )}
                     </div>
-                    {!hideAllButtons && showDropDown && (
+                    {!isErrorPage && (
                         <div className="headerRightContainer">
-                            <AccountDropdown
-                                hideSpaceButtons={hideSpaceButtons}
-                                showAllDropDownOptions={showAllDropDownOptions()}/>
+                            <AccountDropdown showAllDropDownOptions={!isDashboardPage}/>
                         </div>
                     )}
                 </header>
