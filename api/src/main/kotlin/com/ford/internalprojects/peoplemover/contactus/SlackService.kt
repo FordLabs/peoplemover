@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.contactus
 
+import com.slack.api.Slack
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
@@ -26,37 +27,39 @@ import java.net.URI
 import java.net.URISyntaxException
 
 @Service
-class SlackService {
-
-    @Value("\${slack.url}")
-    var slackURL: String? = null
+class SlackService (
+    @Value("\${slack.url}") val slackURL: String = "",
+) {
 
     fun postToSlackChannel(newFormResponse: ContactFormDTO) {
-        if (slackURL == null){return}
-        var uri: URI? = null
-        try {
-            uri = URI(slackURL)
-        } catch (e: URISyntaxException) {
-            e.printStackTrace()
-        }
-        val contactInformation = ContactForm(
-            newFormResponse.name,
-            newFormResponse.email,
-            newFormResponse.userType,
-            newFormResponse.message
-        )
-        val body: HttpEntity<String> = HttpEntity(contactInformation.createStringForSlack(), null)
-        val restTemplate = RestTemplate()
-        try {
-            val response = restTemplate.exchange(
-                uri!!,
-                HttpMethod.POST,
-                body,
-                Void::class.java
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+        val slack = Slack.getInstance()
+        val response = slack.methods().apiTest { it.foo("bar") }
+        println(response)
 
+//        if (slackURL == null){return}
+//        var uri: URI? = null
+//        try {
+//            uri = URI(slackURL)
+//        } catch (e: URISyntaxException) {
+//            e.printStackTrace()
+//        }
+//        val contactInformation = ContactForm(
+//            newFormResponse.name,
+//            newFormResponse.email,
+//            newFormResponse.userType,
+//            newFormResponse.message
+//        )
+//        val body: HttpEntity<String> = HttpEntity(contactInformation.createStringForSlack(), null)
+//        val restTemplate = RestTemplate()
+//        try {
+//            val response = restTemplate.exchange(
+//                uri!!,
+//                HttpMethod.POST,
+//                body,
+//                Void::class.java
+//            )
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+    }
 }

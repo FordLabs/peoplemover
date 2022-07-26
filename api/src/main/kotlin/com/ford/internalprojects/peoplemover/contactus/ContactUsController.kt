@@ -17,6 +17,7 @@
 
 package com.ford.internalprojects.peoplemover.contactus
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -31,8 +32,9 @@ class ContactUsController(
 
     @PostMapping
     fun contactUs(
-        @Valid @RequestBody request: ContactFormDTO,
-    ){
-        slackService.postToSlackChannel()
+        @Valid @RequestBody contactUsForm: ContactFormDTO,
+    ): ResponseEntity<Unit> {
+        slackService.postToSlackChannel(contactUsForm);
+        return ResponseEntity.ok().build()
     }
 }

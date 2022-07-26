@@ -16,7 +16,7 @@ class AuthConfiguration(private val customPermissionEvaluator: CustomPermissionE
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
-                .antMatchers("/", "/error", "/api/config", "/h2-console", "/h2-console/**", "/api/reset/**", "/api/info").permitAll()
+                .antMatchers("/", "/error", "/api/contact-us", "/api/config", "/h2-console", "/h2-console/**", "/api/reset/**", "/api/info").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(HttpStatusEntryPoint(UNAUTHORIZED))
                 .and().csrf().disable()
