@@ -23,6 +23,8 @@ import Input from 'ReusableComponents/Input/Input';
 import Textarea from 'ReusableComponents/Textarea/Textarea';
 
 import './ContactUsPage.scss';
+import {UserType} from '../Types/ContactUsRequest';
+import ContactUsClient from '../Services/Api/ContactUsClient';
 
 type TargetType = {
     email: { value: string };
@@ -38,15 +40,15 @@ function ContactUsPage() {
         const target = event.currentTarget.elements as unknown as TargetType;
         const email = target.email.value;
         const name = target.name.value;
-        const userType = target.userType.value;
+        const userType = target.userType.value as UserType;
         const message = target.message.value;
 
-        console.log('Send!', {
+        ContactUsClient.send({
             email,
             name,
             userType,
             message
-        });
+        })
     }
 
     return (
@@ -63,13 +65,21 @@ function ContactUsPage() {
                         <Input label="Email:" name="email" id="email" type="email" required />
                         <fieldset className="fieldset">
                             <legend>I am:</legend>
-                            <Input label="New User" value="New User" id="new-user" type="radio" name="userType" required />
                             <Input
-                                label="Existing User" value="Existing User"
+                                label={UserType.NEW_USER} value={UserType.NEW_USER}
+                                id="new-user" type="radio" name="userType"
+                                required
+                            />
+                            <Input
+                                label={UserType.EXISTING_USER} value={UserType.EXISTING_USER}
                                 id="existing-user" type="radio" name="userType"
                                 required
                             />
-                            <Input label="Other" value="Other" id="other-user" type="radio" name="userType" required />
+                            <Input
+                                label={UserType.OTHER} value={UserType.OTHER}
+                                id="other-user" type="radio" name="userType"
+                                required
+                            />
                         </fieldset>
                         <Textarea label="How can we help?" id="textarea" name="message" required />
                         <button className="contact-us-page-submit-button" type="submit">Send</button>

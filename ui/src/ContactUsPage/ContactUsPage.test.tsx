@@ -19,19 +19,25 @@ import ContactUsPage from './ContactUsPage';
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
+import ContactUsClient from '../Services/Api/ContactUsClient';
+import {ContactUsRequest, UserType} from '../Types/ContactUsRequest';
+
+jest.mock('Services/Api/ContactUsClient');
 
 describe('Contact Us Page', () => {
     it('should populate and submit contact us form', async () => {
-        console.log = jest.fn();
-
-        const expectedFormValues = {
+        const expectedFormValues: ContactUsRequest = {
             name: 'Layla',
             email: 'layla@abc.com',
-            userType: 'New User',
+            userType: UserType.NEW_USER,
             message: 'Something isn\'t working right.'
         }
 
-        render(<MemoryRouter><ContactUsPage /></MemoryRouter>);
+        render(
+            <MemoryRouter>
+                <ContactUsPage />
+            </MemoryRouter>
+        );
         await userEvent.type(screen.getByLabelText('Name:'), expectedFormValues.name);
         await userEvent.type(screen.getByLabelText('Email:'), expectedFormValues.email);
         const radioButtonToClick = screen.getByLabelText(expectedFormValues.userType);
@@ -44,6 +50,6 @@ describe('Contact Us Page', () => {
 
         await userEvent.click(screen.getByText('Send'));
 
-        expect(console.log).toHaveBeenCalledWith('Send!', expectedFormValues);
+        expect(ContactUsClient.send).toHaveBeenCalledWith(expectedFormValues);
     });
 });
