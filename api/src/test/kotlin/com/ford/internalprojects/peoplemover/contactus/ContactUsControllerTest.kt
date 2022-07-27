@@ -52,15 +52,5 @@ class ContactUsControllerTest {
         assertThat(actualResult.get("body").asText()).isEqualTo(expectedResult.body);
         assertThat(actualResult.get("code").asInt()).isEqualTo(expectedResult.code);
         assertThat(actualResult.get("message").asText()).isEqualTo(expectedResult.message);
-
-        val expectedPayload = "{\"text\":\"" +
-                "*Name*: TestName \n " +
-                "*Email*: test@test.com \n " +
-                "*User Type*: Other \n " +
-                "*Message*: Hello There \"}"
-
-        val expectedWebhookUrl = "https://hooks.slack.com/services/123/456/789";
-
-        Mockito.verify(slack, Mockito.times(1)).send(expectedWebhookUrl, expectedPayload)
     }
 }
