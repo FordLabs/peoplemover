@@ -1,63 +1,66 @@
 package com.ford.internalprojects.peoplemover.contactus
 
-import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
-import com.github.tomakehurst.wiremock.junit5.WireMockTest
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.slack.api.Slack
+import com.slack.api.webhook.WebhookResponse
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
-
-@WireMockTest(httpPort = 8089)
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class ContactUsControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @BeforeEach
-    fun beforeEach() {
-    }
+    @MockBean
+    private lateinit var slack: Slack;
 
-    @AfterEach
-    fun afterEach() {
-
-    }
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Test
-    @Throws(Exception::class)
-    fun sendToSlackBot(infoThingy: WireMockRuntimeInfo?) {
-        stubFor(
-                post(urlPathEqualTo("/"))
-                .withHeader("Content-Type", containing("text/plain;charset=ISO-8859-1"))
-                .willReturn(ok())
-        )
-        val mvcResult = mockMvc
+    fun `POST should send contact us form info to slack`() {
+        val expectedResult = WebhookResponse.builder().message("").code(200).body("ok").build();
+        `when`(slack.send(anyString(), anyString())).thenReturn(expectedResult);
+
+        val request = ContactFormDTO("TestName", "test@test.com", "Other", "Hello There");
+
+        val result = mockMvc
             .perform(
                 MockMvcRequestBuilders
                     .post("/api/contact-us")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\": \"testName\"," +
-                            " \"email\": \"test@test.test\", " +
-                            "\"userType\": \"other\", " +
-                            "\"message\": \"Hello there\"}")
+                    .content(objectMapper.writeValueAsString(request))
             )
-            .andReturn()
-        verify(
-            postRequestedFor(urlPathEqualTo("/"))
-                .withRequestBody(
-                    equalTo(
-                        "{\"text\":\"Feedback received for team mockTeam. Feedback score of: :vibez_5:. Comments: I'm so HAPPY.\"}"
-                    )
-                )
-                .withHeader("Content-Type", equalTo("text/plain;charset=ISO-8859-1"))
-        )
+            .andReturn();
+
+        val actualResult: JsonNode = objectMapper.readTree(result.response.contentAsString);
+
+        assertThat(actualResult.get("body").asText()).isEqualTo(expectedResult.body);
+        assertThat(actualResult.get("code").asInt()).isEqualTo(expectedResult.code);
+        assertThat(actualResult.get("message").asText()).isEqualTo(expectedResult.message);
+
+        val expectedPayload = "{\"text\":\"" +
+                "*Name*: TestName \n " +
+                "*Email*: test@test.com \n " +
+                "*User Type*: Other \n " +
+                "*Message*: Hello There \"}"
+
+        val expectedWebhookUrl = "https://hooks.slack.com/services/123/456/789";
+
+        Mockito.verify(slack, Mockito.times(1)).send(expectedWebhookUrl, expectedPayload)
     }
 }

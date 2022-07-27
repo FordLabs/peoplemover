@@ -22,4 +22,12 @@ data class ContactFormDTO(
     val email: String,
     val userType: String,
     val message: String
-)
+) {
+    fun createStringForSlack(): String {
+        return "{\"text\":\"" +
+                "*Name*: $name \n " +
+                "*Email*: $email \n " +
+                "*User Type*: $userType \n " +
+                "*Message*: $message \"}"
+    }
+}

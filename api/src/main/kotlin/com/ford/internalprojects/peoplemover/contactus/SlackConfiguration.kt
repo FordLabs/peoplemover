@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ford.internalprojects.peoplemover.contactus
 
 import com.slack.api.Slack
-import com.slack.api.webhook.WebhookResponse
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Service
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
-
-@Service
-class SlackService (
-    private val slack: Slack,
-    @Value("\${slack.url}") private val webhookUrl: String? = null,
-) {
-    fun postToSlackChannel(contactForm: ContactFormDTO): WebhookResponse {
-        if (webhookUrl.isNullOrEmpty()) return WebhookResponse.builder().code(400).message("Missing Webhook Url.").build();
-
-        val response = slack.send(webhookUrl, contactForm.createStringForSlack());
-        return response
+@Configuration
+class SlackConfiguration {
+    @Bean
+    fun slackInstance(): Slack {
+        return Slack.getInstance()
     }
 }

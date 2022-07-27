@@ -17,24 +17,21 @@
 
 package com.ford.internalprojects.peoplemover.contactus
 
-import org.springframework.http.ResponseEntity
+import com.slack.api.webhook.WebhookResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
-@RequestMapping("/api/contact-us")
 @RestController
 class ContactUsController(
-    private val slackService: SlackService
+    private val slackService: SlackService,
 ) {
 
-    @PostMapping
+    @PostMapping("/api/contact-us")
     fun contactUs(
         @Valid @RequestBody contactUsForm: ContactFormDTO,
-    ): ResponseEntity<Unit> {
-        slackService.postToSlackChannel(contactUsForm);
-        return ResponseEntity.ok().build()
+    ): WebhookResponse {
+        return slackService.postToSlackChannel(contactUsForm);
     }
 }

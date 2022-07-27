@@ -60,13 +60,20 @@ dependencies {
   implementation("com.slack.api:slack-api-model-kotlin-extension:1.24.0")
   implementation("com.slack.api:slack-api-client-kotlin-extension:1.24.0")
 
+  implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
   runtimeOnly 'mysql:mysql-connector-java:8.0.25'
   runtimeOnly 'com.h2database:h2:1.4.200'
 
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'org.springframework.security:spring-security-test'
   testImplementation "io.mockk:mockk:1.11.0"
-  testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.33.2'
+
+  constraints {
+    implementation('com.squareup.okhttp3:okhttp:4.9.3') {
+      because('Gradle resolves 3.14.9 by default')
+    }
+  }
 }
 
 jacocoTestReport {
