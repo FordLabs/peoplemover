@@ -22,7 +22,6 @@ import InviteEditorsFormSection from './InviteEditorsFormSection';
 import {fireEvent, screen, waitFor, within} from '@testing-library/react';
 import Cookies from 'universal-cookie';
 import SpaceClient from 'Services/Api/SpaceClient';
-import RedirectClient from 'Utils/RedirectClient';
 import {Space} from 'Types/Space';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
@@ -36,7 +35,6 @@ describe('Invite Editors Form', function() {
         SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(TestData.spaceMappingsArray);
 
         cookies.set('accessToken', '123456');
-        RedirectClient.redirect = jest.fn();
     });
 
     describe('Feature toggle enabled', () => {
@@ -272,6 +270,11 @@ describe('Invite Editors Form', function() {
         });
 
         it('should show a confirmation modal when removing self', async () => {
+            const location = window.location;
+            Reflect.deleteProperty(window, 'location');
+            Object.defineProperty(window, 'location', {
+                value: { pathname: '/' }, writable: true,
+            });
             const currentUser = 'USER_ID_2';
             await renderComponent(currentUser);
             const editorRow = within(await screen.findByTestId(`userListItem__user_id_2`));
@@ -286,7 +289,8 @@ describe('Invite Editors Form', function() {
 
             await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[1]));
             expect(screen.queryByText('Are you sure?')).not.toBeInTheDocument();
-            expect(RedirectClient.redirect).toHaveBeenCalledWith('/user/dashboard');
+            await waitFor(() => expect(window.location.pathname).toBe('/user/dashboard'));
+            window.location = location;
         });
 
         it('should show a confirmation modal when removing editor access', async () => {

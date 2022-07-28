@@ -24,12 +24,11 @@ import {
 import React, {CSSProperties, useState} from 'react';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from '../Types/UserSpaceMapping';
-
-import './UserAccessList.scss';
 import SpaceClient from '../Services/Api/SpaceClient';
 import ConfirmationModal from 'Modal/ConfirmationModal/ConfirmationModal';
 import {dashboardUrl} from '../Routes';
-import RedirectClient from '../Utils/RedirectClient';
+
+import './UserAccessList.scss';
 
 interface PermissionType {
     label: string;
@@ -123,7 +122,7 @@ function UserAccessList({
                         (): void => {
                             SpaceClient.removeUser(currentSpace, user).then(() => {
                                 setDisplayRevokeSelfEditorStatusConfirmationModal(false);
-                                RedirectClient.redirect(dashboardUrl);
+                                window.location.pathname = dashboardUrl;
                             });
                         }
                     }
