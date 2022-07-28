@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import PurpleGradientBackgroundImage from 'Assets/background-left-purple-gradient.svg';
 import Branding from 'ReusableComponents/Branding';
 import PeopleMoverLogo from 'ReusableComponents/PeopleMoverLogo';
@@ -34,21 +34,26 @@ type TargetType = {
 }
 
 function ContactUsPage() {
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
     function onSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
-        const target = event.currentTarget.elements as unknown as TargetType;
-        const email = target.email.value;
-        const name = target.name.value;
-        const userType = target.userType.value as UserType;
-        const message = target.message.value;
+        const target = event.currentTarget;
+        const elements = target.elements as unknown as TargetType;
+        const email = elements.email.value;
+        const name = elements.name.value;
+        const userType = elements.userType.value as UserType;
+        const message = elements.message.value;
 
         ContactUsClient.send({
             email,
             name,
             userType,
             message
-        })
+        }).then(() => {
+            target.reset();
+            setIsSubmitted(true);
+        });
     }
 
     return (
@@ -82,7 +87,16 @@ function ContactUsPage() {
                             />
                         </fieldset>
                         <Textarea label="How can we help?" id="textarea" name="message" required />
-                        <button className="contact-us-page-submit-button" type="submit">Send</button>
+                        {isSubmitted ? (
+                            <div className="success-message">
+                                <p>Thanks! A member of our team will reach out to help you.</p>
+                                <a href="/user/dashboard">Back to Dashboard</a>
+                            </div>
+                        ) : (
+                            <button className="contact-us-page-submit-button" type="submit">
+                                Send
+                            </button>
+                        )}
                     </form>
                 </div>
             </main>

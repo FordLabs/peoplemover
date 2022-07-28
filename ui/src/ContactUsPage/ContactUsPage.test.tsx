@@ -26,6 +26,7 @@ jest.mock('Services/Api/ContactUsClient');
 
 describe('Contact Us Page', () => {
     it('should populate and submit contact us form', async () => {
+        const confirmationMessage = 'Thanks! A member of our team will reach out to help you.';
         const expectedFormValues: ContactUsRequest = {
             name: 'Layla',
             email: 'layla@abc.com',
@@ -48,8 +49,13 @@ describe('Contact Us Page', () => {
         expect(screen.getByLabelText('Other')).not.toBeChecked();
         await userEvent.type(screen.getByLabelText('How can we help?'), expectedFormValues.message);
 
+        expect(screen.queryByText(confirmationMessage)).toBeNull();
+
         await userEvent.click(screen.getByText('Send'));
 
         expect(ContactUsClient.send).toHaveBeenCalledWith(expectedFormValues);
+
+        expect(screen.queryByText('Send')).toBeNull();
+        expect(screen.getByText(confirmationMessage)).toBeDefined();
     });
 });
