@@ -16,7 +16,7 @@
  */
 import React from 'react';
 import ContactUsPage from './ContactUsPage';
-import {render, screen} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import ContactUsClient from '../Services/Api/ContactUsClient';
@@ -53,7 +53,7 @@ describe('Contact Us Page', () => {
 
         await userEvent.click(screen.getByText('Send'));
 
-        expect(ContactUsClient.send).toHaveBeenCalledWith(expectedFormValues);
+        await waitFor(() => expect(ContactUsClient.send).toHaveBeenCalledWith(expectedFormValues));
 
         expect(screen.queryByText('Send')).toBeNull();
         expect(screen.getByText(confirmationMessage)).toBeDefined();

@@ -44,7 +44,7 @@ function ContactUsPage() {
         const elements = target.elements as unknown as TargetType;
 
         ContactUsClient.send({
-            email: getValue(elements.name),
+            email: getValue(elements.email),
             name: getValue(elements.name),
             userType: getValue(elements.userType) as UserType,
             message: getValue(elements.message),
