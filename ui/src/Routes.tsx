@@ -30,7 +30,9 @@ import AnimatedImageSrc from './Assets/404.gif';
 import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
 import AnnouncementBanner from './Header/AnnouncementBanner';
+import ContactUsPage from './ContactUsPage/ContactUsPage';
 
+export const contactUsPath = '/contact-us';
 export const dashboardUrl = '/user/dashboard';
 const notFoundUrl = '/error/404';
 const forbiddenUrl = '/error/403';
@@ -63,6 +65,7 @@ function Routes(): JSX.Element {
                         <TimeOnProduct/>
                     </AuthorizedRoute>
                 } />
+                <Route path={contactUsPath} element={<ContactUsPage />} />
                 <Route
                     path={notFoundUrl}
                     element={
