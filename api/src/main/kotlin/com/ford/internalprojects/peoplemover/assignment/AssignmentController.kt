@@ -19,7 +19,6 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.space.SpaceService
 import com.ford.internalprojects.peoplemover.utilities.AssignmentV1ToAssignmentV2Converter
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -30,7 +29,6 @@ class AssignmentController(
         private val assignmentService: AssignmentService,
         private val spaceService: SpaceService,
         private val assignmentConverter: AssignmentV1ToAssignmentV2Converter,
-        private val logger: BasicLogger
 ) {
 
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
@@ -39,7 +37,6 @@ class AssignmentController(
         spaceService.checkReadOnlyAccessByDate(requestedDate, spaceUuid)
 
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonIdAndDate(personId, LocalDate.parse(requestedDate))
-        logger.logInfoMessage("All assignments retrieved for person with id: [$personId] on date: [$requestedDate].")
         return ResponseEntity.ok(assignmentsForPerson)
     }
 
@@ -49,7 +46,6 @@ class AssignmentController(
         spaceService.checkReadOnlyAccessByDate(null, spaceUuid)
 
         val assignmentsForPerson = assignmentService.getAssignmentsForTheGivenPersonId(personId)
-        logger.logInfoMessage("All assignments retrieved for person with id: [$personId].")
         return ResponseEntity.ok(assignmentsForPerson)
     }
 
@@ -64,7 +60,6 @@ class AssignmentController(
     @GetMapping("/api/v2/{spaceUuid}/assignments/product/{productId}")
     fun getAssignmentsV2ByProductId(@PathVariable spaceUuid: String, @PathVariable productId: Int): ResponseEntity<List<AssignmentV2>> {
         val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
-        logger.logInfoMessage("All v2 assignments retrieved for space [$spaceUuid] for product [$productId].")
         return ResponseEntity.ok(assignmentConverter.convert(allAssignments).filter { assignment ->  productId == assignment.productId})
     }
 
@@ -72,7 +67,6 @@ class AssignmentController(
     @GetMapping("/api/v2/{spaceUuid}/assignments/person/{personId}")
     fun getAssignmentsV2ByPersonId(@PathVariable spaceUuid: String, @PathVariable personId: Int): ResponseEntity<List<AssignmentV2>> {
         val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
-        logger.logInfoMessage("All v2 assignments retrieved for space [$spaceUuid] for person [$personId].")
         return ResponseEntity.ok(assignmentConverter.convert(allAssignments).filter { assignment ->  personId == assignment.person.id})
     }
 
@@ -80,7 +74,6 @@ class AssignmentController(
     @GetMapping("/api/v2/{spaceUuid}/assignments")
     fun getAssignmentsV2BySpace(@PathVariable spaceUuid: String): ResponseEntity<List<AssignmentV2>> {
         val allAssignments = assignmentService.getAssignmentsForSpace(spaceUuid);
-        logger.logInfoMessage("All v2 assignments retrieved for space [$spaceUuid].")
         return ResponseEntity.ok(assignmentConverter.convert(allAssignments))
     }
 
@@ -88,7 +81,6 @@ class AssignmentController(
     @GetMapping(path = ["/api/spaces/{spaceUuid}/assignment/dates"])
     fun getAllEffectiveDates(@PathVariable spaceUuid: String): ResponseEntity<Set<LocalDate>> {
         val dates = assignmentService.getEffectiveDates(spaceUuid)
-        logger.logInfoMessage("All effective dates retrieved for space with uuid: [$spaceUuid].")
         return ResponseEntity.ok(dates)
     }
 
@@ -98,7 +90,6 @@ class AssignmentController(
         spaceService.checkReadOnlyAccessByDate(requestedDate, spaceUuid)
 
         val reassignmentsByExactDate = assignmentService.getReassignmentsByExactDate(spaceUuid, LocalDate.parse(requestedDate))
-        logger.logInfoMessage("All reassignments retrieved for space with uuid: [$spaceUuid] on date: [$requestedDate].")
         return ResponseEntity.ok(reassignmentsByExactDate ?: emptyList())
     }
 
@@ -110,9 +101,6 @@ class AssignmentController(
             @RequestBody createAssignmentRequest: CreateAssignmentsRequest
     ): ResponseEntity<Set<AssignmentV1>> {
         val assignmentsCreated: Set<AssignmentV1> = assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(createAssignmentRequest, spaceUuid, personId)
-        logger.logInfoMessage("[${assignmentsCreated.size}] assignment(s) created " +
-                "for person with id: [${assignmentsCreated.first().person.id}] " +
-                "with effective date: [${assignmentsCreated.first().effectiveDate}]")
         return ResponseEntity.ok(assignmentsCreated)
     }
 
@@ -124,9 +112,6 @@ class AssignmentController(
         @PathVariable requestedDate: String
     ): ResponseEntity<Unit> {
         assignmentService.revertAssignmentsForDate(LocalDate.parse(requestedDate), spaceUuid, personId)
-        logger.logInfoMessage("assignment deleted " +
-                "for person with id: [${personId}] " +
-                "with effective date: [${requestedDate}]")
         return ResponseEntity.ok().build()
     }
 }

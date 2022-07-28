@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover.person
 
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -27,34 +26,29 @@ import javax.validation.Valid
 @RequestMapping("/api/spaces/{spaceUuid}/people")
 @RestController
 class PersonController(
-        private val logger: BasicLogger,
-        private val personService: PersonService
+    private val personService: PersonService
 ) {
-
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getAllPeopleInSpace(@PathVariable spaceUuid: String): List<Person> {
-        logger.logInfoMessage("All people retrieved for space: [$spaceUuid].")
         return personService.getPeopleInSpace(spaceUuid)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
     fun addPersonToSpace(
-            @PathVariable spaceUuid: String,
-            @Valid @RequestBody personIncoming: PersonRequest
+        @PathVariable spaceUuid: String,
+        @Valid @RequestBody personIncoming: PersonRequest
     ): Person {
-        val personCreated = personService.createPerson(personIncoming.toPerson(spaceUuid))
-        logger.logInfoMessage("Person with id [${personCreated.id}] created for space: [$spaceUuid].")
-        return personCreated
+        return personService.createPerson(personIncoming.toPerson(spaceUuid))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping("/{personId}/archive")
     fun archivePerson(
-            @PathVariable spaceUuid: String,
-            @PathVariable personId: Int,
-            @Valid @RequestBody archivePersonRequest: ArchivePersonRequest
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int,
+        @Valid @RequestBody archivePersonRequest: ArchivePersonRequest
     ): ResponseEntity<String> {
         return if(personService.archivePerson(spaceUuid, personId, archivePersonRequest.archiveDate)) {
             ResponseEntity(HttpStatus.OK)
@@ -66,24 +60,19 @@ class PersonController(
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PutMapping("/{personId}")
     fun updatePerson(
-            @PathVariable spaceUuid: String,
-            @PathVariable personId: Int,
-            @Valid @RequestBody personIncoming: PersonRequest
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int,
+        @Valid @RequestBody personIncoming: PersonRequest
     ): Person {
-
-        val updatedPerson = personService.updatePerson(personIncoming.toPerson(spaceUuid, personId))
-        logger.logInfoMessage("Person with id [${updatedPerson.id}] updated.")
-        return updatedPerson
+        return personService.updatePerson(personIncoming.toPerson(spaceUuid, personId))
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @DeleteMapping("/{personId}")
     fun removePerson(
-            @PathVariable spaceUuid: String,
-            @PathVariable personId: Int
+        @PathVariable spaceUuid: String,
+        @PathVariable personId: Int
     ) {
-        personService.removePerson(personId, spaceUuid)
-        logger.logInfoMessage("Person with id [$personId] deleted.")
+        personService.removePerson(personId, spaceUuid);
     }
-
 }

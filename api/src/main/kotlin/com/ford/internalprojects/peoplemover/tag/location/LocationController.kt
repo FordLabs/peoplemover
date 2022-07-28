@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.tag.location
 
 import com.ford.internalprojects.peoplemover.tag.TagRequest
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -28,13 +27,11 @@ import javax.validation.Valid
 @RestController
 class LocationController(
     private val locationService: LocationService,
-    private val logger: BasicLogger
 ) {
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getLocationsForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceLocation>> {
         val locationsForSpace: Set<SpaceLocation> = locationService.getLocationsForSpace(spaceUuid)
-        logger.logInfoMessage("All location retrieved for space: [$spaceUuid].")
         return ResponseEntity.ok(locationsForSpace)
     }
 
@@ -56,8 +53,6 @@ class LocationController(
         @Valid @RequestBody locationRequest: TagRequest
     ): ResponseEntity<SpaceLocation> {
         val editedLocation: SpaceLocation = locationService.editLocation(spaceUuid, locationRequest, locationId)
-        logger.logInfoMessage("Location with id [${editedLocation.id}] is updated to have name " +
-                "[${editedLocation.name}] in space: [$spaceUuid].")
         return ResponseEntity.ok(editedLocation)
     }
 
@@ -68,7 +63,6 @@ class LocationController(
         @PathVariable locationId: Int
     ): ResponseEntity<Unit> {
         locationService.deleteLocation(locationId, spaceUuid)
-        logger.logInfoMessage("Deleted location with id [$locationId] in space: [$spaceUuid].")
         return ResponseEntity.ok().build()
     }
 }
