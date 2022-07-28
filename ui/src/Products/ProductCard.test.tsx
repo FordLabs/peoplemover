@@ -20,7 +20,7 @@ import {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {emptyProduct} from './ProductService';
 import ProductCard from './ProductCard';
-import {fireEvent, screen, waitFor} from '@testing-library/react';
+import {fireEvent, screen, waitFor, within} from '@testing-library/react';
 import ProductClient from '../Services/Api/ProductClient';
 import moment from 'moment';
 import AssignmentClient from '../Services/Api/AssignmentClient';
@@ -44,25 +44,19 @@ describe('ProductCard', () => {
         ]},
     ];
 
-    it('should not show the product link icon when there is no url', () => {
+    it('should render product name NOT as a link if url is not present', async () => {
         renderProductCard({...emptyProduct(), name: 'testProduct'});
-        expect(screen.queryAllByTestId('productUrl').length).toEqual(0);
+        const productNameLink = await screen.findByTestId('productName');
+        expect(productNameLink).not.toHaveAttribute('href');
     });
 
-    it('should show the product link icon when there is a url', () => {
-        renderProductCard({...emptyProduct(), name: 'testProduct', url: 'any old url'});
-        expect(screen.queryAllByTestId('productUrl').length).toEqual(1);
-    });
-
-    it('should open url when product name is clicked', async () => {
-        window.open = jest.fn();
+    it('should render product name as a link if url is present', async () => {
         const expectedUrl = 'www.any-old-url.com'
         renderProductCard({...emptyProduct(), name: 'testProduct', url: expectedUrl });
 
-        fireEvent.click(await screen.findByTestId('productName'));
-
-        expect(window.open).toHaveBeenCalledTimes(1);
-        expect(window.open).toHaveBeenCalledWith(expectedUrl);
+        const productNameLink = await screen.findByTestId('productName');
+        expect(productNameLink).toHaveAttribute('href', expectedUrl);
+        expect(within(productNameLink).getByTestId('productUrl')).toBeDefined();
     });
 
     it('archiving a product sets the appropriate fields in the product and moves all people to unassigned', async () => {

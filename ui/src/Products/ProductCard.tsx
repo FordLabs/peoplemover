@@ -41,8 +41,6 @@ import {Person} from 'Types/Person';
 
 import './Product.scss';
 
-export const PRODUCT_URL_CLICKED = 'productUrlClicked';
-
 interface Props {
     product: Product;
 }
@@ -140,16 +138,6 @@ function ProductCard({ product }: Props): JSX.Element {
         }
     }
 
-    function handleClickForProductUrl(): void {
-        window.open(product.url);
-    }
-
-    function handleKeyDownForProductUrl(event: React.KeyboardEvent): void {
-        if (event.key === 'Enter') {
-            handleClickForProductUrl();
-        }
-    }
-
     function listenKeyUp(event: React.KeyboardEvent): void {
         if (event.key === 'ArrowDown' && !isEditMenuOpen) {
             toggleEditMenu();
@@ -189,18 +177,19 @@ function ProductCard({ product }: Props): JSX.Element {
                         <div className="productNameEditContainer">
                             <div className="productDetails">
                                 {product.url ? (
-                                    // Todo make a link
-                                    <button className="productNameButton" onClick={handleClickForProductUrl}
-                                        onKeyPress={handleKeyDownForProductUrl}>
-                                        <div data-testid="productName" className="productName productNameUrl">
-                                            {product.name}
-                                            <i className="material-icons productUrlIcon productNameUrl"
-                                                aria-label="Assign Person"
-                                                data-testid="productUrl">
+                                    <a
+                                        href={product.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        data-testid="productName"
+                                        className="productNameLink productName productNameUrl">
+                                        {product.name}
+                                        <i className="material-icons productUrlIcon productNameUrl"
+                                            aria-label="Assign Person"
+                                            data-testid="productUrl">
                                                 open_in_new
-                                            </i>
-                                        </div>
-                                    </button>
+                                        </i>
+                                    </a>
                                 ) : (
                                     <div data-testid="productName" className="productName">
                                         {product.name}
