@@ -36,20 +36,18 @@ type TargetType = {
 function ContactUsPage() {
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
+    const getValue = (element: { value: string; }) => element.value;
+
     function onSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         const target = event.currentTarget;
         const elements = target.elements as unknown as TargetType;
-        const email = elements.email.value;
-        const name = elements.name.value;
-        const userType = elements.userType.value as UserType;
-        const message = elements.message.value;
 
         ContactUsClient.send({
-            email,
-            name,
-            userType,
-            message
+            email: getValue(elements.name),
+            name: getValue(elements.name),
+            userType: getValue(elements.userType) as UserType,
+            message: getValue(elements.message),
         }).then(() => {
             target.reset();
             setIsSubmitted(true);
