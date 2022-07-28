@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 import React from 'react';
+import {MemoryRouter} from 'react-router-dom';
 import Branding from './Branding';
 import {RunConfig} from '../index';
 import {render, screen} from '@testing-library/react';
@@ -24,11 +25,21 @@ describe('Branding', () => {
 
     beforeEach(() => {
         window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
+
+        render(
+            <MemoryRouter>
+                <Branding />
+            </MemoryRouter>
+        );
     });
     
     it('should get url from config', () => {
-        render(<Branding />);
-        const actualUrl = screen.getByText('FordLabs');
-        expect(actualUrl).toHaveAttribute('href', expectedUrl);
+        const fordLabsLink = screen.getByText('FordLabs');
+        expect(fordLabsLink).toHaveAttribute('href', expectedUrl);
+    });
+
+    it('should go to contact us page when clicking "Contact Us" link', () => {
+        const contactUsLink = screen.getByText('Contact Us');
+        expect(contactUsLink).toHaveAttribute('href', '/contact-us');
     });
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,11 @@
  */
 
 import React from 'react';
-import './Branding.scss';
+import {Link} from 'react-router-dom';
 import FordLabsLogo from '../Assets/fordlabs_logo.svg';
+import {contactUsPath} from '../Routes';
+
+import './Branding.scss';
 
 function Branding(): JSX.Element {
     const fordLabsUrl = window?.runConfig?.ford_labs_url || '';
@@ -38,7 +41,11 @@ function Branding(): JSX.Element {
                 FordLabs
             </a>
             <span className="brandingMessage brandingLeftPadSmall">|
-                <a href="mailto:pplmover@ford.com?subject=PeopleMover Web Contact" className="brandingMessage brandingLeftPadSmall">Contact Us</a>
+                <Link
+                    to={contactUsPath}
+                    className="brandingMessage brandingLeftPadSmall">
+                    Contact Us
+                </Link>
             </span>
         </div>
     );

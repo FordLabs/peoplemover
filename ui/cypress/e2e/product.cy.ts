@@ -131,10 +131,12 @@ describe('Product', () => {
         cy.get('[data-testid="calendarToggle"]').click();
 
         const isMonday = moment().isoWeekday() === 1;
+        const isSunday =  moment().isoWeekday() === 7;
         let daysToSubtract = 1;
         if (isMonday) daysToSubtract = 3;
-        const expectedCurrentDate = moment().subtract(daysToSubtract, 'days').format('D');
-        cy.get('.react-datepicker__month').contains(expectedCurrentDate).click();
+        if (isSunday) daysToSubtract = 2;
+        const newDate = moment().subtract(daysToSubtract, 'days').format('dddd, MMMM Do, YYYY');
+        cy.get(`[aria-label="Choose ${newDate}"]`).click();
         cy.contains('Baguette Bakery').should('exist');
     });
 

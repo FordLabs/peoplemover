@@ -21,7 +21,7 @@ import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link, useLocation} from 'react-router-dom';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
-import {dashboardUrl} from '../Routes';
+import {contactUsPath, dashboardUrl} from '../Routes';
 
 import './Headers.scss';
 
@@ -36,6 +36,7 @@ function Header(): JSX.Element {
     const isLandingPage = location.pathname === '/';
     const isErrorPage = location.pathname.includes('error');
     const isDashboardPage = location.pathname === dashboardUrl;
+    const isContactUsPage = location.pathname === contactUsPath;
 
     const spaceName = currentSpace?.name;
 
@@ -72,7 +73,7 @@ function Header(): JSX.Element {
                     </div>
                     {!isErrorPage && (
                         <div className="headerRightContainer">
-                            <AccountDropdown showAllDropDownOptions={!isDashboardPage}/>
+                            <AccountDropdown showAllDropDownOptions={!isDashboardPage && !isContactUsPage}/>
                         </div>
                     )}
                 </header>

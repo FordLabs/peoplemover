@@ -113,6 +113,33 @@ describe('Header', () => {
         });
     });
 
+    describe('Contact Us Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader('/contact-us', TestData.space));
+        })
+
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
+            shouldOnlyShowSignoutButtonInAccountDropdown();
+        });
+    });
+
     describe('Time On Product Page', () => {
         beforeEach(() => {
             ({container} = renderHeader(`/${TestData.space.uuid}/timeonproduct`, TestData.space));
