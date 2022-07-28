@@ -20,7 +20,6 @@ import {Tag} from 'Types/Tag';
 import {TagRequest} from 'Types/TagRequest';
 import {TagClient} from 'Types/TagClient';
 import {Space} from 'Types/Space';
-import MatomoService from 'Services/MatomoService';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
 function getBaseProductTagsUrl(spaceUuid: string): string {
@@ -34,35 +33,17 @@ async function get(spaceUuid: string): Promise<AxiosResponse<Array<Tag>>> {
 
 async function add(productTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
     const url = getBaseProductTagsUrl(space.uuid!);
-    return Axios.post(url, productTagAddRequest, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'addProductTag', productTagAddRequest.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'addProductTagError', productTagAddRequest.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.post(url, productTagAddRequest, getAxiosConfig());
 }
 
 async function edit(productTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
     const url = `${getBaseProductTagsUrl(space.uuid!)}/${productTagEditRequest.id}`;
-    return Axios.put(url, productTagEditRequest, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'editProductTag', productTagEditRequest.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'editProductTagError', productTagEditRequest.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.put(url, productTagEditRequest, getAxiosConfig());
 }
 
 async function deleteProduct(productTagId: number, space: Space): Promise<AxiosResponse> {
     const url = getBaseProductTagsUrl(space.uuid!) + `/${productTagId}`;
-    return Axios.delete(url, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'deleteProductTag', productTagId.toString());
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'deleteProductTagError', productTagId.toString(), err.code);
-        return Promise.reject(err);
-    });
+    return Axios.delete(url, getAxiosConfig());
 }
 
 const ProductTagClient: TagClient = {

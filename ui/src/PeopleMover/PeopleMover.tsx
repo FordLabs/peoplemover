@@ -24,7 +24,6 @@ import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
-import MatomoService from '../Services/MatomoService';
 import Counter from '../ReusableComponents/Counter';
 import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
@@ -40,10 +39,10 @@ import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentS
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from '../Modal/Modal';
+import DragAndDrop from '../DragAndDrop/DragAndDrop';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
-import DragAndDrop from '../DragAndDrop/DragAndDrop';
 
 function PeopleMover(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
@@ -62,9 +61,6 @@ function PeopleMover(): JSX.Element {
     useEffect(() => {
         if (currentSpace) {
             document.title = `${currentSpace.name} | PeopleMover`;
-            if (isReadOnly) {
-                MatomoService.pushEvent(currentSpace.name, 'viewOnlyVisit', '');
-            }
         }
         return (): void => {
             document.title = 'PeopleMover';

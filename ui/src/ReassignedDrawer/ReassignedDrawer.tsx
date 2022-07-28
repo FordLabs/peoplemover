@@ -20,7 +20,6 @@ import {useRecoilValue} from 'recoil';
 import DrawerContainer from 'ReusableComponents/DrawerContainer';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import {isArchived} from 'People/PersonService';
-import MatomoService from 'Services/MatomoService';
 import PeopleClient from 'Services/Api/PeopleClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
@@ -111,18 +110,13 @@ function ReassignedDrawer(): JSX.Element {
     }
 
     async function revert(person: Person): Promise<void> {
-        const reassignment = reassignments.find(reassignment => reassignment.person.id === person.id);
         if (isArchived(person, viewingDate)) {
-            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined}, []);
+            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined});
         }
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();
                 fetchPeople();
-                MatomoService.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
-            }).catch(err => {
-                MatomoService.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`, err.code);
-                return Promise.reject(err);
             });
     }
 }

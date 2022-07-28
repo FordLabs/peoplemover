@@ -65,7 +65,7 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
         const spaceToSend = {...formSpace, name:  formSpace.name.trim() };
 
         if (!!selectedSpace && formSpace.uuid) {
-            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend, selectedSpace.name)
+            SpaceClient.editSpaceName(formSpace.uuid, spaceToSend)
                 .then(closeModal)
                 .then(fetchUserSpaces);
         } else {

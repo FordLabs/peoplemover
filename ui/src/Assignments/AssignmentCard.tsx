@@ -25,7 +25,6 @@ import {ProductPlaceholderPair} from './CreateAssignmentRequest';
 import moment from 'moment';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {createDataTestId} from 'Utils/ReactUtils';
-import MatomoService from 'Services/MatomoService';
 import PeopleClient from 'Services/Api/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
@@ -95,8 +94,7 @@ function AssignmentCard({
         const assignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(spaceUuid, assignment.person.id, viewingDate)).data;
 
         const assignmentIndex: number = assignments.findIndex(fetchedAssignment => (fetchedAssignment.productId === assignment.productId));
-        const markedAsPlaceholder = !assignment.placeholder;
-        assignments[assignmentIndex].placeholder = markedAsPlaceholder;
+        assignments[assignmentIndex].placeholder = !assignment.placeholder;
 
         const productPlaceholderPairs: Array<ProductPlaceholderPair> = assignments.map(fetchedAssignment => ({
             productId: fetchedAssignment.productId,
@@ -110,16 +108,9 @@ function AssignmentCard({
             productPlaceholderPairs,
             currentSpace,
             assignment.person,
-            false)
-            .then(() => {
-                const matomoAction = markedAsPlaceholder ? 'markAsPlaceholder' : 'unmarkAsPlaceholder';
-                MatomoService.pushEvent(currentSpace.name, matomoAction, assignment.person.name);
-
-                if (fetchProducts) fetchProducts();
-            }).catch((error) => {
-                MatomoService.pushEvent(currentSpace.name, 'placeholderError', assignment.person.name, error.code);
-                return Promise.reject(error);
-            });
+        ).then(() => {
+            if (fetchProducts) fetchProducts();
+        });
     }
 
     async function cancelAssignmentAndCloseEditMenu(): Promise<void> {
@@ -138,14 +129,9 @@ function AssignmentCard({
             moment(viewingDate).format('YYYY-MM-DD'),
             productPlaceholderPairs,
             currentSpace,
-            assignment.person,
-            false
+            assignment.person
         ).then(() => {
-            MatomoService.pushEvent(currentSpace.name, 'cancelAssignment', assignment.person.name);
             if (fetchProducts) fetchProducts();
-        }).catch((error) => {
-            MatomoService.pushEvent(currentSpace.name, 'cancelAssignmentError', assignment.person.name, error.code);
-            return Promise.reject(error);
         });
     }
 

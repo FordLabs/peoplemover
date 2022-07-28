@@ -16,14 +16,12 @@
  */
 
 import React, {createRef, useCallback, useEffect, useState} from 'react';
-import MatomoService from '../Services/MatomoService';
 import Dropdown from '../ReusableComponents/Dropdown';
 import NavigationSection from '../ReusableComponents/NavigationSection';
-import {useRecoilState, useRecoilValue} from 'recoil';
+import {useRecoilState} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 
 import './FilterOrSortBy.scss';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 interface SortByOption {
     label: string;
@@ -37,7 +35,6 @@ const sortByOptions: SortByOption[] = [
 ];
 
 function ProductSortBySelector(): JSX.Element {
-    const currentSpace = useRecoilValue(CurrentSpaceState);
     const [productSortBy, setProductSortBy] = useRecoilState(ProductSortByState);
 
     const [selectedSortOption, setSelectedSortOption] = useState<SortByOption>();
@@ -58,10 +55,7 @@ function ProductSortBySelector(): JSX.Element {
                 className="sortDropdownOption"
                 data-testid={`sortDropdownOption_${option.value}`}
                 ref={createRef<HTMLButtonElement>()}
-                onClick={(): void => {
-                    setProductSortBy(option.value);
-                    MatomoService.pushEvent(currentSpace.name, 'sort', option.label);
-                }}>
+                onClick={(): void => setProductSortBy(option.value)}>
                 {option.label}
                 {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
             </button>

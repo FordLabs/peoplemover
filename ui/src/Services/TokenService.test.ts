@@ -15,35 +15,11 @@
  * limitations under the License.
  */
 import {getUserNameFromAccessToken} from './TokenService';
-import {MatomoWindow} from '../Types/MatomoWindow';
-
-declare let window: MatomoWindow;
 
 jest.mock('jwt-decode');
 
 describe('Token Service', function() {
-    let originalWindow: MatomoWindow;
-
-    beforeEach(() => {
-        originalWindow = window;
-    });
-
-    afterEach(() => {
-        window = originalWindow;
-    });
-
-    describe('getUserNameFromAccessToken', function() {
-        it('should get username from access token', function() {
-            expect(getUserNameFromAccessToken()).toBe('USER_ID');
-        });
-
-        it('should set the username for matomo on _paq', async () => {
-            getUserNameFromAccessToken();
-            expect(window._paq).toContainEqual(['setUserId', 'USER_ID']);
-        });
-        it('should set track page views on _paq', function() {
-            getUserNameFromAccessToken();
-            expect(window._paq).toContainEqual(['trackPageView']);
-        });
+    it('should get username from access token', function() {
+        expect(getUserNameFromAccessToken()).toBe('USER_ID');
     });
 });

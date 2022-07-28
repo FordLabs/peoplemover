@@ -23,7 +23,6 @@ import AssignmentCardList from '../Assignments/AssignmentCardList';
 
 import moment from 'moment';
 import {createDataTestId} from '../Utils/ReactUtils';
-import MatomoService from '../Services/MatomoService';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
 import AssignmentClient from '../Services/Api/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
@@ -116,7 +115,7 @@ function ProductCard({ product }: Props): JSX.Element {
             AssignmentClient.createAssignmentForDate(assignmentEndDate, getRemainingAssignments(assignment.person), currentSpace, assignment.person);
         });
         const archivedProduct = {...product, endDate: productEndDate};
-        ProductClient.editProduct(currentSpace, archivedProduct, true).then(fetchProducts);
+        ProductClient.editProduct(currentSpace, archivedProduct).then(fetchProducts);
     }
 
     const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
@@ -142,7 +141,6 @@ function ProductCard({ product }: Props): JSX.Element {
     }
 
     function handleClickForProductUrl(): void {
-        handleMatomoEventsForProductUrlClicked();
         window.open(product.url);
     }
 
@@ -151,10 +149,6 @@ function ProductCard({ product }: Props): JSX.Element {
             handleClickForProductUrl();
         }
     }
-
-    const handleMatomoEventsForProductUrlClicked = (): void  => {
-        MatomoService.pushEvent(currentSpace.name, PRODUCT_URL_CLICKED, product.name);
-    };
 
     function listenKeyUp(event: React.KeyboardEvent): void {
         if (event.key === 'ArrowDown' && !isEditMenuOpen) {
@@ -194,17 +188,24 @@ function ProductCard({ product }: Props): JSX.Element {
                     <div>
                         <div className="productNameEditContainer">
                             <div className="productDetails">
-                                {product.url ?
+                                {product.url ? (
+                                    // Todo make a link
                                     <button className="productNameButton" onClick={handleClickForProductUrl}
                                         onKeyPress={handleKeyDownForProductUrl}>
                                         <div data-testid="productName" className="productName productNameUrl">
-                                            {product.name}<i className="material-icons productUrlIcon productNameUrl"
+                                            {product.name}
+                                            <i className="material-icons productUrlIcon productNameUrl"
                                                 aria-label="Assign Person"
-                                                data-testid="productUrl">open_in_new</i>
+                                                data-testid="productUrl">
+                                                open_in_new
+                                            </i>
                                         </div>
-                                    </button> :
-                                    <div data-testid="productName" className="productName">{product.name}</div>
-                                }
+                                    </button>
+                                ) : (
+                                    <div data-testid="productName" className="productName">
+                                        {product.name}
+                                    </div>
+                                )}
                                 {!isReadOnly && (
                                     <div className="productControlsContainer">
                                         <button

@@ -18,7 +18,6 @@
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import MatomoService from 'Services/MatomoService';
 import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 const baseSpaceUrl = `/api/spaces`;
@@ -67,24 +66,12 @@ async function createSpaceForUser(spaceName: string): Promise<AxiosResponse<Spac
     return Axios.post(url, { spaceName }, getAxiosConfig());
 }
 
-async function editSpaceName(uuid: string, editedSpace: Space, oldSpaceName: string): Promise<AxiosResponse> {
-    return editSpace(uuid, editedSpace).then(result => {
-        MatomoService.pushEvent(oldSpaceName, 'editSpaceName', editedSpace.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(oldSpaceName, 'editSpaceNameError', editedSpace.name, err.code);
-        return Promise.reject(err);
-    });
+async function editSpaceName(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+    return editSpace(uuid, editedSpace);
 }
 
 async function editSpaceReadOnlyFlag(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
-    return editSpace(uuid, editedSpace).then(result => {
-        MatomoService.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlag', `${editedSpace.todayViewIsPublic}`);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(editedSpace.name, 'editSpaceReadOnlyFlagError', err.code);
-        return Promise.reject(err);
-    });
+    return editSpace(uuid, editedSpace);
 }
 
 async function editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
@@ -94,35 +81,17 @@ async function editSpace(uuid: string, editedSpace: Space): Promise<AxiosRespons
 
 async function inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users`;
-    return Axios.post(url, { userIds }, getAxiosConfig()).then((result) => {
-        MatomoService.pushEvent(space.name, 'inviteUser', userIds.join(', '));
-        return result;
-    }).catch((error) => {
-        MatomoService.pushEvent(space.name, 'inviteUserError', userIds.join(', '), error.code);
-        return Promise.reject(error);
-    });
+    return Axios.post(url, { userIds }, getAxiosConfig());
 }
 
 function removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
-    return Axios.delete(url, getAxiosConfig()).then((result) => {
-        MatomoService.pushEvent(space.name, 'removeUser', user.userId);
-        return result;
-    }).catch((error) => {
-        MatomoService.pushEvent(space.name, 'removeUserError', user.userId, error.code);
-        return Promise.reject(error);
-    });
+    return Axios.delete(url, getAxiosConfig());
 }
 
 async function changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
-    return Axios.put(url, null, getAxiosConfig()).then((result) => {
-        MatomoService.pushEvent(space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`);
-        return result;
-    }).catch((error) => {
-        MatomoService.pushEvent(space.name, 'updateOwnerError', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`, error.code);
-        return Promise.reject(error);
-    });
+    return Axios.put(url, null, getAxiosConfig());
 }
 
 const SpaceClient = {
