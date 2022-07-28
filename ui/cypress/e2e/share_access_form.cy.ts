@@ -104,11 +104,13 @@ describe('Share Access Form', () => {
             cy.get('[data-testid=userListItem__ELISE]').should('not.exist');
         });
 
-        it('Transferring ownership to an editor should change current owner to editor', () => {
+        it('Transferring ownership', () => {
             cy.server();
             cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
             cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
             cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
+
+            cy.log('**Transferring ownership to an editor should change current owner to editor**');
 
             cy.get('[id=employeeIdTextArea]').focus().type('Elise', {force: true});
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
@@ -132,7 +134,8 @@ describe('Share Access Form', () => {
                 .find(':contains("Editor")').eq(0)
                 .click();
 
-            cy.get('[data-testid=userAccessOptionLabel]').eq(1).should('contain.text', 'Owner')
+            cy.get('[data-testid=userAccessOptionLabel]').eq(1)
+                .should('contain.text', 'Owner')
                 .click();
 
             cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
@@ -155,6 +158,21 @@ describe('Share Access Form', () => {
                 .should('contain.text', 'ELISE');
             cy.get('[data-testid=userListItem__ELISE]')
                 .should('contain.text', 'owner');
+
+            cy.log('**Removing current user from space should direct user to dashboard**');
+            cy.get('[data-testid=userListItem__USER_ID]')
+                .should('contain.text', 'USER_ID')
+                .find(':contains("Editor")').eq(0)
+                .click();
+            cy.get('[data-testid=userAccessOptionLabel]').eq(1)
+                .should('contain.text', 'Remove')
+                .click();
+            cy.contains('Do you still want to remove yourself as editor?').should('exist');
+            cy.contains('Yes').click();
+
+            cy.log('**The space current user was removed from should no longer be on dashboard**');
+            cy.url().should('eq', Cypress.config().baseUrl + '/user/dashboard');
+            cy.contains('Flipping Sweet').should('not.exist');
         });
     });
 });
