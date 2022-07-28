@@ -235,7 +235,9 @@ describe('TimeOnProduct', () => {
     describe('Loading', () => {
         it('should show loading state', async () => {
             renderWithRecoil(
-                <TimeOnProduct/>,
+                <MemoryRouter>
+                    <TimeOnProduct/>
+                </MemoryRouter>,
                 ({set}) => {
                     set(CurrentSpaceState, TestData.space)
                 }
