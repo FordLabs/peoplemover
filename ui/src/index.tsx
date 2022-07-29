@@ -34,6 +34,7 @@ import {FlagsState, simplifyFlags} from './State/FlagsState';
 import {getBrowserInfo} from './Utils/getBrowserInfo';
 import FlagSmithService from './Services/FlagSmithService';
 import reactDomRender from './Utils/reactDomRender';
+import EnvironmentConfigService from './Services/Api/EnvironmentConfigService';
 
 if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
@@ -59,10 +60,9 @@ const { isNotSupported, browserName } = getBrowserInfo()
 if (isNotSupported) {
     reactDomRender(<UnsupportedBrowserPage browserName={browserName}/>);
 } else {
-    Axios.get( '/api/config', {headers: {'Content-Type': 'application/json'}})
-        .then(async (response) => {
-            window.runConfig = Object.freeze(response.data);
-            const flags: IFlags = await FlagSmithService.initAndGetFlags(window.runConfig)
+    EnvironmentConfigService.get()
+        .then(async (runConfig) => {
+            const flags: IFlags = await FlagSmithService.initAndGetFlags(runConfig);
 
             reactDomRender(
                 <CacheBuster>
