@@ -33,6 +33,7 @@ import {RecoilRoot} from 'recoil';
 import {FlagsState, simplifyFlags} from './State/FlagsState';
 import {getBrowserInfo} from './Utils/getBrowserInfo';
 import FlagSmithService from './Services/FlagSmithService';
+import reactDomRender from './Utils/reactDomRender';
 
 if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
@@ -53,21 +54,17 @@ Axios.interceptors.response.use(
         return Promise.reject(error);
     },
 );
-
 const { isNotSupported, browserName } = getBrowserInfo()
 
 if (isNotSupported) {
-    ReactDOM.render(
-        <UnsupportedBrowserPage browserName={browserName}/>,
-        document.getElementById('root'),
-    );
+    reactDomRender(<UnsupportedBrowserPage browserName={browserName}/>);
 } else {
     Axios.get( '/api/config', {headers: {'Content-Type': 'application/json'}})
         .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
             const flags: IFlags = await FlagSmithService.initAndGetFlags(window.runConfig)
 
-            ReactDOM.render(
+            reactDomRender(
                 <CacheBuster>
                     {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
                         if (loading) return null;
@@ -81,8 +78,7 @@ if (isNotSupported) {
                             </RecoilRoot>
                         );
                     }}
-                </CacheBuster>,
-                document.getElementById('root')
+                </CacheBuster>
             );
         });
 }
