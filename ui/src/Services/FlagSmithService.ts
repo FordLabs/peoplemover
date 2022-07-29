@@ -16,20 +16,16 @@
  */
 
 import flagsmith, {IFlags} from 'flagsmith';
-import {RunConfig} from '../Types/RunConfig';
 
 const FlagSmithService = {
-    async initAndGetFlags(runConfig: RunConfig): Promise<IFlags> {
-        try {
-            await flagsmith.init({
-                environmentID : runConfig.flagsmith_environment_id,
-                api: runConfig.flagsmith_url,
-            })
-        } catch (err) {
-            console.log('Flagsmith client failed to initialize')
-        }
-
-        return flagsmith.getAllFlags()
+    initAndGetFlags(url: string, environmentId: string): IFlags | null {
+        flagsmith.init({
+            environmentID : environmentId,
+            api: url,
+        }).then(() => {
+            return flagsmith.getAllFlags()
+        }, () => console.log('Flagsmith client failed to initialize'))
+        return null;
     }
 }
 

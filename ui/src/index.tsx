@@ -62,7 +62,10 @@ if (isNotSupported) {
 } else {
     EnvironmentConfigService.get()
         .then(async (runConfig) => {
-            const flags: IFlags = await FlagSmithService.initAndGetFlags(runConfig);
+            const flags: IFlags | null = FlagSmithService.initAndGetFlags(
+                runConfig.flagsmith_url,
+                runConfig.flagsmith_environment_id
+            );
 
             reactDomRender(
                 <CacheBuster>
