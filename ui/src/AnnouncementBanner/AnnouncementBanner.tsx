@@ -27,17 +27,18 @@ const BANNER_CLOSED_BY_USER_KEY = 'bannerHasBeenClosedByUser';
 const AnnouncementBanner = (): ReactElement => {
     const flags = useRecoilValue(FlagsState);
 
-    const [closedByUser, setClosedByUser] = useState<string|null>(localStorage.getItem(BANNER_CLOSED_BY_USER_KEY));
+    const bannerIsNew = localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY) == null ||
+        flags.announcementBannerMessage !== localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY);
+
+    const [closedByUser, setClosedByUser] = useState<string|null>(
+        bannerIsNew ? '' : localStorage.getItem(BANNER_CLOSED_BY_USER_KEY)
+    );
 
     const flagsNotReceived = flags.announcementBannerMessage === DEFAULT_BANNER_MESSAGE;
 
     if (flagsNotReceived) return <></>;
 
-    const bannerIsNew = localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY) == null ||
-        flags.announcementBannerMessage !== localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY);
-
     if (bannerIsNew) {
-        setClosedByUser('');
         localStorage.removeItem(BANNER_CLOSED_BY_USER_KEY);
         localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, flags.announcementBannerMessage);
     }
