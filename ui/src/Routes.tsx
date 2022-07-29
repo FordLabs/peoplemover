@@ -29,7 +29,7 @@ import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import AnimatedImageSrc from './Assets/404.gif';
 import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
-import AnnouncementBanner from './Header/AnnouncementBanner';
+import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
 import ContactUsPage from './ContactUsPage/ContactUsPage';
 
 export const contactUsPath = '/contact-us';
