@@ -62,7 +62,7 @@ if (isNotSupported) {
 } else {
     EnvironmentConfigService.get()
         .then(async (runConfig) => {
-            const flags: IFlags | null = FlagSmithService.initAndGetFlags(
+            const flags: IFlags | null = await FlagSmithService.initAndGetFlags(
                 runConfig.flagsmith_url,
                 runConfig.flagsmith_environment_id
             );

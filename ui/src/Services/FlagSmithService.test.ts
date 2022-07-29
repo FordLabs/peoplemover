@@ -15,21 +15,19 @@
  * limitations under the License.
  */
 
-import flagsmith, {IFlags} from 'flagsmith';
+import Flagsmith from '../__mocks__/flagsmith';
+import FlagSmithService from './FlagSmithService';
 
-const FlagSmithService = {
-    async initAndGetFlags(flagsmithUrl: string, flagsmithEnvironmentId: string): Promise<IFlags | null> {
-        let flags: IFlags | null = null;
-
-        await flagsmith.init({
+describe('Flag Smith Service', () => {
+    it('should initialize flagsmith and return all flags', async () => {
+        const flagSmithUrl = 'flagsmith-url';
+        const flagsmithEnvironmentId = 'flagsmith-environment-id'
+        const flags = await FlagSmithService.initAndGetFlags( flagSmithUrl, flagsmithEnvironmentId);
+        expect(Flagsmith.init).toHaveBeenCalledWith({
             environmentID: flagsmithEnvironmentId,
-            api: flagsmithUrl,
-        }).then(() => {
-            flags = flagsmith.getAllFlags()
-        }, () => console.log('Flagsmith client failed to initialize'));
-
-        return flags;
-    }
-}
-
-export default FlagSmithService;
+            api: flagSmithUrl,
+        });
+        expect(flags).toEqual({ flags: true })
+        expect(Flagsmith.getAllFlags).toHaveBeenCalled();
+    });
+});
