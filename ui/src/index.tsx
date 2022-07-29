@@ -26,12 +26,13 @@ import FocusRing from './FocusRing';
 import CacheBuster, {CacheBusterProps} from './CacheBuster';
 import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
-import flagsmith, {IFlags} from 'flagsmith';
+import {IFlags} from 'flagsmith';
 
 import axe from '@axe-core/react';
 import {RecoilRoot} from 'recoil';
 import {FlagsState, simplifyFlags} from './State/FlagsState';
 import {getBrowserInfo} from './Utils/getBrowserInfo';
+import FlagSmithService from './Services/FlagSmithService';
 
 if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
@@ -64,12 +65,7 @@ if (isNotSupported) {
     Axios.get( '/api/config', {headers: {'Content-Type': 'application/json'}})
         .then(async (response) => {
             window.runConfig = Object.freeze(response.data);
-            let flags: IFlags;
-
-            flagsmith.init({
-                environmentID : window.runConfig.flagsmith_environment_id,
-                api: window.runConfig.flagsmith_url,
-            }).then(() => { flags = flagsmith.getAllFlags() }, () => console.log('Flagsmith client failed to initialize'));
+            const flags: IFlags = await FlagSmithService.initAndGetFlags(window.runConfig)
 
             ReactDOM.render(
                 <CacheBuster>
