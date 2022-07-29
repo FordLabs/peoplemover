@@ -20,7 +20,7 @@ import {renderWithRecoil} from '../../Utils/TestUtils';
 import TestData from '../../Utils/TestData';
 import React from 'react';
 import Cookies from 'universal-cookie';
-import {RunConfig} from '../../index';
+import {RunConfig} from 'Types/RunConfig';
 import AccountDropdown from './AccountDropdown';
 import ReportClient from '../../Services/Api/ReportClient';
 import {ViewingDateState} from '../../State/ViewingDateState';

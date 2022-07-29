@@ -19,9 +19,9 @@ import React from 'react';
 import {renderWithRecoil} from '../../../Utils/TestUtils';
 import ShareAccessButton from './ShareAccessButton';
 import {screen, waitFor} from '@testing-library/react';
-import {ModalContents, ModalContentsState} from '../../../State/ModalContentsState';
-import {RecoilObserver} from '../../../Utils/RecoilObserver';
-import {RunConfig} from '../../../index';
+import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
+import {RecoilObserver} from '../../Utils/RecoilObserver';
+import {RunConfig} from 'Types/RunConfig';
 import ShareAccessForm from '../ShareAccessForm/ShareAccessForm';
 
 describe('Share Access Button', () => {

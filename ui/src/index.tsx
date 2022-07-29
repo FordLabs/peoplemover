@@ -36,23 +36,6 @@ if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
 }
 
-declare global {
-    interface Window {
-        runConfig: RunConfig;
-    }
-}
-
-export interface RunConfig {
-    auth_enabled: boolean;
-    ford_labs_url: string;
-    invite_users_to_space_enabled: boolean;
-    adfs_url_template: string;
-    adfs_client_id: string;
-    adfs_resource: string;
-    flagsmith_environment_id: string;
-    flagsmith_url: string;
-}
-
 window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
 
 const UNAUTHORIZED = 401;
