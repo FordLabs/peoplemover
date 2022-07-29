@@ -32,7 +32,7 @@ import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpac
 import {useParams} from 'react-router-dom';
 import {Product} from 'Types/Product';
 import {Assignment} from 'Types/Assignment';
-import Branding from 'ReusableComponents/Branding';
+import Branding from 'Common/Branding';
 
 import './TimeOnProduct.scss';
 

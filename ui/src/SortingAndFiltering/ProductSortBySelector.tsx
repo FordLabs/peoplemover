@@ -17,8 +17,8 @@
 
 import React, {createRef, useCallback, useEffect, useState} from 'react';
 import MatomoService from '../Services/MatomoService';
-import Dropdown from '../ReusableComponents/Dropdown';
-import NavigationSection from '../ReusableComponents/NavigationSection';
+import Dropdown from '../Common/Dropdown';
+import NavigationSection from '../Common/NavigationSection';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
 

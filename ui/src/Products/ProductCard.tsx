@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
+import EditMenu, {EditMenuOption} from '../Common/EditMenu';
 import ProductClient from '../Services/Api/ProductClient';
 import {isUnassignedProduct} from './ProductService';
 import AssignmentCardList from '../Assignments/AssignmentCardList';

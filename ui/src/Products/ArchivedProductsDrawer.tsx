@@ -18,7 +18,7 @@
 import React, {useState} from 'react';
 import ArchivedProduct from './ArchivedProduct';
 import {isArchivedOnDate} from './ProductService';
-import DrawerContainer from '../ReusableComponents/DrawerContainer';
+import DrawerContainer from '../Common/DrawerContainer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';

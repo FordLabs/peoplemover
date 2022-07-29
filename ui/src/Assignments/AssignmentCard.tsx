@@ -16,9 +16,9 @@
  */
 
 import React, {RefObject, useRef, useState} from 'react';
-import EditMenu, {EditMenuOption} from '../ReusableComponents/EditMenu';
+import EditMenu, {EditMenuOption} from '../Common/EditMenu';
 
-import NewBadge from '../ReusableComponents/NewBadge';
+import NewBadge from '../Common/NewBadge';
 import AssignmentClient from '../Services/Api/AssignmentClient';
 import {calculateDuration} from './AssignmentService';
 import {ProductPlaceholderPair} from './CreateAssignmentRequest';

@@ -19,7 +19,7 @@ import React from 'react';
 import './PersonDrawer.scss';
 import './UnassignedDrawer.scss';
 import {stripAssignmentsForArchivedPeople} from '../Products/ProductService';
-import DrawerContainer from '../ReusableComponents/DrawerContainer';
+import DrawerContainer from '../Common/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';

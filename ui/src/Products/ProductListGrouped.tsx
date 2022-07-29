@@ -20,7 +20,7 @@ import {emptyProduct} from './ProductService';
 import NewProductButton from './NewProductButton';
 import {useRecoilValue} from 'recoil';
 
-import {ProductCardArray} from 'ReusableComponents/ProductCardArray';
+import {ProductCardArray} from 'Common/ProductCardArray';
 import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
 import {LocationsState} from 'State/LocationsState';
 import {ProductTagsState} from 'State/ProductTagsState';

@@ -18,7 +18,7 @@
 import React from 'react';
 import Calendar from '../Calendar/Calendar';
 import ProductSortBy from '../SortingAndFiltering/ProductSortBySelector';
-import NavigationSection from '../ReusableComponents/NavigationSection';
+import NavigationSection from '../Common/NavigationSection';
 import {useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 

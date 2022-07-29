@@ -18,14 +18,14 @@
 import React, {useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
-import Branding from '../ReusableComponents/Branding';
+import Branding from '../Common/Branding';
 import SubHeader from '../Header/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import MatomoService from '../Services/MatomoService';
-import Counter from '../ReusableComponents/Counter';
+import Counter from '../Common/Counter';
 import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
