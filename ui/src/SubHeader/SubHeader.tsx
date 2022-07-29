@@ -39,29 +39,31 @@ function SubHeader({ showFilters = true, showSortBy = true, message = undefined}
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     return (
-        <section className="newSpaceSelectionContainer" aria-label="Filters">
-            <div className="leftContent">
-                <Calendar/>
-                {isReadOnly && (
-                    <span className="viewState">
-                        <i className="material-icons">visibility</i>
+        <div className="sub-header">
+            <section className="newSpaceSelectionContainer" aria-label="Filters">
+                <div className="leftContent">
+                    <Calendar/>
+                    {isReadOnly && (
+                        <span className="viewState">
+                            <i className="material-icons">visibility</i>
                         View only
-                    </span>
-                )}
-                {message && <>{message}</>}
-            </div>
-            <div className="rightContent">
-                {showFilters && (
-                    <NavigationSection label="Filter by" icon="filter_list">
-                        <ProductLocationFilter />
-                        <ProductTagsFilter />
-                        <PersonTagsFilter />
-                        <RolesFilter />
-                    </NavigationSection>
-                )}
-                {showSortBy && <ProductSortBySelector/>}
-            </div>
-        </section>
+                        </span>
+                    )}
+                    {message && <>{message}</>}
+                </div>
+                <div className="rightContent">
+                    {showFilters && (
+                        <NavigationSection label="Filter by" icon="filter_list">
+                            <ProductLocationFilter />
+                            <ProductTagsFilter />
+                            <PersonTagsFilter />
+                            <RolesFilter />
+                        </NavigationSection>
+                    )}
+                    {showSortBy && <ProductSortBySelector/>}
+                </div>
+            </section>
+        </div>
     );
 }
 

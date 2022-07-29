@@ -26,7 +26,6 @@ import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import MatomoService from '../Services/MatomoService';
 import Counter from '../Common/Counter/Counter';
-import HeaderContainer from '../Header/HeaderContainer';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
@@ -90,9 +89,7 @@ function PeopleMover(): JSX.Element {
 
     return products.length && !!currentSpace ? (
         <div className="App">
-            <HeaderContainer>
-                <SubHeader/>
-            </HeaderContainer>
+            <SubHeader/>
             <main>
                 <div id="main-content-landing-target"/>
                 <Counter />

@@ -17,6 +17,15 @@
 
 @import '../Styles/Colors';
 
+.sub-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
 .newSpaceSelectionContainer {
   display: flex;
   justify-content: space-between;

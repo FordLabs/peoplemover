@@ -19,7 +19,6 @@ import React, {useEffect, useState} from 'react';
 
 import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
 import {calculateDuration} from 'Assignments/AssignmentService';
-import HeaderContainer from 'Header/HeaderContainer';
 import SubHeader from 'SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -166,17 +165,15 @@ function TimeOnProduct(): JSX.Element {
         currentSpace && (
             <div className="App">
                 <Modal />
-                <HeaderContainer>
-                    <SubHeader
-                        showFilters={false}
-                        showSortBy={false}
-                        message={
-                            <div className="timeOnProductHeaderMessage">
-                                <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
-                            </div>
-                        }
-                    />
-                </HeaderContainer>
+                <SubHeader
+                    showFilters={false}
+                    showSortBy={false}
+                    message={
+                        <div className="timeOnProductHeaderMessage">
+                            <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
+                        </div>
+                    }
+                />
                 {isLoading ?
                     <div className="timeOnProductLoading">{LOADING}</div>
                     : (
