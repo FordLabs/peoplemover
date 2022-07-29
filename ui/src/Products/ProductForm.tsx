@@ -31,7 +31,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
 import {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
 import ProductTagClient from 'Services/Api/ProductTagClient';
-import FormTagsField from 'Common/FormTagsField';
+import FormTagsField from 'Common/FormTagsField/FormTagsField';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ModalContentsState} from 'State/ModalContentsState';

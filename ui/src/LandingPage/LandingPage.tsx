@@ -19,8 +19,8 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import LandingPageImage from './LandingPageImage.svg';
 import LandingPageBackground from './LandingPageBackground.svg';
-import PeopleMoverLogo from '../Common/PeopleMoverLogo';
-import Branding from '../Common/Branding';
+import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
+import Branding from '../Common/Branding/Branding';
 
 import './LandingPage.scss';
 

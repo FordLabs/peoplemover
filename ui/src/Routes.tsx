@@ -18,9 +18,9 @@
 import React from 'react';
 import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
-import {OAuthRedirect} from './Common/OAuthRedirect';
+import {OAuthRedirect} from './Common/OAuthRedirect/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
-import RedirectWrapper from './Common/RedirectWrapper';
+import RedirectWrapper from './Common/RedirectWrapper/RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import PeopleMover from './PeopleMover/PeopleMover';

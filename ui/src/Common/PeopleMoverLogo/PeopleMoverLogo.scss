@@ -15,29 +15,37 @@
  * limitations under the License.
  */
 
-@import '../Styles/Colors.scss';
+@import '../../Styles/Colors';
+@import '../../Styles/Breakpoints';
 
-.brandingImage {
-  vertical-align: middle;
-  margin: 0 3px;
-}
-
-.brandingMessage {
-  display: inline;
-  font-size: 12px;
-  color: $gray-2;
-  margin: 0;
-  text-decoration: none;
-}
-
-.brandingContainer {
+.peopleMoverLogo {
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin-top: auto;
-  padding: 16px 0;
-}
+  text-decoration: none;
 
-.brandingLeftPadSmall {
-  padding-left: 6px;
-};
+  .peopleMoverImage {
+    width: 30px;
+    height: 30px;
+    @include phone {
+      max-width: 24px;
+    }
+  }
+
+  .peopleMoverTitle {
+    display: inline-block;
+    margin: 0;
+    background: $logo-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 23px;
+    white-space: nowrap;
+    padding-top: 6px;
+    padding-left: 8px;
+
+    @include phone {
+      font-size: 16px;
+    }
+  }
+}

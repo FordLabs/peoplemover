@@ -17,8 +17,8 @@
 
 import React, {useState} from 'react';
 import PurpleGradientBackgroundImage from 'Assets/background-left-purple-gradient.svg';
-import Branding from 'Common/Branding';
-import PeopleMoverLogo from 'Common/PeopleMoverLogo';
+import Branding from 'Common/Branding/Branding';
+import PeopleMoverLogo from 'Common/PeopleMoverLogo/PeopleMoverLogo';
 import Input from 'Common/Input/Input';
 import Textarea from 'Common/Textarea/Textarea';
 

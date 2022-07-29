@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {Option} from '../Types/Option';
+import {Option} from '../../Types/Option';
 import {Tag} from 'Types/Tag';
 import {JSX} from '@babel/types';
 import React, {useEffect, useState} from 'react';
 import {AxiosResponse} from 'axios';
-import {TagRequest} from '../Types/TagRequest';
-import SelectWithCreateOption, {Metadata} from '../ModalFormComponents/SelectWithCreateOption';
-import {TagClient} from '../Types/TagClient';
+import {TagRequest} from '../../Types/TagRequest';
+import SelectWithCreateOption, {Metadata} from '../../ModalFormComponents/SelectWithCreateOption';
+import {TagClient} from '../../Types/TagClient';
 import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
 
 interface Props {
     loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };

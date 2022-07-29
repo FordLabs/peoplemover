@@ -17,7 +17,7 @@
 import React from 'react';
 import {MemoryRouter} from 'react-router-dom';
 import Branding from './Branding';
-import {RunConfig} from '../index';
+import {RunConfig} from '../../index';
 import {render, screen} from '@testing-library/react';
 
 describe('Branding', () => {

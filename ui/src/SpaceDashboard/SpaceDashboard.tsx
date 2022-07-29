@@ -19,7 +19,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from 'Types/Space';
 import SpaceDashboardTile from './SpaceDashboardTile';
 
-import Branding from '../Common/Branding';
+import Branding from '../Common/Branding/Branding';
 import {useNavigate} from 'react-router-dom';
 import {useRecoilState, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import AccessibleDropdownContainer from './AccessibleDropdownContainer';
+import AccessibleDropdownContainer from '../AccessibleDropdownContainer/AccessibleDropdownContainer';
 import React, {ReactNode, useState} from 'react';
 
 interface Props {

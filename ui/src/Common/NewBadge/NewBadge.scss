@@ -15,37 +15,31 @@
  * limitations under the License.
  */
 
-@import '../Styles/Colors';
-@import '../Styles/Breakpoints.scss';
+@import '../../Styles/Colors';
 
-.peopleMoverLogo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-
-  .peopleMoverImage {
-    width: 30px;
-    height: 30px;
-    @include phone {
-      max-width: 24px;
-    }
-  }
-
-  .peopleMoverTitle {
-    display: inline-block;
-    margin: 0;
+.newBadge {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
     background: $logo-gradient;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 23px;
-    white-space: nowrap;
-    padding-top: 6px;
-    padding-left: 8px;
+    border-radius: 8px;
+    margin-top: -7px;
+    margin-left: -4px;
+    width: 26px;
+    height: 12px;
+    font-size: 0.5rem;
+    color: $white;
+    font-weight: normal;
+    padding: 0.1em;
 
-    @include phone {
-      font-size: 16px;
+    &.stage2 {
+        background: $logo-gradient-2;
     }
-  }
+
+    &.stage3 {
+        background: $logo-gradient-3;
+    }
 }
+
+

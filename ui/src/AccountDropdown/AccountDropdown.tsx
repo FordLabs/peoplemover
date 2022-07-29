@@ -21,7 +21,7 @@ import ShareAccessButton from './ShareAccessButton/ShareAccessButton';
 import DownloadReportButton from './DownloadReportButton';
 import SignOutButton from './SignOutButton';
 
-import AccessibleDropdownContainer from '../Common/AccessibleDropdownContainer';
+import AccessibleDropdownContainer from '../Common/AccessibleDropdownContainer/AccessibleDropdownContainer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {CurrentUserState} from '../State/CurrentUserState';

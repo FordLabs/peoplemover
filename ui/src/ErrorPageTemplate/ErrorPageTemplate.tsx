@@ -17,7 +17,7 @@
 
 import React from 'react';
 import './ErrorPageTemplate.scss';
-import Branding from '../Common/Branding';
+import Branding from '../Common/Branding/Branding';
 import FormButton from '../ModalFormComponents/FormButton';
 
 interface Props {

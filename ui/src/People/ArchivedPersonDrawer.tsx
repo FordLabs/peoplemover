@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import DrawerContainer from '../Common/DrawerContainer';
+import DrawerContainer from '../Common/DrawerContainer/DrawerContainer';
 import moment from 'moment';
 import PersonCard from './PersonCard';
 import {useRecoilValue} from 'recoil';

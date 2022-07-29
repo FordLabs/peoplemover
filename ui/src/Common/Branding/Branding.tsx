@@ -17,8 +17,8 @@
 
 import React from 'react';
 import {Link} from 'react-router-dom';
-import FordLabsLogo from '../Assets/fordlabs_logo.svg';
-import {contactUsPath} from '../Routes';
+import FordLabsLogo from '../../Assets/fordlabs_logo.svg';
+import {contactUsPath} from '../../Routes';
 
 import './Branding.scss';
 

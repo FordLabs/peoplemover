@@ -15,31 +15,13 @@
  * limitations under the License.
  */
 
-@import '../Styles/Colors.scss';
+@import '../../Styles/Colors';
 
-.newBadge {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    justify-content: center;
-    background: $logo-gradient;
-    border-radius: 8px;
-    margin-top: -7px;
-    margin-left: -4px;
-    width: 26px;
-    height: 12px;
-    font-size: 0.5rem;
-    color: $white;
-    font-weight: normal;
-    padding: 0.1em;
-
-    &.stage2 {
-        background: $logo-gradient-2;
-    }
-
-    &.stage3 {
-        background: $logo-gradient-3;
-    }
+.counter-container {
+  padding: 23px 0 10px 8px;
 }
 
-
+.counter {
+  font-size: 14px;
+  line-height: 16px;
+}

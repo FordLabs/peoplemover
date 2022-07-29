@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import PeopleMoverLogo from '../Common/PeopleMoverLogo';
+import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
 import AccountDropdown from '../AccountDropdown/AccountDropdown';
 import {Link, useLocation} from 'react-router-dom';
 import {useRecoilValue} from 'recoil';
