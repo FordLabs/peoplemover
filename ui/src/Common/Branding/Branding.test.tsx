@@ -21,7 +21,7 @@ import {RunConfig} from '../../index';
 import {render, screen} from '@testing-library/react';
 
 describe('Branding', () => {
-    const expectedUrl = 'http://url.com';
+    const expectedUrl = 'url-dot-com';
 
     beforeEach(() => {
         window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
