@@ -42,7 +42,7 @@ import Modal from '../Modal/Modal';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
-import DragAndDrop from '../DragAndDrop/DragAndDrop';
+import DragAndDrop from './DragAndDrop/DragAndDrop';
 
 function PeopleMover(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();

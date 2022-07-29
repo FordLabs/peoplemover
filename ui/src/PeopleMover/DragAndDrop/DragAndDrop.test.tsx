@@ -17,15 +17,15 @@
 import React, {ReactChildren} from 'react';
 import {DropResult} from 'react-beautiful-dnd';
 import {screen, waitFor} from '@testing-library/react';
-import {ProductsState} from '../State/ProductsState';
-import TestData from '../Utils/TestData';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {RecoilObserver, renderWithRecoil} from '../Utils/TestUtils';
-import {ViewingDateState} from '../State/ViewingDateState';
-import AssignmentClient from '../Services/Api/AssignmentClient';
+import {ProductsState} from '../../State/ProductsState';
+import TestData from '../../Utils/TestData';
+import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import {RecoilObserver, renderWithRecoil} from '../../Utils/TestUtils';
+import {ViewingDateState} from '../../State/ViewingDateState';
+import AssignmentClient from '../../Services/Api/AssignmentClient';
 import ProductClient from 'Services/Api/ProductClient';
-import {Product} from '../Types/Product';
-import {Assignment} from '../Types/Assignment';
+import {Product} from '../../Types/Product';
+import {Assignment} from '../../Types/Assignment';
 
 jest.mock('Services/Api/AssignmentClient');
 jest.mock('Services/Api/ProductClient');

@@ -18,15 +18,15 @@
 import React, {PropsWithChildren, useCallback} from 'react';
 import {DragDropContext, OnDragEndResponder} from 'react-beautiful-dnd';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ProductsState} from '../State/ProductsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../../State/ProductsState';
+import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import AssignmentClient from '../../Services/Api/AssignmentClient';
+import {ViewingDateState} from '../../State/ViewingDateState';
 import moment from 'moment';
-import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import useFetchProducts from '../Hooks/useFetchProducts/useFetchProducts';
-import {Product} from '../Types/Product';
-import {Assignment} from '../Types/Assignment';
+import {ProductPlaceholderPair} from '../../Assignments/CreateAssignmentRequest';
+import useFetchProducts from '../../Hooks/useFetchProducts/useFetchProducts';
+import {Product} from '../../Types/Product';
+import {Assignment} from '../../Types/Assignment';
 
 type Props = {};
 
