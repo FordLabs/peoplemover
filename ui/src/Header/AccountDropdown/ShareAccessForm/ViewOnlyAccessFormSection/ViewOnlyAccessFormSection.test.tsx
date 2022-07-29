@@ -23,8 +23,8 @@ import SpaceClient from 'Services/Api/SpaceClient';
 import {Space} from 'Types/Space';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
 import {MatomoWindow} from 'Types/MatomoWindow';
-import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
-import {RecoilObserver} from '../../../Utils/RecoilObserver';
+import {CurrentSpaceState} from '../../../../State/CurrentSpaceState';
+import {RecoilObserver} from '../../../../Utils/RecoilObserver';
 
 declare let window: MatomoWindow;
 

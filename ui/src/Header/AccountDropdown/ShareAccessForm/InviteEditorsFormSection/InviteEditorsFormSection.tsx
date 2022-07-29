@@ -21,7 +21,8 @@ import FormButton from 'ModalFormComponents/FormButton';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 
-import UserAccessList from 'AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
+import UserAccessList
+    from 'Header/AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
 import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from 'ModalFormComponents/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';

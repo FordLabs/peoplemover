@@ -16,15 +16,15 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {getUserNameFromAccessToken} from '../Services/TokenService';
+import {getUserNameFromAccessToken} from '../../Services/TokenService';
 import ShareAccessButton from './ShareAccessButton/ShareAccessButton';
-import DownloadReportButton from './DownloadReportButton';
-import SignOutButton from './SignOutButton';
+import DownloadReportButton from './DownloadReportButton/DownloadReportButton';
+import SignOutButton from './SignOutButton/SignOutButton';
 
-import AccessibleDropdownContainer from '../Common/AccessibleDropdownContainer/AccessibleDropdownContainer';
+import AccessibleDropdownContainer from '../../Common/AccessibleDropdownContainer/AccessibleDropdownContainer';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {CurrentUserState} from '../State/CurrentUserState';
+import {IsReadOnlyState} from '../../State/IsReadOnlyState';
+import {CurrentUserState} from '../../State/CurrentUserState';
 
 import './AccountDropdown.scss';
 
