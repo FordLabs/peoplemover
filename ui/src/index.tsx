@@ -23,7 +23,7 @@ import {RedirectToADFS} from './Auth/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
-import CacheBuster from './CacheBuster';
+import CacheBuster, {CacheBusterProps} from './CacheBuster';
 import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
 import flagsmith, {IFlags} from 'flagsmith';
@@ -52,12 +52,6 @@ Axios.interceptors.response.use(
         return Promise.reject(error);
     },
 );
-
-interface CacheBusterProps {
-    loading: boolean;
-    isLatestVersion: boolean;
-    refreshCacheAndReload: Function;
-}
 
 const { isNotSupported, browserName } = getBrowserInfo()
 
