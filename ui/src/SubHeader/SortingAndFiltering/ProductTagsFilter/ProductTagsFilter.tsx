@@ -16,52 +16,53 @@
  */
 
 import React, {useCallback, useEffect, useState} from 'react';
-import {FilterOption} from '../../Types/Option';
+import {useRecoilValue} from 'recoil';
+import {ProductTagsState} from '../../../State/ProductTagsState';
+import {FilterOption} from '../../../Types/Option';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,
-    personTagsFilterKey,
+    productTagsFilterKey,
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
-import {useRecoilValue} from 'recoil';
-import {PersonTagsState} from '../../State/PersonTagsState';
 import Filter from '../Filter';
-import MyTagsForm from '../../Tags/MyTagsForm';
-import {PersonTag} from '../../Types/Tag';
+import MyTagsForm from 'Tags/MyTagsForm';
+import {ProductTag} from 'Types/Tag';
 
-function PersonTagsFilter() {
-    const personTags = useRecoilValue(PersonTagsState);
+function ProductTagsFilter() {
+    const productTags = useRecoilValue(ProductTagsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(personTagsFilterKey);
-        return personTags.map((tag: PersonTag): FilterOption => ({
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(productTagsFilterKey);
+        return productTags.map((tag: ProductTag): FilterOption => ({
             label: tag.name,
             value: tag.id + '_' + tag.name,
             selected: selectedRolesFromLocalStorage.includes(tag.name),
         }));
-    },[personTags])
+    },[productTags])
 
-    const [personTagFilterOptions, setPersonTagFilterOptions] = useState<Array<FilterOption>>([]);
+    const [productTagFilterOptions, setProductTagFilterOptions] = useState<Array<FilterOption>>([]);
 
     useEffect(() => {
-        setPersonTagFilterOptions(getFilterOptions())
-    }, [getFilterOptions, personTags])
+        setProductTagFilterOptions(getFilterOptions())
+    }, [getFilterOptions, productTags])
 
     function setFilterOptions(options: FilterOption[]) {
-        setLocalStorageFiltersByType(personTagsFilterKey, options);
-        setPersonTagFilterOptions(options);
+        setLocalStorageFiltersByType(productTagsFilterKey, options);
+        setProductTagFilterOptions(options);
     }
 
     return (
         <Filter
-            label="Person Tags"
-            defaultValues={personTagFilterOptions}
+            label="Product Tags"
+            defaultValues={productTagFilterOptions}
             onSelect={setFilterOptions}
             modalContents={{
-                title: 'Person Tags',
-                component: <MyTagsForm filterType={FilterTypeListings.PersonTag}/>
+                title: 'Product Tags',
+                // @todo refactor my tags form
+                component: <MyTagsForm filterType={FilterTypeListings.ProductTag}/>
             }}/>
     )
 }
 
-export default PersonTagsFilter;
+export default ProductTagsFilter;

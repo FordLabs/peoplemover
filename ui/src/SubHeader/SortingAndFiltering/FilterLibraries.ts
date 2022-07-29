@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {FilterOption} from '../Types/Option';
-import {localStorageEventListenerKey} from '../Hooks/useOnStorageChange/useOnStorageChange';
+import {FilterOption} from '../../Types/Option';
+import {localStorageEventListenerKey} from '../../Hooks/useOnStorageChange/useOnStorageChange';
 
 export interface FilterTypeListing {
     Location: FilterType;

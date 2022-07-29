@@ -16,14 +16,14 @@
  */
 
 import React, {createRef, useCallback, useEffect, useState} from 'react';
-import MatomoService from '../Services/MatomoService';
-import Dropdown from '../Common/Dropdown/Dropdown';
-import NavigationSection from '../Common/NavigationSection/NavigationSection';
+import MatomoService from 'Services/MatomoService';
+import Dropdown from 'Common/Dropdown/Dropdown';
+import NavigationSection from '../NavigationSection/NavigationSection';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
-import './FilterOrSortBy.scss';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import '../SortingAndFiltering/FilterOrSortBy.scss';
 
 interface SortByOption {
     label: string;

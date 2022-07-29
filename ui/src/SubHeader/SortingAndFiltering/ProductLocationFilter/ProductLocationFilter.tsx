@@ -17,17 +17,17 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
-import {LocationsState} from '../../State/LocationsState';
-import MyTagsForm from '../../Tags/MyTagsForm';
+import {LocationsState} from '../../../State/LocationsState';
+import MyTagsForm from '../../../Tags/MyTagsForm';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,
     locationTagsFilterKey,
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
-import {FilterOption} from '../../Types/Option';
+import {FilterOption} from '../../../Types/Option';
 import Filter from '../Filter';
-import {LocationTag} from '../../Types/Tag';
+import {LocationTag} from '../../../Types/Tag';
 
 function ProductLocationFilter() {
     const productLocations = useRecoilValue(LocationsState);

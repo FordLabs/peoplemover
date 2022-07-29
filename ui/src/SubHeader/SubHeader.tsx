@@ -16,18 +16,18 @@
  */
 
 import React from 'react';
-import Calendar from '../Calendar/Calendar';
-import ProductSortBy from '../SortingAndFiltering/ProductSortBySelector';
-import NavigationSection from '../Common/NavigationSection/NavigationSection';
+import Calendar from './Calendar/Calendar';
+import ProductSortBySelector from './ProductSortBySelector/ProductSortBySelector';
+import NavigationSection from './NavigationSection/NavigationSection';
 import {useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import ProductLocationFilter from './SortingAndFiltering/ProductLocationFilter/ProductLocationFilter';
+import ProductTagsFilter from './SortingAndFiltering/ProductTagsFilter/ProductTagsFilter';
+import PersonTagsFilter from './SortingAndFiltering/PersonTagsFilter/PersonTagsFilter';
+import RolesFilter from './SortingAndFiltering/RolesFilter/RolesFilter';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './SubHeader.scss';
-import ProductLocationFilter from '../SortingAndFiltering/ProductLocationFilter/ProductLocationFilter';
-import ProductTagsFilter from '../SortingAndFiltering/ProductTagsFilter/ProductTagsFilter';
-import PersonTagsFilter from '../SortingAndFiltering/PersonTagsFilter/PersonTagsFilter';
-import RolesFilter from '../SortingAndFiltering/RolesFilter/RolesFilter';
 
 interface Props {
     showFilters?: boolean;
@@ -59,7 +59,7 @@ function SubHeader({ showFilters = true, showSortBy = true, message = undefined}
                         <RolesFilter />
                     </NavigationSection>
                 )}
-                {showSortBy && <ProductSortBy/>}
+                {showSortBy && <ProductSortBySelector/>}
             </div>
         </section>
     );

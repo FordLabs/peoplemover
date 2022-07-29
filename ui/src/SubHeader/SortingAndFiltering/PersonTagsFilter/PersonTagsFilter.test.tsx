@@ -16,16 +16,16 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
+import {renderWithRecoil} from '../../../Utils/TestUtils';
 import {screen, waitFor} from '@testing-library/react';
-import TestData from '../../Utils/TestData';
+import TestData from '../../../Utils/TestData';
 import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
-import {RecoilObserver} from '../../Utils/RecoilObserver';
-import {localStorageEventListenerKey} from '../../Hooks/useOnStorageChange/useOnStorageChange';
-import MyTagsForm from '../../Tags/MyTagsForm';
+import {ModalContents, ModalContentsState} from '../../../State/ModalContentsState';
+import {RecoilObserver} from '../../../Utils/RecoilObserver';
+import {localStorageEventListenerKey} from '../../../Hooks/useOnStorageChange/useOnStorageChange';
+import MyTagsForm from '../../../Tags/MyTagsForm';
 import PersonTagsFilter from './PersonTagsFilter';
-import {PersonTagsState} from '../../State/PersonTagsState';
+import {PersonTagsState} from '../../../State/PersonTagsState';
 
 describe('Person Tags Filter', () => {
     let modalContent: ModalContents | null;

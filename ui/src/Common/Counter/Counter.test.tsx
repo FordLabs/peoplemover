@@ -22,7 +22,7 @@ import Counter from './Counter';
 import {screen} from '@testing-library/react';
 import {ViewingDateState} from '../../State/ViewingDateState';
 import {ProductsState} from '../../State/ProductsState';
-import {LocalStorageFilters} from '../../SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from '../../SubHeader/SortingAndFiltering/FilterLibraries';
 import {Product} from '../../Types/Product';
 
 describe('Counter', () => {

@@ -21,15 +21,15 @@ import {renderWithRecoil} from '../Utils/TestUtils';
 import SubHeader from './SubHeader';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
-jest.mock('../Calendar/Calendar', () => {
+jest.mock('./Calendar/Calendar', () => {
     return jest.fn(() => <div>Calendar</div>);
 });
 
-jest.mock('../SortingAndFiltering/Filter', () => {
+jest.mock('./SortingAndFiltering/Filter', () => {
     return jest.fn(() => <div>Filter</div>);
 });
 
-jest.mock('../SortingAndFiltering/ProductSortBySelector', () => {
+jest.mock('./ProductSortBySelector/ProductSortBySelector', () => {
     return jest.fn(() => <div>ProductSortBySelector</div>);
 });
 

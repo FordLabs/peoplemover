@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import TestUtils, {renderWithRecoil} from '../../Utils/TestUtils';
+import TestData from '../../Utils/TestData';
 import React from 'react';
 import {fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
 import Calendar from './Calendar';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ViewingDateState} from '../../State/ViewingDateState';
+import {IsReadOnlyState} from '../../State/IsReadOnlyState';
+import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 
 jest.mock('Services/Api/AssignmentClient');
 

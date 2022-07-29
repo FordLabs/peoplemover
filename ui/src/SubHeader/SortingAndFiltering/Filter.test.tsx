@@ -16,12 +16,12 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from '../../Utils/TestUtils';
 import {screen, waitFor} from '@testing-library/react';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import {FilterOption} from '../Types/Option';
+import {IsReadOnlyState} from '../../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
+import {RecoilObserver} from '../../Utils/RecoilObserver';
+import {FilterOption} from '../../Types/Option';
 import Filter from './Filter';
 
 let actualModalContent: ModalContents | null;

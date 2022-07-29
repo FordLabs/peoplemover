@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import {FilterOption} from '../Types/Option';
-import Dropdown from '../Common/Dropdown/Dropdown';
+import {FilterOption} from '../../Types/Option';
+import Dropdown from '../../Common/Dropdown/Dropdown';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import {IsReadOnlyState} from '../../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
 
 import './FilterOrSortBy.scss';
 

@@ -19,7 +19,7 @@ import React, {useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
 import Branding from '../Common/Branding/Branding';
-import SubHeader from '../Header/SubHeader';
+import SubHeader from '../SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';

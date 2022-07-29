@@ -20,7 +20,7 @@ import React, {useEffect, useState} from 'react';
 import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
 import {calculateDuration} from 'Assignments/AssignmentService';
 import HeaderContainer from 'Header/HeaderContainer';
-import SubHeader from 'Header/SubHeader';
+import SubHeader from 'SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
