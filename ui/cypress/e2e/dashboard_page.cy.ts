@@ -35,7 +35,7 @@ describe('The Space Dashboard', () => {
                 cy.contains('Ok').click({ force: true });
                 cy.wait(['@getSpaceUsers', '@getSpacesForUser']);
             }
-        })
+        });
 
         cy.get('@spaceTiles')
             .should('have.length', 1)
