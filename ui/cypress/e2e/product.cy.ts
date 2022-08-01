@@ -18,9 +18,13 @@ import product from '../fixtures/product';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 
+const activeDateString = '01/16/2019'
+const activeDate = new Date(activeDateString);
+
 describe('Product', () => {
     beforeEach(() => {
-        cy.visitSpace();
+        cy.clock(activeDate);
+        cy.visitSpace(undefined, '', activeDate);
     });
 
     it('Create a new product', () => {
@@ -34,8 +38,7 @@ describe('Product', () => {
 
         cy.getModal().should('contain', 'Add New Product');
 
-        const todayDate = moment().format('MM/DD/yyyy');
-        populateProductForm(product, todayDate);
+        populateProductForm(product, moment(activeDate).format('MM/DD/yyyy'));
 
         submitProductForm('Add');
 
@@ -73,8 +76,8 @@ describe('Product', () => {
             location: 'Michigan',
             archived: false,
             tags: ['Tag 1', 'Tag 2'],
-            startDate: moment('01/02/2019'),
-            nextPhaseDate: moment().add(1, 'days'),
+            startDate: moment('01/14/2019'),
+            nextPhaseDate: moment('01/18/2019'),
             notes: 'Updated',
         };
         populateProductForm(updateProduct, '01/01/2019');
@@ -129,13 +132,7 @@ describe('Product', () => {
         cy.contains('Baguette Bakery').should('not.exist');
 
         cy.get('[data-testid="calendarToggle"]').click();
-
-        const isMonday = moment().isoWeekday() === 1;
-        const isSunday =  moment().isoWeekday() === 7;
-        let daysToSubtract = 1;
-        if (isMonday) daysToSubtract = 3;
-        if (isSunday) daysToSubtract = 2;
-        const newDate = moment().subtract(daysToSubtract, 'days').format('dddd, MMMM Do, YYYY');
+        const newDate = moment(activeDateString).subtract(1, 'days').format('dddd, MMMM Do, YYYY');
         cy.get(`[aria-label="Choose ${newDate}"]`).click();
         cy.contains('Baguette Bakery').should('exist');
     });

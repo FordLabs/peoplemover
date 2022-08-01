@@ -28,10 +28,10 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '') => {
+Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
     cy.server();
-    const date = moment().format('yyyy-MM-DD');
-    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
+    const activeDate = moment(date).format('yyyy-MM-DD');
+    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
     cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     const locationRoute = {
         method: 'GET',
