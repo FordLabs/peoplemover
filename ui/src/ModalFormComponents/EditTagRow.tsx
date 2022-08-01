@@ -24,7 +24,7 @@ import {RoleTagRequest, TagRequest} from '../Types/TagRequest';
 
 import {OptionType} from './SelectWithHTMLOptions';
 import ColorDropdown from '../Roles/ColorDropdown';
-import {TagType} from '../SortingAndFiltering/FilterLibraries';
+import {TagType} from '../SubHeader/SortingAndFiltering/FilterLibraries';
 import {Color} from '../Types/Color';
 
 import './TagRowsContainer.scss';

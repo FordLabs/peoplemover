@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2022 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../../../../Styles/Variables';
+@import '../../../../Styles/Colors';
+@import '../../../../Styles/Breakpoints';
+
+.modalCardBanner.multiModal{
+  margin: 0 auto;
+  width: $form-width;
+  justify-content: space-between;
+  padding-bottom: 18px;
+
+  @include phone {
+    width: 100%;
+  }
+
+  .expand-collapse-toggle-button {
+    background: none;
+    display: flex;
+    padding: 0;
+
+    .modalTitle {
+      margin: 0 1rem 0 0;
+    }
+
+    .focusedModalArrow {
+      background-color: $sec-5;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      align-self: center;
+    }
+  }
+}

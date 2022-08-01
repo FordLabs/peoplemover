@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
-import AccountDropdown from '../AccountDropdown/AccountDropdown';
+import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
+import AccountDropdown from './AccountDropdown/AccountDropdown';
 import {Link, useLocation} from 'react-router-dom';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';

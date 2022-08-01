@@ -21,7 +21,7 @@ import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
 import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
-import DragAndDrop from '../DragAndDrop/DragAndDrop';
+import DragAndDrop from '../PeopleMover/DragAndDrop/DragAndDrop';
 
 async function renderPeopleMoverComponent(
     initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,

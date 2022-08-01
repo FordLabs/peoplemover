@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
-import DrawerContainer from 'ReusableComponents/DrawerContainer';
+import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import {isArchived} from 'People/PersonService';
 import MatomoService from 'Services/MatomoService';

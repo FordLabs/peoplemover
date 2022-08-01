@@ -19,7 +19,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import TestData from 'Utils/TestData';
 import ProductList from './ProductList';
-import {LocalStorageFilters} from 'SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
 import {MutableSnapshot} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import {ProductsState} from 'State/ProductsState';

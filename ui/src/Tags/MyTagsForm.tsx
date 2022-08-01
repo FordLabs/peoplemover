@@ -19,7 +19,7 @@ import React from 'react';
 import {useRecoilValue} from 'recoil';
 import {JSX} from '@babel/types';
 import TagsModalContent from './TagsModalContent';
-import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {FilterType, FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
 import ProductTagClient from '../Services/Api/ProductTagClient';
 import LocationClient from 'Services/Api/LocationClient';
 import PersonTagClient from '../Services/Api/PersonTagClient';

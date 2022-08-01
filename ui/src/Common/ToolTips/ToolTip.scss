@@ -1,0 +1,75 @@
+/*
+ *   Copyright (c) 2021 Ford Motor Company
+ *   All rights reserved.
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
+@import '../../Styles/Main';
+
+.toolTipContainer {
+  position: relative;
+  padding-left: 6px;
+  background-color: white;
+  margin-left: 6px;
+
+  .toolTipLabel {
+    font-size: 12px;
+    line-height: 14px;
+    text-decoration-line: underline;
+    color: $prime-1;
+    font-weight: normal;
+    letter-spacing: normal;
+  }
+
+  .toolTipHover{
+    font-size: 12px;
+    color: $gray-1;
+    border-radius: 7px;
+    background-color: white;
+    z-index: 2;
+    width: 160px;
+    padding: 8px;
+    border: 1px solid $prime-1;
+    position: absolute;
+    top: 32px;
+    text-align: left;
+    word-wrap: break-word;
+    line-height: 15px;
+  }
+
+  .toolTipHoverNotch {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    border-top: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid white;
+    width: 0;
+    height: 0;
+  }
+
+  .toolTipHover .toolTipHoverNotchBorder-notch { border-bottom-color: $prime-1;
+    top: -11px;
+  }
+}
+
+.toolTipHoverShow {
+  display: block;
+}
+
+.toolTipHoverNotShow {
+  display: none;
+}
+
