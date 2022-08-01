@@ -87,7 +87,7 @@ describe('Assignment Card', () => {
             .toHaveBeenCalledWith(assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date))
         )
         await waitFor(() => expect(AssignmentClient.createAssignmentForDate)
-            .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestData.space, assignmentToRender.person, false)
+            .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestData.space, assignmentToRender.person)
         )
         await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, expect.any(Date)))
     });
@@ -106,8 +106,10 @@ describe('Assignment Card', () => {
         await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toHaveBeenCalledWith(
             assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date)
         ))
+        const requestedDate = moment(new Date()).format('YYYY-MM-DD')
+        const products = [{"placeholder": false, "productId": 1}];
         await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-            moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": false, "productId": 1}], TestData.space, assignmentToRender.person, false
+            requestedDate, products, TestData.space, assignmentToRender.person
         ))
         await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, expect.any(Date)));
     });

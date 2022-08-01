@@ -21,15 +21,10 @@ import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../../Assignment
 import TestData from '../../Utils/TestData';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../../Types/MatomoWindow';
-
-declare let window: MatomoWindow;
 
 jest.mock('axios');
 
 describe('Assignment client', () => {
-
-    let originalWindow: Window;
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
@@ -44,13 +39,10 @@ describe('Assignment client', () => {
         Axios.get = jest.fn().mockResolvedValue({});
         Axios.post = jest.fn().mockResolvedValue({});
         Axios.delete = jest.fn().mockResolvedValue({});
-        originalWindow = window;
-        window._paq = [];
     });
 
     afterEach(function() {
         cookies.remove('accessToken');
-        (window as Window) = originalWindow;
     });
 
     it('should get all assignments for given personId and date', async () => {
@@ -64,7 +56,7 @@ describe('Assignment client', () => {
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
 
-    it('should create assignments for given date and send matomo event', async () => {
+    it('should create assignments for given date', async () => {
         const date = new Date('2019-01-10');
         const productPlaceholderPair: ProductPlaceholderPair = {
             productId: 1,
@@ -87,56 +79,6 @@ describe('Assignment client', () => {
         );
 
         expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
-        expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'assignPerson', TestData.person1.name]);
-    });
-
-    it('should send matomo error event if assign person fails', async () => {
-        Axios.post = jest.fn().mockRejectedValue({code: 417});
-
-        try {
-            await AssignmentClient.createAssignmentForDate(
-                moment(new Date()).format('YYYY-MM-DD'),
-                [],
-                TestData.space,
-                TestData.person1
-            );
-        } catch (err) {
-            expect(window._paq).toContainEqual(
-                ['trackEvent', TestData.space.name, 'assignPersonError', TestData.person1.name, 417]
-            );
-        }
-    });
-
-    it('should not send matomo event if sendEvent is false', async () => {
-        await AssignmentClient.createAssignmentForDate(
-            moment(new Date()).format('YYYY-MM-DD'),
-            [],
-            TestData.space,
-            TestData.person1,
-            false
-        );
-        expect(window._paq).not.toContainEqual(
-            ['trackEvent', TestData.space.name, 'assignPerson', TestData.person1.name]
-        );
-    });
-
-    it('should send not matomo error event if sendEvent is false', async () => {
-        Axios.post = jest.fn().mockRejectedValue({code: 417});
-
-        try {
-            await AssignmentClient.createAssignmentForDate(
-                moment(new Date()).format('YYYY-MM-DD'),
-                [],
-                TestData.space,
-                TestData.person1,
-                false
-            );
-        } catch (err) {
-            expect(window._paq).not.toContainEqual(
-                ['trackEvent', TestData.space.name, 'assignPersonError', TestData.person1.name, 417]
-            );
-        }
-
     });
 
     it('should get all effective dates given space', async () => {

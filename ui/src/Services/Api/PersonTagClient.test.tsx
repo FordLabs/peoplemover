@@ -19,9 +19,6 @@ import Axios from 'axios';
 import PersonTag from './PersonTagClient';
 import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../../Types/MatomoWindow';
-
-declare let window: MatomoWindow;
 
 describe('Person Tags Client', function() {
     const spaceUuid = TestData.space.uuid || '';
@@ -34,8 +31,6 @@ describe('Person Tags Client', function() {
     };
     const cookies = new Cookies();
 
-    let originalWindow: MatomoWindow;
-
     beforeEach(() => {
         cookies.set('accessToken', '123456');
 
@@ -43,14 +38,10 @@ describe('Person Tags Client', function() {
         Axios.put = jest.fn().mockResolvedValue({ data: 'Updated Person Tag' });
         Axios.delete = jest.fn().mockResolvedValue({ data: 'Deleted Person Tag' });
         Axios.get = jest.fn().mockResolvedValue({ data: 'Get Person Tags' });
-
-        originalWindow = window;
-        window._paq = [];
     });
 
     afterEach(() => {
         cookies.remove('accessToken');
-        window = originalWindow;
     });
 
     it('should return all person tags for space', function(done) {
@@ -68,7 +59,6 @@ describe('Person Tags Client', function() {
         PersonTag.add(expectedPersonAddRequest, TestData.space)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePersonTagsUrl, expectedPersonAddRequest, expectedConfig);
-                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'addPersonTag', TestData.personTag1.name]);
                 expect(response.data).toBe('Created Person Tag');
                 done();
             });

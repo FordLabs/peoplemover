@@ -42,15 +42,6 @@ Note: If you are running the backend with simplified authentication, your abilit
 If this is the case, you should be able to navigate to the [home page](https://localhost:3000) and the 
 [test space](https://localhost:3000/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)
 
-
-## Set up Analytics
-We support matomo out of the box. You will need to replace matomo-url-placeholder 
-and matomo-site-id-placeholder in the `analytics-template.js` file, and copy its contents
-to the `analytics.js` file.
-
-You can also add google analytics, hotjar and more by adding the config scripts
-in the `analytics.js` file
-
 ## License
 
 PeopleMover is licensed under the Apache 2.0 license.

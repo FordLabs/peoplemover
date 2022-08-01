@@ -18,25 +18,17 @@
 import Axios, {AxiosResponse} from 'axios';
 import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Assignments/CreateAssignmentRequest';
 import moment from 'moment';
-import MatomoService from 'Services/MatomoService';
 import {Space} from 'Types/Space';
 import {Person} from 'Types/Person';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
-async function createAssignmentForDate(requestedDate: string, products: Array<ProductPlaceholderPair>, space: Space, person: Person, sendEvent = true): Promise<AxiosResponse> {
+async function createAssignmentForDate(requestedDate: string, products: Array<ProductPlaceholderPair>, space: Space, person: Person): Promise<AxiosResponse> {
     const url = `/api/spaces/${space.uuid}/person/${person.id}/assignment/create`;
     const assignmentRequest = {
         requestedDate,
         products,
     } as CreateAssignmentsRequest;
-
-    return Axios.post(url, assignmentRequest, getAxiosConfig()).then(result => {
-        if (sendEvent) MatomoService.pushEvent(space.name, 'assignPerson', person.name);
-        return result;
-    }).catch(err => {
-        if (sendEvent) MatomoService.pushEvent(space.name, 'assignPersonError', person.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.post(url, assignmentRequest, getAxiosConfig());
 }
 
 async function getAssignmentsUsingPersonIdAndDate(spaceUuid: string, personId: number, date: Date): Promise<AxiosResponse> {

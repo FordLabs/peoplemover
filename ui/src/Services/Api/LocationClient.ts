@@ -19,7 +19,6 @@ import Axios, {AxiosResponse} from 'axios';
 import {TagRequest} from 'Types/TagRequest';
 import {TagClient} from 'Types/TagClient';
 import {Space} from 'Types/Space';
-import MatomoService from 'Services/MatomoService';
 import {LocationTag} from 'Types/Tag';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
 
@@ -34,35 +33,17 @@ async function get(spaceUuid: string): Promise<AxiosResponse<LocationTag[]>> {
 
 async function add(location: TagRequest, space: Space): Promise<AxiosResponse> {
     const url = getBaseLocationsUrl(space.uuid || '');
-    return Axios.post(url, location, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'addLocationTag', location.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'addLocationTagError', location.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.post(url, location, getAxiosConfig());
 }
 
 async function edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
     const url = getBaseLocationsUrl(space.uuid || '') + `/${location.id}`;
-    return Axios.put(url, location, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'editLocationTag', location.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'editLocationTagError', location.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.put(url, location, getAxiosConfig());
 }
 
 async function deleteLocation(locationId: number, space: Space): Promise<AxiosResponse> {
     const url = getBaseLocationsUrl(space.uuid!) + `/${locationId}`;
-    return Axios.delete(url, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'deleteLocationTag', locationId.toString());
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'deleteLocationTagError', locationId.toString(), err.code);
-        return Promise.reject(err);
-    });
+    return Axios.delete(url, getAxiosConfig());
 }
 
 const LocationClient: TagClient = {

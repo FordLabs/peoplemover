@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,8 @@ import Axios from 'axios';
 import SpaceClient from './SpaceClient';
 import Cookies from 'universal-cookie';
 import {createEmptySpace} from 'Types/Space';
-import {MatomoWindow} from '../../Types/MatomoWindow';
 import TestData from '../../Utils/TestData';
 import {UserSpaceMapping} from '../../Types/UserSpaceMapping';
-
-declare let window: MatomoWindow;
 
 describe('Space Client', function() {
     const baseSpaceUrl = `/api/spaces`;
@@ -35,21 +32,16 @@ describe('Space Client', function() {
         },
     };
 
-    let originalWindow: MatomoWindow;
-
     beforeEach(function() {
         cookies.set('accessToken', '123456');
         Axios.post = jest.fn().mockResolvedValue({});
         Axios.put = jest.fn().mockResolvedValue({});
         Axios.get = jest.fn().mockResolvedValue({});
         Axios.delete = jest.fn().mockResolvedValue({});
-        originalWindow = window;
-        window._paq = [];
     });
 
     afterEach(function() {
         cookies.remove('accessToken');
-        (window as Window) = originalWindow;
     });
 
     it('should return the space given a user', function(done) {
@@ -83,11 +75,8 @@ describe('Space Client', function() {
         const expectedBody = createEmptySpace();
         expectedBody.name = 'NewName';
 
-        const oldSpaceName = 'OldName';
-
-        SpaceClient.editSpaceName('uuidbob', expectedBody, oldSpaceName).then(() => {
+        SpaceClient.editSpaceName('uuidbob', expectedBody).then(() => {
             expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
-            expect(window._paq).toContainEqual(['trackEvent', oldSpaceName, 'editSpaceName', expectedBody.name]);
             done();
         });
     });
@@ -99,7 +88,6 @@ describe('Space Client', function() {
 
         SpaceClient.editSpaceReadOnlyFlag('uuidbob', expectedBody).then(() => {
             expect(Axios.put).toHaveBeenCalledWith(expectedUrl, expectedBody, expectedConfig);
-            expect(window._paq).toContainEqual(['trackEvent', expectedBody.name, 'editSpaceReadOnlyFlag', `${expectedBody.todayViewIsPublic}`]);
             done();
         });
     });
@@ -127,7 +115,6 @@ describe('Space Client', function() {
         SpaceClient.inviteUsersToSpace(TestData.space, expectedData.userIds)
             .then(() => {
                 expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedData, expectedConfig);
-                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'inviteUser', expectedData.userIds.join(', ')]);
                 done();
             });
     });
@@ -140,7 +127,6 @@ describe('Space Client', function() {
                     `/api/spaces/${TestData.space.uuid}/users/${user.userId}`,
                     {headers: {Authorization: 'Bearer 123456',"Content-Type": "application/json"}}
                 );
-                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'removeUser', user.userId]);
                 done();
             });
     });
@@ -155,7 +141,6 @@ describe('Space Client', function() {
                     null,
                     {headers: {Authorization: 'Bearer 123456', "Content-Type": "application/json"}}
                 );
-                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'updateOwner', `oldOwner: ${currentOwner.userId} -> newOwner: ${newOwner.userId}`]);
                 done();
             });
     });

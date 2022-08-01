@@ -35,7 +35,6 @@ import FormTagsField from '../Common/FormTagsField/FormTagsField';
 import PersonTagClient from '../Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
 import ToolTip from '../Common/ToolTips/ToolTip';
-import MatomoService from '../Services/MatomoService';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from '../State/ViewingDateState';
@@ -82,7 +81,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
-    const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -116,11 +114,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
             setInitialNewPersonFlag(personEdited.newPerson);
-            if (personEdited.newPersonDate !== null) {
-                const viewingDateMoment = moment(viewingDate).startOf('day');
-                const checkedDateMoment = moment(personEdited.newPersonDate).startOf('day');
-                setInitialNewPersonDuration(moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays());
-            }
         } else {
             if (initialPersonName) {
                 setPerson((updatingPerson: Person) => ({...updatingPerson, name: initialPersonName}));
@@ -142,29 +135,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         });
     };
 
-    const getAddedPersonTag = (): string[] => {
-        let result: string[] = [];
-        if (person.tags !== selectedPersonTags) {
-            result = selectedPersonTags.filter(tag => {
-                return !person.tags.includes(tag);
-            }).map(tag => {
-                return tag.name;
-            });
-        }
-        return result;
-    };
-
-    const handleMatomoEventsForNewPersonCheckboxChange = (): void  => {
-        if (hasNewPersonChanged) {
-            if (person.newPerson) {
-                MatomoService.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
-            } else {
-                MatomoService.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
-            }
-            setHasNewPersonChanged(false);
-        }
-    };
-
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
@@ -172,8 +142,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
             setIsPersonNameInvalid(true);
         } else {
             setIsPersonNameInvalid(false);
-
-            const personTagModified = getAddedPersonTag();
 
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
@@ -196,7 +164,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
             };
 
             if (isEditPersonForm) {
-                const response = await PeopleClient.updatePerson(currentSpace, personToSend, personTagModified);
+                const response = await PeopleClient.updatePerson(currentSpace, personToSend);
                 const updatedPerson: Person = response.data;
                 setPeople(currentPeople => currentPeople.map((p) => {
                     return (p.id === updatedPerson.id) ? updatedPerson : p;
@@ -212,7 +180,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                 }
 
             } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend, personTagModified);
+                const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend);
                 const newPerson: Person = response.data;
                 setPeople(currentPeople => [...currentPeople, newPerson])
                 await AssignmentClient.createAssignmentForDate(
@@ -222,7 +190,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                     newPerson
                 );
             }
-            handleMatomoEventsForNewPersonCheckboxChange();
             closeModal();
         }
     };
