@@ -18,15 +18,14 @@
 import React, {useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
-import Branding from '../ReusableComponents/Branding';
-import SubHeader from '../Header/SubHeader';
+import Branding from '../Common/Branding/Branding';
+import SubHeader from '../SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import MatomoService from '../Services/MatomoService';
-import Counter from '../ReusableComponents/Counter';
-import HeaderContainer from '../Header/HeaderContainer';
+import Counter from '../Common/Counter/Counter';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
@@ -43,7 +42,7 @@ import Modal from '../Modal/Modal';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
-import DragAndDrop from '../DragAndDrop/DragAndDrop';
+import DragAndDrop from './DragAndDrop/DragAndDrop';
 
 function PeopleMover(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
@@ -90,9 +89,7 @@ function PeopleMover(): JSX.Element {
 
     return products.length && !!currentSpace ? (
         <div className="App">
-            <HeaderContainer>
-                <SubHeader/>
-            </HeaderContainer>
+            <SubHeader/>
             <main>
                 <div id="main-content-landing-target"/>
                 <Counter />

@@ -18,9 +18,9 @@
 import React from 'react';
 import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
-import {OAuthRedirect} from './ReusableComponents/OAuthRedirect';
+import {OAuthRedirect} from './Common/OAuthRedirect/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
-import RedirectWrapper from './ReusableComponents/RedirectWrapper';
+import RedirectWrapper from './RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import PeopleMover from './PeopleMover/PeopleMover';
@@ -29,7 +29,7 @@ import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import AnimatedImageSrc from './Assets/404.gif';
 import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
-import AnnouncementBanner from './Header/AnnouncementBanner';
+import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
 import ContactUsPage from './ContactUsPage/ContactUsPage';
 
 export const contactUsPath = '/contact-us';

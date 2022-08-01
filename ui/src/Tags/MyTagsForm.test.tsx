@@ -19,7 +19,7 @@ import {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {screen} from '@testing-library/react';
 import MyTagsForm from './MyTagsForm';
-import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
 import React from 'react';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
