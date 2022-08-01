@@ -22,7 +22,7 @@ import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from 
 import LocationClient from '../Services/Api/LocationClient';
 import ProductTagClient from '../Services/Api/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
-import {FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {FilterType, FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
 import {LocationsState} from '../State/LocationsState';
 import {ProductTagsState} from '../State/ProductTagsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';

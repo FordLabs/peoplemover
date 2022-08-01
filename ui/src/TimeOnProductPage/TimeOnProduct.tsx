@@ -19,8 +19,7 @@ import React, {useEffect, useState} from 'react';
 
 import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
 import {calculateDuration} from 'Assignments/AssignmentService';
-import HeaderContainer from 'Header/HeaderContainer';
-import SubHeader from 'Header/SubHeader';
+import SubHeader from 'SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
@@ -32,7 +31,7 @@ import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpac
 import {useParams} from 'react-router-dom';
 import {Product} from 'Types/Product';
 import {Assignment} from 'Types/Assignment';
-import Branding from 'ReusableComponents/Branding';
+import Branding from 'Common/Branding/Branding';
 
 import './TimeOnProduct.scss';
 
@@ -166,17 +165,15 @@ function TimeOnProduct(): JSX.Element {
         currentSpace && (
             <div className="App">
                 <Modal />
-                <HeaderContainer>
-                    <SubHeader
-                        showFilters={false}
-                        showSortBy={false}
-                        message={
-                            <div className="timeOnProductHeaderMessage">
-                                <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
-                            </div>
-                        }
-                    />
-                </HeaderContainer>
+                <SubHeader
+                    showFilters={false}
+                    showSortBy={false}
+                    message={
+                        <div className="timeOnProductHeaderMessage">
+                            <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
+                        </div>
+                    }
+                />
                 {isLoading ?
                     <div className="timeOnProductLoading">{LOADING}</div>
                     : (

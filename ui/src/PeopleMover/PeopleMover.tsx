@@ -18,14 +18,13 @@
 import React, {useEffect} from 'react';
 
 import ProductList from '../Products/ProductList';
-import Branding from '../ReusableComponents/Branding';
-import SubHeader from '../Header/SubHeader';
+import Branding from '../Common/Branding/Branding';
+import SubHeader from '../SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
-import Counter from '../ReusableComponents/Counter';
-import HeaderContainer from '../Header/HeaderContainer';
+import Counter from '../Common/Counter/Counter';
 import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
@@ -39,7 +38,7 @@ import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentS
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'People/PersonForm';
 import Modal from '../Modal/Modal';
-import DragAndDrop from '../DragAndDrop/DragAndDrop';
+import DragAndDrop from './DragAndDrop/DragAndDrop';
 
 import '../Styles/Main.scss';
 import './PeopleMover.scss';
@@ -86,9 +85,7 @@ function PeopleMover(): JSX.Element {
 
     return products.length && !!currentSpace ? (
         <div className="App">
-            <HeaderContainer>
-                <SubHeader/>
-            </HeaderContainer>
+            <SubHeader/>
             <main>
                 <div id="main-content-landing-target"/>
                 <Counter />

@@ -20,7 +20,7 @@ import {useRecoilValue, useSetRecoilState} from 'recoil';
 import moment, {now} from 'moment';
 import {Space} from 'Types/Space';
 import LeaveIcon from 'Assets/leave-icon.svg';
-import AccessibleDropdownContainer from 'ReusableComponents/AccessibleDropdownContainer';
+import AccessibleDropdownContainer from 'Common/AccessibleDropdownContainer/AccessibleDropdownContainer';
 import SpaceClient from 'Services/Api/SpaceClient';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {ModalContentsState} from 'State/ModalContentsState';
