@@ -30,8 +30,7 @@ const BASE_API_URL = Cypress.env('BASE_API_URL');
 
 Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
     cy.server();
-    const activeDate = moment(date).format('yyyy-MM-DD');
-    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
+    cy.spyOnGetProductsByDate(date);
     cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     const locationRoute = {
         method: 'GET',
@@ -93,3 +92,8 @@ Cypress.Commands.add('resetSpace', () => {
     const RESET_SPACE_URL = `${BASE_API_URL}/api/reset/${spaceUuid}`;
     cy.request('DELETE', RESET_SPACE_URL);
 });
+
+Cypress.Commands.add('spyOnGetProductsByDate', (expectedDate) => {
+    const activeDate = moment(expectedDate).format('yyyy-MM-DD');
+    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
+})

@@ -17,8 +17,8 @@
 import * as moment from 'moment';
 import person, {Person} from '../fixtures/person';
 
-const todaysDate = moment().format('yyyy-MM-DD');
-const activeDateString = '01/16/2019';
+const activeDateString = '07/13/2022';
+const notActiveDateString = '07/20/2022';
 const activeDate = new Date(activeDateString);
 const keycodes = {
     space: 32,
@@ -27,25 +27,26 @@ const keycodes = {
 };
 
 describe('People', () => {
-    const notActiveDay = '01/23/2019';
     const highlightClass = 'react-datepicker__day--highlighted';
 
     beforeEach(() => {
-        cy.clock(activeDate);
-
-        cy.visitSpace(undefined, '', activeDate);
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
+        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
+
+        cy.clock(activeDate);
+        cy.visitSpace(undefined, '', activeDate);
     });
 
     it('Add a new assigned person', () => {
-        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=2019-01-23`).as('getUpdatedProduct');
-        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
+        cy.spyOnGetProductsByDate(activeDateString);
 
         getCalendarToggle().click();
         cy.getCalendarDate(activeDateString).should('have.class', 'react-datepicker__day--today');
-        cy.getCalendarDate(notActiveDay).should('not.have.class', highlightClass).click();
+        cy.getCalendarDate(notActiveDateString).should('not.have.class', highlightClass).click();
+
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${moment(notActiveDateString).format('yyyy-MM-DD')}`).as('getProductsByDate');
 
         cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
 
@@ -65,7 +66,7 @@ describe('People', () => {
 
         submitPersonForm('Add');
 
-        cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
+        cy.wait(['@postNewPerson', '@getProductsByDate', '@getPeople'])
             .should((xhrs: Cypress.ObjectLike[]) => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
@@ -94,14 +95,16 @@ describe('People', () => {
                 ensureNewAssignmentIsPresentInAssignmentDrawer(assignedPerson);
 
                 getCalendarToggle().click();
-                cy.getCalendarDate(notActiveDay).should('have.class', highlightClass).click();
+                cy.getCalendarDate(notActiveDateString).should('have.class', highlightClass).click();
             });
     });
     
     it('Add a new unassigned person', () => {
-        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${todaysDate}`).as('getUpdatedProduct');
-        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
+        cy.clock().then((clock) => {
+            clock.restore()
+        })
+        cy.spyOnGetProductsByDate(new Date().toString());
+        cy.visitSpace();
 
         const unassignedPerson = {
             ...person,
@@ -121,7 +124,7 @@ describe('People', () => {
 
         submitPersonForm('Add');
 
-        cy.wait(['@postNewPerson', '@getUpdatedProduct', '@getPeople'])
+        cy.wait(['@postNewPerson', '@getProductsByDate', '@getPeople'])
             .should((xhrs: Cypress.ObjectLike[]) => {
                 const postNewPersonXhr = xhrs[0];
                 const getUpdatedProductXhr = xhrs[1];
@@ -160,6 +163,7 @@ describe('People', () => {
 
     it('Edit a person', () => {
         cy.route('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
+
         const editedPerson = {
             name: 'Jane Bob',
             isNew: false,
@@ -207,10 +211,6 @@ describe('People', () => {
     });
 
     context('Drag and Drop', () => {
-        beforeEach(() => {
-            cy.route('GET', Cypress.env('API_PRODUCTS_PATH') + '?requestedDate=' + todaysDate).as('getProducts');
-        });
-
         it('Drag and drop person from one product to another product and back', () => {
             const assignmentName = 'Jane Smith';
             const janeSmithSelector = '[data-testid=assignmentCard__jane_smith]';
@@ -220,14 +220,14 @@ describe('People', () => {
 
             moveAssignment(janeSmithSelector, keycodes.arrowLeft);
 
-            cy.wait('@getProducts').should(() => {
+            cy.wait('@getProductsByDate').should(() => {
                 checkIfPersonIsInProductBaguetteBakery(assignmentName, true);
                 checkIfPersonIsInProductMyProduct(assignmentName, false);
             });
 
             moveAssignment(janeSmithSelector, keycodes.arrowRight);
 
-            cy.wait('@getProducts').should(() => {
+            cy.wait('@getProductsByDate').should(() => {
                 checkIfPersonIsInProductBaguetteBakery(assignmentName, false);
                 checkIfPersonIsInProductMyProduct(assignmentName, true);
             });
@@ -244,14 +244,14 @@ describe('People', () => {
 
             moveAssignment(adamSandlerSelector, keycodes.arrowLeft);
 
-            cy.wait('@getProducts').should(() => {
+            cy.wait('@getProductsByDate').should(() => {
                 checkIfPersonIsInUnassignedDrawer(assignmentName, false);
                 checkIfPersonIsInProductMyProduct(assignmentName, true);
             });
 
             moveAssignment(adamSandlerSelector, keycodes.arrowRight);
 
-            cy.wait('@getProducts').should(() => {
+            cy.wait('@getProductsByDate').should(() => {
                 checkIfPersonIsInUnassignedDrawer(assignmentName, true);
                 checkIfPersonIsInProductMyProduct(assignmentName, false);
             });
@@ -259,6 +259,13 @@ describe('People', () => {
     });
 
     context('Edit Menu', () => {
+        beforeEach(() => {
+            cy.clock().then((clock) => {
+                clock.restore()
+            })
+            cy.visitSpace();
+        })
+
         it('Only allow one person\'s edit menu to be open at a time', () => {
             cy.get('[data-testid=editMenu__jane_smith]').should('not.exist');
             cy.get('[data-testid=editMenu__bob_barker]').should('not.exist');
@@ -286,23 +293,6 @@ describe('People', () => {
         });
     });
 });
-
-function findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth(): string {
-    let closestWorkdayToMiddleOfMonthThatIsntToday;
-    const firstDayOfMonth = moment().startOf('month');
-    const twoWeeksIntoMonth = firstDayOfMonth.add(2, 'weeks');
-    const closestWorkdayToMiddleOfMonth = twoWeeksIntoMonth.isoWeekday() <= 5 ? twoWeeksIntoMonth : twoWeeksIntoMonth.add(8 - twoWeeksIntoMonth.isoWeekday(), 'days');
-    if (todaysDate === closestWorkdayToMiddleOfMonth.format('yyyy-MM-DD')) {
-        if (closestWorkdayToMiddleOfMonth.isoWeekday() === 5) {
-            closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.subtract(1, 'days').format('yyyy-MM-DD');
-        } else {
-            closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.add(1, 'days').format('yyyy-MM-DD');
-        }
-    } else {
-        closestWorkdayToMiddleOfMonthThatIsntToday = closestWorkdayToMiddleOfMonth.format('yyyy-MM-DD');
-    }
-    return closestWorkdayToMiddleOfMonthThatIsntToday;
-}
 
 const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags = [] }): void => {
     cy.get('[data-testid=personForm]').as('personForm');
