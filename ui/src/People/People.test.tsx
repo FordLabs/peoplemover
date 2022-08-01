@@ -25,14 +25,11 @@ import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
 import {emptyPerson} from './PersonService';
 import moment from 'moment';
-import {MatomoWindow} from '../Types/MatomoWindow';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {PeopleState} from '../State/PeopleState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {Person} from '../Types/Person';
-
-declare let window: MatomoWindow;
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/PeopleClient');
@@ -153,7 +150,7 @@ describe('People actions', () => {
                     name: 'Low Achiever',
                 }],
             };
-            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson, ['Low Achiever']);
+            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson);
         });
 
         it('should not create person with empty value and display proper error message', async () => {
@@ -209,8 +206,7 @@ describe('People actions', () => {
                         color: TestData.color2,
                     },
                 };
-                const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestData.space, expectedPerson, []]);
+                expect(PeopleClient.createPersonForSpace).toHaveBeenLastCalledWith(TestData.space, expectedPerson);
             });
         });
 
@@ -242,8 +238,7 @@ describe('People actions', () => {
                         color: {color: '1', id: 2},
                     },
                 };
-                const spy = jest.spyOn(PeopleClient, 'createPersonForSpace');
-                expect(spy.mock.calls[0]).toEqual([TestData.space, expectedPerson, []]);
+                expect(PeopleClient.createPersonForSpace).toHaveBeenLastCalledWith(TestData.space, expectedPerson);
             });
         });
 
@@ -291,7 +286,7 @@ describe('People actions', () => {
 
         const checkForCreatedPerson = async (): Promise<void> => {
             expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1);
-            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestData.space, expectedPerson, []);
+            expect(PeopleClient.createPersonForSpace).toBeCalledWith(TestData.space, expectedPerson);
 
             expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1);
             expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
@@ -386,8 +381,6 @@ describe('People actions', () => {
     });
 
     describe('Editing people/assignments', () => {
-        let originalWindow: Window;
-
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(({set}) => {
                 set(ViewingDateState, new Date(2019, 0, 1))
@@ -396,13 +389,6 @@ describe('People actions', () => {
 
             const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');
             fireEvent.click(editPersonButton);
-
-            originalWindow = window;
-            window._paq = [];
-        });
-
-        afterEach(function() {
-            (window as Window) = originalWindow;
         });
 
         it('should show Edit Person Modal when you click on edit person option', async () => {
@@ -423,10 +409,8 @@ describe('People actions', () => {
                     TestData.originDateString,
                     [],
                     TestData.space,
-                    TestData.person1,
-                    false
+                    TestData.person1
                 );
-                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'cancelAssignment', TestData.person1.name]);
             });
         });
     });

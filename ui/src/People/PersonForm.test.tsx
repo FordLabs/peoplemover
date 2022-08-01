@@ -26,15 +26,12 @@ import {TagRequest} from '../Types/TagRequest';
 import AssignmentClient from '../Services/Api/AssignmentClient';
 import PeopleClient from '../Services/Api/PeopleClient';
 import {emptyPerson} from './PersonService';
-import {MatomoWindow} from '../Types/MatomoWindow';
 import moment from 'moment';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {MutableSnapshot} from 'recoil';
 import {Person} from '../Types/Person';
-
-declare let window: MatomoWindow;
 
 jest.mock('Services/Api/PeopleClient');
 jest.mock('Services/Api/RoleClient');
@@ -80,7 +77,7 @@ describe('Person Form', () => {
                 newPerson: true,
                 newPersonDate: mayFourteen,
             };
-            await waitFor(() => expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson, []));
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson));
         });
     });
 
@@ -222,7 +219,7 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByText('Save'));
 
             const expectedPerson: Person =  {...TestData.hank, newPerson: true, newPersonDate: mayFourteen};
-            await waitFor(() => expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, expectedPerson, []));
+            await waitFor(() => expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, expectedPerson));
         });
 
         it('should send a regular assignment request on an unarchived person', async () => {
@@ -258,85 +255,6 @@ describe('Person Form', () => {
                 TestData.space,
                 updatedPerson
             ));
-        });
-    });
-
-    describe('handleMatomoEventsForNewPersonCheckboxChange()', () => {
-        let originalWindow: Window;
-
-        beforeEach(() => {
-            window._paq = [];
-            (window as Window) = originalWindow;
-        });
-
-        it('newPerson box goes from unchecked to checked, call matomo event for newPersonChecked action',  async () => {
-            renderWithRecoil(
-                <PersonForm
-                    isEditPersonForm={true}
-                    initiallySelectedProduct={TestData.productForHank}
-                    personEdited={TestData.hank}
-                />,
-                recoilState
-            );
-
-            fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
-            fireEvent.click(await screen.findByText('Save'));
-
-            await waitFor(() => expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'newPersonChecked', TestData.hank.name]));
-        });
-
-        it('newPerson box goes from checked to unchecked, call matomo event for newPersonUnchecked action',  async () => {
-            const newHank: Person = {...TestData.hank, newPerson: true, newPersonDate: new Date(2019, 4, 14)};
-
-            renderWithRecoil(
-                <PersonForm
-                    isEditPersonForm={true}
-                    initiallySelectedProduct={TestData.productForHank}
-                    personEdited={newHank}
-                />,
-                recoilState
-            );
-
-            fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
-            fireEvent.click(await screen.findByText('Save'));
-
-            await waitFor(() => expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'newPersonUnchecked', newHank.name + ', 366 day(s)']));
-        });
-
-        it('newPerson box goes from checked to unchecked to checked, DO NOT call any matomo event',  async () => {
-            const newHank: Person = {...TestData.hank, name: 'XXXX', newPerson: true, newPersonDate: new Date(2019, 4, 14)};
-
-            renderWithRecoil(
-                <PersonForm
-                    isEditPersonForm={true}
-                    initiallySelectedProduct={TestData.productForHank}
-                    personEdited={newHank}
-                />,
-                recoilState
-            );
-
-            fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
-            fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
-            fireEvent.click(await screen.findByText('Save'));
-
-            await waitFor(() => expect(window._paq).toEqual([]));
-        });
-
-        it('newPerson box goes from unchecked to checked to unchecked, DO NOT call matomo event',  async () => {
-            renderWithRecoil(
-                <PersonForm
-                    isEditPersonForm={true}
-                    initiallySelectedProduct={TestData.productForHank}
-                    personEdited={TestData.hank}
-                />,
-                recoilState
-            );
-
-            fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
-            fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
-            fireEvent.click(await screen.findByText('Save'));
-
-            await waitFor(() => expect(window._paq).toEqual([]));
         });
     });
 });

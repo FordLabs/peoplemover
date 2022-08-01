@@ -19,15 +19,11 @@ import TestUtils from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Services/Api/SpaceClient';
-import {MatomoWindow} from '../Types/MatomoWindow';
-import {createEmptySpace} from 'Types/Space';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';
 import {ProductsState} from '../State/ProductsState';
 import {LocationsState} from '../State/LocationsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
-
-declare let window: MatomoWindow;
 
 jest.mock('Services/Api/SpaceClient');
 jest.mock('Services/Api/ProductClient');
@@ -48,10 +44,6 @@ jest.mock('react-router-dom', () => ({
 describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
 
-    beforeEach(() => {
-        window._paq = [];
-    });
-
     describe('Read Only Mode', function() {
         beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent(({set}) => {
@@ -71,14 +63,6 @@ describe('PeopleMover', () => {
         it('should display Add Person button on startup', async () => {
             expect(await screen.queryByText('Add Person')).not.toBeInTheDocument();
             expect(await screen.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
-        });
-
-        it('should trigger a matomo read-only visit event on load if space is defined', () => {
-            const nextSpace = {...createEmptySpace(), name: 'newSpace'};
-
-            expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'viewOnlyVisit', '']);
-            expect(window._paq).not.toContainEqual(['trackEvent', nextSpace.name, 'viewOnlyVisit', '']);
-            expect(getEventCount('viewOnlyVisit')).toEqual(1);
         });
     });
 
@@ -348,11 +332,3 @@ describe('PeopleMover', () => {
         });
     });
 });
-
-function getEventCount(eventString: string): number {
-    let returnValue = 0;
-    window._paq.forEach((event) => {
-        if (event.includes(eventString)) returnValue++;
-    });
-    return returnValue;
-}

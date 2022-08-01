@@ -80,7 +80,7 @@ describe('ReassignedDrawer', () => {
             await waitFor(() => expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledTimes(1));
             expect(AssignmentClient.deleteAssignmentForDate).toHaveBeenCalledWith(mayFourteen2020, TestData.archivedPerson);
             expect(PeopleClient.updatePerson).toHaveBeenCalledTimes(1);
-            expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, {...TestData.archivedPerson, archiveDate: undefined}, []);
+            expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, {...TestData.archivedPerson, archiveDate: undefined});
             expect(ProductClient.getProductsForDate).toHaveBeenCalledTimes(1);
             expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, mayFourteen2020);
             expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledTimes(1);

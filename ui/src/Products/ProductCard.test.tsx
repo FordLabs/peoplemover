@@ -19,8 +19,7 @@ import React from 'react';
 import {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {emptyProduct} from './ProductService';
-import ProductCard, {PRODUCT_URL_CLICKED} from './ProductCard';
-import {MatomoWindow} from '../Types/MatomoWindow';
+import ProductCard from './ProductCard';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import ProductClient from '../Services/Api/ProductClient';
 import moment from 'moment';
@@ -30,12 +29,9 @@ import {ProductsState} from '../State/ProductsState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import {Product} from '../Types/Product';
 
-declare let window: MatomoWindow;
-
 jest.mock('Services/Api/AssignmentClient');
 
 describe('ProductCard', () => {
-    let originalWindow: Window;
     const mayFourteenth2020 = new Date(2020, 4, 14);
     const products = [TestData.unassignedProduct,
         TestData.productWithoutAssignments,
@@ -48,11 +44,6 @@ describe('ProductCard', () => {
         ]},
     ];
 
-    afterEach(() => {
-        window._paq = [];
-        (window as Window) = originalWindow;
-    });
-
     it('should not show the product link icon when there is no url', () => {
         renderProductCard({...emptyProduct(), name: 'testProduct'});
         expect(screen.queryAllByTestId('productUrl').length).toEqual(0);
@@ -63,15 +54,15 @@ describe('ProductCard', () => {
         expect(screen.queryAllByTestId('productUrl').length).toEqual(1);
     });
 
-    it('when a url is followed, generate a matomo event', async () => {
+    it('should open url when product name is clicked', async () => {
         window.open = jest.fn();
-        renderProductCard({...emptyProduct(), name: 'testProduct', url: 'any old url'});
+        const expectedUrl = 'www.any-old-url.com'
+        renderProductCard({...emptyProduct(), name: 'testProduct', url: expectedUrl });
 
         fireEvent.click(await screen.findByTestId('productName'));
 
         expect(window.open).toHaveBeenCalledTimes(1);
-        expect(window.open).toHaveBeenCalledWith('any old url');
-        expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, PRODUCT_URL_CLICKED, 'testProduct']);
+        expect(window.open).toHaveBeenCalledWith(expectedUrl);
     });
 
     it('archiving a product sets the appropriate fields in the product and moves all people to unassigned', async () => {
@@ -92,7 +83,7 @@ describe('ProductCard', () => {
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestData.space, TestData.person2);
         expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(may14String, [], TestData.space, TestData.person3);
         expect(ProductClient.editProduct).toHaveBeenCalledTimes(1);
-        expect(ProductClient.editProduct).toHaveBeenCalledWith(TestData.space, {...testProduct, endDate: may13String}, true);
+        expect(ProductClient.editProduct).toHaveBeenCalledWith(TestData.space, {...testProduct, endDate: may13String});
     });
 
     it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {

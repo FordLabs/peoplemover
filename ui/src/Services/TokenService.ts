@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 import Cookies from 'universal-cookie';
 import jwtDecoder from 'jwt-decode';
-import MatomoService from './MatomoService';
 
 export const getToken = (): string => {
     const cookies = new Cookies();
@@ -37,10 +36,7 @@ export const getDecodedToken = (): { sub: string; } | null => {
 export const getUserNameFromAccessToken = (): string => {
     try {
         const decodedAccessToken = getDecodedToken();
-        const userName = decodedAccessToken?.sub || '';
-        MatomoService.addUserToMatomo(userName);
-
-        return userName;
+        return decodedAccessToken?.sub || '';
     } catch {
         return '';
     }
