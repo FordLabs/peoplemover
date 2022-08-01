@@ -18,9 +18,8 @@
 import React, {createRef, useCallback, useEffect, useState} from 'react';
 import Dropdown from 'Common/Dropdown/Dropdown';
 import NavigationSection from '../NavigationSection/NavigationSection';
-import {useRecoilState, useRecoilValue} from 'recoil';
+import {useRecoilState} from 'recoil';
 import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 import '../SortingAndFiltering/FilterOrSortBy.scss';
 
