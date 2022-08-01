@@ -83,6 +83,10 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
         .click(0, 0, { force: true });
 });
 
+Cypress.Commands.add('getCalendarDate', (dateToSelect) => {
+    const dateLabel = moment(dateToSelect).format( 'dddd, MMMM Do, yyyy');
+    return cy.get(`[aria-label="Choose ${dateLabel}"]`);
+});
 
 /* API requests */
 Cypress.Commands.add('resetSpace', () => {

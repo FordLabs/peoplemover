@@ -16,7 +16,6 @@
  */
 import product from '../fixtures/product';
 import * as moment from 'moment';
-import {Moment} from 'moment';
 
 const activeDateString = '01/16/2019'
 const activeDate = new Date(activeDateString);
@@ -199,8 +198,8 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .should('have.value', defaultStartDate)
         .click();
 
-    const today = defaultStartDate ? moment(startDate) : moment();
-    cy.get(dateSelector(today)).click({force: true});
+    const today = defaultStartDate ? startDate : activeDateString;
+    cy.getCalendarDate(today).click({force: true});
 
     cy.get('@calendarStartDate').should('have.value', startDate.format('MM/DD/yyyy'));
     cy.get('[data-testid=modalTitle]').click();
@@ -209,8 +208,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .should('have.value', '')
         .click();
 
-    const tomorrow = moment(nextPhaseDate);
-    cy.get(dateSelector(tomorrow)).click({force: true});
+    cy.getCalendarDate(nextPhaseDate).click({force: true});
 
     cy.get('@calendarEndDate').should('have.value', nextPhaseDate.format('MM/DD/yyyy'));
 
@@ -218,11 +216,6 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
         .focus()
         .type(notes)
         .should('have.value', notes);
-};
-
-const dateSelector = (momentInstance: Moment): string => {
-    const dateLabel = momentInstance.format( 'dddd, MMMM Do, yyyy');
-    return `[aria-label="Choose ${dateLabel}"]`;
 };
 
 const submitProductForm = (expectedSubmitButtonText: string): void => {

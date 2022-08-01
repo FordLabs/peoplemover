@@ -23,6 +23,8 @@ declare namespace Cypress {
 
         closeModal(): Chainable;
 
+        getCalendarDate(dateToSelect: string): Chainable;
+
         resetSpace(uuid: string): Chainable;
 
         selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: string): Chainable;
