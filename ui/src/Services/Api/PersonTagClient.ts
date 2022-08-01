@@ -20,7 +20,6 @@ import {Tag} from 'Types/Tag';
 import {TagRequest} from '../../Types/TagRequest';
 import {TagClient} from '../../Types/TagClient';
 import {Space} from 'Types/Space';
-import MatomoService from '../MatomoService';
 import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 function getBasePersonTagsUrl(spaceUuid: string): string {
@@ -34,35 +33,17 @@ async function get(spaceUuid: string): Promise<AxiosResponse<Array<Tag>>> {
 
 async function add(personTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
     const url = getBasePersonTagsUrl(space.uuid!);
-    return Axios.post(url, personTagAddRequest, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'addPersonTag', personTagAddRequest.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'addPersonTagError', personTagAddRequest.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.post(url, personTagAddRequest, getAxiosConfig());
 }
 
 async function edit(personTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
     const url = `${getBasePersonTagsUrl(space.uuid!)}/${personTagEditRequest.id}`;
-    return Axios.put(url, personTagEditRequest, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'editPersonTag', personTagEditRequest.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'editPersonTagError', personTagEditRequest.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.put(url, personTagEditRequest, getAxiosConfig());
 }
 
 async function deletePerson(personTagId: number, space: Space): Promise<AxiosResponse> {
     const url = getBasePersonTagsUrl(space.uuid!) + `/${personTagId}`;
-    return Axios.delete(url, getAxiosConfig()).then( result => {
-        MatomoService.pushEvent(space.name, 'deletePersonTag', personTagId.toString());
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'deletePersonTagError', personTagId.toString(), err.code);
-        return Promise.reject(err);
-    });
+    return Axios.delete(url, getAxiosConfig());
 }
 
 const PersonTagClient: TagClient = {

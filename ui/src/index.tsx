@@ -23,7 +23,6 @@ import {RedirectToADFS} from './Auth/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
-import MatomoService from './Services/MatomoService';
 import CacheBuster from './CacheBuster';
 import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
@@ -60,14 +59,11 @@ const UNAUTHORIZED = 401;
 Axios.interceptors.response.use(
     response => response,
     error => {
-        const {status, statusText, config} = error.response;
+        const {status} = error.response;
 
         if (status === UNAUTHORIZED) {
             removeToken();
             RedirectToADFS();
-        } else {
-            const conventionizedErrorName = `${statusText} - ${status}`;
-            MatomoService.pushEvent(conventionizedErrorName, config.method, config.url, status);
         }
         return Promise.reject(error);
     },

@@ -19,9 +19,6 @@ import Axios from 'axios';
 import RoleClient from './RoleClient';
 import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../../Types/MatomoWindow';
-
-declare let window: MatomoWindow;
 
 describe('Role Client', function() {
     const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
@@ -34,8 +31,6 @@ describe('Role Client', function() {
         },
     };
 
-    let originalWindow: Window;
-
     beforeEach(() => {
         cookies.set('accessToken', '123456');
 
@@ -45,9 +40,8 @@ describe('Role Client', function() {
         Axios.get = jest.fn().mockResolvedValue({ data: 'Get Roles' });
     });
 
-    afterEach(function() {
+    afterEach(() => {
         cookies.remove('accessToken');
-        (window as Window) = originalWindow;
     });
 
     it('should return all roles for space', function(done) {
@@ -64,7 +58,6 @@ describe('Role Client', function() {
         const expectedRoleAddRequest = { name: TestData.softwareEngineer.name };
         RoleClient.add(expectedRoleAddRequest, TestData.space)
             .then((response) => {
-                expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'addRole', TestData.softwareEngineer.name]);
                 expect(Axios.post).toHaveBeenCalledWith(
                     baseRolesUrl, expectedRoleAddRequest, expectedConfig
                 );

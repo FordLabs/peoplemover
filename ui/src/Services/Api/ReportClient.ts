@@ -20,7 +20,6 @@ import {Report} from '../../Types/Report';
 import fileDownload from 'js-file-download';
 import {Parser} from 'json2csv';
 import moment from 'moment';
-import MatomoService from '../MatomoService';
 import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
 async function getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
@@ -30,11 +29,7 @@ async function getReportsWithNames(spaceName: string, spaceUuid: string, date: D
         const jsonAsCsv = ReportClient.convertToCSV(response.data);
         const fileName = `${spaceName}_${date.toISOString().split('T')[0]}.csv`;
         fileDownload(jsonAsCsv, fileName);
-        MatomoService.pushEvent(spaceName, 'downloadReport', dateAsString);
-    }).catch(err => {
-        MatomoService.pushEvent(spaceName, 'downloadReportError', dateAsString, err.code);
-        Promise.reject(err);
-    });
+    })
 }
 
 function convertToCSV(jsonData: Report[]): string {

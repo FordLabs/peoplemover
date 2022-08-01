@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,8 @@ import Axios from 'axios';
 import PeopleClient from './PeopleClient';
 import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
-import {MatomoWindow} from '../../Types/MatomoWindow';
-import {Person} from '../../Types/Person';
 
 jest.mock('axios');
-
-declare let window: MatomoWindow;
 
 describe('People Client', function() {
     const uuid = TestData.space.uuid || '';
@@ -70,7 +66,7 @@ describe('People Client', function() {
 
     it('should create a person and return that person', function(done) {
         const newPerson = TestData.person1;
-        PeopleClient.createPersonForSpace(TestData.space, newPerson, [])
+        PeopleClient.createPersonForSpace(TestData.space, newPerson)
             .then((response) => {
                 expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
                 expect(response.data).toBe('Created Person');
@@ -81,7 +77,7 @@ describe('People Client', function() {
     it('should edit a person and return that person', function(done) {
         const updatedPerson = TestData.person1;
         const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
-        PeopleClient.updatePerson(TestData.space, updatedPerson, [])
+        PeopleClient.updatePerson(TestData.space, updatedPerson)
             .then((response) => {
                 expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
                 expect(response.data).toBe('Updated Person');
@@ -107,37 +103,5 @@ describe('People Client', function() {
                 expect(response.data).toBe('Deleted Person');
                 done();
             });
-    });
-
-    describe('Matomo', () => {
-        let _paq: (string | number)[][];
-        const expectedName = 'New Person';
-        const person: Person = {
-            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            id: -1,
-            name: expectedName,
-            spaceRole: TestData.softwareEngineer,
-            newPerson: false,
-            tags: [],
-        };
-
-        beforeEach(() => {
-            _paq = window._paq
-
-            Object.defineProperty(window, '_paq', {
-                value: [],
-                writable: true,
-            });
-        });
-
-        afterEach(() => {
-            window._paq = _paq
-        });
-
-        it('should send an event to matomo when a person is created', async () => {
-            await PeopleClient.createPersonForSpace(TestData.space, person, ['bob']);
-            expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'addPerson', expectedName]);
-            expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'assignPersonTagToANewPerson', 'bob']);
-        });
     });
 });

@@ -117,4 +117,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: cypress
-          path: /home/runner/work/PeopleMover/PeopleMover/ui/cypress/
+          path: /home/runner/work/peoplemover/peoplemover/ui/cypress/

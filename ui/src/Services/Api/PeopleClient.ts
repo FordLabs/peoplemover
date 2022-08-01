@@ -17,7 +17,6 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import {Space} from 'Types/Space';
-import MatomoService from '../MatomoService';
 import {Person} from '../../Types/Person';
 import {getAxiosConfig} from '../../Utils/getAxiosConfig';
 
@@ -30,17 +29,9 @@ async function getAllPeopleInSpace(spaceUuid: string): Promise<AxiosResponse> {
     return Axios.get(url, getAxiosConfig());
 }
 
-async function createPersonForSpace(space: Space, person: Person, personTagModified: string[]): Promise<AxiosResponse> {
+async function createPersonForSpace(space: Space, person: Person): Promise<AxiosResponse> {
     const url = getBasePeopleUrl(space.uuid || '');
-    return Axios.post(url, person, getAxiosConfig()).then(result => {
-        MatomoService.pushEvent(space.name, 'addPerson', person.name);
-        if (personTagModified.length > 0 )
-            MatomoService.pushEvent(space.name, 'assignPersonTagToANewPerson', personTagModified.toString());
-        return result;
-    }).catch( err => {
-        MatomoService.pushEvent(space.name, 'addPersonError', person.name, err.code);
-        return Promise.reject(err.code);
-    });
+    return Axios.post(url, person, getAxiosConfig());
 }
 
 async function archivePerson(space: Space, person: Person, archiveDate: Date): Promise<AxiosResponse> {
@@ -48,16 +39,9 @@ async function archivePerson(space: Space, person: Person, archiveDate: Date): P
     return Axios.post(url, {archiveDate: archiveDate}, getAxiosConfig());
 }
 
-async function updatePerson(space: Space, person: Person, personTagModified: string[]): Promise<AxiosResponse> {
+async function updatePerson(space: Space, person: Person): Promise<AxiosResponse> {
     const url = getBasePeopleUrl(space.uuid!) + `/${person.id}`;
-    return Axios.put(url, person, getAxiosConfig()).then(result => {
-        MatomoService.pushEvent(space.name, 'editPerson', person.name);
-        if (personTagModified.length > 0 ) MatomoService.pushEvent(space.name, 'assignPersonTagToAnAlreadyExistingPerson', personTagModified.toString());
-        return result;
-    }).catch( err => {
-        MatomoService.pushEvent(space.name, 'editPersonError', person.name, err.code);
-        return Promise.reject(err.code);
-    });
+    return Axios.put(url, person, getAxiosConfig())
 }
 
 async function removePerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {

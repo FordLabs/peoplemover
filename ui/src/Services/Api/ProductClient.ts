@@ -17,8 +17,6 @@
 
 import Axios, {AxiosResponse} from 'axios';
 import moment from 'moment';
-import {getToken} from 'Services/TokenService';
-import MatomoService from 'Services/MatomoService';
 import {Space} from 'Types/Space';
 import {Product} from 'Types/Product';
 import {getAxiosConfig} from 'Utils/getAxiosConfig';
@@ -29,52 +27,23 @@ function getBaseProductsUrl(spaceUuid: string): string {
 
 async function createProduct(space: Space, product: Product): Promise<AxiosResponse> {
     const url = getBaseProductsUrl(space.uuid || '');
-    return Axios.post(url, product, getAxiosConfig()).then(result => {
-        MatomoService.pushEvent(space.name, 'createProduct', product.name);
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'createProductError', product.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.post(url, product, getAxiosConfig());
 }
 
-async function editProduct(space: Space, product: Product, isArchive = false): Promise<AxiosResponse> {
+async function editProduct(space: Space, product: Product): Promise<AxiosResponse> {
     const url = getBaseProductsUrl(space.uuid || '') + `/${product.id}`;
-    return Axios.put(url, product, getAxiosConfig()).then(result => {
-        if (isArchive) {
-            MatomoService.pushEvent(space.name, 'archiveProduct', product.name);
-        } else {
-            MatomoService.pushEvent(space.name, 'editProduct', product.name);
-        }
-        return result;
-    }).catch(err => {
-        MatomoService.pushEvent(space.name, 'editProductError', product.name, err.code);
-        return Promise.reject(err);
-    });
+    return Axios.put(url, product, getAxiosConfig());
 }
 
 async function deleteProduct(space: Space, product: Product): Promise<AxiosResponse> {
     const url = getBaseProductsUrl(space.uuid || '') + `/${product.id}`;
-    return Axios.delete(url, getAxiosConfig()).then(result => {
-        MatomoService.pushEvent(space.name, 'deleteProduct', product.name);
-        return result;
-    }).catch((error) => {
-        MatomoService.pushEvent(space.name, 'deleteProductError', product.name, error.code);
-        return Promise.reject(error);
-    });
+    return Axios.delete(url, getAxiosConfig());
 }
 
 async function getProductsForDate(spaceUuid: string, date: Date): Promise<AxiosResponse> {
     const formattedDate = moment(date).format('YYYY-MM-DD');
     const url = getBaseProductsUrl(spaceUuid) + `?requestedDate=${formattedDate}`;
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`,
-        },
-    };
-
-    return Axios.get(url, config);
+    return Axios.get(url, getAxiosConfig());
 }
 
 const ProductClient = {

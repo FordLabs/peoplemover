@@ -22,11 +22,8 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import SpaceClient from 'Services/Api/SpaceClient';
 import {Space} from 'Types/Space';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
-import {MatomoWindow} from 'Types/MatomoWindow';
-import {CurrentSpaceState} from '../../../../State/CurrentSpaceState';
-import {RecoilObserver} from '../../../../Utils/RecoilObserver';
-
-declare let window: MatomoWindow;
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
 
 Object.assign(navigator, {
     clipboard: {
@@ -45,13 +42,11 @@ describe('View Only Access Form Section', () => {
     const expectedUrl = 'https://some-url';
 
     let location: (string | Location) & Location;
-    let _paq: (string | number)[][];
 
     beforeEach(() => {
         actualCurrentSpace = null;
 
         location = window.location;
-        _paq = window._paq
         Reflect.deleteProperty(window, 'location');
 
         Object.defineProperty(window, 'location', {
@@ -68,7 +63,6 @@ describe('View Only Access Form Section', () => {
 
     afterEach(() => {
         window.location = location;
-        window._paq = _paq
     });
 
     it('should show correct space URL', async () => {
@@ -85,7 +79,6 @@ describe('View Only Access Form Section', () => {
         fireEvent.click(screen.getByText('Copy link'));
 
         await waitFor(() => expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl));
-        expect(window._paq).toContainEqual(['trackEvent', TestData.space.name, 'readOnlyLinkCopied', '']);
     });
 
     it('should should change text on copy', async () => {
