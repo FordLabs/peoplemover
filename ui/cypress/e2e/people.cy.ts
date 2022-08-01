@@ -18,6 +18,8 @@ import * as moment from 'moment';
 import person, {Person} from '../fixtures/person';
 
 const todaysDate = moment().format('yyyy-MM-DD');
+const activeDateString = '01/16/2019';
+const activeDate = new Date(activeDateString);
 const keycodes = {
     space: 32,
     arrowRight: 39,
@@ -25,31 +27,25 @@ const keycodes = {
 };
 
 describe('People', () => {
-    let notTodaysDate;
-    let highlightedLastDayOfMonth;
-    let calendarDateClass;
+    const notActiveDay = '01/23/2019';
+    const highlightClass = 'react-datepicker__day--highlighted';
 
     beforeEach(() => {
-        cy.visitSpace();
+        cy.clock(activeDate);
+
+        cy.visitSpace(undefined, '', activeDate);
         cy.server();
         cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
-
-        notTodaysDate = findAWorkingDayThatIsNotTodayInTheMiddleOfTheMonth();
-
-        calendarDateClass = `.react-datepicker__day--0${moment(notTodaysDate).format('DD')}`;
-        highlightedLastDayOfMonth = `${calendarDateClass}.react-datepicker__day--highlighted`;
     });
 
     it('Add a new assigned person', () => {
-        cy.get('[data-testid=calendarToggle]').as('calendarToggle');
-
         cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${notTodaysDate}`).as('getUpdatedProduct');
+        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=2019-01-23`).as('getUpdatedProduct');
         cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
-        cy.get('@calendarToggle').click();
-        cy.get(calendarDateClass).click();
-        cy.get(highlightedLastDayOfMonth).should('not.exist');
+        getCalendarToggle().click();
+        cy.getCalendarDate(activeDateString).should('have.class', 'react-datepicker__day--today');
+        cy.getCalendarDate(notActiveDay).should('not.have.class', highlightClass).click();
 
         cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
 
@@ -97,8 +93,8 @@ describe('People', () => {
 
                 ensureNewAssignmentIsPresentInAssignmentDrawer(assignedPerson);
 
-                cy.get('@calendarToggle').click();
-                cy.get(highlightedLastDayOfMonth).should('have.text', moment(notTodaysDate).format('D'));
+                getCalendarToggle().click();
+                cy.getCalendarDate(notActiveDay).should('have.class', highlightClass).click();
             });
     });
     
@@ -399,4 +395,8 @@ function moveAssignment(selector: string, direction: typeof keycodes.arrowLeft |
         .trigger('keydown', { keyCode: direction, force: true })
         .wait(200)
         .trigger('keydown', { keyCode: keycodes.space, force: true });
+}
+
+function getCalendarToggle() {
+    return cy.get('[data-testid=calendarToggle]')
 }
