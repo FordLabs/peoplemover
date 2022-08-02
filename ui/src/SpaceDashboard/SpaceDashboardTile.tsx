@@ -42,8 +42,7 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
-    const [spaceHasEditors, setSpaceHasEditors] = useState<boolean>(false);
-    const [isUserOwner, setIsUserOwner] = useState<boolean>(false);
+    const [usersData, setUsersData] = useState<{ spaceHasEditors: boolean, isUserOwner: boolean } | null>(null)
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
@@ -57,16 +56,18 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
 
     useEffect(() => {
         SpaceClient.getUsersForSpace(space.uuid!).then((result) => {
-            setIsUserOwner(result.some(userSpaceMapping =>
+            const isUserOwner = result.some(userSpaceMapping =>
                 (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
                     userSpaceMapping.permission.toUpperCase() === 'OWNER')
-            ));
-            setSpaceHasEditors(result.some(userSpaceMapping => currentUser &&
+            )
+            const spaceHasEditors = result.some(userSpaceMapping => currentUser &&
                 userSpaceMapping.userId.toUpperCase() !== currentUser.toUpperCase() &&
-                userSpaceMapping.permission.toUpperCase() === 'EDITOR'));
+                userSpaceMapping.permission.toUpperCase() === 'EDITOR')
+
+            setUsersData({ spaceHasEditors, isUserOwner })
         });
 
-    }, [setIsUserOwner, currentUser, space.uuid]);
+    }, [currentUser, space.uuid]);
 
     function handleDropdownClick(): void {
         setDropdownToggle(!dropdownToggle);
@@ -94,6 +95,9 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
     }
 
     const ActionsDropdownContent = (): JSX.Element => {
+        const showLeaveSpaceButton = usersData?.isUserOwner && usersData?.spaceHasEditors;
+        const showDeleteSpaceButton = usersData?.isUserOwner;
+
         return (
             <AccessibleDropdownContainer
                 handleClose={(): void => {setDropdownToggle(false);}}
@@ -110,7 +114,7 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
                     <i className="material-icons">edit</i>
                     Edit
                 </button>
-                {isUserOwner && spaceHasEditors && (
+                {showLeaveSpaceButton && (
                     <button
                         data-testid="leaveSpace"
                         className="dropdownOptions"
@@ -121,12 +125,12 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
                         Leave Space
                     </button>
                 )}
-                {isUserOwner && (
+                {showDeleteSpaceButton && (
                     <button
                         data-testid="deleteSpace"
                         className="dropdownOptions"
                         role="menuitem"
-                        onClick={() => openDeleteModal(spaceHasEditors)}
+                        onClick={() => openDeleteModal(usersData?.spaceHasEditors)}
                     >
                         <i className="material-icons">delete</i>
                         Delete Space
@@ -155,7 +159,7 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
         );
     };
 
-    return (
+    return usersData ? (
         <div>
             <button className="spaceTile"
                 data-testid="spaceDashboardTile"
@@ -168,7 +172,7 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
             </button>
             <ActionsEllipsis/>
         </div>
-    );
+    ) : <></>;
 }
 
 export default SpaceDashboardTile;
