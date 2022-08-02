@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,12 +18,9 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.ford.internalprojects.peoplemover.space.SpaceService
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.validation.Valid
 
 @RequestMapping("/api/spaces/{spaceUuid}/products")
@@ -31,7 +28,6 @@ import javax.validation.Valid
 class ProductController(
     private val productService: ProductService,
     private val spaceService: SpaceService,
-    private val logger: BasicLogger
 ) {
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
@@ -45,13 +41,10 @@ class ProductController(
         if (requestedDate != null) {
             val date = LocalDate.parse(requestedDate)
             products = productService.findAllBySpaceUuidAndDate(spaceUuid, date)
-            logger.logInfoMessage("All product retrieved by date ${requestedDate}.")
             return products
         }
 
-        logger.logInfoMessage("All product retrieved for space.")
         products = productService.findAllBySpaceUuid(spaceUuid)
-
         return products
     }
 
@@ -61,9 +54,7 @@ class ProductController(
         @PathVariable spaceUuid: String,
         @Valid @RequestBody productRequest: ProductRequest
     ): Product {
-        val createdProduct = productService.create(productRequest, spaceUuid)
-        logger.logInfoMessage("Product [${createdProduct.name}] created.")
-        return createdProduct
+        return productService.create(productRequest, spaceUuid)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
@@ -73,9 +64,7 @@ class ProductController(
         @PathVariable productId: Int,
         @Valid @RequestBody productRequest: ProductRequest
     ): Product {
-        val updatedProduct: Product = productService.update(productRequest, productId, spaceUuid)
-        logger.logInfoMessage("Product with id [$productId] updated.")
-        return updatedProduct
+        return productService.update(productRequest, productId, spaceUuid)
     }
 
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
@@ -85,6 +74,5 @@ class ProductController(
         @PathVariable productId: Int
     ) {
         productService.delete(productId, spaceUuid)
-        logger.logInfoMessage("Product with id [$productId] deleted.")
     }
 }
