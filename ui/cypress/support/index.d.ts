@@ -17,11 +17,15 @@
 
 declare namespace Cypress {
     interface Chainable {
-        visitSpace(mockData?: { locationData: any[]; productTagsData: any[] }): Chainable<void>;
+        visitSpace(mockData?: { locationData: any[]; productTagsData: any[] }, hash?: string, date?: Date): Chainable<void>;
 
         getModal(): Chainable<Element>;
 
         closeModal(): Chainable;
+
+        getCalendarDate(dateToSelect: string): Chainable;
+
+        spyOnGetProductsByDate(dateToSelect: string): Chainable;
 
         resetSpace(uuid: string): Chainable;
 
