@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const newSpaceName = 'SpaceShip';
+const flippingSweetSpaceName = 'Flipping Sweet'
 
-describe.skip('The Space Dashboard', () => {
-    const newSpaceName = 'SpaceShip';
-
+describe('The Space Dashboard', () => {
     beforeEach(() => {
-        cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getSpaceUsers');
         cy.intercept('GET', '/api/spaces/user').as('getSpacesForUser');
 
         cy.visit('/user/dashboard');
 
-        cy.wait(['@getSpaceUsers', '@getSpacesForUser']);
+        cy.wait('@getSpacesForUser');
 
         cy.get('[data-testid="spaceDashboardTile"]').as('spaceTiles');
 
@@ -33,16 +32,16 @@ describe.skip('The Space Dashboard', () => {
                 openDeleteSpaceModal(newSpaceName);
                 cy.get('[data-testid="confirmDeleteButton"]').click();
                 cy.contains('Ok').click({ force: true });
-                cy.wait(['@getSpaceUsers', '@getSpacesForUser']);
+                cy.wait('@getSpacesForUser');
             }
         });
 
         cy.get('@spaceTiles')
             .should('have.length', 1)
-            .should('contain', 'Flipping Sweet');
+            .should('contain', flippingSweetSpaceName);
         cy.get('[data-testid=peopleMoverHeader]')
             .should('contain', 'PEOPLEMOVER')
-            .should('not.contain', 'Flipping Sweet')
+            .should('not.contain', flippingSweetSpaceName)
     })
 
     it('Add a space', () => {
@@ -55,7 +54,7 @@ describe.skip('The Space Dashboard', () => {
     });
 
     it('Edit a space name', () => {
-        openSpaceActionsDropdown();
+        openSpaceActionsDropdown(flippingSweetSpaceName);
         cy.contains('Edit').click();
         cy.get('[data-testid="createSpaceInputField"]').type(' SpaceShip');
         cy.findByText('Save').click();
@@ -68,8 +67,7 @@ describe.skip('The Space Dashboard', () => {
     });
 
     it('Delete a space', () => {
-        const flippingSweetBoardName = 'Flipping Sweet'
-        openDeleteSpaceModal(flippingSweetBoardName);
+        openDeleteSpaceModal(flippingSweetSpaceName);
         cy.contains('Are you sure?').should('exist');
         cy.contains('Transfer Ownership').should('exist');
         cy.get('[data-testid="confirmationModalLeaveAndDeleteSpace"]').click();
@@ -77,13 +75,13 @@ describe.skip('The Space Dashboard', () => {
         cy.wait(['@getSpacesForUser']);
 
         checkPresenceOfDashboardWelcomeMessage(true);
-        cy.contains(flippingSweetBoardName).should('not.exist');
+        cy.contains(flippingSweetSpaceName).should('not.exist');
     });
 
     it('Leave a space (transfer ownership of a space)', () => {
         checkPresenceOfDashboardWelcomeMessage(false);
 
-        openSpaceActionsDropdown();
+        openSpaceActionsDropdown(flippingSweetSpaceName);
         cy.contains('Leave Space').click();
         cy.contains('Transfer Ownership of Space');
         cy.get('[data-testid="transferOwnershipFormRadioControl-BBARKER"]').click();
@@ -113,11 +111,11 @@ function checkPresenceOfDashboardWelcomeMessage(isPresent : boolean) {
     cy.contains('Create New Space').should('exist');
 }
 
-function openSpaceActionsDropdown() {
-    cy.get('[data-testid="ellipsisButton"]').should('exist').click();
+function openSpaceActionsDropdown(spaceName: string) {
+    cy.findByLabelText(`Open Menu for Space ${spaceName}`).click();
 }
 
 function openDeleteSpaceModal(spaceName: string) {
-    cy.findByLabelText(`Open Menu for Space ${spaceName}`).click();
+    openSpaceActionsDropdown(spaceName);
     cy.contains('Delete Space').click();
 }
