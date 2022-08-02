@@ -27,15 +27,6 @@ describe('The Space Dashboard', () => {
 
         cy.get('[data-testid="spaceDashboardTile"]').as('spaceTiles');
 
-        cy.get('@spaceTiles').then((elements) => {
-            if (elements.length > 1) {
-                openDeleteSpaceModal(newSpaceName);
-                cy.get('[data-testid="confirmDeleteButton"]').click();
-                cy.contains('Ok').click({ force: true });
-                cy.wait('@getSpacesForUser');
-            }
-        });
-
         cy.get('@spaceTiles')
             .should('have.length', 1)
             .should('contain', flippingSweetSpaceName);
