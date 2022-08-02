@@ -28,10 +28,9 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '') => {
+Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
     cy.server();
-    const date = moment().format('yyyy-MM-DD');
-    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
+    cy.spyOnGetProductsByDate(date);
     cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     const locationRoute = {
         method: 'GET',
@@ -83,9 +82,18 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
         .click(0, 0, { force: true });
 });
 
+Cypress.Commands.add('getCalendarDate', (dateToSelect) => {
+    const dateLabel = moment(dateToSelect).format( 'dddd, MMMM Do, yyyy');
+    return cy.get(`[aria-label="Choose ${dateLabel}"]`);
+});
 
 /* API requests */
 Cypress.Commands.add('resetSpace', () => {
     const RESET_SPACE_URL = `${BASE_API_URL}/api/reset/${spaceUuid}`;
     cy.request('DELETE', RESET_SPACE_URL);
 });
+
+Cypress.Commands.add('spyOnGetProductsByDate', (expectedDate) => {
+    const activeDate = moment(expectedDate).format('yyyy-MM-DD');
+    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
+})
