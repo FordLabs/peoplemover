@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-describe('The Space Dashboard', () => {
+describe.skip('The Space Dashboard', () => {
     const newSpaceName = 'SpaceShip';
 
     beforeEach(() => {
