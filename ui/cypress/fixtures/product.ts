@@ -32,8 +32,8 @@ const product: Product = {
     location: 'Michigan',
     archived: false,
     tags: ['Tag 1', 'Tag 2'],
-    startDate: moment(),
-    nextPhaseDate: moment().add(1, 'days'),
+    startDate: moment('01/16/2019'),
+    nextPhaseDate: moment('01/16/2019').add(1, 'days'),
     notes: 'Product note.',
 };
 

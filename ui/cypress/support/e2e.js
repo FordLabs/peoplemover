@@ -61,6 +61,11 @@ beforeEach(() => {
     cy.log('Reset DB');
     cy.resetSpace(spaceUuid);
     cy.viewport(1000, 660);
+
+    cy.intercept('GET', '/user/some_urlflags/', {
+        statusCode: 200,
+        body: {}
+    })
 });
 
 Cypress.on('window:before:load', (win) => {
