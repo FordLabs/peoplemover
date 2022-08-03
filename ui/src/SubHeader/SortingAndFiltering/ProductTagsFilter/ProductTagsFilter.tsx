@@ -17,8 +17,8 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
-import {ProductTagsState} from '../../../State/ProductTagsState';
-import {FilterOption} from '../../../Types/Option';
+import {ProductTagsState} from 'State/ProductTagsState';
+import {FilterOption} from 'Types/Option';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,
@@ -26,7 +26,7 @@ import {
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
 import Filter from '../Filter';
-import MyTagsForm from 'Tags/MyTagsForm';
+import MyTagsForm from 'SubHeader/SortingAndFiltering/MyTagsForm/MyTagsForm';
 import {ProductTag} from 'Types/Tag';
 
 function ProductTagsFilter() {

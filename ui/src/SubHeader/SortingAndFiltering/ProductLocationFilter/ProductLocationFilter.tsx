@@ -17,8 +17,8 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
-import {LocationsState} from '../../../State/LocationsState';
-import MyTagsForm from '../../../Tags/MyTagsForm';
+import {LocationsState} from 'State/LocationsState';
+import MyTagsForm from '../MyTagsForm/MyTagsForm';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,

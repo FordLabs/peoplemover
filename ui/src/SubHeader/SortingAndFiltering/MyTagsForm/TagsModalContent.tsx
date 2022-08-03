@@ -66,7 +66,7 @@ const TagsModalContent = ({
 
     const editTag = async (tagToEdit: TagRequest): Promise<unknown> => {
         return await tagClient.edit(tagToEdit, currentSpace)
-            .then((response) => {
+            .then(() => {
                 fetchCommand();
                 returnToViewState();
             });

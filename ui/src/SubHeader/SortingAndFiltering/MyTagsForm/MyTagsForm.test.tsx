@@ -16,16 +16,16 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
-import LocationClient from '../Services/Api/LocationClient';
-import ProductTagClient from '../Services/Api/ProductTagClient';
+import LocationClient from 'Services/Api/LocationClient';
+import ProductTagClient from 'Services/Api/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
-import {FilterType, FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
-import {LocationsState} from '../State/LocationsState';
-import {ProductTagsState} from '../State/ProductTagsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {FilterType, FilterTypeListings} from '../FilterLibraries';
+import {LocationsState} from 'State/LocationsState';
+import {ProductTagsState} from 'State/ProductTagsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 jest.mock('Services/Api/LocationClient');
 
@@ -361,6 +361,37 @@ describe('My Tags Form', () => {
                 expect(addNewProductTagButton).toBeDisabled();
             });
         });
+    });
+
+    it('should only display location tags when the passed-in filter type is location tags', async () => {
+        renderWithRecoil(
+            <MyTagsForm filterType={FilterTypeListings.Location}/>,
+            ({set}) => {
+                set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+
+        await screen.findByText( TestData.annarbor.name);
+        await screen.findByText( TestData.detroit.name);
+        await screen.findByText( TestData.dearborn.name);
+        await screen.findByText( TestData.southfield.name);
+    });
+
+    it('should only display product tags when the passed-in filter type is product tags', async () => {
+        renderWithRecoil(
+            <MyTagsForm filterType={FilterTypeListings.ProductTag}/>,
+            ({set}) => {
+                set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
+            }
+        );
+
+        await screen.findByText(TestData.productTag1.name);
+        await screen.findByText(TestData.productTag2.name);
+        await screen.findByText(TestData.productTag3.name);
+        await screen.findByText(TestData.productTag4.name);
     });
 });
 

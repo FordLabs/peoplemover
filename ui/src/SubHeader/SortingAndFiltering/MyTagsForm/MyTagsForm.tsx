@@ -19,14 +19,14 @@ import React from 'react';
 import {useRecoilValue} from 'recoil';
 import {JSX} from '@babel/types';
 import TagsModalContent from './TagsModalContent';
-import {FilterType, FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
-import ProductTagClient from '../Services/Api/ProductTagClient';
+import {FilterType, FilterTypeListings} from '../FilterLibraries';
+import ProductTagClient from 'Services/Api/ProductTagClient';
 import LocationClient from 'Services/Api/LocationClient';
-import PersonTagClient from '../Services/Api/PersonTagClient';
+import PersonTagClient from 'Services/Api/PersonTagClient';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 
 import 'Styles/TagRowsContainer.scss';
 

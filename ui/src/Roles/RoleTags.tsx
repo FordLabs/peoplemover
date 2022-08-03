@@ -23,7 +23,7 @@ import {createDataTestId} from 'Utils/ReactUtils';
 import ViewTagRow from 'Common/ViewTagRow/ViewTagRow';
 import EditTagRow from 'Common/EditTagRow/EditTagRow';
 import AddNewTagRow from 'Common/AddNewTagRow/AddNewTagRow';
-import {INACTIVE_EDIT_STATE_INDEX} from 'Tags/MyTagsForm';
+import {INACTIVE_EDIT_STATE_INDEX} from 'SubHeader/SortingAndFiltering/MyTagsForm/MyTagsForm';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
@@ -61,7 +61,7 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
 
     const editRole = async (role: RoleTagRequest): Promise<unknown> => {
         return await RoleClient.edit(role, currentSpace)
-            .then((response) => {
+            .then(() => {
                 fetchRoles();
                 returnToViewState();
             });
