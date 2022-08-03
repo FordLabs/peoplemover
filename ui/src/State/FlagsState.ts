@@ -31,7 +31,7 @@ export const FlagsState = atom<Flag>({
     default: DEFAULT_FLAGS_STATE,
 });
 
-export const simplifyFlags = (flags?: IFlags): Flag => {
+export const simplifyFlags = (flags?: IFlags | null): Flag => {
     return flags ? {
         announcementBannerEnabled: flags['announcement_banner_enabled'].enabled,
         announcementBannerMessage: flags['announcement_banner_message'].value ? flags['announcement_banner_message'].value : '',

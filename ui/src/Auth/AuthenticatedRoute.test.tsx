@@ -19,7 +19,7 @@ import React from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {AuthenticatedRoute} from './AuthenticatedRoute';
 import Cookies from 'universal-cookie';
-import {RunConfig} from '../index';
+import {RunConfig} from 'Types/RunConfig';
 import {MemoryRouter, Routes} from 'react-router-dom';
 import {Route} from 'react-router';
 import AccessTokenClient from '../Services/Api/AccessTokenClient';

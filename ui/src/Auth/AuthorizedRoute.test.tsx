@@ -19,7 +19,7 @@ import {screen, waitFor} from '@testing-library/react';
 import AuthorizedRoute from './AuthorizedRoute';
 import React from 'react';
 import Axios from 'axios';
-import {RunConfig} from '../index';
+import {RunConfig} from 'Types/RunConfig';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {IsReadOnlyState} from '../State/IsReadOnlyState';

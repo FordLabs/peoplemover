@@ -20,7 +20,7 @@ import {fireEvent, RenderResult, screen} from '@testing-library/react';
 import {axe} from 'jest-axe';
 import Header from './Header';
 import {renderWithRecoil} from '../Utils/TestUtils';
-import {RunConfig} from '../index';
+import {RunConfig} from 'Types/RunConfig';
 import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
