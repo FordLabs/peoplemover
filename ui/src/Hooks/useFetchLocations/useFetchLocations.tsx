@@ -17,10 +17,10 @@
 
 import {useRecoilState} from 'recoil';
 import {useCallback} from 'react';
-import sortTagsAlphabetically from 'Tags/sortTagsAlphabetically';
+import sortTagsAlphabetically from 'Utils/sortTagsAlphabetically';
 import LocationClient from 'Services/Api/LocationClient';
 import {LocationsState} from 'State/LocationsState';
-import {LocationTag} from '../../Types/Tag';
+import {LocationTag} from 'Types/Tag';
 
 interface UseFetchLocations {
     locations: LocationTag[];

@@ -16,16 +16,16 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../../../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import {screen, waitFor} from '@testing-library/react';
-import TestData from '../../../Utils/TestData';
+import TestData from 'Utils/TestData';
 import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from '../../../State/ModalContentsState';
-import {RecoilObserver} from '../../../Utils/RecoilObserver';
-import {localStorageEventListenerKey} from '../../../Hooks/useOnStorageChange/useOnStorageChange';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import {localStorageEventListenerKey} from 'Hooks/useOnStorageChange/useOnStorageChange';
 import ProductTagsFilter from './ProductTagsFilter';
-import {ProductTagsState} from '../../../State/ProductTagsState';
-import MyTagsForm from '../../../Tags/MyTagsForm';
+import {ProductTagsState} from 'State/ProductTagsState';
+import MyTagsForm from '../MyTagsForm/MyTagsForm';
 
 describe('Product Tags Filter', () => {
     let modalContent: ModalContents | null;

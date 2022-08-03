@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
+import React, {useCallback, useEffect, useState} from 'react';
 import Filter from '../Filter';
 import {getLocalStorageFiltersByType, roleTagsFilterKey, setLocalStorageFiltersByType} from '../FilterLibraries';
-import React, {useCallback, useEffect, useState} from 'react';
-import MyRolesForm from '../../../Roles/MyRolesForm';
+import MyRolesForm from './MyRolesForm/MyRolesForm';
 import {useRecoilValue} from 'recoil';
-import {RolesState} from '../../../State/RolesState';
-import {FilterOption} from '../../../Types/Option';
-import {RoleTag} from '../../../Types/Tag';
+import {RolesState} from 'State/RolesState';
+import {FilterOption} from 'Types/Option';
+import {RoleTag} from 'Types/Tag';
 
 function RolesFilter() {
     const roles = useRecoilValue(RolesState);

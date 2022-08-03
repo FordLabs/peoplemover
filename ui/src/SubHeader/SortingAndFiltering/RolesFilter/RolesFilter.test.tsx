@@ -16,16 +16,16 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../../../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import RolesFilter from './RolesFilter';
 import {screen, waitFor} from '@testing-library/react';
-import {RolesState} from '../../../State/RolesState';
-import TestData from '../../../Utils/TestData';
+import {RolesState} from 'State/RolesState';
+import TestData from 'Utils/TestData';
 import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from '../../../State/ModalContentsState';
-import {RecoilObserver} from '../../../Utils/RecoilObserver';
-import MyRolesForm from '../../../Roles/MyRolesForm';
-import {localStorageEventListenerKey} from '../../../Hooks/useOnStorageChange/useOnStorageChange';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import MyRolesForm from './MyRolesForm/MyRolesForm';
+import {localStorageEventListenerKey} from 'Hooks/useOnStorageChange/useOnStorageChange';
 
 describe('Role Filter', () => {
     let modalContent: ModalContents | null;

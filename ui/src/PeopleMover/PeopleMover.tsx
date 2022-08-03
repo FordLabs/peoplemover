@@ -17,15 +17,15 @@
 
 import React, {useEffect} from 'react';
 
-import ProductList from '../Products/ProductList';
-import Branding from '../Common/Branding/Branding';
-import SubHeader from '../SubHeader/SubHeader';
+import ProductList from 'PeopleMover/ProductList/ProductList';
+import Branding from 'Common/Branding/Branding';
+import SubHeader from 'SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
-import UnassignedDrawer from 'Assignments/UnassignedDrawer/UnassignedDrawer';
-import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
-import Counter from '../Common/Counter/Counter';
-import ArchivedPersonDrawer from '../People/ArchivedPersonDrawer';
+import UnassignedDrawer from 'PeopleMover/UnassignedDrawer/UnassignedDrawer';
+import ArchivedProductsDrawer from 'PeopleMover/ArchiveProductsDrawer/ArchivedProductsDrawer';
+import Counter from 'Common/Counter/Counter';
+import ArchivedPersonDrawer from 'PeopleMover/ArchivedPersonDrawer/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
@@ -34,13 +34,13 @@ import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
-import useFetchCurrentSpace from '../Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
+import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm';
-import Modal from '../Modal/Modal';
+import PersonForm from 'Common/PersonForm/PersonForm';
+import Modal from 'Modal/Modal';
 import DragAndDrop from './DragAndDrop/DragAndDrop';
 
-import '../Styles/Main.scss';
+import 'Styles/Main.scss';
 import './PeopleMover.scss';
 
 function PeopleMover(): JSX.Element {
