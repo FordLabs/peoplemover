@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
 import {fireEvent, screen} from '@testing-library/react';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 
 describe('Tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import AssignmentExistsWarning from './AssignmentExistsWarning';
 import {screen} from '@testing-library/react';
 import React from 'react';

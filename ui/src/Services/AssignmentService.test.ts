@@ -16,8 +16,8 @@
  */
 
 import {calculateDuration} from './AssignmentService';
-import TestData from '../Utils/TestData';
-import {Assignment} from '../Types/Assignment';
+import TestData from 'Utils/TestData';
+import {Assignment} from 'Types/Assignment';
 
 describe('Assignment', () => {
     describe('calculateDuration', () => {

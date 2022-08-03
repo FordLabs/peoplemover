@@ -26,7 +26,7 @@ import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormCo
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../Types/Option';
 import {JSX} from '@babel/types';
-import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
+import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';

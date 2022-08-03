@@ -16,14 +16,14 @@
  */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
-import {LocalStorageFilters} from '../SubHeader/SortingAndFiltering/FilterLibraries';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {renderWithRecoil} from '../Utils/TestUtils';
-import {Product} from '../Types/Product';
+import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import {Product} from 'Types/Product';
 
 const product: Product = {
     id: 1,

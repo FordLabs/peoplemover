@@ -16,7 +16,7 @@
  */
 
 import moment from 'moment';
-import {didAssignmentEndInThePast, getDurationWithRespectToToday} from '../AssignmentService';
+import {didAssignmentEndInThePast, getDurationWithRespectToToday} from 'Services/AssignmentService';
 import React, {useEffect, useState} from 'react';
 import AssignmentClient from '../../Services/Api/AssignmentClient';
 import ProductClient from 'Services/Api/ProductClient';

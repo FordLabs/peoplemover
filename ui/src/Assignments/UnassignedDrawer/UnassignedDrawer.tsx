@@ -16,15 +16,16 @@
  */
 
 import React from 'react';
-import './PersonDrawer.scss';
-import './UnassignedDrawer.scss';
-import {stripAssignmentsForArchivedPeople} from '../Products/ProductService';
-import DrawerContainer from '../Common/DrawerContainer/DrawerContainer';
-import ProductCard from '../Products/ProductCard';
+import {stripAssignmentsForArchivedPeople} from 'Products/ProductService';
+import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
+import ProductCard from 'Products/ProductCard';
 import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
-import {UnassignedProductSelector} from '../State/ProductsState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
+import {UnassignedProductSelector} from 'State/ProductsState';
+
+import '../PersonDrawer.scss';
+import './UnassignedDrawer.scss';
 
 function UnassignedDrawer(): JSX.Element {
     const unassignedProduct = useRecoilValue(UnassignedProductSelector);

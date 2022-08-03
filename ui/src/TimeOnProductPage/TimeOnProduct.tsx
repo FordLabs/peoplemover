@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
-import {calculateDuration} from 'Assignments/AssignmentService';
+import {calculateDuration} from 'Services/AssignmentService';
 import SubHeader from 'SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';

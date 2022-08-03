@@ -17,27 +17,85 @@
 
 import {fireEvent, getByText, screen, waitFor, within} from '@testing-library/react';
 import React from 'react';
-import AssignmentForm from '../Assignments/AssignmentForm';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import AssignmentForm from './AssignmentForm';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {ProductsState} from '../State/ProductsState';
-import {PeopleState} from '../State/PeopleState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import PersonForm from '../People/PersonForm';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {PeopleState} from 'State/PeopleState';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import PersonForm from 'People/PersonForm';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 let modalContent: ModalContents | null;
 
 jest.mock('Services/Api/AssignmentClient');
 
-describe('AssignmentForm', () => {
+describe('Assignment Form', () => {
     beforeEach(() => {
         modalContent = null;
+    });
+
+    it('renders the assignment form labels', () => {
+        renderWithRecoil(
+            <AssignmentForm initiallySelectedProduct={TestData.unassignedProduct} />,
+            (({set}) => {
+                set(ProductsState, [TestData.unassignedProduct])
+                set(CurrentSpaceState, TestData.space)
+            })
+        );
+        expect(screen.getByLabelText('Name')).toBeDefined();
+        expect(screen.getByLabelText('Mark as Placeholder')).toBeDefined();
+        expect(screen.getByLabelText('Assign to')).toBeDefined();
+    });
+
+    it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
+        const products = [TestData.unassignedProduct, TestData.productWithAssignments, TestData.productWithoutAssignments, TestData.productForHank];
+        const viewingDate = new Date(2020, 5, 5);
+        renderWithRecoil(
+            <AssignmentForm initiallySelectedProduct={products[2]} />,
+            (({set}) => {
+                set(ViewingDateState, viewingDate)
+                set(ProductsState, products)
+                set(PeopleState, TestData.people)
+                set(CurrentSpaceState, TestData.space)
+            })
+        );
+
+        const labelElement = await screen.findByLabelText('Name');
+        const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
+        await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
+
+        const productSelect = await screen.findByLabelText('Assign to');
+        await selectEvent.select(productSelect, 'Product 1');
+        const assignButton = await screen.findByText('Assign');
+        fireEvent.click(assignButton);
+
+        await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1));
+
+        expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+            moment(viewingDate).format('YYYY-MM-DD'),
+            [
+                {
+                    productId: TestData.productWithoutAssignments.id,
+                    placeholder: false,
+                },
+                {
+                    productId: TestData.productWithAssignments.id,
+                    placeholder: false,
+                },
+                {
+                    productId: TestData.productForHank.id,
+                    placeholder: TestData.assignmentForHank.placeholder,
+                },
+            ],
+            TestData.space,
+            TestData.hank
+        );
     });
 
     describe('In create mode', () => {

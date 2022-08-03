@@ -19,7 +19,7 @@ import {fireEvent, screen, waitFor} from '@testing-library/react';
 import React from 'react';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import UnassignedDrawer from './UnassignedDrawer';
+import UnassignedDrawer from './UnassignedDrawer/UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
 import {ProductsState} from 'State/ProductsState';

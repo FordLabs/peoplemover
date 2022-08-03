@@ -16,14 +16,14 @@
  */
 
 import React, {RefObject, useRef, useState} from 'react';
-import EditMenu, {EditMenuOption} from '../Common/EditMenu/EditMenu';
+import EditMenu, {EditMenuOption} from 'Common/EditMenu/EditMenu';
 
-import NewBadge from '../Common/NewBadge/NewBadge';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import {calculateDuration} from './AssignmentService';
-import {ProductPlaceholderPair} from './CreateAssignmentRequest';
+import NewBadge from 'Common/NewBadge/NewBadge';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import {calculateDuration} from 'Services/AssignmentService';
+import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
-import PersonAndRoleInfo from './PersonAndRoleInfo';
+import PersonAndRoleInfo from '../PersonAndRoleInfo/PersonAndRoleInfo';
 import {createDataTestId} from 'Utils/ReactUtils';
 import PeopleClient from 'Services/Api/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
@@ -38,7 +38,7 @@ import PersonForm from 'People/PersonForm';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Assignment} from 'Types/Assignment';
 
-import '../Styles/Main.scss';
+import 'Styles/Main.scss';
 import './AssignmentCard.scss';
 
 interface Props {

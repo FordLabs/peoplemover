@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from '../State/ModalContentsState';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './AssignmentExistsWarning.scss';
 
