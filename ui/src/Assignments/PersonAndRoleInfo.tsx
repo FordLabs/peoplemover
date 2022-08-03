@@ -127,7 +127,7 @@ const PersonAndRoleInfo = ({ isUnassignedProduct, duration, person }: Props): Re
             onMouseLeave={(): void => onHover(false)}
         >
             <div
-                className={`${person.name === 'Chris Boyer' ? 'chrisBoyer' : ''} ${!isReadOnly ? 'notReadOnly' : ''}  personName`}
+                className={`${!isReadOnly ? 'notReadOnly' : ''}  personName`}
                 data-testid="personName">
                 {person.name}
                 {hasTags(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>local_offer</i>}
