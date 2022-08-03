@@ -24,18 +24,18 @@ import RedirectWrapper from './RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute';
 import PeopleMover from './PeopleMover/PeopleMover';
-import ErrorPageTemplate from './ErrorPageTemplate/ErrorPageTemplate';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
-import AnimatedImageSrc from './Assets/404.gif';
-import errorImageSrc from './Assets/403.png';
 import Header from './Header/Header';
 import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
 import ContactUsPage from './ContactUsPage/ContactUsPage';
+import NotFoundErrorPage from './ErrorPages/NotFoundErrorPage';
+import ForbiddenErrorPage from './ErrorPages/ForbiddenErrorPage';
 
 export const contactUsPath = '/contact-us';
 export const dashboardUrl = '/user/dashboard';
-const notFoundUrl = '/error/404';
-const forbiddenUrl = '/error/403';
+const NOT_FOUND = '404';
+const FORBIDDEN = '403'
+const notFoundUrl = `/error/${NOT_FOUND}`;
 
 function Routes(): JSX.Element {
     return (
@@ -55,35 +55,24 @@ function Routes(): JSX.Element {
                         <SpaceDashboard/>
                     </AuthenticatedRoute>
                 } />
-                <Route path="/:teamUUID" element={
-                    <AuthorizedRoute>
-                        <PeopleMover/>
-                    </AuthorizedRoute>
-                } />
-                <Route path="/:teamUUID/timeonproduct" element={
-                    <AuthorizedRoute>
-                        <TimeOnProduct/>
-                    </AuthorizedRoute>
-                } />
+                <Route path="/:teamUUID">
+                    <Route path="" element={
+                        <AuthorizedRoute>
+                            <PeopleMover/>
+                        </AuthorizedRoute>
+                    } />
+                    <Route path="timeonproduct" element={
+                        <AuthorizedRoute>
+                            <TimeOnProduct/>
+                        </AuthorizedRoute>
+                    } />
+                </Route>
                 <Route path={contactUsPath} element={<ContactUsPage />} />
-                <Route
-                    path={notFoundUrl}
-                    element={
-                        <ErrorPageTemplate
-                            errorGraphic={AnimatedImageSrc}
-                            errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."
-                        />
-                    }
-                />
-                <Route
-                    path={forbiddenUrl}
-                    element={
-                        <ErrorPageTemplate
-                            errorGraphic={errorImageSrc}
-                            errorText="You don&apos;t have access to this page. Please request access."
-                        />
-                    }
-                />
+                <Route path="/error">
+                    <Route path="" element={<Navigate to={NOT_FOUND} />} />
+                    <Route path={NOT_FOUND} element={<NotFoundErrorPage />} />
+                    <Route path={FORBIDDEN} element={<ForbiddenErrorPage />} />
+                </Route>
                 <Route element={<Navigate replace to={notFoundUrl} />} />
             </ReactRoutes>
         </Router>
