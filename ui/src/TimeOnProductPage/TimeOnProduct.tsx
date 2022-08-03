@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,19 +16,24 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Product, UNASSIGNED} from '../Products/Product';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {calculateDuration} from '../Assignments/Assignment';
-import {Space} from '../Space/Space';
-import RedirectClient from '../Utils/RedirectClient';
+
+import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
+import {calculateDuration} from 'Assignments/AssignmentService';
+import SubHeader from 'SubHeader/SubHeader';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import {ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from 'People/PersonForm';
+import Modal from 'Modal/Modal';
+import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
+import {useParams} from 'react-router-dom';
+import {Product} from 'Types/Product';
+import {Assignment} from 'Types/Assignment';
+import Branding from 'Common/Branding/Branding';
+
 import './TimeOnProduct.scss';
-import CurrentModal from '../Redux/Containers/CurrentModal';
-import {fetchProductsAction, setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import HeaderContainer from '../Header/HeaderContainer';
-import SubHeader from '../Header/SubHeader';
-import {AvailableModals} from '../Modal/AvailableModals';
 
 export const LOADING = 'Loading...';
 
@@ -44,7 +49,7 @@ export interface TimeOnProductItem {
 export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
     const timeOnProductItem: TimeOnProductItem[] = [];
     products.forEach(product => {
-        const productName = product.name === UNASSIGNED ? 'Unassigned' : product.name;
+        const productName = product.name === UNASSIGNED_PRODUCT_NAME ? 'Unassigned' : product.name;
         product.assignments.forEach(assignment => {
             timeOnProductItem.push({
                 personName: assignment.person.name,
@@ -73,51 +78,44 @@ export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductIte
     return returnValue;
 };
 
-export interface TimeOnProductProps {
-    currentSpace: Space;
-    viewingDate: Date;
-    products: Array<Product>;
-    currentModal: CurrentModalState;
-    isReadOnly: boolean;
+function TimeOnProduct(): JSX.Element {
+    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
 
-    fetchProducts(): Array<Product>;
-    setCurrentModal(modalState: CurrentModalState): void;
-}
+    const [modalContents, setModalContents] = useRecoilState(ModalContentsState)
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
-function TimeOnProduct({currentSpace, viewingDate, products, currentModal, isReadOnly, fetchProducts, setCurrentModal}: TimeOnProductProps): JSX.Element {
+    const { fetchProducts, products } = useFetchProducts(teamUUID);
+    const { fetchCurrentSpace, currentSpace } = useFetchCurrentSpace(teamUUID);
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const extractUuidFromUrl = (): string => {
-        return window.location.pathname.split('/')[1];
-    };
+    useEffect(() => {
+        if (!currentSpace.uuid) fetchCurrentSpace();
+    }, [currentSpace, fetchCurrentSpace]);
 
     useEffect(() => {
-        if (!currentSpace) {
-            const uuid = extractUuidFromUrl();
-            RedirectClient.redirect(`/${uuid}`);
-        }
-    }, [currentSpace]);
-
-    useEffect(() => {
-        if (currentSpace && currentModal.modal === null) {
+        if (currentSpace && !modalContents) {
             setIsLoading(true);
             fetchProducts();
         }
-    }, [currentModal, currentSpace, fetchProducts, viewingDate]);
+    }, [modalContents, currentSpace, fetchProducts]);
 
     useEffect(() => {
-        setIsLoading(false);
+        if (products.length) setIsLoading(false);
     }, [products]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
-        const product = products.find(item => timeOnProductItem.productName === item.name);
-        const assignment = product?.assignments.find(item => timeOnProductItem.assignmentId === item.id);
+        const product = products.find(item => timeOnProductItem.productName.toLowerCase() === item.name.toLowerCase());
+        const assignment = product?.assignments.find((item: Assignment) => timeOnProductItem.assignmentId === item.id);
         if (assignment) {
-            const newModalState: CurrentModalState = {
-                modal: AvailableModals.EDIT_PERSON,
-                item: assignment.person,
-            };
-            setCurrentModal(newModalState);
+            setModalContents({
+                title: 'Edit Person',
+                component: <PersonForm
+                    isEditPersonForm
+                    personEdited={assignment.person}
+                />,
+            });
         }
     };
 
@@ -164,35 +162,33 @@ function TimeOnProduct({currentSpace, viewingDate, products, currentModal, isRea
     };
 
     return (
-        currentSpace && <>
-            <CurrentModal/>
+        currentSpace && (
             <div className="App">
-                <HeaderContainer>
-                    <SubHeader showFilters={false} showSortBy={false} message={<div className="timeOnProductHeaderMessage"><span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product</div>}/>
-                </HeaderContainer>
+                <Modal />
+                <SubHeader
+                    showFilters={false}
+                    showSortBy={false}
+                    message={
+                        <div className="timeOnProductHeaderMessage">
+                            <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
+                        </div>
+                    }
+                />
                 {isLoading ?
                     <div className="timeOnProductLoading">{LOADING}</div>
-                    : <div className="timeOnProductTable">
-                        {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
-                    </div>}
+                    : (
+                        <div className="timeOnProductTable">
+                            {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
+                        </div>
+                    )
+                }
+                <footer>
+                    <Branding/>
+                </footer>
             </div>
-        </>
+        )
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
-    products: state.products,
-    currentModal: state.currentModal,
-    isReadOnly: state.isReadOnly,
-});
+export default TimeOnProduct;
 
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchProducts: () => dispatch(fetchProductsAction()),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(TimeOnProduct);
-/* eslint-enable */

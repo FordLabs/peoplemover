@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,62 +18,32 @@
 import React from 'react';
 import './PersonDrawer.scss';
 import './UnassignedDrawer.scss';
-import {Product, stripAssignmentsForArchivedPeople} from '../Products/Product';
-import DrawerContainer from '../ReusableComponents/DrawerContainer';
+import {stripAssignmentsForArchivedPeople} from '../Products/ProductService';
+import DrawerContainer from '../Common/DrawerContainer/DrawerContainer';
 import ProductCard from '../Products/ProductCard';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
-import {setIsUnassignedDrawerOpenAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
+import {UnassignedProductSelector} from '../State/ProductsState';
 
-interface UnassignedDrawerProps {
-    isUnassignedDrawerOpen: boolean;
-    setIsUnassignedDrawerOpen(isOpen: boolean): void;
-    product: Product;
-    viewingDate: Date;
-}
+function UnassignedDrawer(): JSX.Element {
+    const unassignedProduct = useRecoilValue(UnassignedProductSelector);
 
-function UnassignedDrawer({
-    isUnassignedDrawerOpen,
-    setIsUnassignedDrawerOpen,
-    product,
-    viewingDate,
-}: UnassignedDrawerProps): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const [isUnassignedDrawerOpen, setIsUnassignedDrawerOpen] = useRecoilState(IsUnassignedDrawerOpenState);
 
-    let productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(product, viewingDate);
+    const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(unassignedProduct, viewingDate);
 
-    const containee =
-        <ProductCard product={productWithoutArchivedPeople} />;
     return (
         <DrawerContainer
             drawerIcon="supervisor_account"
             testId="unassignedDrawer"
             numberForCountBadge={productWithoutArchivedPeople.assignments ? productWithoutArchivedPeople.assignments.length : 0}
             containerTitle="Unassigned"
-            containee={containee}
+            containee={<ProductCard product={productWithoutArchivedPeople} />}
             isDrawerOpen={isUnassignedDrawerOpen}
             setIsDrawerOpen={setIsUnassignedDrawerOpen}/>
     );
 }
 
-const getUnassignedProduct = (products: Array<Product>): Product => {
-    if (products == null) {
-        return {} as Product;
-    }
-    const unassignedProducts = products.filter(product => product.name === 'unassigned');
-    return unassignedProducts.length === 1 ? unassignedProducts[0] : {} as Product;
-};
-
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isUnassignedDrawerOpen: state.isUnassignedDrawerOpen,
-    product: getUnassignedProduct(state.products ? state.products : []),
-    viewingDate: state.viewingDate,
-});
-
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UnassignedDrawer);
-/* eslint-enable */
+export default UnassignedDrawer;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,14 +21,16 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
+import '@testing-library/cypress/add-commands';
+import moment from 'moment';
+
 const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '') => {
+Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
     cy.server();
-    const date = Cypress.moment().format('yyyy-MM-DD');
-    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${date}`).as('getProductsByDate');
+    cy.spyOnGetProductsByDate(date);
     cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     const locationRoute = {
         method: 'GET',
@@ -62,12 +64,12 @@ Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash
 });
 
 Cypress.Commands.add('getModal', () => {
-    return cy.get('[data-testid=modalCard]');
+    return cy.get('[data-testid=modalContent]');
 });
 
 Cypress.Commands.add('closeModal', () => {
     cy.get('[data-testid=modalCloseButton]').click();
-    cy.getModal().should('not.exist');
+    cy.getModal().should('not.be.visible');
 });
 
 Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {
@@ -80,9 +82,18 @@ Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTex
         .click(0, 0, { force: true });
 });
 
+Cypress.Commands.add('getCalendarDate', (dateToSelect) => {
+    const dateLabel = moment(dateToSelect).format( 'dddd, MMMM Do, yyyy');
+    return cy.get(`[aria-label="Choose ${dateLabel}"]`);
+});
 
 /* API requests */
 Cypress.Commands.add('resetSpace', () => {
     const RESET_SPACE_URL = `${BASE_API_URL}/api/reset/${spaceUuid}`;
     cy.request('DELETE', RESET_SPACE_URL);
 });
+
+Cypress.Commands.add('spyOnGetProductsByDate', (expectedDate) => {
+    const activeDate = moment(expectedDate).format('yyyy-MM-DD');
+    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
+})

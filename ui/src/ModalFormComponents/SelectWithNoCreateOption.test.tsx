@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,66 +15,62 @@
  * limitations under the License.
  */
 
-import {render} from '@testing-library/react';
-import {mount} from 'enzyme';
+import {render, screen} from '@testing-library/react';
 import SelectWithNoCreateOption from './SelectWithNoCreateOption';
 import React from 'react';
-import {Product} from '../Products/Product';
-import TestUtils from '../tests/TestUtils';
+import TestData from '../Utils/TestData';
 import {noop} from '@babel/types';
+import selectEvent from 'react-select-event';
+import {Product} from '../Types/Product';
 
-describe('the multi-select component', () => {
-
-    const intiallySelectedProducts: Product[] = [
-        TestUtils.products[0],
-        TestUtils.products[1],
+describe('SelectWithNoCreateOption (Multi-select)', () => {
+    const initiallySelectedProducts: Product[] = [
+        TestData.products[0],
+        TestData.products[1],
     ];
 
-    it('should render its initial selections', () => {
-        const underTest = render(
+    it('should render initial select options', () => {
+        render(
             <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
                     placeholder: 'Select a product',
                 }}
-                values={intiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                values={initiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                options={TestData.products.map(x => {return {value:x.name, label:x.name};})}
                 onChange={noop}
             />
         );
-        expect(underTest.getByText(intiallySelectedProducts[0].name)).toBeInTheDocument();
-        expect(underTest.getByText(intiallySelectedProducts[1].name)).toBeInTheDocument();
-        expect(underTest.queryByText(TestUtils.products[2].name)).not.toBeInTheDocument();
-        expect(underTest.queryByText(TestUtils.products[3].name)).not.toBeInTheDocument();
+        expect(screen.getByText(initiallySelectedProducts[0].name)).toBeInTheDocument();
+        expect(screen.getByText(initiallySelectedProducts[1].name)).toBeInTheDocument();
+        expect(screen.queryByText(TestData.products[2].name)).not.toBeInTheDocument();
+        expect(screen.queryByText(TestData.products[3].name)).not.toBeInTheDocument();
     });
 
-    it('should call the onChange callback on change', async () => {
-        let testShouldPass = false;
-        const makeTestPass = (): void => {
-            testShouldPass = true;
-        };
+    it('should call the onChange callback when user selects new option', async () => {
+        const mockOnChange = jest.fn();
 
-        const wrapper = await mount(
+        render(
             <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
                     placeholder: 'Select a product',
                 }}
-                values={intiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
-                onChange={makeTestPass}
+                values={initiallySelectedProducts.map(x => ({value: x.name, label: x.name}))}
+                options={TestData.products.map(x => ({value: x.name, label: x.name}))}
+                onChange={mockOnChange}
             />
         );
 
-        expect(wrapper.find('.MultiSelect__placeholder').length).toEqual(0);
-        (wrapper.find('Select').instance() as React.ComponentProps<typeof Object>).selectOption({label: 'eee', value: 'eee'});
-        expect(testShouldPass).toBeTruthy();
+        const SelectElement = screen.getByLabelText('Title');
+        await selectEvent.select(SelectElement, [TestData.productForHank.name]);
+        expect(mockOnChange).toHaveBeenCalled();
     });
 
-    it('should render its placeholder text if nothing starts selected - Enzyme style', () => {
-        const underTest = mount(
+    it('should render placeholder text no options are selected', () => {
+        render(
             <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
@@ -82,45 +78,28 @@ describe('the multi-select component', () => {
                     placeholder: 'Select a product',
                 }}
                 values={[]}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                options={TestData.products.map(x => {return {value:x.name, label:x.name};})}
                 onChange={noop}
             />
         );
 
-        expect(underTest.find('div.product__placeholder').length).toEqual(1);
+        expect(screen.getByText('Select a product')).toBeInTheDocument();
     });
 
-    it('should render its placeholder text if nothing starts selected', () => {
-        const underTest = render(
+    it('should custom up and down arrows', async () => {
+        render(
             <SelectWithNoCreateOption
                 metadata={{
                     title: 'Title',
                     id: 'product',
                     placeholder: 'Select a product',
                 }}
-                values={[]}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
+                values={initiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
+                options={TestData.products.map(x => {return {value:x.name, label:x.name};})}
                 onChange={noop}
             />
         );
 
-        expect(underTest.getByText('Select a product')).toBeInTheDocument();
-    });
-
-    it('should use custom dropdown indicator', async () => {
-        const wrapper = await mount(
-            <SelectWithNoCreateOption
-                metadata={{
-                    title: 'Title',
-                    id: 'product',
-                    placeholder: 'Select a product',
-                }}
-                values={intiallySelectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                options={TestUtils.products.map(x => {return {value:x.name, label:x.name};})}
-                onChange={noop}
-            />
-        );
-
-        expect(wrapper.find('DropdownIndicator').length).toEqual(1);
+        expect(screen.getByTestId('downArrow_product')).toBeDefined();
     });
 });

@@ -16,24 +16,31 @@
  */
 
 import React from 'react';
-import {connect} from 'react-redux';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {Product} from './Product';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Dispatch} from 'redux';
-import {AvailableModals} from '../Modal/AvailableModals';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../State/ModalContentsState';
+import ProductForm from './ProductForm';
+import {Product} from '../Types/Product';
 
-interface ArchiveProductProps{
+interface Props{
     product: Product;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function ArchivedProduct({product, setCurrentModal}: ArchiveProductProps): JSX.Element {
+function ArchivedProduct({product}: Props): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
+    const openModal = (): void => setModalContents({
+        title: 'Edit Product',
+        component: <ProductForm
+            editing
+            product={product}/>,
+    })
 
     return (
         <div>
-            <button className="archivedProduct" data-testid={`archivedProduct_${product.id}`}
-                onClick={(): void => setCurrentModal({modal: AvailableModals.EDIT_PRODUCT, item: product})}>
+            <button
+                className="archivedProduct"
+                data-testid={`archivedProduct_${product.id}`}
+                onClick={openModal}>
                 <span className="archivedProductName">{product.name}</span>
                 <div className="productInfoContainer">
                     <i>{product.spaceLocation && product.spaceLocation.name}</i>
@@ -47,10 +54,4 @@ function ArchivedProduct({product, setCurrentModal}: ArchiveProductProps): JSX.E
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(null, mapDispatchToProps)(ArchivedProduct);
-/* eslint-enable */
+export default ArchivedProduct;

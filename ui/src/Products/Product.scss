@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
-@import '../Application/Styleguide/Breakpoints.scss';
+@import '../Styles/Colors.scss';
+@import '../Styles/Breakpoints.scss';
 
 .productCardContainer {
   background-color: $gray-5;
@@ -33,28 +33,18 @@
   }
 }
 
-.emptyProductText {
-  padding: 2px 5px 8px 9px;
-}
-
-.emptyProductTextHint {
+.no-assignments-message {
+  margin: 2px 5px 8px 9px;
+  font-weight: normal;
   display: flex;
   align-items: flex-end;
+  line-height: 14px;
+  font-size: 12px;
+  color: $gray-2;
 
   i {
     margin-left: 6px;
     color: $gray-2;
-  }
-}
-
-.emptyProductText,
-.emptyProductTextHint {
-  line-height: 14px;
-
-  p {
-    font-size: 12px;
-    color: $gray-2;
-    margin: 0;
   }
 }
 
@@ -78,13 +68,14 @@
   justify-content: space-between;
   align-items: flex-start;
 
-  .productNameButton {
+  .productNameLink {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-content: flex-start;
     background-color: $gray-5;
-    padding: 0px;
-    position: relative;
+    padding: 0;
+    text-decoration: none;
   }
 
   .productName {
@@ -106,8 +97,7 @@
 
   .productUrlIcon {
     font-size: 15px;
-    position: absolute;
-    bottom: 0.55em;
+    line-height: 0.75rem;
   }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,17 @@
  * limitations under the License.
  */
 
-import {Assignment, calculateDuration} from './Assignment';
-import TestUtils from '../tests/TestUtils';
+import {calculateDuration} from './AssignmentService';
+import TestData from '../Utils/TestData';
+import {Assignment} from '../Types/Assignment';
 
 describe('Assignment', () => {
     describe('calculateDuration', () => {
         const assignment: Assignment = {
             id: 1,
-            person: TestUtils.hank,
-            productId: TestUtils.productForHank.id,
-            spaceUuid: TestUtils.hank.spaceUuid,
+            person: TestData.hank,
+            productId: TestData.productForHank.id,
+            spaceUuid: TestData.hank.spaceUuid,
             placeholder: false,
             startDate: undefined,
             endDate: undefined,

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Option} from '../CommonTypes/Option';
+import {Option} from '../Types/Option';
 
 export interface ValidateUserResult {
     options: Option[];

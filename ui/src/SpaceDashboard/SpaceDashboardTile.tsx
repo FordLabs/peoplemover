@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,35 +15,34 @@
  * limitations under the License.
  */
 
-import {Space} from '../Space/Space';
-import * as React from 'react';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
 import moment, {now} from 'moment';
-import './SpaceDashboardTile.scss';
-import LeaveIcon from '../Application/Assets/leave-icon.svg';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {Dispatch} from 'redux';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {connect} from 'react-redux';
-import AccessibleDropdownContainer from '../ReusableComponents/AccessibleDropdownContainer';
-import {AvailableModals} from '../Modal/AvailableModals';
-import SpaceClient from '../Space/SpaceClient';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {Space} from 'Types/Space';
+import LeaveIcon from 'Assets/leave-icon.svg';
+import AccessibleDropdownContainer from 'Common/AccessibleDropdownContainer/AccessibleDropdownContainer';
+import SpaceClient from 'Services/Api/SpaceClient';
+import {CurrentUserState} from 'State/CurrentUserState';
+import {ModalContentsState} from 'State/ModalContentsState';
+import SpaceForm from './SpaceForm';
+import TransferOwnershipForm from './TransferOwnershipForm';
+import DeleteSpaceForm from './DeleteSpaceForm';
 
-interface SpaceDashboardTileProps {
+import './SpaceDashboardTile.scss';
+
+interface Props {
     space: Space;
     onClick: (space: Space) => void;
-    currentUser: string;
-
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentModal}: SpaceDashboardTileProps): JSX.Element {
+function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
+    const currentUser = useRecoilValue(CurrentUserState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
-    const [spaceHasEditors, setSpaceHasEditors] = useState<boolean>(false);
-    const [isUserOwner, setIsUserOwner] = useState<boolean>(false);
+    const [usersData, setUsersData] = useState<{ spaceHasEditors: boolean, isUserOwner: boolean } | null>(null)
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
@@ -56,40 +55,49 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
     }
 
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        SpaceClient.getUsersForSpace(space.uuid!!).then((result) => {
-            setIsUserOwner(result.some(userSpaceMapping =>
+        SpaceClient.getUsersForSpace(space.uuid!).then((result) => {
+            const isUserOwner = result.some(userSpaceMapping =>
                 (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
                     userSpaceMapping.permission.toUpperCase() === 'OWNER')
-            ));
-            setSpaceHasEditors(result.some(userSpaceMapping => currentUser &&
+            )
+            const spaceHasEditors = result.some(userSpaceMapping => currentUser &&
                 userSpaceMapping.userId.toUpperCase() !== currentUser.toUpperCase() &&
-                userSpaceMapping.permission.toUpperCase() === 'EDITOR'));
+                userSpaceMapping.permission.toUpperCase() === 'EDITOR')
+
+            setUsersData({ spaceHasEditors, isUserOwner })
         });
 
-    }, [setIsUserOwner, currentUser, space.uuid]);
+    }, [currentUser, space.uuid]);
 
     function handleDropdownClick(): void {
         setDropdownToggle(!dropdownToggle);
     }
 
     function openEditModal(): void {
-        return setCurrentModal({modal: AvailableModals.EDIT_SPACE, item: space});
+        setModalContents({
+            title: 'Edit Space',
+            component: <SpaceForm selectedSpace={space}/>
+        });
     }
 
     function openLeaveModal(): void {
-        return setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
+        setModalContents( {
+            title: 'Transfer Ownership of Space',
+            component: <TransferOwnershipForm spaceToTransfer={space}/>
+        });
     }
 
-    function openDeleteModal(): void {
-        return setCurrentModal({modal: AvailableModals.DELETE_SPACE, item: space});
-    }
-
-    function openDeleteNoEditorsModal(): void {
-        return setCurrentModal({modal: AvailableModals.DELETE_SPACE_NO_EDITORS, item: space});
+    function openDeleteModal(spaceHasEditors = false): void {
+        setModalContents({
+            title: "Are you sure?",
+            component: <DeleteSpaceForm space={space} spaceHasEditors={spaceHasEditors}/>
+        });
     }
 
     const ActionsDropdownContent = (): JSX.Element => {
+        const showLeaveSpaceButton = usersData?.isUserOwner && usersData?.spaceHasEditors;
+        const showDeleteSpaceButton = usersData?.isUserOwner;
+
         return (
             <AccessibleDropdownContainer
                 handleClose={(): void => {setDropdownToggle(false);}}
@@ -104,30 +112,30 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
                     onClick={openEditModal}
                 >
                     <i className="material-icons">edit</i>
-                Edit
+                    Edit
                 </button>
-                {isUserOwner && spaceHasEditors &&
-                <button
-                    data-testid="leaveSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={openLeaveModal}
-                >
-                    <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
-                    Leave Space
-                </button>
-                }
-                {isUserOwner &&
-                <button
-                    data-testid="deleteSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={spaceHasEditors ? openDeleteModal : openDeleteNoEditorsModal}
-                >
-                    <i className="material-icons">delete</i>
-                    Delete Space
-                </button>
-                }
+                {showLeaveSpaceButton && (
+                    <button
+                        data-testid="leaveSpace"
+                        className="dropdownOptions"
+                        role="menuitem"
+                        onClick={openLeaveModal}
+                    >
+                        <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
+                        Leave Space
+                    </button>
+                )}
+                {showDeleteSpaceButton && (
+                    <button
+                        data-testid="deleteSpace"
+                        className="dropdownOptions"
+                        role="menuitem"
+                        onClick={() => openDeleteModal(usersData?.spaceHasEditors)}
+                    >
+                        <i className="material-icons">delete</i>
+                        Delete Space
+                    </button>
+                )}
             </AccessibleDropdownContainer>
         );
     };
@@ -151,7 +159,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
         );
     };
 
-    return (
+    return usersData ? (
         <div>
             <button className="spaceTile"
                 data-testid="spaceDashboardTile"
@@ -164,17 +172,7 @@ function SpaceDashboardTile({space, onClick: openSpace, currentUser, setCurrentM
             </button>
             <ActionsEllipsis/>
         </div>
-    );
+    ) : <></>;
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentUser: state.currentUser
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboardTile);
-/* eslint-enable */
+export default SpaceDashboardTile;

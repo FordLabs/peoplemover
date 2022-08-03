@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,102 +15,70 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Space} from '../Space/Space';
-import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
-import AccountDropdown from '../AccountDropdown/AccountDropdown';
-import {Link} from 'react-router-dom';
+import React from 'react';
+import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
+import AccountDropdown from './AccountDropdown/AccountDropdown';
+import {Link, useLocation} from 'react-router-dom';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {contactUsPath, dashboardUrl} from '../Routes';
+
 import './Headers.scss';
-import MatomoEvents from '../Matomo/MatomoEvents';
 
-interface HeaderProps {
-    hideSpaceButtons?: boolean;
-    hideAllButtons?: boolean;
-    currentSpace: Space;
-}
+function Header(): JSX.Element {
+    const location = useLocation();
 
-function Header({
-    hideSpaceButtons,
-    hideAllButtons,
-    currentSpace,
-}: HeaderProps): JSX.Element {
-    const dashboardPathname = '/user/dashboard';
-    const logoHref = window.location.pathname === dashboardPathname ? '' : dashboardPathname;
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
+
+    const isTimeOnProductPage = location.pathname.includes('timeonproduct');
+    const isSpacePage = location.pathname === `/${uuid}`;
+    const isLandingPage = location.pathname === '/';
+    const isErrorPage = location.pathname.includes('error');
+    const isDashboardPage = location.pathname === dashboardUrl;
+    const isContactUsPage = location.pathname === contactUsPath;
+
     const spaceName = currentSpace?.name;
-    const [timeOnProductClicked, setTimeOnProductClicked] = useState<boolean>(false);
-    const [showDropDown, setShowDropDown] = useState<boolean>(!window.location.pathname.includes('error'));
 
-    const useReactPath = (): string => {
-        const [path, setPath] = React.useState(window.location.pathname);
-        const listenToPopstate = (): void => {
-            setPath(window.location.pathname);
-        };
-        React.useEffect(() => {
-            window.addEventListener('popstate', listenToPopstate);
-            return (): void => {
-                window.removeEventListener('popstate', listenToPopstate);
-            };
-        }, []);
-        return path;
-    };
-
-    const path = useReactPath();
-
-    /* eslint-disable */
-    useEffect( () => {
-        setShowDropDown(!window.location.pathname.includes('error'));
-        if(window.location.pathname.includes('timeonproduct')) {
-            setTimeOnProductClicked(true);
-        } else {
-            setTimeOnProductClicked(false);
-        }
-    }, [window.location.pathname, path]);
-    /* eslint-enable */
-
-    const showAllDropDownOptions = (): boolean => {
-        return (window.location.pathname !== dashboardPathname);
-    };
-
-    const showHeader = (): boolean => {
-        return (window.location.pathname === '/');
-    };
-    
-    const sendEventTimeOnProductClick = (clicked: boolean): void => {
-        setTimeOnProductClicked(clicked);
-        if (clicked) {
-            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Go to Time On Product page');
-        } else  {
-            MatomoEvents.pushEvent(currentSpace.name, 'TimeOnProductClicked', 'Return to Space from Time On Product page');
-        }
-    };
+    function showSpaceName(): boolean {
+        return (isSpacePage || isTimeOnProductPage) && !!spaceName;
+    }
 
     return (
-        showHeader() ? <></>
+        isLandingPage ? <></>
             : <>
-                {currentSpace && currentSpace.uuid && !timeOnProductClicked && <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">Skip to
-                    main content</a>}
-                <header className="peopleMoverHeader">
+                {isSpacePage && (
+                    <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
+                        Skip to main content
+                    </a>
+                )}
+                <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
                     <div className="headerLeftContainer">
-                        <PeopleMoverLogo href={logoHref}/>
-                        {spaceName && <h1 className="spaceName">{spaceName}</h1>}
-                        {currentSpace && currentSpace.uuid && !timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}/timeonproduct`} onClick={(): void => sendEventTimeOnProductClick(true)}><span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;</Link>}
-                        {currentSpace && currentSpace.uuid && timeOnProductClicked && <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`} onClick={(): void => sendEventTimeOnProductClick(false)}>&#60; Back</Link>}
+                        <PeopleMoverLogo href={isDashboardPage ? '' : dashboardUrl}/>
+                        {showSpaceName() && <h1 className="spaceName">{spaceName}</h1>}
+                        {isSpacePage && (
+                            <Link
+                                className="timeOnProductLink"
+                                to={`/${uuid}/timeonproduct`}>
+                                <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
+                            </Link>
+                        )}
+                        {isTimeOnProductPage && (
+                            <Link
+                                className="timeOnProductLink"
+                                to={`/${uuid}`}>
+                                &#60; Back
+                            </Link>
+                        )}
                     </div>
-                    {!hideAllButtons && showDropDown && <div className="headerRightContainer">
-                        <AccountDropdown hideSpaceButtons={hideSpaceButtons} showAllDropDownOptions={showAllDropDownOptions()}/>
-                    </div>
-                    }
+                    {!isErrorPage && (
+                        <div className="headerRightContainer">
+                            <AccountDropdown showAllDropDownOptions={!isDashboardPage && !isContactUsPage}/>
+                        </div>
+                    )}
                 </header>
             </>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(Header);
-/* eslint-enable */
+export default Header;

@@ -18,8 +18,8 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
@@ -35,24 +35,20 @@ import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.CHAR_520
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
-import kotlin.collections.HashSet
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -94,7 +90,7 @@ class ProductControllerApiTest {
     private fun getBaseProductUrl(spaceUuid: String) = "/api/spaces/${spaceUuid}/products"
     private fun getSingleProductUrl(productId: Int) = baseProductsUrl + "/${productId}"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
@@ -104,7 +100,7 @@ class ProductControllerApiTest {
         location = spaceLocationRepository.save(SpaceLocation(spaceUuid = space.uuid, name = "Mars"))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
@@ -231,7 +227,10 @@ class ProductControllerApiTest {
         // should actualProduct have the assignment in it? productInDb will have it
         val productInDb: Product = productRepository.findByIdOrNull(product.id!!)!!
         assertThat(actualProduct).isEqualTo(expectedProduct)
-        assertThat(actualProduct).isEqualToIgnoringGivenFields(productInDb, "assignments")
+        assertThat(actualProduct)
+            .usingRecursiveComparison()
+            .ignoringFields("assignments")
+            .isEqualTo(productInDb)
     }
 
     @Test

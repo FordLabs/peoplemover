@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,89 +15,60 @@
  * limitations under the License.
  */
 
-import React, {FormEvent, useState} from 'react';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import RoleClient from '../Roles/RoleClient';
-import PeopleClient from './PeopleClient';
-import {connect} from 'react-redux';
-import {
-    addPersonAction,
-    closeModalAction,
-    editPersonAction,
-    fetchRolesAction,
-    setAllGroupedTagFilterOptionsAction,
-    setIsUnassignedDrawerOpenAction,
-} from '../Redux/Actions';
-import {GlobalStateProps} from '../Redux/Reducers';
+import React, {FormEvent, useCallback, useEffect, useState} from 'react';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import RoleClient from '../Services/Api/RoleClient';
+import PeopleClient from '../Services/Api/PeopleClient';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, isArchived, Person} from './Person';
-import {RoleTag} from '../Roles/RoleTag.interface';
-import {isActiveProduct, isUnassignedProduct, Product} from '../Products/Product';
+import {emptyPerson, isArchived} from './PersonService';
+import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
 import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import {Option} from '../CommonTypes/Option';
-import {Assignment} from '../Assignments/Assignment';
-import {RoleAddRequest} from '../Roles/RoleAddRequest.interface';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import {Option} from '../Types/Option';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from '../Assignments/CreateAssignmentRequest';
-import {Space} from '../Space/Space';
 import moment from 'moment';
 import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
 import FormButton from '../ModalFormComponents/FormButton';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
 import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
-import './PersonForm.scss';
-import FormTagsField from '../ReusableComponents/FormTagsField';
-import {TagInterface} from '../Tags/Tag.interface';
-import PersonTagClient from '../Tags/PersonTag/PersonTagClient';
-import {Tag} from '../Tags/Tag';
-import {
-    addGroupedTagFilterOptions,
-    AllGroupedTagFilterOptions,
-    FilterTypeListings,
-} from '../SortingAndFiltering/FilterLibraries';
-import ToolTip from '../ReusableComponents/ToolTip';
-import MatomoEvents from '../Matomo/MatomoEvents';
+import FormTagsField from '../Common/FormTagsField/FormTagsField';
+import PersonTagClient from '../Services/Api/PersonTagClient';
+import {RoleTag, Tag} from 'Types/Tag';
+import ToolTip from '../Common/ToolTips/ToolTip';
 import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {ViewingDateState} from '../State/ViewingDateState';
+import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
+import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
+import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
+import {ModalContentsState} from '../State/ModalContentsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {RoleTagRequest} from 'Types/TagRequest';
+import {Product} from 'Types/Product';
+import {Person} from '../Types/Person';
+import {Assignment} from '../Types/Assignment';
 
-interface PersonFormProps {
-    isEditPersonForm: boolean;
-    products: Array<Product>;
+import './PersonForm.scss';
+
+interface Props {
+    isEditPersonForm: boolean
     initiallySelectedProduct?: Product;
     initialPersonName?: string;
     personEdited?: Person;
-    currentSpace: Space;
-    viewingDate: Date;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    roles: Array<RoleTag>;
-
-    closeModal(): void;
-    addPerson(person: Person): void;
-    editPerson(person: Person): void;
-    setIsUnassignedDrawerOpen(isUnassignedDrawerOpen: boolean): void;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-    fetchRoles(): Array<RoleTag>;
 }
 
-function PersonForm({
-    isEditPersonForm,
-    products,
-    initiallySelectedProduct,
-    initialPersonName,
-    currentSpace,
-    viewingDate,
-    personEdited,
-    closeModal,
-    addPerson,
-    editPerson,
-    setIsUnassignedDrawerOpen,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-    roles,
-    fetchRoles,
-}: PersonFormProps): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const spaceUuid = currentSpace.uuid!;
+function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonName, personEdited }: Props): JSX.Element {
+    const products = useRecoilValue(ProductsState);
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const setIsUnassignedDrawerOpen = useSetRecoilState(IsUnassignedDrawerOpenState);
+    const setPeople = useSetRecoilState(PeopleState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
+    const spaceUuid = currentSpace.uuid || '';
+    const { fetchRoles, roles } = useFetchRoles(spaceUuid);
+
     const { ROLE_TAGS } = MetadataReactSelectProps;
     const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
     const { ARCHIVED_PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
@@ -110,7 +81,6 @@ function PersonForm({
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
-    const [initialNewPersonDuration, setInitialNewPersonDuration] = useState<number>(0);
 
     const alphabetize = (products: Array<Product>): void => {
         products.sort((product1: Product, product2: Product) => {
@@ -118,7 +88,18 @@ function PersonForm({
         });
     };
 
-    const populatedEntirePersonForm = (personToPopulate: Person): void => {
+    const getUnassignedProductId = useCallback((): number => {
+        const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
+        if (unassignedProduct && unassignedProduct.id) return unassignedProduct.id;
+        return -1;
+    }, [products]);
+
+    const createProductsFromAssignments = useCallback((assignments: Assignment[]): Product[] => {
+        const allProductIdsFromAssignments = assignments.map(a => a.productId);
+        return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProductId());
+    }, [getUnassignedProductId, products]);
+
+    const populatedEntirePersonForm = useCallback((personToPopulate: Person): void => {
         setPerson({...personToPopulate});
         setSelectedPersonTags(personToPopulate.tags);
 
@@ -127,38 +108,20 @@ function PersonForm({
                 const assignments: Array<Assignment> = response.data;
                 setSelectedProducts(createProductsFromAssignments(assignments));
             });
-    };
+    }, [createProductsFromAssignments, spaceUuid, viewingDate]);
 
-    useOnLoad(() => {
+    useEffect(() => {
         if (isEditPersonForm && personEdited) {
             populatedEntirePersonForm(personEdited);
             setInitialNewPersonFlag(personEdited.newPerson);
-            if (personEdited.newPersonDate !== null) {
-                const viewingDateMoment = moment(viewingDate).startOf('day');
-                const checkedDateMoment = moment(personEdited.newPersonDate).startOf('day');
-                setInitialNewPersonDuration(moment.duration(viewingDateMoment.diff(checkedDateMoment)).asDays());
-            }
         } else {
             if (initialPersonName) {
-                setPerson(
-                    (updatingPerson: Person) => ({...updatingPerson, name: initialPersonName})
-                );
+                setPerson((updatingPerson: Person) => ({...updatingPerson, name: initialPersonName}));
             }
 
             if (initiallySelectedProduct) setSelectedProducts([initiallySelectedProduct]);
         }
-    });
-
-    const getUnassignedProductId = (): number => {
-        const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
-        if (unassignedProduct && unassignedProduct.id) return unassignedProduct.id;
-        return -1;
-    };
-
-    const createProductsFromAssignments = (assignments: Array<Assignment>): Array<Product> => {
-        const allProductIdsFromAssignments = assignments.map(a => a.productId);
-        return products.filter(p => allProductIdsFromAssignments.includes(p.id)).filter(product => product.id !== getUnassignedProductId());
-    };
+    }, [initialPersonName, initiallySelectedProduct, isEditPersonForm, personEdited, populatedEntirePersonForm, viewingDate]);
 
     const getSelectedProductPairs = (): ProductPlaceholderPair[] => {
         return selectedProducts.map((product) => {
@@ -172,29 +135,6 @@ function PersonForm({
         });
     };
 
-    const getAddedPersonTag = (): string[] => {
-        let result: string[] = [];
-        if (person.tags !== selectedPersonTags) {
-            result = selectedPersonTags.filter(tag => {
-                return !person.tags.includes(tag);
-            }).map(tag => {
-                return tag.name;
-            });
-        }
-        return result;
-    };
-
-    const handleMatomoEventsForNewPersonCheckboxChange = (): void  => {
-        if (hasNewPersonChanged) {
-            if (person.newPerson) {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonChecked', person.name);
-            } else {
-                MatomoEvents.pushEvent(currentSpace.name, 'newPersonUnchecked', person.name + ', ' + initialNewPersonDuration + ' day(s)');
-            }
-            setHasNewPersonChanged(false);
-        }
-    };
-
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
@@ -202,8 +142,6 @@ function PersonForm({
             setIsPersonNameInvalid(true);
         } else {
             setIsPersonNameInvalid(false);
-
-            let personTagModified = getAddedPersonTag();
 
             if (selectedProducts.length === 0) {
                 setIsUnassignedDrawerOpen(true);
@@ -217,16 +155,21 @@ function PersonForm({
                 }
             }
 
-            let personToSend = {...person};
-            personToSend.name = personToSend.name.trim();
-            personToSend.customField1 = personToSend.customField1?.trim();
-            personToSend.notes = personToSend.notes?.trim();
-            personToSend.tags = selectedPersonTags;
+            const personToSend = {
+                ...person,
+                name: person.name.trim(),
+                customField1: person.customField1?.trim(),
+                notes:  person.notes?.trim(),
+                tags: selectedPersonTags
+            };
 
             if (isEditPersonForm) {
-                const response = await PeopleClient.updatePerson(currentSpace, personToSend, personTagModified);
+                const response = await PeopleClient.updatePerson(currentSpace, personToSend);
                 const updatedPerson: Person = response.data;
-                editPerson(updatedPerson);
+                setPeople(currentPeople => currentPeople.map((p) => {
+                    return (p.id === updatedPerson.id) ? updatedPerson : p;
+                }))
+
                 if (hasAssignmentChanged) {
                     await AssignmentClient.createAssignmentForDate(
                         moment(viewingDate).format('YYYY-MM-DD'),
@@ -237,9 +180,9 @@ function PersonForm({
                 }
 
             } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend, personTagModified);
+                const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend);
                 const newPerson: Person = response.data;
-                addPerson(newPerson);
+                setPeople(currentPeople => [...currentPeople, newPerson])
                 await AssignmentClient.createAssignmentForDate(
                     moment(viewingDate).format('YYYY-MM-DD'),
                     getSelectedProductPairs(),
@@ -247,10 +190,11 @@ function PersonForm({
                     newPerson
                 );
             }
-            handleMatomoEventsForNewPersonCheckboxChange();
             closeModal();
         }
     };
+
+    const closeModal = () => setModalContents(null);
 
     const removePerson = (): void => {
         const assignmentId = personEdited && personEdited.id;
@@ -296,7 +240,7 @@ function PersonForm({
 
     const handleCreateRole = (inputValue: string): void => {
         setIsLoading(true);
-        const roleAddRequest: RoleAddRequest = {name: inputValue};
+        const roleAddRequest: RoleTagRequest = {name: inputValue};
         RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
             fetchRoles();
@@ -401,16 +345,13 @@ function PersonForm({
                     options={getAssignToOptions()}
                     onChange={changeProductName}
                 />
-                {isEditPersonForm && <div className="formItem">
-                    <>{getAssignmentHistoryContent()}</>
-                </div>}
+                {isEditPersonForm && <div className="formItem">{getAssignmentHistoryContent()}</div>}
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                     tagClient={PersonTagClient}
                     currentTagsState={{currentTags: person.tags}}
                     selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
                     loadingState={{isLoading, setIsLoading}}
-                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.PersonTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                     toolTip={<ToolTip toolTipLabel="What's this?" contentElement={toolTipContent()}/>}
                 />
                 <div className="formItem">
@@ -453,23 +394,4 @@ function PersonForm({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-    roles: state.roles,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    closeModal: () => dispatch(closeModalAction()),
-    addPerson: (person: Person) => dispatch(addPersonAction(person)),
-    editPerson: (person: Person) => dispatch(editPersonAction(person)),
-    setIsUnassignedDrawerOpen: (open: boolean) => dispatch(setIsUnassignedDrawerOpenAction(open)),
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-    fetchRoles: () => dispatch(fetchRolesAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PersonForm);
-/* eslint-enable */
+export default PersonForm;

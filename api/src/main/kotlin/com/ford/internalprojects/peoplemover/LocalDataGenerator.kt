@@ -41,7 +41,6 @@ import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
-import com.google.common.collect.Sets
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import java.sql.Timestamp
@@ -83,7 +82,7 @@ class LocalDataGenerator(
         val createdSpace: Space = spaceRepository.save(
             Space(name = spaceName, uuid = uuid, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
         )
-        productService.createDefaultProducts(createdSpace);
+        productService.createDefaultProducts(createdSpace)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = createdSpace.uuid, permission = PERMISSION_OWNER))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "BBARKER", spaceUuid = createdSpace.uuid, permission = PERMISSION_EDITOR))
@@ -178,21 +177,21 @@ class LocalDataGenerator(
         )
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2019-01-01"),
-            products = Sets.newHashSet(ProductPlaceholderPair(
+            products = setOf(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = false
             ))
         ), createdSpace.uuid, jane.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.now(),
-            products = Sets.newHashSet(ProductPlaceholderPair(
+            products = setOf(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = true
             ))
         ), createdSpace.uuid, bob.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2020-06-01"),
-            products = Sets.newHashSet()
+            products = setOf()
         ), createdSpace.uuid, adam.id!!)
     }
 

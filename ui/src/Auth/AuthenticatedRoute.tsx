@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,43 +15,35 @@
  * limitations under the License.
  */
 
-import {Route, RouteProps} from 'react-router';
-import * as React from 'react';
-import {useState} from 'react';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
-import {useOnLoad} from '../ReusableComponents/UseOnLoad';
-import {getToken} from './TokenProvider';
-import {setOauthRedirect} from '../ReusableComponents/OAuthRedirect';
+import React, {ReactNode, useEffect, useState} from 'react';
+import AccessTokenClient from '../Services/Api/AccessTokenClient';
+import {getToken} from '../Services/TokenService';
+import {setOauthRedirect} from '../Common/OAuthRedirect/OAuthRedirect';
 
-export function AuthenticatedRoute<T extends RouteProps>(props: T): JSX.Element {
-    const {children, ...rest} = props;
+export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.Element {
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
-
-    useOnLoad(() => {
-        const authenticatedRoute = <Route {...rest}>{children}</Route>;
+    useEffect(() => {
         if (!window.runConfig.auth_enabled) {
-            setRenderedElement(authenticatedRoute);
+            setRenderedElement(<>{children}</>);
         } else {
             const accessToken = getToken();
-
             AccessTokenClient.validateAccessToken(accessToken)
-                .then(() => setRenderedElement(authenticatedRoute))
+                .then(() => setRenderedElement(<>{children}</>))
                 .catch(() => setRenderedElement(<RedirectToADFS/>));
         }
-    });
+    }, [children]);
 
-    return <>{renderedElement}</>;
+    return renderedElement;
 }
 
 export function RedirectToADFS(): null {
     setOauthRedirect(window.location.pathname);
 
-    /* eslint-disable @typescript-eslint/camelcase */
     let oauthUri: string = window.runConfig.adfs_url_template;
     const clientId: string = window.runConfig.adfs_client_id;
     const resource: string = window.runConfig.adfs_resource;
-    /* eslint-enable @typescript-eslint/camelcase */
+
     const redirectUri = `${window.location.origin}/adfs/catch`;
 
     oauthUri = oauthUri.replace('%s', clientId);

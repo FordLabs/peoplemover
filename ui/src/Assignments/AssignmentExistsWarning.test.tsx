@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-import {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import AssignmentExistsWarning from './AssignmentExistsWarning';
+import {screen} from '@testing-library/react';
 import React from 'react';
 
 describe('Assignment exists warning ', () => {
     it('should have appropriate text rendered', async () => {
-        const underTest = renderWithRedux(<AssignmentExistsWarning/>);
-        await underTest.findByText('This person is already assigned to this product.');
+        renderWithRecoil(<AssignmentExistsWarning/>);
+        await screen.findByText('This person is already assigned to this product.');
     });
 
     it('should have render Okay button', async () => {
-        const underTest = renderWithRedux(<AssignmentExistsWarning/>);
-        await underTest.findByText('Okay');
+        renderWithRecoil(<AssignmentExistsWarning/>);
+        await screen.findByText('Okay');
     });
 });

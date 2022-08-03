@@ -1,36 +1,46 @@
-import * as React from 'react';
-import {useState} from 'react';
-import {Space} from '../Space/Space';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import SpaceClient from '../Space/SpaceClient';
-import {closeModalAction, fetchUserSpacesAction, setCurrentModalAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {AvailableModals} from '../Modal/AvailableModals';
+/*
+ * Copyright (c) 2022 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React, {useState} from 'react';
+import {Space} from 'Types/Space';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import SpaceClient from 'Services/Api/SpaceClient';
 import FormButton from '../ModalFormComponents/FormButton';
-import NotificationModal, {NotificationModalProps} from '../Modal/NotificationModal';
+import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
+import TransferOwnershipForm from './TransferOwnershipForm';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../State/ModalContentsState';
+
 import './DeleteSpaceForm.scss';
 
-interface DeleteSpaceFormProps {
+interface Props {
     space: Space;
-
-    closeModal(): void;
-
-    setCurrentModal(modalState: CurrentModalState): void;
-
-    fetchUserSpaces(): void;
-
     spaceHasEditors?: boolean;
 }
 
-function DeleteSpaceForm({
-    space,
-    closeModal,
-    setCurrentModal,
-    fetchUserSpaces,
-    spaceHasEditors,
-}: DeleteSpaceFormProps): JSX.Element {
+function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
+    const { fetchUserSpaces } = useFetchUserSpaces();
+
     const [submitted, setSubmitted] = useState<boolean>(false);
+
+    const closeModal = () => setModalContents(null);
 
     const notificationModalProps = {
         content: <span>{space.name + ' has been deleted from PeopleMover.'
@@ -56,15 +66,18 @@ function DeleteSpaceForm({
                 testId="confirmationModalLeaveAndDeleteSpace"
                 onClick={(): void => {
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
-                        fetchUserSpaces();
+                    SpaceClient.deleteSpaceByUuid(space.uuid!).then(() => {
+                        fetchUserSpaces().catch().finally(closeModal);
                         setSubmitted(true);
                     });
                 }}>
                 Delete space
             </FormButton>),
-        submit(item?: unknown): void | Promise<void> {
-            setCurrentModal({modal: AvailableModals.TRANSFER_OWNERSHIP, item: space});
+        submit(): void | Promise<void> {
+            setModalContents({
+                title: 'Transfer Ownership of Space',
+                component: <TransferOwnershipForm spaceToTransfer={space}/>
+            });
         },
         close() {
             closeModal();
@@ -81,9 +94,8 @@ function DeleteSpaceForm({
         </>,
         submitButtonLabel: 'Delete Space',
         primaryButtonStyle: 'redalert',
-        submit(item?: unknown): void | Promise<void> {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            SpaceClient.deleteSpaceByUuid(space.uuid!!).then(() => {
+        submit(): void | Promise<void> {
+            SpaceClient.deleteSpaceByUuid(space.uuid!).then(() => {
                 fetchUserSpaces();
                 setSubmitted(true);
             });
@@ -103,12 +115,4 @@ function DeleteSpaceForm({
 
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    closeModal: () => dispatch(closeModalAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
-});
-
-export default connect(null, mapDispatchToProps)(DeleteSpaceForm);
-/* eslint-enable */
+export default DeleteSpaceForm;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,25 +16,25 @@
  */
 
 import React from 'react';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {Dispatch} from 'redux';
-import {connect} from 'react-redux';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
+import ProductForm from './ProductForm';
 
 import './NewProductButton.scss';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {AvailableModals} from '../Modal/AvailableModals';
 
 interface Props {
-  isReadOnly: boolean;
-  setCurrentModal(modalState: CurrentModalState): void;
-  modalState?: CurrentModalState;
+    modalContents?: ModalContents;
 }
 
-function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CREATE_PRODUCT}, setCurrentModal}: Props): JSX.Element {
+function NewProductButton({ modalContents}: Props): JSX.Element {
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
+
     const openModal = (): void => {
-        setCurrentModal(modalState);
-    };
+        const createNewProductForm = {title: 'Add New Product', component: <ProductForm editing={false}/>};
+        setModalContents(modalContents || createNewProductForm);
+    }
 
     return isReadOnly ? <></> : (
         <button
@@ -47,14 +47,4 @@ function NewProductButton({ isReadOnly, modalState = {modal: AvailableModals.CRE
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    isReadOnly: state.isReadOnly,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(NewProductButton);
-/* eslint-enable */
+export default NewProductButton;

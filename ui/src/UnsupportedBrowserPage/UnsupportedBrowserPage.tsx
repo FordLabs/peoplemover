@@ -20,8 +20,8 @@ import React from 'react';
 import './UnsupportedBrowserPage.scss';
 import Chrome from './chrome.png';
 import FireFox from './firefox.png';
-import PeopleMoverLogo from '../ReusableComponents/PeopleMoverLogo';
-import Branding from '../ReusableComponents/Branding';
+import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
+import Branding from '../Common/Branding/Branding';
 
 interface UnsupportedBrowserProps {
     browserName: string;

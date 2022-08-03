@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,55 +16,53 @@
  */
 
 import React from 'react';
-import {Product} from './Product';
+import {emptyProduct} from './ProductService';
 import NewProductButton from './NewProductButton';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {TagInterface} from '../Tags/Tag.interface';
-import {GlobalStateProps, SortByType} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Tag} from '../Tags/Tag';
-import {LocationTag} from '../Locations/LocationTag.interface';
+import {useRecoilValue} from 'recoil';
+
+import {ProductCardArray} from 'Common/ProductCardArray/ProductCardArray';
+import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
+import {LocationsState} from 'State/LocationsState';
+import {ProductTagsState} from 'State/ProductTagsState';
+import {ModalContents} from 'State/ModalContentsState';
+import ProductForm from './ProductForm';
+import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import {Tag} from 'Types/Tag';
+import {Product} from 'Types/Product';
 
 import './ProductListGrouped.scss';
-import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
-import {AvailableModals} from '../Modal/AvailableModals';
 
 interface GroupedByListProps {
     products: Array<Product>;
-    productSortBy: SortByType;
-    productTags: Array<Tag>;
-    locations: Array<LocationTag>;
 }
 
 interface GroupedListDataProps {
     traitTitle: string;
-    traits: Array<TagInterface>;
-    modalType: AvailableModals | null;
+    traits: Array<Tag>;
     filterByTraitFunction: (product: Product, tagName: string) => boolean;
     filterByNoTraitFunction: (product: Product) => boolean;
 }
 
 interface ProductGroupProps {
     tagName: string;
-    modalState?: CurrentModalState;
+    modalContents?: ModalContents;
     productFilterFunction: (product: Product, tagName: string) => boolean;
     useGrayBackground?: boolean;
 }
 
-function GroupedByList({
-    productSortBy,
-    products,
-    productTags,
-    locations,
-}: GroupedByListProps): JSX.Element {
-    let productGroupList = sortProducts();
+function GroupedByList({ products }: GroupedByListProps): JSX.Element {
+    const locations = useRecoilValue(LocationsState);
+    const productSortBy = useRecoilValue(ProductSortByState);
+    const productTags = useRecoilValue(ProductTagsState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
+
+    const productGroupList = sortProducts();
 
     function sortProducts(): GroupedListDataProps {
-        if (productSortBy === 'location') {
+        if (productSortBy === ProductSortBy.LOCATION) {
             return ({
                 traitTitle: 'Location',
                 traits: [...locations],
-                modalType: AvailableModals.CREATE_PRODUCT_OF_LOCATION,
                 filterByTraitFunction: filterByLocation,
                 filterByNoTraitFunction: filterByNoLocation,
             });
@@ -72,7 +70,6 @@ function GroupedByList({
             return ({
                 traitTitle: 'Product Tag',
                 traits: [...productTags],
-                modalType: AvailableModals.CREATE_PRODUCT_OF_PRODUCT_TAG,
                 filterByTraitFunction: filterByProductTag,
                 filterByNoTraitFunction: filterByNoProductTag,
             });
@@ -95,7 +92,7 @@ function GroupedByList({
         return !product.spaceLocation;
     }
 
-    function ProductGroup({tagName, modalState, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
+    function ProductGroup({tagName, modalContents, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
         const filteredProducts = products.filter(product => productFilterFunction(product, tagName));
 
         return (
@@ -105,7 +102,7 @@ function GroupedByList({
                         <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
                         <div className="groupedProducts">
                             <ProductCardArray products={filteredProducts} arrayId={tagName}/>
-                            <NewProductButton modalState={modalState}/>
+                            <NewProductButton modalContents={modalContents}/>
                         </div>
                     </div>
                 )
@@ -114,12 +111,24 @@ function GroupedByList({
 
     return (
         <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
-            {productGroupList.traits.map((trait: TagInterface) => {
+            {productGroupList.traits.map((trait: Tag) => {
+                const newProduct = emptyProduct(uuid);
+                if (productSortBy === ProductSortBy.LOCATION) {
+                    newProduct.spaceLocation = {...trait}
+                } else if (productSortBy === ProductSortBy.PRODUCT_TAG) {
+                    newProduct.tags = [trait]
+                }
+
                 return (
                     <span key={trait.id}>
                         <ProductGroup
                             tagName={trait.name}
-                            modalState={{modal: productGroupList.modalType, item: trait}}
+                            modalContents={{
+                                title: 'Add New Product',
+                                component: <ProductForm
+                                    editing={false}
+                                    product={newProduct}/>
+                            }}
                             productFilterFunction={productGroupList.filterByTraitFunction}/>
                     </span>
                 );
@@ -135,11 +144,4 @@ function GroupedByList({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    productTags: state.productTags,
-    locations: state.locations,
-});
-
-export default connect(mapStateToProps)(GroupedByList);
-/* eslint-enable */
+export default GroupedByList;

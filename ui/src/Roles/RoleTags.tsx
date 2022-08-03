@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,38 +16,36 @@
  */
 
 import {JSX} from '@babel/types';
-import {Color, RoleTag} from './RoleTag.interface';
 import React, {useState} from 'react';
-import {TagInterface} from '../Tags/Tag.interface';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import RoleClient from './RoleClient';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import RoleClient from '../Services/Api/RoleClient';
 import {createDataTestId} from '../Utils/ReactUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Space} from '../Space/Space';
 import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
-import {RoleEditRequest} from './RoleEditRequest.interface';
-import {fetchRolesAction, setupSpaceAction} from '../Redux/Actions';
+import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Color} from '../Types/Color';
+import {RoleTag} from '../Types/Tag';
+import {RoleTagRequest} from '../Types/TagRequest';
 
 interface Props {
     colors: Array<Color>;
-    roles: Array<RoleTag>;
-    fetchRoles(): Array<RoleTag>;
-    updateFilterOptions(index: number, tag: TagInterface): void;
-    currentSpace: Space;
 }
 
-const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace }: Props): JSX.Element => {
+const RoleTags = ({ colors }: Props): JSX.Element => {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
+    const { fetchRoles, roles } = useFetchRoles(currentSpace.uuid || '');
+
     const tagType = 'role';
-    const roleFiltersIndex = 2;
     const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-    const showDeleteConfirmationModal = (roleToDelete: TagInterface): void => {
+    const showDeleteConfirmationModal = (roleToDelete: RoleTag): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteRole(roleToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -61,29 +59,27 @@ const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace
         setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
-    const editRole = async (role: RoleEditRequest): Promise<unknown> => {
+    const editRole = async (role: RoleTagRequest): Promise<unknown> => {
         return await RoleClient.edit(role, currentSpace)
             .then((response) => {
-                const newRole: RoleTag = response.data;
-                updateFilterOptions(roleFiltersIndex, newRole);
                 fetchRoles();
                 returnToViewState();
             });
     };
 
-    const addRole = async (role: RoleEditRequest): Promise<unknown> => {
+    const addRole = async (role: RoleTagRequest): Promise<unknown> => {
         const newRole = {
             name: role.name,
             colorId: role.colorId,
         };
         return await RoleClient.add(newRole, currentSpace)
-            .then((response) => {
+            .then(() => {
                 fetchRoles();
                 returnToViewState();
             });
     };
 
-    const deleteRole = async (roleToDelete: TagInterface): Promise<void> => {
+    const deleteRole = async (roleToDelete: RoleTag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
                 await RoleClient.delete(roleToDelete.id, currentSpace);
@@ -101,7 +97,7 @@ const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace
 
     const showEditState = (index: number): boolean => editRoleIndex === index;
 
-    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleEditRequest => {
+    const transformTagIntoRoleEditRequest = (role: RoleTag): RoleTagRequest => {
         return {id: role.id, name: role.name, colorId: role.color?.id};
     };
 
@@ -155,16 +151,4 @@ const RoleTags = ({ colors, roles, fetchRoles, updateFilterOptions, currentSpace
     );
 };
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-    roles: state.roles,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    fetchRoles: () => dispatch(fetchRolesAction()),
-    setSpace: (space: Space) => dispatch(setupSpaceAction(space)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(RoleTags);
-/* eslint-enable */
+export default RoleTags;

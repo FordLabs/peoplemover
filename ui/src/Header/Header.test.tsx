@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,116 +16,271 @@
  */
 
 import React from 'react';
-import {act, fireEvent, RenderResult, wait} from '@testing-library/react';
-import {axe, toHaveNoViolations} from 'jest-axe';
+import {fireEvent, RenderResult, screen} from '@testing-library/react';
+import {axe} from 'jest-axe';
 import Header from './Header';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {RunConfig} from '../index';
-import {BrowserRouter as Router} from 'react-router-dom';
+import {renderWithRecoil} from '../Utils/TestUtils';
+import {RunConfig} from 'Types/RunConfig';
+import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import TestData from '../Utils/TestData';
+import {MutableSnapshot} from 'recoil';
+import {dashboardUrl} from '../Routes';
+import {createEmptySpace, Space} from '../Types/Space';
 
 const debounceTimeToWait = 100;
-expect.extend(toHaveNoViolations);
 
 describe('Header', () => {
-    // @ts-ignore
-    const initialState: PreloadedState<GlobalStateProps> = {currentSpace: TestUtils.space, currentUser: 'bob' } as GlobalStateProps;
+    let container: string | Element;
 
-    let app: RenderResult;
-    let originalWindow: Window;
+    beforeEach(() => {
+        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+    })
 
-    beforeEach(async () => {
-        originalWindow = window;
-        delete window.location;
-        (window as Window) = Object.create(window);
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
-
-    afterEach(() => {
-        (window as Window) = originalWindow;
-    });
-
-    it('should have no axe violations', async () => {
-        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
-        const app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
-        const results = await axe(app.container);
-        expect(results).toHaveNoViolations();
-    });
-
-    it('should hide space buttons', async () => {
-        window.location = {origin: 'https://localhost', pathname: '/user/dashboard'} as Location;
-        app = renderWithRedux(
-            <Router>
-                <Header hideSpaceButtons={true}/>
-            </Router>, undefined, initialState
-        );
-        expect(app.queryByTestId('filters')).toBeFalsy();
-        expect(app.queryByTestId('sortBy')).toBeFalsy();
-
-        const userIconButton = await app.findByTestId('accountDropdownToggle');
-        await wait(() => {
-            fireEvent.click(userIconButton);
+    describe('Landing Page', () => {
+        it('should not show header at all', () => {
+            renderHeader('/');
+            expect(screen.queryByTestId('peopleMoverHeader')).toBeNull();
         });
-        expect(await app.queryByTestId('shareAccess')).toBeNull();
-        expect(await app.queryByTestId('downloadReport')).toBeNull();
     });
 
-    it('should not show the account dropdown when user is on the error page', () => {
-        window.location = {origin: 'https://localhost', pathname: '/error/404'} as Location;
-        app = renderWithRedux(
-            <Router>
-                <Header hideSpaceButtons={true}/>
-            </Router>, undefined, initialState
-        );
+    describe('Dashboard Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader('/user/dashboard'));
+        })
 
-        expect(app.queryByText('bob')).toBeNull();
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
+        });
+
+        it('should show logo that is NOT a link', () => {
+            const staticLogo = screen.getByTestId('peopleMoverStaticLogo');
+            expect(staticLogo).not.toHaveAttribute('href');
+            expect(staticLogo).toHaveTextContent('PEOPLEMOVER');
+            expect(screen.queryByTestId('peopleMoverLogoLink')).toBeNull();
+        });
+
+        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
+            shouldOnlyShowSignoutButtonInAccountDropdown();
+        });
+    });
+
+    describe('Space Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader(`/${TestData.space.uuid}`, TestData.space));
+        })
+
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show space name', () => {
+            shouldShowSpaceName();
+        });
+
+        it('should render "Skip to main content" accessibility link', () => {
+            expect(screen.getByText('Skip to main content')).toBeDefined();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should show "Time On Product" link and NOT "Back" link', () => {
+            const timeOnProductLink = screen.getByText('Time On Product >');
+            expect(timeOnProductLink).toBeDefined();
+            expect(timeOnProductLink).toHaveAttribute('href', `/${TestData.space.uuid}/timeonproduct`);
+            expect(screen.queryByText('< Back')).toBeNull();
+        });
+
+        it('should show all account dropdown options', () => {
+            shouldShowAllAccountDropdownOptions();
+        });
+    });
+
+    describe('Contact Us Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader('/contact-us', TestData.space));
+        })
+
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
+            shouldOnlyShowSignoutButtonInAccountDropdown();
+        });
+    });
+
+    describe('Time On Product Page', () => {
+        beforeEach(() => {
+            ({container} = renderHeader(`/${TestData.space.uuid}/timeonproduct`, TestData.space));
+        })
+
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should show space name', () => {
+            shouldShowSpaceName();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            const logoLink = screen.getByTestId('peopleMoverLogoLink');
+            expect(logoLink).toHaveAttribute('href', dashboardUrl);
+            expect(logoLink).toHaveTextContent('PEOPLEMOVER');
+        });
+
+        it('should show "Back" to space link and NOT "Time on Product" link', async () => {
+            const backToSpaceLink = screen.getByText('< Back');
+            expect(backToSpaceLink).toBeDefined();
+            expect(backToSpaceLink).toHaveAttribute('href', `/${TestData.space.uuid}`);
+            expect(screen.queryByText('Time On Product >')).toBeNull();
+        });
+
+        it('should show all account dropdown options', () => {
+            shouldShowAllAccountDropdownOptions();
+        });
+    })
+
+    describe('Error Page', () => {
+        beforeEach(() => {
+            renderHeader('/error/404');
+        })
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should not show the account dropdown at all when user is on the error page', () => {
+            expect(screen.queryByText('bob')).toBeNull();
+            expect(screen.queryByText('Sign Out')).toBeNull();
+            expect(screen.queryByText('Share Access')).toBeNull();
+            expect(screen.queryByText('Download Report')).toBeNull();
+        });
     });
 
     describe('Account Dropdown', () => {
-        let app: RenderResult;
         beforeEach(async () => {
             jest.useFakeTimers();
             flagsmith.hasFeature = jest.fn().mockReturnValue(true);
-            window.location = {origin: 'https://localhost', pathname: '/aaaaaaaaaaaaaa'} as Location;
-            app = await renderWithRedux(<Router><Header/></Router>, undefined, initialState);
+
+            renderHeader(`/${TestData.space.uuid}`);
+
+            await screen.findByTestId('accountDropdownToggle');
         });
 
         it('should show username', async () => {
-            expect(app.queryByText('USER_ID')).not.toBeNull();
-        });
-
-        it('should show time On Product Link when user is in a space', async () => {
-            expect(await app.getByText('Time On Product >'));
-        });
-
-        it('should show Back to Space Link when user is in time on product page', async () => {
-            fireEvent.click( await app.getByText('Time On Product >'));
-            expect(await app.getByText('< Back'));
+            expect(screen.getByText('USER_ID')).toBeDefined();
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
 
-            act(() => {
-                app.getByTestId('accountDropdownToggle').click();
-                jest.advanceTimersByTime(debounceTimeToWait);
-            });
-            expect(app.queryByTestId('shareAccess')).toBeNull();
+            openAccountDropdown();
+            jest.advanceTimersByTime(debounceTimeToWait);
+
+            expect(screen.queryByTestId('shareAccess')).toBeNull();
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 
-            act(() => {
-                app.getByTestId('accountDropdownToggle').click();
-                jest.advanceTimersByTime(debounceTimeToWait);
-            });
-            expect(app.queryByTestId('shareAccess')).not.toBeNull();
+            openAccountDropdown();
+            jest.advanceTimersByTime(debounceTimeToWait);
+
+            expect(await screen.findByTestId('shareAccess')).toBeDefined();
         });
     });
 });
+
+function renderHeader(initialRoute: string, currentSpace: Space = createEmptySpace()): RenderResult {
+    return renderWithRecoil(
+        <MemoryRouter initialEntries={[initialRoute]}>
+            <Header />
+        </MemoryRouter>,
+        ({set}: MutableSnapshot) => {
+            set(CurrentSpaceState, currentSpace)
+        }
+    );
+}
+
+function openAccountDropdown() {
+    const userIconButton = screen.getByTestId('accountDropdownToggle');
+    fireEvent.click(userIconButton);
+}
+
+function shouldShowAllAccountDropdownOptions() {
+    openAccountDropdown();
+    expect(screen.getByText('Sign Out')).toBeDefined();
+    expect(screen.getByText('Share Access')).toBeDefined();
+    expect(screen.getByText('Download Report')).toBeDefined();
+}
+
+function shouldRenderLogoAsDashboardLink() {
+    const logoLink = screen.getByTestId('peopleMoverLogoLink');
+    expect(logoLink).toHaveAttribute('href', dashboardUrl);
+    expect(logoLink).toHaveTextContent('PEOPLEMOVER');
+    expect(screen.queryByTestId('peopleMoverStaticLogo')).toBeNull();
+}
+
+function shouldOnlyShowSignoutButtonInAccountDropdown() {
+    openAccountDropdown();
+
+    expect(screen.getByText('Sign Out')).toBeDefined();
+    expect(screen.queryByText('Share Access')).toBeNull();
+    expect(screen.queryByText('Download Report')).toBeNull();
+}
+
+function shouldNotShowSpaceName() {
+    expect(screen.queryByText(TestData.space.name)).toBeNull();
+}
+
+function shouldShowSpaceName() {
+    expect(screen.getByText(TestData.space.name)).toBeDefined();
+}

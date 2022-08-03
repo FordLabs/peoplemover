@@ -24,15 +24,13 @@ import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -41,7 +39,6 @@ import java.sql.Timestamp
 import java.time.Instant
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 class SpaceControllerApiTest {
@@ -68,7 +65,7 @@ class SpaceControllerApiTest {
 
     var baseSpaceUrl: String = "/api/spaces"
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()

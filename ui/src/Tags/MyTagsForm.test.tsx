@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,40 +15,45 @@
  * limitations under the License.
  */
 
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
+import {renderWithRecoil} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
+import {screen} from '@testing-library/react';
 import MyTagsForm from './MyTagsForm';
-import {FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
+import {FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
 import React from 'react';
-import moment from 'moment';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {LocationsState} from '../State/LocationsState';
+import {ProductTagsState} from '../State/ProductTagsState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 describe('My Tags Form', () => {
-    const initialState = {
-        productTags: TestUtils.productTags,
-        locations: TestUtils.locations,
-        allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-        viewingDate: moment().toDate(),
-        productSortBy: 'name',
-        currentSpace: TestUtils.space,
-    } as GlobalStateProps;
-
     it('should only display location tags when the passed-in filter type is location tags', async () => {
-        const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.Location}/>, undefined, initialState);
+        renderWithRecoil(
+            <MyTagsForm filterType={FilterTypeListings.Location}/>,
+            ({set}) => {
+                set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
 
-        // location included in TestUtils.locations
-        await app.findByText( TestUtils.annarbor.name);
-        await app.findByText( TestUtils.detroit.name);
-        await app.findByText( TestUtils.dearborn.name);
-        await app.findByText( TestUtils.southfield.name);
+        await screen.findByText( TestData.annarbor.name);
+        await screen.findByText( TestData.detroit.name);
+        await screen.findByText( TestData.dearborn.name);
+        await screen.findByText( TestData.southfield.name);
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
-        const app = renderWithRedux(<MyTagsForm filterType={FilterTypeListings.ProductTag}/>, undefined, initialState);
+        renderWithRecoil(
+            <MyTagsForm filterType={FilterTypeListings.ProductTag}/>,
+            ({set}) => {
+                set(LocationsState, TestData.locations)
+                set(ProductTagsState, TestData.productTags)
+            }
+        );
 
-        // product tags included in TestUtils.productTags
-        await app.findByText(TestUtils.productTag1.name);
-        await app.findByText(TestUtils.productTag2.name);
-        await app.findByText(TestUtils.productTag3.name);
-        await app.findByText(TestUtils.productTag4.name);
+        await screen.findByText(TestData.productTag1.name);
+        await screen.findByText(TestData.productTag2.name);
+        await screen.findByText(TestData.productTag3.name);
+        await screen.findByText(TestData.productTag4.name);
     });
 });

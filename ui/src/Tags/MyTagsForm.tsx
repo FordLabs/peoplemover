@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,101 +16,39 @@
  */
 
 import React from 'react';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {
-    fetchLocationsAction,
-    fetchPersonTagsAction,
-    fetchProductTagsAction,
-    setAllGroupedTagFilterOptionsAction,
-} from '../Redux/Actions';
-import {TagInterface} from './Tag.interface';
+import {useRecoilValue} from 'recoil';
 import {JSX} from '@babel/types';
-import {FilterOption} from '../CommonTypes/Option';
-import {LocationTag} from '../Locations/LocationTag.interface';
-import {Tag} from './Tag';
 import TagsModalContent from './TagsModalContent';
+import {FilterType, FilterTypeListings} from '../SubHeader/SortingAndFiltering/FilterLibraries';
+import ProductTagClient from '../Services/Api/ProductTagClient';
+import LocationClient from 'Services/Api/LocationClient';
+import PersonTagClient from '../Services/Api/PersonTagClient';
+import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
+import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
+import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 import '../ModalFormComponents/TagRowsContainer.scss';
-import {AllGroupedTagFilterOptions, FilterType, FilterTypeListings} from '../SortingAndFiltering/FilterLibraries';
-import ProductTagClient from './ProductTag/ProductTagClient';
-import LocationClient from '../Locations/LocationClient';
-import PersonTagClient from './PersonTag/PersonTagClient';
 
 export const INACTIVE_EDIT_STATE_INDEX = -1;
 
 interface Props {
     filterType: FilterType;
-    locations: Array<LocationTag>;
-    productTags: Array<Tag>;
-    personTags: Array<Tag>;
-    fetchLocations(): Array<LocationTag>;
-    fetchProductTags(): Array<Tag>;
-    fetchPersonTags(): Array<Tag>;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    locations: state.locations,
-    productTags: state.productTags,
-    personTags: state.personTags,
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
+function MyTagsForm({ filterType }: Props): JSX.Element {
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
-const mapDispatchToProps = (dispatch: any) => ({
-    fetchLocations: () => dispatch(fetchLocationsAction()),
-    fetchPersonTags: () => dispatch(fetchPersonTagsAction()),
-    fetchProductTags: () => dispatch(fetchProductTagsAction()),
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
+    const { fetchLocations, locations } = useFetchLocations(uuid);
+    const { fetchPersonTags, personTags } = useFetchPersonTags(uuid);
+    const { fetchProductTags, productTags } = useFetchProductTags(uuid);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyTagsForm);
-/* eslint-enable */
-
-function MyTagsForm({
-    filterType,
-    locations,
-    productTags,
-    personTags,
-    fetchLocations,
-    fetchProductTags,
-    fetchPersonTags,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-}: Props): JSX.Element {
-
-    const getUpdatedFilterOptions = (index: number, tag: TagInterface): Array<FilterOption> => {
-        let options: Array<FilterOption>;
-        options = allGroupedTagFilterOptions[index].options.map(val =>
-            !val.value.includes(tag.id.toString() + '_') ?
-                val :
-                {
-                    label: tag.name,
-                    value: tag.id.toString() + '_' + tag.name,
-                    selected: val.selected,
-                }
-        );
-        return options;
-    };
-
-    function updateFilterOptions(optionIndex: number, tag: TagInterface): void {
-        const groupedFilterOptions = [...allGroupedTagFilterOptions];
-        groupedFilterOptions[optionIndex]
-            .options = getUpdatedFilterOptions(optionIndex, tag);
-        setAllGroupedTagFilterOptions(groupedFilterOptions);
-    }
-
-    const getWarningMessageElement = (message: string): JSX.Element => {
-        return <div className="traitWarning">
+    const getWarningMessageElement = (message: string): JSX.Element => (
+        <div className="traitWarning">
             <i className="material-icons warningIcon">error</i>
-            <p className="warningText">
-                {message}
-            </p>
-        </div>;
-    };
+            <p className="warningText">{message}</p>
+        </div>
+    );
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
@@ -118,7 +56,6 @@ function MyTagsForm({
             <>
                 <TagsModalContent
                     tags={locations}
-                    updateFilterOptions={updateFilterOptions}
                     tagClient={LocationClient}
                     filterType={filterType}
                     fetchCommand={fetchLocations}
@@ -130,7 +67,6 @@ function MyTagsForm({
             <>
                 <TagsModalContent
                     tags={productTags}
-                    updateFilterOptions={updateFilterOptions}
                     tagClient={ProductTagClient}
                     filterType={filterType}
                     fetchCommand={fetchProductTags}
@@ -142,7 +78,6 @@ function MyTagsForm({
             <>
                 <TagsModalContent
                     tags={personTags}
-                    updateFilterOptions={updateFilterOptions}
                     tagClient={PersonTagClient}
                     filterType={filterType}
                     fetchCommand={fetchPersonTags}
@@ -153,3 +88,6 @@ function MyTagsForm({
         </div>
     );
 }
+
+export default MyTagsForm;
+

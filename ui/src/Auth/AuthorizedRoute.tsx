@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,31 +15,26 @@
  * limitations under the License.
  */
 
-import {Redirect, Route, RouteProps} from 'react-router';
+import {RouteProps} from 'react-router';
 import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
-import {AccessTokenClient} from '../Login/AccessTokenClient';
+import AccessTokenClient from '../Services/Api/AccessTokenClient';
 import {AxiosError} from 'axios';
-import {setIsReadOnlyAction} from '../Redux/Actions';
-import {connect} from 'react-redux';
+import {useNavigate, useParams} from 'react-router-dom';
+import {useSetRecoilState} from 'recoil';
+import {IsReadOnlyState} from '../State/IsReadOnlyState';
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_NOT_FOUND = 404;
 const HTTP_FORBIDDEN = 403;
 
-interface AuthorizedRouteProps extends RouteProps {
-    setIsReadOnly(isReadOnly: boolean): boolean;
-}
-
-function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX.Element {
-    const {children, setIsReadOnly, ...rest} = props;
+function AuthorizedRoute({children}: RouteProps): JSX.Element {
+    const { teamUUID = '' } = useParams<{ teamUUID: string }>()
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
+    const navigate = useNavigate();
 
-    function extractUuidFromUrl(): string {
-        return window.location.pathname.split('/')[1];
-    }
+    const setIsReadOnly = useSetRecoilState(IsReadOnlyState);
 
-    /* eslint-disable */
     useEffect(() => {
         setIsReadOnly(false);
 
@@ -49,41 +44,30 @@ function AuthorizedRoute<T extends RouteProps>(props: AuthorizedRouteProps): JSX
             const cookie = new Cookies();
             const accessToken = cookie.get('accessToken');
 
-            const uuid = extractUuidFromUrl();
-
-            AccessTokenClient.userCanAccessSpace(accessToken, uuid)
-                .then(() => {
-                    setRenderedElement(<Route {...rest}>{children}</Route>);
-                })
+            AccessTokenClient.userCanAccessSpace(accessToken, teamUUID)
+                .then(() => setRenderedElement(<>{children}</>))
                 .catch((error: AxiosError) => {
                     setIsReadOnly(true);
                     if (!error.response) return;
                     switch (error.response.status) {
                         case HTTP_FORBIDDEN: {
-                            setRenderedElement(<Route {...rest}>{children}</Route>);
+                            setRenderedElement(<>{children}</>);
                             break;
                         }
                         case HTTP_NOT_FOUND: {
-                            setRenderedElement(<Redirect to="/error/404"/>);
+                            navigate("/error/404");
                             break;
                         }
                         case HTTP_UNAUTHORIZED:
                         default: {
-                            setRenderedElement(<Redirect to="/user/login"/>);
+                            navigate("/user/login");
                         }
                     }
                 });
         }
-    }, [children, setIsReadOnly, rest.path]);
-    /* eslint-enable */
+    }, [setIsReadOnly, teamUUID, children, navigate]);
 
     return <>{renderedElement}</>;
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch: any) => ({
-    setIsReadOnly: (isReadOnly: boolean) => dispatch(setIsReadOnlyAction(isReadOnly)),
-});
-
-export default connect(null, mapDispatchToProps)(AuthorizedRoute);
-/* eslint-enable */
+export default AuthorizedRoute;

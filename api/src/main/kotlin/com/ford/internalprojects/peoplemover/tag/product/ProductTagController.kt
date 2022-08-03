@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.tag.product
 
 import com.ford.internalprojects.peoplemover.tag.TagRequest
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -28,7 +27,6 @@ import javax.validation.Valid
 @RequestMapping("/api/spaces/{spaceUuid}/product-tags")
 class ProductTagController (
         private val productTagService: ProductTagService,
-        private val logger: BasicLogger
 ) {
     @PreAuthorize("hasPermission(#spaceUuid, 'write')")
     @PostMapping
@@ -38,7 +36,6 @@ class ProductTagController (
     ): ResponseEntity<ProductTag> {
         val createdProductTag: ProductTag = productTagService
             .createProductTagForSpace(request, spaceUuid)
-        logger.logInfoMessage("Product tag [${createdProductTag.name}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(createdProductTag)
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,72 +17,75 @@
 
 import React from 'react';
 import AssignmentForm from './AssignmentForm';
-import {act, fireEvent} from '@testing-library/react';
-import AssignmentClient from './AssignmentClient';
-import TestUtils, {renderWithRedux, renderWithReduxEnzyme} from '../tests/TestUtils';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
+import AssignmentClient from '../Services/Api/AssignmentClient';
+import {renderWithRecoil} from '../Utils/TestUtils';
+import TestData from '../Utils/TestData';
 import selectEvent from 'react-select-event';
-import {PreloadedState} from 'redux';
-import {GlobalStateProps} from '../Redux/Reducers';
 import moment from 'moment';
+import {ViewingDateState} from '../State/ViewingDateState';
+import {ProductsState} from '../State/ProductsState';
+import {PeopleState} from '../State/PeopleState';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
-describe('the assignment form', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-    });
+jest.mock('Services/Api/AssignmentClient');
 
+describe('The Assignment Form', () => {
     it('renders the assignment form labels', () => {
-        const wrapper = renderWithReduxEnzyme(
-            <AssignmentForm products={[TestUtils.unassignedProduct]}
-                initiallySelectedProduct={TestUtils.unassignedProduct}/>,
+        renderWithRecoil(
+            <AssignmentForm initiallySelectedProduct={TestData.unassignedProduct} />,
+            (({set}) => {
+                set(ProductsState, [TestData.unassignedProduct])
+                set(CurrentSpaceState, TestData.space)
+            })
         );
-        expect(wrapper.find('label').at(0).text()).toEqual('Name');
-        expect(wrapper.find('label').at(1).text()).toEqual('Mark as Placeholder');
-        expect(wrapper.find('label').at(2).text()).toEqual('Assign to');
+        expect(screen.getByLabelText('Name')).toBeDefined();
+        expect(screen.getByLabelText('Mark as Placeholder')).toBeDefined();
+        expect(screen.getByLabelText('Assign to')).toBeDefined();
     });
 
     it('accepts changes to the assignment forms product list and can submit multiple assignments', async () => {
-        const products = [TestUtils.unassignedProduct, TestUtils.productWithAssignments, TestUtils.productWithoutAssignments, TestUtils.productForHank];
+        const products = [TestData.unassignedProduct, TestData.productWithAssignments, TestData.productWithoutAssignments, TestData.productForHank];
         const viewingDate = new Date(2020, 5, 5);
+        renderWithRecoil(
+            <AssignmentForm initiallySelectedProduct={products[2]} />,
+            (({set}) => {
+                set(ViewingDateState, viewingDate)
+                set(ProductsState, products)
+                set(PeopleState, TestData.people)
+                set(CurrentSpaceState, TestData.space)
+            })
+        );
 
-        await act(async () => {
-            const component = <AssignmentForm products={products}
-                initiallySelectedProduct={products[2]}/>;
-            const initialState: PreloadedState<GlobalStateProps> = {people: TestUtils.people, currentSpace: TestUtils.space, viewingDate: viewingDate} as GlobalStateProps;
-            const wrapper = await renderWithRedux(component, undefined, initialState);
+        const labelElement = await screen.findByLabelText('Name');
+        const containerToFindOptionsIn = { container: await screen.findByTestId('assignmentForm') };
+        await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
 
-            const labelElement = await wrapper.findByLabelText('Name');
-            const containerToFindOptionsIn = { container: await wrapper.findByTestId('assignmentForm') };
-            await selectEvent.select(labelElement, /Hank/, containerToFindOptionsIn);
+        const productSelect = await screen.findByLabelText('Assign to');
+        await selectEvent.select(productSelect, 'Product 1');
+        const assignButton = await screen.findByText('Assign');
+        fireEvent.click(assignButton);
 
-            const productSelect = await wrapper.findByLabelText('Assign to');
-            await selectEvent.select(productSelect, 'Product 1');
-            const assignButton = await wrapper.findByText('Assign');
-            fireEvent.click(assignButton);
-
-            const spy = jest.spyOn(AssignmentClient, 'createAssignmentForDate');
-            expect(spy).toBeCalledTimes(1);
+        await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toBeCalledTimes(1));
             
-            expect(spy).toBeCalledWith(
-                moment(viewingDate).format('YYYY-MM-DD'),
-                [
-                    {
-                        productId: TestUtils.productWithoutAssignments.id,
-                        placeholder: false,
-                    },
-                    {
-                        productId: TestUtils.productWithAssignments.id,
-                        placeholder: false,
-                    },
-                    {
-                        productId: TestUtils.productForHank.id,
-                        placeholder: TestUtils.assignmentForHank.placeholder,
-                    },
-                ],
-                TestUtils.space,
-                TestUtils.hank
-            );
-            
-        });
+        expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
+            moment(viewingDate).format('YYYY-MM-DD'),
+            [
+                {
+                    productId: TestData.productWithoutAssignments.id,
+                    placeholder: false,
+                },
+                {
+                    productId: TestData.productWithAssignments.id,
+                    placeholder: false,
+                },
+                {
+                    productId: TestData.productForHank.id,
+                    placeholder: TestData.assignmentForHank.placeholder,
+                },
+            ],
+            TestData.space,
+            TestData.hank
+        );
     });
 });

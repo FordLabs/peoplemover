@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +16,14 @@
  */
 
 import React from 'react';
-import {connect} from 'react-redux';
-import {closeModalAction} from '../Redux/Actions';
-import {Dispatch} from 'redux';
+import {useSetRecoilState} from 'recoil';
+import {ModalContentsState} from '../State/ModalContentsState';
 
 import './AssignmentExistsWarning.scss';
 
-export interface Props {
-    closeModal(): void;
-}
+function AssignmentExistsWarning(): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
 
-function AssignmentExistsWarning(props: Props): JSX.Element {
     return (
         <>
             <div className="warningText">
@@ -35,7 +32,7 @@ function AssignmentExistsWarning(props: Props): JSX.Element {
             <div>
                 <button
                     className="formButton warningOkayButton"
-                    onClick={props.closeModal}>
+                    onClick={() => setModalContents(null)}>
                     Okay
                 </button>
             </div>
@@ -43,10 +40,4 @@ function AssignmentExistsWarning(props: Props): JSX.Element {
     );
 }
 
-/* eslint-disable */
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-    closeModal: () => dispatch(closeModalAction()),
-});
-
-export default connect(null, mapDispatchToProps)(AssignmentExistsWarning);
-/* eslint-enable */
+export default AssignmentExistsWarning;

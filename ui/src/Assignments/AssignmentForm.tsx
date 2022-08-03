@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,48 +16,37 @@
  */
 
 import React, {FormEvent, useState} from 'react';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
-import {connect} from 'react-redux';
-import {
-    closeModalAction,
-    setCurrentModalAction,
-} from '../Redux/Actions';
-import {Person} from '../People/Person';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Product} from '../Products/Product';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import './AssignmentForm.scss';
-import {Option} from '../CommonTypes/Option';
-import {Dispatch} from 'redux';
-import {ProductPlaceholderPair} from './CreateAssignmentRequest';
-import {Assignment} from './Assignment';
 import moment from 'moment';
-import FormButton from '../ModalFormComponents/FormButton';
-import {Space} from '../Space/Space';
-import SelectWithCreateOption, { MetadataReactSelectProps } from '../ModalFormComponents/SelectWithCreateOption';
-import {AvailableModals} from '../Modal/AvailableModals';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
+import {Option} from 'Types/Option';
+import {ProductPlaceholderPair} from './CreateAssignmentRequest';
+import FormButton from 'ModalFormComponents/FormButton';
+import SelectWithCreateOption, {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {PeopleState} from 'State/PeopleState';
+import {ModalContentsState} from 'State/ModalContentsState';
+import PersonForm from 'People/PersonForm';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Product} from '../Types/Product';
+import {Person} from '../Types/Person';
 
-interface AssignmentFormProps {
-    products: Array<Product>;
+import './AssignmentForm.scss';
+import {Assignment} from '../Types/Assignment';
+
+interface Props {
     initiallySelectedProduct: Product;
-    people: Array<Person>;
-    currentSpace: Space;
-    viewingDate: Date;
-
-    closeModal(): void;
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function AssignmentForm({
-    products,
-    initiallySelectedProduct,
-    people,
-    currentSpace,
-    viewingDate,
-    closeModal,
-    setCurrentModal,
-}: AssignmentFormProps): JSX.Element {
+function AssignmentForm({ initiallySelectedProduct }: Props): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const products = useRecoilValue(ProductsState);
+    const people = useRecoilValue(PeopleState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
     const { ASSIGNMENT_NAME } = MetadataReactSelectProps;
     const { ASSIGNMENT_ASSIGN_TO } = MetadataMultiSelectProps;
     const defaultPerson: Person = {id: -1, name: ''} as Person;
@@ -94,7 +83,7 @@ function AssignmentForm({
     }
 
     function getProductPairsForPerson(): ProductPlaceholderPair[] {
-        let allProductPairs: ProductPlaceholderPair [] = [];
+        const allProductPairs: ProductPlaceholderPair [] = [];
 
         const selectedProductPairs: ProductPlaceholderPair[] = getSelectedProductPairs();
         const selectedProductIds: number[] = Array.from(selectedProductPairs.map(selectedProductPairs => {
@@ -179,12 +168,19 @@ function AssignmentForm({
         }
     }
 
+    function closeModal() {
+        setModalContents(null);
+    }
+
     function openCreatePersonModal(personName: string): void {
-        const item = {
-            initiallySelectedProduct,
-            initialPersonName: personName,
-        };
-        setCurrentModal({modal: AvailableModals.CREATE_PERSON, item});
+        setModalContents({
+            title: 'Add New Person',
+            component: <PersonForm
+                isEditPersonForm={false}
+                initiallySelectedProduct={initiallySelectedProduct}
+                initialPersonName={personName}
+            />,
+        });
     }
 
     function getAssignToOptions(): Array<Option> {
@@ -242,17 +238,5 @@ function AssignmentForm({
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    people: state.people,
-    currentSpace: state.currentSpace,
-    viewingDate: state.viewingDate,
-});
+export default AssignmentForm;
 
-const mapDispatchToProps = (dispatch:  Dispatch) => ({
-    closeModal: () => dispatch(closeModalAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AssignmentForm);
-/* eslint-enable */

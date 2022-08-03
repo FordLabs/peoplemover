@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,55 +16,39 @@
  */
 
 import React, {ChangeEvent, FormEvent, useState} from 'react';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {Dispatch} from 'redux';
-import {connect} from 'react-redux';
-import {closeModalAction, setAllGroupedTagFilterOptionsAction} from '../Redux/Actions';
 import {JSX} from '@babel/types';
 import moment from 'moment';
-import ProductClient from './ProductClient';
-import {emptyProduct, Product} from './Product';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import {Tag} from '../Tags/Tag';
-import {TagInterface} from '../Tags/Tag.interface';
+import ProductClient from '../Services/Api/ProductClient';
+import {emptyProduct} from './ProductService';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import {Tag} from 'Types/Tag';
 import ProductFormLocationField from './ProductFormLocationField';
 import ProductFormStartDateField from './ProductFormStartDateField';
 import ProductFormEndDateField from './ProductFormEndDateField';
-import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
-import {Space} from '../Space/Space';
-import FormButton from '../ModalFormComponents/FormButton';
+import FormNotesTextArea from 'ModalFormComponents/FormNotesTextArea';
+import FormButton from 'ModalFormComponents/FormButton';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductForm.scss';
-import {
-    addGroupedTagFilterOptions,
-    AllGroupedTagFilterOptions,
-    FilterTypeListings,
-} from '../SortingAndFiltering/FilterLibraries';
-import {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
-import ProductTagClient from '../Tags/ProductTag/ProductTagClient';
-import FormTagsField from '../ReusableComponents/FormTagsField';
+import {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
+import ProductTagClient from 'Services/Api/ProductTagClient';
+import FormTagsField from 'Common/FormTagsField/FormTagsField';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ModalContentsState} from 'State/ModalContentsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {Product} from 'Types/Product';
 
-interface ProductFormProps {
+interface Props {
     editing: boolean;
     product?: Product;
-    currentSpace: Space;
-    viewingDate: string;
-    allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>;
-
-    setAllGroupedTagFilterOptions(groupedTagFilterOptions: Array<AllGroupedTagFilterOptions>): void;
-    closeModal(): void;
 }
 
-function ProductForm({
-    editing,
-    product,
-    currentSpace,
-    viewingDate,
-    allGroupedTagFilterOptions,
-    setAllGroupedTagFilterOptions,
-    closeModal,
-}: ProductFormProps): JSX.Element {
-    const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct());
+function ProductForm({ editing, product }: Props): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const setModalContents = useSetRecoilState(ModalContentsState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
+    const [currentProduct, setCurrentProduct] = useState<Product>(initializeProduct(viewingDate));
     const [selectedProductTags, setSelectedProductTags] = useState<Array<Tag>>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
@@ -73,11 +57,17 @@ function ProductForm({
     const emptyProductNameWarningMessage = 'Please enter a product name.';
     const [nameWarningMessage, setNameWarningMessage] = useState<string>('');
 
-    function initializeProduct(): Product {
-        if (product == null) {
-            return {...emptyProduct(currentSpace.uuid), startDate: viewingDate};
+    const closeModal = () => setModalContents(null);
+
+    function initializeProduct(startDate = new Date()): Product {
+        const returnProduct = {
+            ...emptyProduct(currentSpace.uuid),
+            ...product,
         }
-        return product;
+        if(returnProduct.startDate === '') {
+            returnProduct.startDate = moment(startDate).format('YYYY-MM-DD');
+        }
+        return returnProduct;
     }
 
     function handleSubmit(event: FormEvent): void {
@@ -95,11 +85,13 @@ function ProductForm({
             return;
         }
 
-        let productToSend = {...currentProduct};
-        productToSend.name = productToSend.name.trim();
-        productToSend.url = productToSend.url?.trim();
-        productToSend.notes = productToSend.notes?.trim();
-        productToSend.tags = selectedProductTags;
+        const productToSend = {
+            ...currentProduct,
+            name: currentProduct.name.trim(),
+            url: currentProduct.url?.trim(),
+            notes: currentProduct.notes?.trim(),
+            tags: selectedProductTags
+        };
 
         if (editing) {
             ProductClient.editProduct(currentSpace, productToSend)
@@ -194,11 +186,11 @@ function ProductForm({
                         value={currentProduct.name}
                         onChange={(e: ChangeEvent<HTMLInputElement>): void => updateProductField('name', e.target.value)}
                         placeholder="e.g. Product 1"/>
-                    {nameWarningMessage &&
-                    <span data-testid="productNameWarningMessage" className="productNameWarning">
-                        {nameWarningMessage}
-                    </span>
-                    }
+                    {nameWarningMessage && (
+                        <span data-testid="productNameWarningMessage" className="productNameWarning">
+                            {nameWarningMessage}
+                        </span>
+                    )}
                 </div>
                 <div className="formItem">
                     <label className="formItemLabel" htmlFor="url">Product Page URL</label>
@@ -214,13 +206,11 @@ function ProductForm({
                 <ProductFormLocationField
                     currentProductState={{currentProduct, setCurrentProduct}}
                     loadingState={{isLoading, setIsLoading}}
-                    addGroupedTagFilterOptions={(tagFilterIndex: number, trait: TagInterface): void => {addGroupedTagFilterOptions(tagFilterIndex, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                 />
                 <FormTagsField
                     currentTagsState={{currentTags: currentProduct.tags}}
                     loadingState={{isLoading, setIsLoading}}
                     selectedTagsState={{selectedTags: selectedProductTags, setSelectedTags: setSelectedProductTags}}
-                    addGroupedTagFilterOptions={(trait: TagInterface): void => {addGroupedTagFilterOptions(FilterTypeListings.ProductTag.index, trait, allGroupedTagFilterOptions, setAllGroupedTagFilterOptions);}}
                     tagClient={ProductTagClient}
                     tagsMetadata={MetadataReactSelectProps.PRODUCT_TAGS}
                 />
@@ -267,18 +257,5 @@ function ProductForm({
     ) : <></>;
 }
 
-/* eslint-disable  */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-    viewingDate: moment(state.viewingDate).format('YYYY-MM-DD'),
-    allGroupedTagFilterOptions: state.allGroupedTagFilterOptions,
-});
+export default ProductForm;
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    closeModal: () => dispatch(closeModalAction()),
-    setAllGroupedTagFilterOptions: (allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions>) =>
-        dispatch(setAllGroupedTagFilterOptionsAction(allGroupedTagFilterOptions)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductForm);
-/* eslint-enable  */

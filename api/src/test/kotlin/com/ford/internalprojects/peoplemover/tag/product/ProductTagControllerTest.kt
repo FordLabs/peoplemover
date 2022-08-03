@@ -29,22 +29,19 @@ import com.ford.internalprojects.peoplemover.tag.TagRequest
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -73,14 +70,14 @@ class ProductTagControllerTest {
 
     private fun getBaseProductTagsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/product-tags"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "anotherSpaceName1"))
         baseProductTagsUrl = getBaseProductTagsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         productTagRepository.deleteAll()
         productRepository.deleteAll()
@@ -132,7 +129,7 @@ class ProductTagControllerTest {
         mockMvc.perform(put("$baseProductTagsUrl/${actualTag.id}")
             .header("Authorization", "Bearer GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(actualTag.copy(name = actualTag.name.toLowerCase()))))
+            .content(objectMapper.writeValueAsString(actualTag.copy(name = actualTag.name.lowercase()))))
             .andExpect(status().isConflict)
     }
 

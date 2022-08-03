@@ -31,6 +31,7 @@ export const reactSelectStyles = {
         border: '1px solid hsl(0, 0%, 80%)',
         width: '216px',
         backgroundColor: 'transparent',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -59,6 +60,7 @@ export const reactSelectStyles = {
         minHeight: '30px',
         margin: '3px 0px',
         overflowWrap: 'break-word',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -104,6 +106,7 @@ export const reactSelectStyles = {
     multiValueRemove: (provided: CSSProperties): CSSProperties => ({
         ...provided,
         color: '#403D3D',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             color: '#5463B0',
@@ -144,8 +147,8 @@ export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>):
                 ? <i style={{display: 'none'}}/>
                 : (
                     props.selectProps.menuIsOpen
-                        ? <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_up</i>
-                        : <i className="material-icons greyIcon" data-testid={props.selectProps.name}>arrow_drop_down</i>
+                        ? <i className="material-icons greyIcon" data-testid={`upArrow_${props.selectProps.name}`}>arrow_drop_up</i>
+                        : <i className="material-icons greyIcon" data-testid={`downArrow_${props.selectProps.name}`}>arrow_drop_down</i>
                 )
         }
     </components.DropdownIndicator>

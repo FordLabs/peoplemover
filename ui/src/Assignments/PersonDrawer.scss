@@ -15,12 +15,16 @@
  * limitations under the License.
  */
 
-@import '../Application/Styleguide/Colors.scss';
+@import '../Styles/Colors.scss';
 
 .unassignedPeopleContainer {
     max-height: 450px;
     min-height: 106px;
     overflow-y: auto;
+
+    .no-assignments-message {
+        margin-left: 1rem;
+    }
 }
 
 .unassignedPeopleContainer:hover {

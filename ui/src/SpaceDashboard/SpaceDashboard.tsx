@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,73 +15,55 @@
  * limitations under the License.
  */
 
-import * as React from 'react';
-import {useEffect, useState} from 'react';
-import {createEmptySpace, Space} from '../Space/Space';
-import CurrentModal from '../Redux/Containers/CurrentModal';
-import {
-    fetchUserSpacesAction,
-    setCurrentModalAction,
-    setCurrentSpaceAction,
-    setViewingDateAction,
-} from '../Redux/Actions';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import {connect} from 'react-redux';
-import {Redirect} from 'react-router';
+import React, {useCallback, useEffect, useState} from 'react';
+import {createEmptySpace, Space} from 'Types/Space';
 import SpaceDashboardTile from './SpaceDashboardTile';
-import {GlobalStateProps} from '../Redux/Reducers';
+
+import Branding from '../Common/Branding/Branding';
+import {useNavigate} from 'react-router-dom';
+import {useRecoilState, useSetRecoilState} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
+import {ModalContentsState} from 'State/ModalContentsState';
+import SpaceForm from './SpaceForm';
+import Modal from '../Modal/Modal';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
 
 import './SpaceDashboard.scss';
-import Branding from '../ReusableComponents/Branding';
-import {AvailableModals} from '../Modal/AvailableModals';
 
-interface SpaceDashboardProps {
-    currentSpace: Space;
-    setCurrentModal(modalState: CurrentModalState): void;
-    fetchUserSpaces(): void;
-    userSpaces: Array<Space>;
-    setCurrentSpace(space: Space): Space;
-    setCurrentDateOnState(): void;
-}
+function SpaceDashboard(): JSX.Element {
+    const navigate = useNavigate();
 
-function SpaceDashboard({
-    currentSpace,
-    setCurrentModal,
-    fetchUserSpaces,
-    userSpaces,
-    setCurrentSpace,
-    setCurrentDateOnState,
-}: SpaceDashboardProps): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
+    const setViewingDate = useSetRecoilState(ViewingDateState);
+    const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
+
+    const { userSpaces, fetchUserSpaces } = useFetchUserSpaces();
+
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [redirectPage, setRedirectPage] = useState<JSX.Element | null>(null);
-    setCurrentDateOnState();
 
     function onCreateNewSpaceButtonClicked(): void {
-        setCurrentModal({modal: AvailableModals.CREATE_SPACE});
+        setModalContents({title: 'Create New Space', component: <SpaceForm/>});
     }
 
-    function onSpaceClicked(space: Space): void {
-        setRedirectPage(<Redirect to={`/${space.uuid}`}/>);
-    }
+    const onSpaceClicked = useCallback((space: Space): void => {
+        navigate(`/${space.uuid}`)
+    }, [navigate])
 
     useEffect(() => {
-        async function populateUserSpaces(): Promise<void> {
-            await fetchUserSpaces();
-        }
-
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
         setCurrentSpace(createEmptySpace());
 
-        populateUserSpaces().then(() => {
-            setIsLoading(false);
-        });
+        fetchUserSpaces().then(() => {
+            setIsLoading(false)
+        })
     }, [fetchUserSpaces, setCurrentSpace]);
 
     useEffect(() => {
-        if (currentSpace?.uuid) {
-            onSpaceClicked(currentSpace);
-        }
-    }, [currentSpace]);
+        setViewingDate(new Date())
+
+        if (currentSpace?.uuid) onSpaceClicked(currentSpace);
+    }, [currentSpace, onSpaceClicked, setViewingDate]);
 
     function WelcomeMessage(): JSX.Element {
         return (
@@ -100,13 +82,12 @@ function SpaceDashboard({
     function SpaceTileGrid(): JSX.Element {
         return (
             <div className="userSpaceItemContainer">
-                {
-                    userSpaces.map((space, index) => {
-                        return <SpaceDashboardTile
-                            key={index} space={space}
-                            onClick={onSpaceClicked}/>;
-                    })
-                }
+                {userSpaces.map((space, index) => (
+                    <SpaceDashboardTile
+                        key={index} space={space}
+                        onClick={onSpaceClicked}
+                    />
+                ))}
                 <NewSpaceButton/>
             </div>
         );
@@ -125,29 +106,13 @@ function SpaceDashboard({
         );
     }
 
-    if (redirectPage) return redirectPage;
-
     return (
         <div className="spaceDashboard">
-            <CurrentModal/>
             {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
             <Branding />
+            <Modal />
         </div>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    userSpaces: state.userSpaces,
-    currentSpace: state.currentSpace,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    fetchUserSpaces: () => dispatch(fetchUserSpacesAction()),
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-    setCurrentSpace: (space: Space) => dispatch(setCurrentSpaceAction(space)),
-    setCurrentDateOnState: () => dispatch(setViewingDateAction(new Date())),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SpaceDashboard);
-/* eslint-enable */
+export default SpaceDashboard;

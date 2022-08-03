@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,37 +16,35 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import DrawerContainer from '../ReusableComponents/DrawerContainer';
+import {useRecoilValue} from 'recoil';
+import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import {isArchived} from 'People/PersonService';
+import PeopleClient from 'Services/Api/PeopleClient';
+import {ViewingDateState} from 'State/ViewingDateState';
+import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
+import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
+import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
+import {Person} from 'Types/Person';
+
 import './ReassignedDrawer.scss';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Reassignment} from './Reassignment';
-import {Product} from '../Products/Product';
-import AssignmentClient from '../Assignments/AssignmentClient';
-import {Space} from '../Space/Space';
-import {isArchived, Person} from '../People/Person';
-import {fetchPeopleAction, fetchProductsAction} from '../Redux/Actions';
-import MatomoEvents from '../Matomo/MatomoEvents';
-import PeopleClient from '../People/PeopleClient';
 
-interface ReassignedDrawerProps {
-    products: Array<Product>;
-    viewingDate: Date;
-    currentSpace: Space;
-
-    fetchProducts(): Array<Product>;
-    fetchPeople(): Array<Person>;
+interface Reassignment {
+    person: Person;
+    originProductName?: string;
+    destinationProductName: string;
 }
 
-function ReassignedDrawer({
-    products,
-    viewingDate,
-    currentSpace,
-    fetchProducts,
-    fetchPeople,
-}: ReassignedDrawerProps): JSX.Element {
+function ReassignedDrawer(): JSX.Element {
+    const viewingDate = useRecoilValue(ViewingDateState);
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
+
+    const { fetchProducts, products } = useFetchProducts(uuid);
+    const { fetchPeople } = useFetchPeople(uuid);
+
     const [showDrawer, setShowDrawer] = useState(true);
-    const [reassignments, setReassignments] = useState<Array<Reassignment>>([]);
+    const [reassignments, setReassignments] = useState<Reassignment[]>([]);
 
     /* eslint-disable */
     useEffect(() => {
@@ -61,20 +59,18 @@ function ReassignedDrawer({
         mapsReassignments(reassignment, index)
     ));
 
-    const containee: JSX.Element = (
-        <div
-            className="reassignmentContainer"
-            data-testid="reassignmentContainer">
-            {listOfHTMLReassignments}
-        </div>
-    );
-
     return (
         <DrawerContainer
             drawerIcon="how_to_reg"
             testId="reassignmentDrawer"
             containerTitle="Reassigned"
-            containee={containee}
+            containee={(
+                <div
+                    className="reassignmentContainer"
+                    data-testid="reassignmentContainer">
+                    {listOfHTMLReassignments}
+                </div>
+            )}
             isDrawerOpen={showDrawer}
             setIsDrawerOpen={setShowDrawer}
             numberForCountBadge={reassignments.length}/>
@@ -114,33 +110,15 @@ function ReassignedDrawer({
     }
 
     async function revert(person: Person): Promise<void> {
-        const reassignment = reassignments.find(reassignment => reassignment.person.id === person.id);
         if (isArchived(person, viewingDate)) {
-            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined}, []);
+            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined});
         }
         await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
             .then(() => {
                 fetchProducts();
                 fetchPeople();
-                MatomoEvents.pushEvent(currentSpace.name, 'revert', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`);
-            }).catch(err => {
-                MatomoEvents.pushEvent(currentSpace.name, 'revertError', `From: ${reassignment?.originProductName} To: ${reassignment?.destinationProductName}`, err.code);
-                return Promise.reject(err);
             });
     }
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    products: state.products,
-    viewingDate: state.viewingDate,
-    currentSpace: state.currentSpace,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    fetchProducts: () => dispatch(fetchProductsAction()),
-    fetchPeople: () => dispatch(fetchPeopleAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReassignedDrawer);
-/* eslint-enable */
+export default ReassignedDrawer;

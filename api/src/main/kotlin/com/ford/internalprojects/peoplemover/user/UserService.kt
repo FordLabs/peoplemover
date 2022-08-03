@@ -31,28 +31,26 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService(
-        private val logger: BasicLogger,
-        private val userSpaceMappingRepository: UserSpaceMappingRepository) {
-
-
+    private val logger: BasicLogger,
+    private val userSpaceMappingRepository: UserSpaceMappingRepository
+) {
     fun getUsersForSpace(uuid: String): List<UserSpaceMapping> {
         return userSpaceMappingRepository.findAllBySpaceUuid(uuid)
     }
 
     fun addUsersToSpace(userIds: List<String>, uuid: String): List<String> =
             userIds.mapNotNull { rawUserId ->
-                val userId = rawUserId.toUpperCase().trim()
+                val userId = rawUserId.uppercase().trim()
                 try {
                     userSpaceMappingRepository.save(UserSpaceMapping(userId = userId, spaceUuid = uuid, permission = PERMISSION_EDITOR))
                     null
                 } catch (e: DataIntegrityViolationException) {
-                    logger.logInfoMessage("$userId already has access to this space.")
                     null
                 } catch (e: Exception) {
                     logger.logException(e)
                     rawUserId
                 }
-            }
+        }
 
     @Transactional
     fun deleteUserFromSpace(uuid: String, userId: String) {

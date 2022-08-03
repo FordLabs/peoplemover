@@ -17,42 +17,39 @@
 
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
-import {TagInterface} from './Tag.interface';
-import ConfirmationModal, {ConfirmationModalProps} from '../Modal/ConfirmationModal';
-import {TagRequest} from './TagRequest.interface';
+import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import {TagRequest} from '../Types/TagRequest';
 import {createDataTestId} from '../Utils/ReactUtils';
 import ViewTagRow from '../ModalFormComponents/ViewTagRow';
 import EditTagRow from '../ModalFormComponents/EditTagRow';
 import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
 import {INACTIVE_EDIT_STATE_INDEX} from './MyTagsForm';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {connect} from 'react-redux';
-import {Space} from '../Space/Space';
-import {TagClient} from './TagClient.interface';
-import {FilterType} from '../SortingAndFiltering/FilterLibraries';
+import {TagClient} from '../Types/TagClient';
+import {FilterType} from '../SubHeader/SortingAndFiltering/FilterLibraries';
+import {useRecoilValue} from 'recoil';
+import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {Tag} from '../Types/Tag';
 
 interface Props {
-    tags: Array<TagInterface>;
-    updateFilterOptions(index: number, tag: TagInterface): void;
-    currentSpace: Space;
+    tags: Array<Tag>;
     tagClient: TagClient;
     filterType: FilterType;
-    fetchCommand: () => {};
+    fetchCommand: () => void;
 }
 
 const TagsModalContent = ({
     tags,
-    currentSpace,
-    updateFilterOptions,
     tagClient,
     filterType,
     fetchCommand,
 }: Props): JSX.Element => {
+    const currentSpace = useRecoilValue(CurrentSpaceState);
+
     const [editTagIndex, setEditTagIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
-    const showDeleteConfirmationModal = (tagToDelete: TagInterface): void => {
+    const showDeleteConfirmationModal = (tagToDelete: Tag): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteTag(tagToDelete),
             close: () => setConfirmDeleteModal(null),
@@ -70,8 +67,6 @@ const TagsModalContent = ({
     const editTag = async (tagToEdit: TagRequest): Promise<unknown> => {
         return await tagClient.edit(tagToEdit, currentSpace)
             .then((response) => {
-                const newTag: TagInterface = response.data;
-                updateFilterOptions(filterType.index, newTag);
                 fetchCommand();
                 returnToViewState();
             });
@@ -79,13 +74,13 @@ const TagsModalContent = ({
 
     const addTag = async (tagToAdd: TagRequest): Promise<unknown> => {
         return await tagClient.add(tagToAdd, currentSpace)
-            .then((response) => {
+            .then(() => {
                 fetchCommand();
                 returnToViewState();
             });
     };
 
-    const deleteTag = async (tagToDelete: TagInterface): Promise<void> => {
+    const deleteTag = async (tagToDelete: Tag): Promise<void> => {
         try {
             if (currentSpace.uuid) {
                 await tagClient.delete(tagToDelete.id, currentSpace);
@@ -105,7 +100,7 @@ const TagsModalContent = ({
 
     return (
         <div data-testid={createDataTestId('tagsModalContainer', filterType.tagType)} className="myTraitsModalContainer">
-            {tags.map((currentTag: TagInterface, index: number) => {
+            {tags.map((currentTag: Tag, index: number) => {
                 return (
                     <React.Fragment key={index}>
                         {showViewState(index) &&
@@ -142,10 +137,4 @@ const TagsModalContent = ({
     );
 };
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    currentSpace: state.currentSpace,
-});
-
-export default connect(mapStateToProps)(TagsModalContent);
-/* eslint-enable */
+export default TagsModalContent;

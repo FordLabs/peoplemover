@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,51 +16,46 @@
  */
 
 import React, {useState} from 'react';
-import '../Application/Styleguide/Main.scss';
-import './ArchivedProductsDrawer.scss';
 import ArchivedProduct from './ArchivedProduct';
-import {isArchivedOnDate, Product} from './Product';
-import DrawerContainer from '../ReusableComponents/DrawerContainer';
-import {connect} from 'react-redux';
-import {GlobalStateProps} from '../Redux/Reducers';
+import {isArchivedOnDate} from './ProductService';
+import DrawerContainer from '../Common/DrawerContainer/DrawerContainer';
+import {useRecoilValue} from 'recoil';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {Product} from 'Types/Product';
 
-interface ArchivedProductsDrawerProps{
-    products: Array<Product>;
-    viewingDate: Date;
-}
+import '../Styles/Main.scss';
+import './ArchivedProductsDrawer.scss';
 
-function ArchivedProductsDrawer({products, viewingDate}: ArchivedProductsDrawerProps): JSX.Element {
+function ArchivedProductsDrawer(): JSX.Element {
+    const products = useRecoilValue(ProductsState);
+    const viewingDate = useRecoilValue(ViewingDateState);
+
     const [showDrawer, setShowDrawer] = useState(false);
 
     const getArchivedProducts = (): Array<Product> => {
         return products.filter(product => isArchivedOnDate(product, viewingDate));
     };
 
-    const containee = <div className="archivedProductListContainer">
-        {getArchivedProducts().map(product => {
-            return (
-                <div key={product.id}>
-                    <ArchivedProduct product={product}/>
-                </div>
-            );
-        })}
-    </div>;
     return (
         <DrawerContainer drawerIcon="inbox"
             numberForCountBadge={getArchivedProducts().length}
             containerTitle="Archived Products"
             testId="archivedProductsDrawer"
-            containee={containee}
+            containee={(
+                <div className="archivedProductListContainer">
+                    {getArchivedProducts().map(product => {
+                        return (
+                            <div key={product.id}>
+                                <ArchivedProduct product={product}/>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
             isDrawerOpen={showDrawer}
             setIsDrawerOpen={setShowDrawer}/>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    products: state.products,
-    viewingDate: state.viewingDate,
-});
-
-export default connect(mapStateToProps)(ArchivedProductsDrawer);
-/* eslint-enable */
+export default ArchivedProductsDrawer;

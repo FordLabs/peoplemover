@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,39 +16,34 @@
  */
 
 import React from 'react';
-import {connect} from 'react-redux';
-import {setCurrentModalAction} from '../Redux/Actions';
-import {GlobalStateProps} from '../Redux/Reducers';
-import {CurrentModalState} from '../Redux/Reducers/currentModalReducer';
-import '../Application/Styleguide/Main.scss';
-import {createDataTestId} from '../Utils/ReactUtils';
-import {AvailableModals} from '../Modal/AvailableModals';
-import {Person} from './Person';
-import PersonAndRoleInfo from '../Assignments/PersonAndRoleInfo';
+import {createDataTestId} from 'Utils/ReactUtils';
+import PersonAndRoleInfo from 'Assignments/PersonAndRoleInfo';
+import {useRecoilValue, useSetRecoilState} from 'recoil';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import PersonForm from './PersonForm';
+import {ModalContentsState} from 'State/ModalContentsState';
+import {Person} from '../Types/Person';
+
+import '../Styles/Main.scss';
 import './PersonCard.scss';
 
-interface PersonCardProps {
-    viewingDate: Date;
-    isReadOnly: boolean;
+interface Props {
     person: Person;
-
-    setCurrentModal(modalState: CurrentModalState): void;
 }
 
-function PersonCard({
-    viewingDate,
-    isReadOnly,
-    person,
-    setCurrentModal,
-}: PersonCardProps): JSX.Element {
+function PersonCard({ person }: Props): JSX.Element {
+    const setModalContents = useSetRecoilState(ModalContentsState);
+    const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     function toggleModal(): void {
         if (!isReadOnly) {
-            const newModalState: CurrentModalState = {
-                modal: AvailableModals.EDIT_PERSON,
-                item: person,
-            };
-            setCurrentModal(newModalState);
+            setModalContents({
+                title: 'Edit Person',
+                component: <PersonForm
+                    isEditPersonForm
+                    personEdited={person}
+                />,
+            });
         }
     }
 
@@ -76,26 +71,15 @@ function PersonCard({
                     style={{backgroundColor: 'transparent'}}
                     onClick={toggleModal}
                 >
-                    {!isReadOnly &&
-                    <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
-                        more_vert
-                    </i>
-                    }
+                    {!isReadOnly && (
+                        <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
+                            more_vert
+                        </i>
+                    )}
                 </button>
             </div>
         </div>
     );
 }
 
-/* eslint-disable */
-const mapStateToProps = (state: GlobalStateProps) => ({
-    viewingDate: state.viewingDate,
-    isReadOnly: state.isReadOnly,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-    setCurrentModal: (modalState: CurrentModalState) => dispatch(setCurrentModalAction(modalState)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PersonCard);
-/* eslint-enable */
+export default PersonCard;

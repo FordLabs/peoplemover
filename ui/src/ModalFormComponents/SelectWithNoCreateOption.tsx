@@ -40,6 +40,7 @@ export const multiSelectStyles = {
         padding: '0px 17px',
         height: '30px',
         margin: '3px 0px',
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
             cursor: 'pointer',
@@ -87,14 +88,16 @@ function SelectWithNoCreateOption({
 }: MultiSelectProps): JSX.Element {
     return (
         <div className="formItem">
-            <label className="formItemLabel" htmlFor={id}>{title}</label>
+            <span className="formItemLabel">{title}</span>
             <Select
+                aria-label={title}
                 name={id}
                 id={id}
                 classNamePrefix={id}
                 placeholder={placeholder}
                 value={values}
                 options={options}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 styles={multiSelectStyles}
                 components={{DropdownIndicator: CustomIndicator}}

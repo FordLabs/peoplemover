@@ -16,24 +16,28 @@
  */
 
 import React from 'react';
-import {Product} from './Product';
 import NewProductButton from './NewProductButton';
 
+import {ProductCardArray} from '../Common/ProductCardArray/ProductCardArray';
+import {useRecoilValue} from 'recoil';
+import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
+import {Product} from '../Types/Product';
+
 import './ProductListSorted.scss';
-import {ProductCardArray} from '../ReusableComponents/ProductCardArray';
 
 interface Props {
     products: Array<Product>;
-    productSortBy: string;
 }
 
-function SortedByList({ products, productSortBy}: Props): JSX.Element {
-    let sortedProducts: Product [] = sortBy(products, productSortBy);
+function SortedByList({ products }: Props): JSX.Element {
+    const productSortBy = useRecoilValue(ProductSortByState);
 
-    function sortBy(products: Array<Product>, productSortBy: string):  Array<Product> {
+    const sortedProducts: Product [] = sortBy();
+
+    function sortBy():  Array<Product> {
         switch (productSortBy) {
-            case 'location': return [...products].sort(sortByLocation);
-            case 'name': return [...products].sort(sortByProductName);
+            case ProductSortBy.LOCATION: return [...products].sort(sortByLocation);
+            case ProductSortBy.NAME: return [...products].sort(sortByProductName);
             default: return [...products];
         }
     }

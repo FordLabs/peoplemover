@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,27 +16,21 @@
  */
 
 import React from 'react';
-import TestUtils, {renderWithRedux} from '../tests/TestUtils';
-import {AxiosResponse} from 'axios';
-import ProductClient from './ProductClient';
+import {screen} from '@testing-library/react';
+import TestData from 'Utils/TestData';
 import ProductList from './ProductList';
-import rootReducer from '../Redux/Reducers';
-import moment from 'moment';
-import {Product} from './Product';
-import {applyMiddleware, createStore, Store} from 'redux';
-import thunk from 'redux-thunk';
-import {AllGroupedTagFilterOptions} from '../SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {MutableSnapshot} from 'recoil';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {ProductsState} from 'State/ProductsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {ProductTagsState} from 'State/ProductTagsState';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import {Product} from 'Types/Product';
 
-describe('Product List tests', () => {
-    let store: Store;
-
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        TestUtils.mockClientCalls();
-
-        ProductClient.getProductsForDate = jest.fn(() =>
-            Promise.resolve({ data: TestUtils.products } as AxiosResponse)
-        );
+describe('Product List', () => {
+    beforeEach(() => {
+        localStorage.removeItem('filters');
     });
 
     describe('Product list test filtering', () => {
@@ -47,29 +41,21 @@ describe('Product List tests', () => {
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 startDate: '2011-01-01',
                 endDate: undefined,
-                spaceLocation: TestUtils.annarbor,
+                spaceLocation: TestData.annarbor,
                 assignments: [],
                 archived: false,
-                tags: [TestUtils.productTag2],
+                tags: [TestData.productTag2],
                 notes: '',
             };
-            let products: Array<Product> = Object.assign([], TestUtils.products);
-            products.push(productWithAnnArborLocation);
+            localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
 
-            const initialState = {
-                products: products,
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                productSortBy: 'name',
-                currentSpace: TestUtils.space,
-            };
+            renderProductList(({set}) => {
+                set(ProductsState, [...TestData.products, productWithAnnArborLocation])
+            });
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
-            await component.findByText(TestUtils.productForHank.name);
-            await component.findByText(productWithAnnArborLocation.name);
-            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(3);
+            await screen.findByText(TestData.productForHank.name);
+            await screen.findByText(productWithAnnArborLocation.name);
+            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(3);
         });
 
         it('should return two aa products with location filter but not a product add button with readonly', async () => {
@@ -79,150 +65,86 @@ describe('Product List tests', () => {
                 spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                 startDate: '2011-01-01',
                 endDate: undefined,
-                spaceLocation: TestUtils.annarbor,
+                spaceLocation: TestData.annarbor,
                 assignments: [],
                 archived: false,
-                tags: [TestUtils.productTag2],
+                tags: [TestData.productTag2],
                 notes: '',
             };
-            let products: Array<Product> = Object.assign([], TestUtils.products);
+            const products: Array<Product> = Object.assign([], TestData.products);
             products.push(productWithAnnArborLocation);
 
-            const initialState = {
-                products: products,
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: TestUtils.allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                productSortBy: 'name',
-                currentSpace: TestUtils.space,
-                isReadOnly: true,
-            };
+            localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
-            await component.findByText(TestUtils.productForHank.name);
-            await component.findByText(productWithAnnArborLocation.name);
-            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
-            expect(component.queryByTestId('newProductButton')).not.toBeInTheDocument();
+            renderProductList(({set}) => {
+                set(IsReadOnlyState, true)
+                set(ProductsState, products)
+            });
+
+            await screen.findByText(TestData.productForHank.name);
+            await screen.findByText(productWithAnnArborLocation.name);
+            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
+            expect(screen.queryByTestId('newProductButton')).not.toBeInTheDocument();
         });
 
         it('should return all products with the selected product tag filter', async () => {
-            const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [{
-                        label: 'FordX',
-                        value: '1_FordX',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [],
-                },
-                {
-                    label: 'Person Tags:',
-                    options: [],
-                },
-            ];
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: [],
+                productTagFilters: ['FordX'],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
 
-            const initialState = {
-                products: TestUtils.products,
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                productSortBy: 'name',
-                currentSpace: TestUtils.space,
-            };
+            renderProductList(({set}) => {
+                set(ProductsState, TestData.products)
+                set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
+            });
 
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
-            await component.findByText(TestUtils.productWithAssignments.name);
-            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
+            await screen.findByText(TestData.productWithAssignments.name);
+            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
 
         it('should return one FordX products with product tag filter but not a product add button with readonly', async () => {
-            const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [{
-                        label: 'FordX',
-                        value: '1_FordX',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [],
-                },
-                {
-                    label: 'Person Tags:',
-                    options: [],
-                },
-            ];
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: [],
+                productTagFilters: ['FordX'],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+            renderProductList(({set}) => {
+                set(IsReadOnlyState, true)
+                set(ProductsState, TestData.products)
+                set(CurrentSpaceState, TestData.space)
+            });
 
-            const initialState = {
-                products: TestUtils.products,
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                productSortBy: 'name',
-                currentSpace: TestUtils.space,
-                isReadOnly: true,
-            };
-
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
-            await component.findByText(TestUtils.productWithAssignments.name);
-            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(1);
-            expect(component.queryByTestId('newProductButton')).not.toBeInTheDocument();
+            await screen.findByText(TestData.productWithAssignments.name);
+            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(1);
+            expect(screen.queryByTestId('newProductButton')).not.toBeInTheDocument();
         });
 
         it('should return all products with the selected product tag filter', async () => {
-            const allGroupedTagFilterOptions: Array<AllGroupedTagFilterOptions> = [
-                {
-                    label:'Location Tags:',
-                    options: [{
-                        label: 'Dearborn',
-                        value: '1_Dearborn',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Product Tags:',
-                    options: [{
-                        label: 'AV',
-                        value: '1_AV',
-                        selected: true,
-                    }],
-                },
-                {
-                    label:'Role Tags:',
-                    options: [],
-                },
-            ];
+            const localStorageFilters: LocalStorageFilters = {
+                locationTagFilters: ['Dearborn'],
+                productTagFilters: ['AV'],
+                personTagFilters: [],
+                roleTagFilters: []
+            }
+            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+            renderProductList(({set}) => {
+                set(ProductsState, TestData.products)
+                set(ProductTagsState, TestData.productTags)
+                set(CurrentSpaceState, TestData.space)
+            });
 
-            const initialState = {
-                products: TestUtils.products,
-                productTags: TestUtils.productTags,
-                allGroupedTagFilterOptions: allGroupedTagFilterOptions,
-                viewingDate: moment().toDate(),
-                productSortBy: 'name',
-                currentSpace: TestUtils.space,
-            };
-
-            store = createStore(rootReducer, initialState, applyMiddleware(thunk));
-            let component = await renderWithRedux(<ProductList/>, store);
-            await component.findByText(TestUtils.productWithoutAssignments.name);
-            expect(component.getByTestId('productListSortedContainer').children.length).toEqual(2);
+            await screen.findByText(TestData.productWithoutAssignments.name);
+            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
         });
     });
 });
+
+function renderProductList(initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
+    renderWithRecoil(<ProductList/>, initializeState);
+}
