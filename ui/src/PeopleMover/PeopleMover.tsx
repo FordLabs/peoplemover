@@ -21,7 +21,7 @@ import ProductList from '../Products/ProductList';
 import Branding from '../Common/Branding/Branding';
 import SubHeader from '../SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
-import ReassignedDrawer from '../ReassignedDrawer/ReassignedDrawer';
+import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from '../Assignments/UnassignedDrawer';
 import ArchivedProductsDrawer from '../Products/ArchivedProductsDrawer';
 import Counter from '../Common/Counter/Counter';
