@@ -20,10 +20,10 @@ import AuthorizedRoute from './AuthorizedRoute';
 import React from 'react';
 import Axios from 'axios';
 import {RunConfig} from 'Types/RunConfig';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
 
 const mockedUsedNavigate = jest.fn();
 

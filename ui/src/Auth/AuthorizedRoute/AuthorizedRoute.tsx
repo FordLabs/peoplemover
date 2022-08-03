@@ -18,11 +18,11 @@
 import {RouteProps} from 'react-router';
 import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
-import AccessTokenClient from '../Services/Api/AccessTokenClient';
+import AccessTokenClient from 'Services/Api/AccessTokenClient';
 import {AxiosError} from 'axios';
 import {useNavigate, useParams} from 'react-router-dom';
 import {useSetRecoilState} from 'recoil';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_NOT_FOUND = 404;

@@ -22,7 +22,7 @@ import Cookies from 'universal-cookie';
 import {RunConfig} from 'Types/RunConfig';
 import {MemoryRouter, Routes} from 'react-router-dom';
 import {Route} from 'react-router';
-import AccessTokenClient from '../Services/Api/AccessTokenClient';
+import AccessTokenClient from 'Services/Api/AccessTokenClient';
 
 const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 const accessToken = 'TOTALLY_REAL_ACCESS_TOKEN';

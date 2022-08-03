@@ -16,9 +16,9 @@
  */
 
 import React, {ReactNode, useEffect, useState} from 'react';
-import AccessTokenClient from '../Services/Api/AccessTokenClient';
-import {getToken} from '../Services/TokenService';
-import {setOauthRedirect} from '../Common/OAuthRedirect/OAuthRedirect';
+import AccessTokenClient from 'Services/Api/AccessTokenClient';
+import {getToken} from 'Services/TokenService';
+import {setOauthRedirect} from '../OAuthRedirect/OAuthRedirect';
 
 export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.Element {
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);

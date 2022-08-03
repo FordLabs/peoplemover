@@ -19,7 +19,7 @@ import './Styles/Colors.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {RedirectToADFS} from './Auth/AuthenticatedRoute';
+import {RedirectToADFS} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
