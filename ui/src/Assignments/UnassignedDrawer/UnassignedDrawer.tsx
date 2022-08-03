@@ -18,7 +18,7 @@
 import React from 'react';
 import {stripAssignmentsForArchivedPeople} from 'Services/ProductService';
 import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
-import ProductCard from 'Products/ProductCard/ProductCard';
+import ProductCard from 'Common/ProductCard/ProductCard';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';

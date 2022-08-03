@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-@import '../Styles/Colors';
-@import '../Styles/Breakpoints';
+@import 'Colors';
+@import 'Breakpoints';
 
 .productCardContainer {
   background-color: $gray-5;
@@ -183,7 +183,7 @@ button.archivedProduct,
   width: 180px;
   
   padding: 9px 0 8px 10px;
-  margin: 0 10px 15px 0px;
+  margin: 0 10px 15px 0;
   text-align: left;
   font-size: 14px;
   font-weight: 700;

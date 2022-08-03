@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import ProductCard from 'Products/ProductCard/ProductCard';
+import ProductCard from 'Common/ProductCard/ProductCard';
 import {Product} from 'Types/Product';
 
 interface ProductCardArrayProps {

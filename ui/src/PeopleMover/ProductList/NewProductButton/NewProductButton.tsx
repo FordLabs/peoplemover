@@ -19,7 +19,7 @@ import React from 'react';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import ProductForm from 'Products/ProductForm/ProductForm';
+import ProductForm from 'Common/ProductForm/ProductForm';
 
 import './NewProductButton.scss';
 

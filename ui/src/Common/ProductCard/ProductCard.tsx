@@ -39,7 +39,7 @@ import AssignmentForm from 'Assignments/AssignmentForm/AssignmentForm';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 
-import '../Product.scss';
+import 'Styles/Product.scss';
 
 interface Props {
     product: Product;

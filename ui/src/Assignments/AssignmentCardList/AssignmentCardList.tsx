@@ -31,7 +31,7 @@ import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import {Product} from 'Types/Product';
 import {Assignment} from 'Types/Assignment';
 
-import 'Products/Product.scss';
+import 'Styles/Product.scss';
 
 interface Props {
     product: Product;
