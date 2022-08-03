@@ -16,14 +16,14 @@
  */
 
 import React, {createRef, FormEvent, useEffect, useState} from 'react';
-import SpaceClient from '../Services/Api/SpaceClient';
+import SpaceClient from 'Services/Api/SpaceClient';
 import {createEmptySpace, Space} from 'Types/Space';
 
-import FormButton from '../ModalFormComponents/FormButton';
+import FormButton from 'ModalFormComponents/FormButton';
 import {useSetRecoilState} from 'recoil';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {ModalContentsState} from '../State/ModalContentsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {ModalContentsState} from 'State/ModalContentsState';
 
 import './SpaceForm.scss';
 

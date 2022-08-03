@@ -17,18 +17,18 @@
 
 import {fireEvent, waitFor} from '@testing-library/dom';
 import {screen} from '@testing-library/react';
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
 import React from 'react';
 import SpaceDashboardTile from './SpaceDashboardTile';
-import SpaceClient from '../Services/Api/SpaceClient';
-import {UserSpaceMapping} from '../Types/UserSpaceMapping';
-import {CurrentUserState} from '../State/CurrentUserState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import SpaceForm from './SpaceForm';
-import DeleteSpaceForm from './DeleteSpaceForm';
-import TransferOwnershipForm from './TransferOwnershipForm';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import SpaceClient from 'Services/Api/SpaceClient';
+import {UserSpaceMapping} from 'Types/UserSpaceMapping';
+import {CurrentUserState} from 'State/CurrentUserState';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import SpaceForm from '../SpaceForm/SpaceForm';
+import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
+import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
+import {renderWithRecoil} from 'Utils/TestUtils';
 
 let modalContent: ModalContents | null;
 

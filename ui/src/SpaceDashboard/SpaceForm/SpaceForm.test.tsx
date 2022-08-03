@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import {fireEvent, screen} from '@testing-library/dom';
 import SpaceForm from './SpaceForm';
 

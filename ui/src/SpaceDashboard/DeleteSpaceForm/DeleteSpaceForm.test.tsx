@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
 import * as React from 'react';
 import {waitFor} from '@testing-library/react';
 import DeleteSpaceForm from './DeleteSpaceForm';
 import {fireEvent, screen} from '@testing-library/dom';
-import SpaceClient from '../Services/Api/SpaceClient';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import TransferOwnershipForm from './TransferOwnershipForm';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import SpaceClient from 'Services/Api/SpaceClient';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import {MutableSnapshot} from 'recoil';
 
 describe('Delete Space Form', () => {

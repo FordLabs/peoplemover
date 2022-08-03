@@ -16,15 +16,15 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import TransferOwnershipForm from './TransferOwnershipForm';
-import SpaceClient from '../Services/Api/SpaceClient';
+import SpaceClient from 'Services/Api/SpaceClient';
 import {fireEvent, screen} from '@testing-library/dom';
 import {waitFor} from '@testing-library/react';
-import {CurrentUserState} from '../State/CurrentUserState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
+import {CurrentUserState} from 'State/CurrentUserState';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
 
 jest.mock('Services/Api/SpaceClient');
 

@@ -24,9 +24,9 @@ import AccessibleDropdownContainer from 'Common/AccessibleDropdownContainer/Acce
 import SpaceClient from 'Services/Api/SpaceClient';
 import {CurrentUserState} from 'State/CurrentUserState';
 import {ModalContentsState} from 'State/ModalContentsState';
-import SpaceForm from './SpaceForm';
-import TransferOwnershipForm from './TransferOwnershipForm';
-import DeleteSpaceForm from './DeleteSpaceForm';
+import SpaceForm from '../SpaceForm/SpaceForm';
+import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
+import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
 
 import './SpaceDashboardTile.scss';
 
