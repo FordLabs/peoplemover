@@ -25,7 +25,7 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm';
+import PersonForm from 'People/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {useParams} from 'react-router-dom';

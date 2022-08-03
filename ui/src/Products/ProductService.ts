@@ -16,7 +16,7 @@
  */
 
 import moment from 'moment';
-import {isArchived} from 'People/PersonService';
+import {isArchived} from 'Services/PersonService';
 import {Product} from 'Types/Product';
 
 export const UNASSIGNED_PRODUCT_NAME = 'unassigned';

@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 
-import {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import PersonForm from './PersonForm';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
 import selectEvent from 'react-select-event';
-import PersonTagClient from '../Services/Api/PersonTagClient';
-import {TagRequest} from '../Types/TagRequest';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import PeopleClient from '../Services/Api/PeopleClient';
-import {emptyPerson} from './PersonService';
+import PersonTagClient from 'Services/Api/PersonTagClient';
+import {TagRequest} from 'Types/TagRequest';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import PeopleClient from 'Services/Api/PeopleClient';
+import {emptyPerson} from 'Services/PersonService';
 import moment from 'moment';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {ProductsState} from '../State/ProductsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {MutableSnapshot} from 'recoil';
-import {Person} from '../Types/Person';
+import {Person} from 'Types/Person';
 
 jest.mock('Services/Api/PeopleClient');
 jest.mock('Services/Api/RoleClient');

@@ -17,11 +17,11 @@
 
 import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {PeopleState} from '../State/PeopleState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {PeopleState} from 'State/PeopleState';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/SpaceClient');

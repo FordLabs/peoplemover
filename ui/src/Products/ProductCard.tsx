@@ -27,7 +27,7 @@ import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
-import {getAssignments} from 'People/PersonService';
+import {getAssignments} from 'Services/PersonService';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';

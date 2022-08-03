@@ -16,40 +16,40 @@
  */
 
 import React, {FormEvent, useCallback, useEffect, useState} from 'react';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import RoleClient from '../Services/Api/RoleClient';
-import PeopleClient from '../Services/Api/PeopleClient';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import RoleClient from 'Services/Api/RoleClient';
+import PeopleClient from 'Services/Api/PeopleClient';
 import {AxiosResponse} from 'axios';
-import {emptyPerson, isArchived} from './PersonService';
-import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
+import {emptyPerson, isArchived} from 'Services/PersonService';
+import {isActiveProduct, isUnassignedProduct} from 'Products/ProductService';
 import SelectWithNoCreateOption, {
     MetadataMultiSelectProps,
 } from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {Option} from '../Types/Option';
+import {Option} from 'Types/Option';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
 import FormNotesTextArea from 'Common/FormNotesTextArea/FormNotesTextArea';
 import FormButton from 'Common/FormButton/FormButton';
 import SelectWithCreateOption, {MetadataReactSelectProps} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
-import FormTagsField from '../Common/FormTagsField/FormTagsField';
-import PersonTagClient from '../Services/Api/PersonTagClient';
+import FormTagsField from 'Common/FormTagsField/FormTagsField';
+import PersonTagClient from 'Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
-import ToolTip from '../Common/ToolTips/ToolTip';
-import {AssignmentHistory} from '../Assignments/History/AssignmentHistory';
+import ToolTip from 'Common/ToolTips/ToolTip';
+import {AssignmentHistory} from 'Assignments/History/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsUnassignedDrawerOpenState} from '../State/IsUnassignedDrawerOpenState';
-import {ProductsState} from '../State/ProductsState';
-import {PeopleState} from '../State/PeopleState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
+import {ProductsState} from 'State/ProductsState';
+import {PeopleState} from 'State/PeopleState';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
-import {ModalContentsState} from '../State/ModalContentsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ModalContentsState} from 'State/ModalContentsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {RoleTagRequest} from 'Types/TagRequest';
 import {Product} from 'Types/Product';
-import {Person} from '../Types/Person';
-import {Assignment} from '../Types/Assignment';
+import {Person} from 'Types/Person';
+import {Assignment} from 'Types/Assignment';
 
 import './PersonForm.scss';
 

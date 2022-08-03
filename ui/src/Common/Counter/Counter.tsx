@@ -22,20 +22,20 @@ import {
     personTagsFilterKey,
     productTagsFilterKey,
     roleTagsFilterKey,
-} from '../../SubHeader/SortingAndFiltering/FilterLibraries';
+} from 'SubHeader/SortingAndFiltering/FilterLibraries';
 import {
     isActiveProduct,
     isProductMatchingSelectedFilters,
     stripAssignmentsForArchivedPeople,
-} from '../../Products/ProductService';
-import {isPersonMatchingSelectedFilters} from '../../People/PersonService';
+} from 'Products/ProductService';
+import {isPersonMatchingSelectedFilters} from 'Services/PersonService';
 import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../../State/ViewingDateState';
-import {ProductsState, UnassignedProductSelector} from '../../State/ProductsState';
-import useOnStorageChange from '../../Hooks/useOnStorageChange/useOnStorageChange';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState, UnassignedProductSelector} from 'State/ProductsState';
+import useOnStorageChange from 'Hooks/useOnStorageChange/useOnStorageChange';
+import {Product} from 'Types/Product';
 
 import './Counter.scss';
-import {Product} from '../../Types/Product';
 
 function Counter(): JSX.Element {
     const products = useRecoilValue(ProductsState);

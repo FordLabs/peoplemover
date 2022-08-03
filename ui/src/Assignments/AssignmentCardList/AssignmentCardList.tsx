@@ -23,7 +23,7 @@ import {
     personTagsFilterKey,
     roleTagsFilterKey,
 } from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {isPersonMatchingSelectedFilters} from 'People/PersonService';
+import {isPersonMatchingSelectedFilters} from 'Services/PersonService';
 import useOnStorageChange from 'Hooks/useOnStorageChange/useOnStorageChange';
 import {Draggable, Droppable} from 'react-beautiful-dnd';
 import {useRecoilValue} from 'recoil';

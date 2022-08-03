@@ -17,19 +17,19 @@
 
 import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import PeopleClient from '../Services/Api/PeopleClient';
-import PersonForm from '../People/PersonForm';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import PeopleClient from 'Services/Api/PeopleClient';
+import PersonForm from './PersonForm/PersonForm';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import selectEvent from 'react-select-event';
-import {emptyPerson} from './PersonService';
+import {emptyPerson} from 'Services/PersonService';
 import moment from 'moment';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {ProductsState} from '../State/ProductsState';
-import {PeopleState} from '../State/PeopleState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {Person} from '../Types/Person';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {PeopleState} from 'State/PeopleState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {Person} from 'Types/Person';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/PeopleClient');

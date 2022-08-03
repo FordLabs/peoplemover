@@ -24,22 +24,22 @@ import TimeOnProduct, {
     TimeOnProductItem,
 } from './TimeOnProduct';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {UNASSIGNED_PRODUCT_NAME} from '../Products/ProductService';
+import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
 import {cleanup, screen, waitFor} from '@testing-library/react';
 import {fireEvent} from '@testing-library/dom';
 import {MutableSnapshot} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {ProductsState} from '../State/ProductsState';
-import ProductClient from '../Services/Api/ProductClient';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {ProductsState} from 'State/ProductsState';
+import ProductClient from 'Services/Api/ProductClient';
 import {RecoilObserver} from 'Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from '../People/PersonForm';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import SpaceClient from '../Services/Api/SpaceClient';
+import PersonForm from 'People/PersonForm/PersonForm';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import SpaceClient from 'Services/Api/SpaceClient';
 import {Space} from 'Types/Space';
-import {renderWithRecoil} from '../Utils/TestUtils';
-import {Product} from '../Types/Product';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import {Product} from 'Types/Product';
 
 const mockedUsedNavigate = jest.fn();
 

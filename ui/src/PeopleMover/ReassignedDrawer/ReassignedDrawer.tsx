@@ -19,7 +19,7 @@ import React, {useEffect, useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import AssignmentClient from 'Services/Api/AssignmentClient';
-import {isArchived} from 'People/PersonService';
+import {isArchived} from 'Services/PersonService';
 import PeopleClient from 'Services/Api/PeopleClient';
 import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';

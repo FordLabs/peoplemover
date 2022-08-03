@@ -17,14 +17,14 @@
 
 import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
 import PersonCard from './PersonCard';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import PersonForm from './PersonForm';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import PersonForm from '../PersonForm/PersonForm';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import {Person} from 'Types/Person';
 
 describe('Person Card', () => {

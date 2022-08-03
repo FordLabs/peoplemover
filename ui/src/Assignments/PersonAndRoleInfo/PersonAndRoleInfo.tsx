@@ -17,7 +17,7 @@
 
 import React, {ReactElement, useState} from 'react';
 import {useRecoilValue} from 'recoil';
-import {isArchived} from 'People/PersonService';
+import {isArchived} from 'Services/PersonService';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import {IsDraggingState} from 'State/IsDraggingState';

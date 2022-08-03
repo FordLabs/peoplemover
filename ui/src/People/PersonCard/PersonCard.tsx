@@ -20,11 +20,11 @@ import {createDataTestId} from 'Utils/ReactUtils';
 import PersonAndRoleInfo from 'Assignments/PersonAndRoleInfo/PersonAndRoleInfo';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import PersonForm from './PersonForm';
+import PersonForm from '../PersonForm/PersonForm';
 import {ModalContentsState} from 'State/ModalContentsState';
-import {Person} from '../Types/Person';
+import {Person} from 'Types/Person';
 
-import '../Styles/Main.scss';
+import 'Styles/Main.scss';
 import './PersonCard.scss';
 
 interface Props {

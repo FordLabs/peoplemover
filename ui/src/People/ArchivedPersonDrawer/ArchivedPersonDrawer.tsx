@@ -16,13 +16,13 @@
  */
 
 import React, {useState} from 'react';
-import DrawerContainer from '../Common/DrawerContainer/DrawerContainer';
+import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import moment from 'moment';
-import PersonCard from './PersonCard';
+import PersonCard from '../PersonCard/PersonCard';
 import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {PeopleState} from '../State/PeopleState';
-import {Person} from '../Types/Person';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {PeopleState} from 'State/PeopleState';
+import {Person} from 'Types/Person';
 
 function ArchivedPersonDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
