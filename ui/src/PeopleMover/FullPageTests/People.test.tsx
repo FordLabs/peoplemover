@@ -19,7 +19,7 @@ import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import PeopleClient from 'Services/Api/PeopleClient';
-import PersonForm from './PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import selectEvent from 'react-select-event';

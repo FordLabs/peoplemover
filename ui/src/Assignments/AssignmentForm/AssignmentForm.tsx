@@ -30,7 +30,7 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';

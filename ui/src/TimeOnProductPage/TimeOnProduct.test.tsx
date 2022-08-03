@@ -34,7 +34,7 @@ import {ProductsState} from 'State/ProductsState';
 import ProductClient from 'Services/Api/ProductClient';
 import {RecoilObserver} from 'Utils/RecoilObserver';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import SpaceClient from 'Services/Api/SpaceClient';
 import {Space} from 'Types/Space';

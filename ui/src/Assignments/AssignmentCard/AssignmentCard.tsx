@@ -34,7 +34,7 @@ import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import {ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Assignment} from 'Types/Assignment';
 

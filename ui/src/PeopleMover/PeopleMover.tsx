@@ -25,7 +25,7 @@ import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from 'Assignments/UnassignedDrawer/UnassignedDrawer';
 import ArchivedProductsDrawer from 'PeopleMover/ArchiveProductsDrawer/ArchivedProductsDrawer';
 import Counter from 'Common/Counter/Counter';
-import ArchivedPersonDrawer from 'People/ArchivedPersonDrawer/ArchivedPersonDrawer';
+import ArchivedPersonDrawer from 'PeopleMover/ArchivedPersonDrawer/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
@@ -36,7 +36,7 @@ import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import DragAndDrop from './DragAndDrop/DragAndDrop';
 

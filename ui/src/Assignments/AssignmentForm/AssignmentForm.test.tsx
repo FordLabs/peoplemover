@@ -28,7 +28,7 @@ import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
 import {RecoilObserver} from 'Utils/RecoilObserver';
-import PersonForm from 'People/PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 let modalContent: ModalContents | null;

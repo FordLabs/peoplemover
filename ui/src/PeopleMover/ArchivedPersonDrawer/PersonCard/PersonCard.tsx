@@ -20,7 +20,7 @@ import {createDataTestId} from 'Utils/ReactUtils';
 import PersonAndRoleInfo from 'Assignments/PersonAndRoleInfo/PersonAndRoleInfo';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import PersonForm from '../PersonForm/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import {ModalContentsState} from 'State/ModalContentsState';
 import {Person} from 'Types/Person';
 
