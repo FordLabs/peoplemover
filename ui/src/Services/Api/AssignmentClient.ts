@@ -16,7 +16,7 @@
  */
 
 import Axios, {AxiosResponse} from 'axios';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Assignments/CreateAssignmentRequest';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
 import {Space} from 'Types/Space';
 import {Person} from 'Types/Person';

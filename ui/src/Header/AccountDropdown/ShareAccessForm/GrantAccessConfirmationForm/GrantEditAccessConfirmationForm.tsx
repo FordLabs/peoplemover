@@ -16,7 +16,7 @@
  */
 
 import React, {useState} from 'react';
-import FormButton from 'ModalFormComponents/FormButton';
+import FormButton from 'Common/FormButton/FormButton';
 import {useSetRecoilState} from 'recoil';
 import {ModalContentsState} from 'State/ModalContentsState';
 

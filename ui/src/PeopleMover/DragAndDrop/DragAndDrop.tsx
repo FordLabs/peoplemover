@@ -23,7 +23,7 @@ import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import AssignmentClient from '../../Services/Api/AssignmentClient';
 import {ViewingDateState} from '../../State/ViewingDateState';
 import moment from 'moment';
-import {ProductPlaceholderPair} from '../../Assignments/CreateAssignmentRequest';
+import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import useFetchProducts from '../../Hooks/useFetchProducts/useFetchProducts';
 import {Product} from '../../Types/Product';
 import {Assignment} from '../../Types/Assignment';

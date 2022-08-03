@@ -17,7 +17,7 @@
 
 import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from '../../Assignments/CreateAssignmentRequest';
+import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import TestData from '../../Utils/TestData';
 import moment from 'moment';
 import Cookies from 'universal-cookie';

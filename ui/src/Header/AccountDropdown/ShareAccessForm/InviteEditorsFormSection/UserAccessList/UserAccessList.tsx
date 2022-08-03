@@ -20,13 +20,13 @@ import {
     CustomIndicator,
     isUserTabbingAndFocusedOnElement,
     reactSelectStyles,
-} from '../../../../../ModalFormComponents/ReactSelectStyles';
+} from 'Common/ReactSelectStyles/ReactSelectStyles';
 import React, {CSSProperties, useState} from 'react';
 import {Space} from 'Types/Space';
-import {UserSpaceMapping} from '../../../../../Types/UserSpaceMapping';
-import SpaceClient from '../../../../../Services/Api/SpaceClient';
+import {UserSpaceMapping} from 'Types/UserSpaceMapping';
+import SpaceClient from 'Services/Api/SpaceClient';
 import ConfirmationModal from 'Modal/ConfirmationModal/ConfirmationModal';
-import {dashboardUrl} from '../../../../../Routes';
+import {dashboardUrl} from 'Routes';
 
 import './UserAccessList.scss';
 

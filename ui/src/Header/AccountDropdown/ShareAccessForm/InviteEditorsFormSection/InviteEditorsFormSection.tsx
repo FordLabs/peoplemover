@@ -17,14 +17,14 @@
 
 import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from 'Services/Api/SpaceClient';
-import FormButton from 'ModalFormComponents/FormButton';
+import FormButton from 'Common/FormButton/FormButton';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 
 import UserAccessList
     from 'Header/AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
 import Creatable from 'react-select/creatable';
-import {reactSelectStyles} from 'ModalFormComponents/ReactSelectStyles';
+import {reactSelectStyles} from 'Common/ReactSelectStyles/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';
 import {Option} from 'Types/Option';
 import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';

@@ -18,11 +18,11 @@
 import React from 'react';
 import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
-import {OAuthRedirect} from './Common/OAuthRedirect/OAuthRedirect';
-import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
+import {OAuthRedirect} from './Auth/OAuthRedirect/OAuthRedirect';
+import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import RedirectWrapper from './RedirectWrapper';
 import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
-import AuthorizedRoute from './Auth/AuthorizedRoute';
+import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
 import PeopleMover from './PeopleMover/PeopleMover';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import Header from './Header/Header';

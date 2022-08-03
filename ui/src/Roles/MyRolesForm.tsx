@@ -21,7 +21,7 @@ import ColorClient from 'Services/Api/ColorClient';
 import RoleTags from 'Roles/RoleTags';
 import {Color} from 'Types/Color';
 
-import '../ModalFormComponents/TagRowsContainer.scss';
+import 'Styles/TagRowsContainer.scss';
 
 function MyRolesForm(): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
