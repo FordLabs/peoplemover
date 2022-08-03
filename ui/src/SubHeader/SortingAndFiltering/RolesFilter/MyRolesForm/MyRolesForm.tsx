@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from 'react';
 import {JSX} from '@babel/types';
 import ColorClient from 'Services/Api/ColorClient';
-import RoleTags from 'Roles/RoleTags';
+import RoleTags from 'SubHeader/SortingAndFiltering/RolesFilter/MyRolesForm/RoleTags';
 import {Color} from 'Types/Color';
 
 import 'Styles/TagRowsContainer.scss';
