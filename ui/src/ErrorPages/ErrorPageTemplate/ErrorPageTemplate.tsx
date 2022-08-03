@@ -16,9 +16,10 @@
  */
 
 import React from 'react';
+import Branding from 'Common/Branding/Branding';
+import FormButton from 'ModalFormComponents/FormButton';
+
 import './ErrorPageTemplate.scss';
-import Branding from '../Common/Branding/Branding';
-import FormButton from '../ModalFormComponents/FormButton';
 
 interface Props {
     errorGraphic: string;
