@@ -21,7 +21,7 @@ import RoleClient from 'Services/Api/RoleClient';
 import PeopleClient from 'Services/Api/PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived} from 'Services/PersonService';
-import {isActiveProduct, isUnassignedProduct} from 'Products/ProductService';
+import {isActiveProduct, isUnassignedProduct} from 'Services/ProductService';
 import SelectWithNoCreateOption, {
     MetadataMultiSelectProps,
 } from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';

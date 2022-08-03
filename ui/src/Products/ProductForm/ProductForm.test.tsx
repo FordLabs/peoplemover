@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ProductForm from '../Products/ProductForm';
+import ProductForm from './ProductForm';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import {Space} from 'Types/Space';
-import LocationClient from '../Services/Api/LocationClient';
-import ProductTagClient from '../Services/Api/ProductTagClient';
-import ProductClient from '../Services/Api/ProductClient';
+import LocationClient from 'Services/Api/LocationClient';
+import ProductTagClient from 'Services/Api/ProductTagClient';
+import ProductClient from 'Services/Api/ProductClient';
 import selectEvent from 'react-select-event';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {ModalContents, ModalContentsState} from '../State/ModalContentsState';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {MutableSnapshot} from 'recoil';
-import {Product} from '../Types/Product';
+import {Product} from 'Types/Product';
 
 jest.mock('Services/Api/LocationClient');
 jest.mock('Services/Api/ProductClient');

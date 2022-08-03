@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import {emptyProduct} from './ProductService';
-import NewProductButton from './NewProductButton';
+import {emptyProduct} from 'Services/ProductService';
+import NewProductButton from '../NewProductButton/NewProductButton';
 import {useRecoilValue} from 'recoil';
 
 import {ProductCardArray} from 'Common/ProductCardArray/ProductCardArray';
@@ -25,7 +25,7 @@ import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
 import {LocationsState} from 'State/LocationsState';
 import {ProductTagsState} from 'State/ProductTagsState';
 import {ModalContents} from 'State/ModalContentsState';
-import ProductForm from './ProductForm';
+import ProductForm from 'Products/ProductForm/ProductForm';
 import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
 import {Tag} from 'Types/Tag';
 import {Product} from 'Types/Product';

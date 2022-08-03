@@ -16,20 +16,20 @@
  */
 
 import React, {useCallback, useState} from 'react';
-import {isActiveProduct, isProductMatchingSelectedFilters} from './ProductService';
-import GroupedByList from './ProductListGrouped';
-import SortedByList from './ProductListSorted';
+import {isActiveProduct, isProductMatchingSelectedFilters} from 'Services/ProductService';
+import GroupedByList from './ProductListGrouped/ProductListGrouped';
+import SortedByList from './ProductListSorted/ProductListSorted';
 import {useRecoilValue} from 'recoil';
-import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {ProductsState} from '../State/ProductsState';
+import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
 import {
     getLocalStorageFiltersByType,
     locationTagsFilterKey,
     productTagsFilterKey,
-} from '../SubHeader/SortingAndFiltering/FilterLibraries';
-import useOnStorageChange from '../Hooks/useOnStorageChange/useOnStorageChange';
-import {Product} from '../Types/Product';
+} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import useOnStorageChange from 'Hooks/useOnStorageChange/useOnStorageChange';
+import {Product} from 'Types/Product';
 
 function ProductList(): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);

@@ -16,15 +16,15 @@
  */
 
 import React, {useState} from 'react';
-import ArchivedProduct from './ArchivedProduct';
-import {isArchivedOnDate} from './ProductService';
-import DrawerContainer from '../Common/DrawerContainer/DrawerContainer';
+import ArchivedProduct from './ArchivedProduct/ArchivedProduct';
+import {isArchivedOnDate} from 'Services/ProductService';
+import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';
 import {Product} from 'Types/Product';
 
-import '../Styles/Main.scss';
+import 'Styles/Main.scss';
 import './ArchivedProductsDrawer.scss';
 
 function ArchivedProductsDrawer(): JSX.Element {

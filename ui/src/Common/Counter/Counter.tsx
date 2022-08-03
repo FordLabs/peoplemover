@@ -27,7 +27,7 @@ import {
     isActiveProduct,
     isProductMatchingSelectedFilters,
     stripAssignmentsForArchivedPeople,
-} from 'Products/ProductService';
+} from 'Services/ProductService';
 import {isPersonMatchingSelectedFilters} from 'Services/PersonService';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';

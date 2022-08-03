@@ -15,16 +15,40 @@
  * limitations under the License.
  */
 
-@import '../Styles/Breakpoints.scss';
+@import '../../../Styles/Colors';
+@import '../../../Styles/Breakpoints';
 
-.productListSortedContainer {
+button.newProduct {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  flex-grow: 1;
+  justify-content: left;
+  align-items: center;
+
+  cursor: pointer;
+  height: 42px;
+  width: 194px;
+  padding: 8px 5px;
+  letter-spacing: 0.5px;
+  background-color: $gray-5;
+  margin: 10px 6px;
+  box-shadow: 1px 2px 3px rgba(black, 0.3);
+  border-radius: 6px;
+
+  font-size: 14px;
+  font-family: Helvetica, sans-serif;
+  font-weight: 700;
+  color: $gray-1;
 
   @include phone {
-    margin: 0 8px;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .addProductIcon.material-icons {
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 11px;
+    margin-right: 8px;
   }
 }

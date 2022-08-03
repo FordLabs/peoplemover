@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import ArchivedProduct from '../Products/ArchivedProduct';
+import ArchivedProduct from './ArchiveProductsDrawer/ArchivedProduct/ArchivedProduct';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
 import {fireEvent, screen} from '@testing-library/react';

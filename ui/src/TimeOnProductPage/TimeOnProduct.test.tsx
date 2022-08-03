@@ -24,7 +24,7 @@ import TimeOnProduct, {
     TimeOnProductItem,
 } from './TimeOnProduct';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
+import {UNASSIGNED_PRODUCT_NAME} from 'Services/ProductService';
 import {cleanup, screen, waitFor} from '@testing-library/react';
 import {fireEvent} from '@testing-library/dom';
 import {MutableSnapshot} from 'recoil';

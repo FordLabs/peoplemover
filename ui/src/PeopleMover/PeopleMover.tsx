@@ -17,13 +17,13 @@
 
 import React, {useEffect} from 'react';
 
-import ProductList from 'Products/ProductList';
+import ProductList from 'PeopleMover/ProductList/ProductList';
 import Branding from 'Common/Branding/Branding';
 import SubHeader from 'SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from 'Assignments/UnassignedDrawer/UnassignedDrawer';
-import ArchivedProductsDrawer from 'Products/ArchivedProductsDrawer';
+import ArchivedProductsDrawer from 'PeopleMover/ArchiveProductsDrawer/ArchivedProductsDrawer';
 import Counter from 'Common/Counter/Counter';
 import ArchivedPersonDrawer from 'People/ArchivedPersonDrawer/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';

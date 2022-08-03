@@ -16,18 +16,18 @@
  */
 
 import React from 'react';
-import {createDataTestId, renderWithRecoil} from '../Utils/TestUtils';
-import TestData from '../Utils/TestData';
-import {emptyProduct} from './ProductService';
+import {createDataTestId, renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
+import {emptyProduct} from 'Services/ProductService';
 import ProductCard from './ProductCard';
 import {fireEvent, screen, waitFor, within} from '@testing-library/react';
-import ProductClient from '../Services/Api/ProductClient';
+import ProductClient from 'Services/Api/ProductClient';
 import moment from 'moment';
-import AssignmentClient from '../Services/Api/AssignmentClient';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {ProductsState} from '../State/ProductsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {Product} from '../Types/Product';
+import AssignmentClient from 'Services/Api/AssignmentClient';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {ProductsState} from 'State/ProductsState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {Product} from 'Types/Product';
 
 jest.mock('Services/Api/AssignmentClient');
 

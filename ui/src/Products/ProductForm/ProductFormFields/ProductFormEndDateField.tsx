@@ -19,7 +19,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask';
 import React, {useState} from 'react';
-import {Product} from '../Types/Product';
+import {Product} from 'Types/Product';
 
 interface Props {
     currentProduct: Product;

@@ -16,12 +16,12 @@
  */
 
 import React from 'react';
-import NewProductButton from './NewProductButton';
+import NewProductButton from '../NewProductButton/NewProductButton';
 
-import {ProductCardArray} from '../Common/ProductCardArray/ProductCardArray';
+import {ProductCardArray} from 'Common/ProductCardArray/ProductCardArray';
 import {useRecoilValue} from 'recoil';
-import {ProductSortBy, ProductSortByState} from '../State/ProductSortByState';
-import {Product} from '../Types/Product';
+import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
+import {Product} from 'Types/Product';
 
 import './ProductListSorted.scss';
 

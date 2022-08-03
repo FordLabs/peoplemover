@@ -20,8 +20,8 @@ import moment from 'moment';
 import MaskedInput from 'react-text-mask';
 import React, {useState} from 'react';
 import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {Product} from '../Types/Product';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {Product} from 'Types/Product';
 
 interface Props {
     currentProduct: Product;

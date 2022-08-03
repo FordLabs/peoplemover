@@ -16,9 +16,9 @@
  */
 
 import React, {useState} from 'react';
-import EditMenu, {EditMenuOption} from '../Common/EditMenu/EditMenu';
-import ProductClient from '../Services/Api/ProductClient';
-import {isUnassignedProduct} from './ProductService';
+import EditMenu, {EditMenuOption} from 'Common/EditMenu/EditMenu';
+import ProductClient from 'Services/Api/ProductClient';
+import {isUnassignedProduct} from 'Services/ProductService';
 import AssignmentCardList from 'Assignments/AssignmentCardList/AssignmentCardList';
 
 import moment from 'moment';
@@ -34,12 +34,12 @@ import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
-import ProductForm from './ProductForm';
+import ProductForm from '../ProductForm/ProductForm';
 import AssignmentForm from 'Assignments/AssignmentForm/AssignmentForm';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 
-import './Product.scss';
+import '../Product.scss';
 
 interface Props {
     product: Product;

@@ -17,7 +17,7 @@
 
 import React, {useEffect, useState} from 'react';
 
-import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
+import {UNASSIGNED_PRODUCT_NAME} from 'Services/ProductService';
 import {calculateDuration} from 'Services/AssignmentService';
 import SubHeader from 'SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';

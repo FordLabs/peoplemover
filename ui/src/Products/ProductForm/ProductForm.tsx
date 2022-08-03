@@ -18,13 +18,13 @@
 import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {JSX} from '@babel/types';
 import moment from 'moment';
-import ProductClient from '../Services/Api/ProductClient';
-import {emptyProduct} from './ProductService';
+import ProductClient from 'Services/Api/ProductClient';
+import {emptyProduct} from 'Services/ProductService';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Tag} from 'Types/Tag';
-import ProductFormLocationField from './ProductFormLocationField';
-import ProductFormStartDateField from './ProductFormStartDateField';
-import ProductFormEndDateField from './ProductFormEndDateField';
+import ProductFormLocationField from './ProductFormFields/ProductFormLocationField';
+import ProductFormStartDateField from './ProductFormFields/ProductFormStartDateField';
+import ProductFormEndDateField from './ProductFormFields/ProductFormEndDateField';
 import FormNotesTextArea from 'Common/FormNotesTextArea/FormNotesTextArea';
 import FormButton from 'Common/FormButton/FormButton';
 import 'react-datepicker/dist/react-datepicker.css';
