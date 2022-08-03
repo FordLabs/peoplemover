@@ -18,18 +18,18 @@
 import {JSX} from '@babel/types';
 import React, {useState} from 'react';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import RoleClient from '../Services/Api/RoleClient';
-import {createDataTestId} from '../Utils/ReactUtils';
-import ViewTagRow from '../ModalFormComponents/ViewTagRow';
-import EditTagRow from '../ModalFormComponents/EditTagRow';
-import AddNewTagRow from '../ModalFormComponents/AddNewTagRow';
-import {INACTIVE_EDIT_STATE_INDEX} from '../Tags/MyTagsForm';
+import RoleClient from 'Services/Api/RoleClient';
+import {createDataTestId} from 'Utils/ReactUtils';
+import ViewTagRow from 'Common/ViewTagRow/ViewTagRow';
+import EditTagRow from 'Common/EditTagRow/EditTagRow';
+import AddNewTagRow from 'Common/AddNewTagRow/AddNewTagRow';
+import {INACTIVE_EDIT_STATE_INDEX} from 'Tags/MyTagsForm';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import {Color} from '../Types/Color';
-import {RoleTag} from '../Types/Tag';
-import {RoleTagRequest} from '../Types/TagRequest';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import {Color} from 'Types/Color';
+import {RoleTag} from 'Types/Tag';
+import {RoleTagRequest} from 'Types/TagRequest';
 
 interface Props {
     colors: Array<Color>;

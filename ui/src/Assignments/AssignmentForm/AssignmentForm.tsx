@@ -18,11 +18,13 @@
 import React, {FormEvent, useState} from 'react';
 import moment from 'moment';
 import AssignmentClient from 'Services/Api/AssignmentClient';
-import SelectWithNoCreateOption, {MetadataMultiSelectProps} from 'ModalFormComponents/SelectWithNoCreateOption';
+import SelectWithNoCreateOption, {
+    MetadataMultiSelectProps,
+} from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';
 import {Option} from 'Types/Option';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
-import FormButton from 'ModalFormComponents/FormButton';
-import SelectWithCreateOption, {MetadataReactSelectProps} from 'ModalFormComponents/SelectWithCreateOption';
+import FormButton from 'Common/FormButton/FormButton';
+import SelectWithCreateOption, {MetadataReactSelectProps} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';

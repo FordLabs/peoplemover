@@ -1,7 +1,7 @@
 import {JSX} from '@babel/types';
-import SelectWithHTMLOptions, {OptionType} from '../ModalFormComponents/SelectWithHTMLOptions';
+import SelectWithHTMLOptions, {OptionType} from 'Common/SelectWithHTMLOptions/SelectWithHTMLOptions';
 import React from 'react';
-import ColorCircle from '../ModalFormComponents/ColorCircle';
+import ColorCircle from 'Common/ColorCircle/ColorCircle';
 import {Color} from 'Types/Color';
 
 const colorMapping: { [key: string]: string } = {

@@ -18,10 +18,10 @@
 import {render, screen} from '@testing-library/react';
 import SelectWithNoCreateOption from './SelectWithNoCreateOption';
 import React from 'react';
-import TestData from '../Utils/TestData';
+import TestData from 'Utils/TestData';
 import {noop} from '@babel/types';
 import selectEvent from 'react-select-event';
-import {Product} from '../Types/Product';
+import {Product} from 'Types/Product';
 
 describe('SelectWithNoCreateOption (Multi-select)', () => {
     const initiallySelectedProducts: Product[] = [

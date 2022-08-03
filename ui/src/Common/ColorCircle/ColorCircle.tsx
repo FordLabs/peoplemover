@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,20 +15,23 @@
  * limitations under the License.
  */
 
-@import '../Styles/Colors.scss';
+import React from 'react';
+import {Color} from 'Types/Color';
 
-.colorCircle {
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
+import './ColorCircle.scss';
 
-  &.whiteCircleBorder {
-    border: 1px solid $gray-4;
-  }
-
-  &:hover {
-    box-shadow: 0 0 0 1px white, 0 0 0 3px $gray-2;
-  }
+interface Props {
+    color: Color;
 }
+
+const ColorCircle = ({ color }: Props): JSX.Element => {
+    return (
+        <span data-testid="selectRoleCircle"
+            style={{'backgroundColor': color.color}}
+            className={`colorCircle ${color.color === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+        />
+    );
+};
+
+export default ColorCircle;
+

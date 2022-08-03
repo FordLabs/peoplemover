@@ -22,15 +22,17 @@ import PeopleClient from '../Services/Api/PeopleClient';
 import {AxiosResponse} from 'axios';
 import {emptyPerson, isArchived} from './PersonService';
 import {isActiveProduct, isUnassignedProduct} from '../Products/ProductService';
-import SelectWithNoCreateOption, {MetadataMultiSelectProps} from '../ModalFormComponents/SelectWithNoCreateOption';
+import SelectWithNoCreateOption, {
+    MetadataMultiSelectProps,
+} from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from '../Types/Option';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
-import FormNotesTextArea from '../ModalFormComponents/FormNotesTextArea';
-import FormButton from '../ModalFormComponents/FormButton';
-import SelectWithCreateOption, {MetadataReactSelectProps} from '../ModalFormComponents/SelectWithCreateOption';
+import FormNotesTextArea from 'Common/FormNotesTextArea/FormNotesTextArea';
+import FormButton from 'Common/FormButton/FormButton';
+import SelectWithCreateOption, {MetadataReactSelectProps} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
 import FormTagsField from '../Common/FormTagsField/FormTagsField';
 import PersonTagClient from '../Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';

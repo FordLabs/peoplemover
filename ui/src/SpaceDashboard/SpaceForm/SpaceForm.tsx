@@ -19,7 +19,7 @@ import React, {createRef, FormEvent, useEffect, useState} from 'react';
 import SpaceClient from 'Services/Api/SpaceClient';
 import {createEmptySpace, Space} from 'Types/Space';
 
-import FormButton from 'ModalFormComponents/FormButton';
+import FormButton from 'Common/FormButton/FormButton';
 import {useSetRecoilState} from 'recoil';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';

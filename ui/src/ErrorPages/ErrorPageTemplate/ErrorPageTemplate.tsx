@@ -17,7 +17,7 @@
 
 import React from 'react';
 import Branding from 'Common/Branding/Branding';
-import FormButton from 'ModalFormComponents/FormButton';
+import FormButton from 'Common/FormButton/FormButton';
 
 import './ErrorPageTemplate.scss';
 

@@ -17,7 +17,7 @@
 
 import React from 'react';
 import ModalCardBanner from '../ModalCardBanner/ModalCardBanner';
-import FormButton, {ButtonStyle} from '../../ModalFormComponents/FormButton';
+import FormButton, {ButtonStyle} from 'Common/FormButton/FormButton';
 
 import './ConfirmationModal.scss';
 

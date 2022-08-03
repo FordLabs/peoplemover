@@ -28,7 +28,7 @@ import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
-import '../ModalFormComponents/TagRowsContainer.scss';
+import 'Styles/TagRowsContainer.scss';
 
 export const INACTIVE_EDIT_STATE_INDEX = -1;
 

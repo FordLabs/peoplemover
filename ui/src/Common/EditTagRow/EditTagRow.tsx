@@ -16,18 +16,18 @@
  */
 
 import React, {ChangeEvent, useState} from 'react';
-import SaveIcon from '../Assets/saveIcon.png';
-import CloseIcon from '../Assets/closeIcon.png';
+import SaveIcon from 'Assets/saveIcon.png';
+import CloseIcon from 'Assets/closeIcon.png';
 import {JSX} from '@babel/types';
-import {createDataTestId} from '../Utils/ReactUtils';
-import {RoleTagRequest, TagRequest} from '../Types/TagRequest';
+import {createDataTestId} from 'Utils/ReactUtils';
+import {RoleTagRequest, TagRequest} from 'Types/TagRequest';
 
-import {OptionType} from './SelectWithHTMLOptions';
-import ColorDropdown from '../Roles/ColorDropdown';
-import {TagType} from '../SubHeader/SortingAndFiltering/FilterLibraries';
-import {Color} from '../Types/Color';
+import {OptionType} from '../SelectWithHTMLOptions/SelectWithHTMLOptions';
+import ColorDropdown from 'Roles/ColorDropdown';
+import {TagType} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {Color} from 'Types/Color';
 
-import './TagRowsContainer.scss';
+import 'Styles/TagRowsContainer.scss';
 
 interface Props {
     colors?: Array<Color>;

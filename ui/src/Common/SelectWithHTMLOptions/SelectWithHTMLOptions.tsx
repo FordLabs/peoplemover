@@ -16,7 +16,7 @@
  */
 
 import React, {ReactNode, useEffect, useRef, useState} from 'react';
-import {debounce} from '../Utils';
+import {debounce} from 'Utils';
 
 import './SelectWithHTMLOptions.scss';
 
