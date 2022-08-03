@@ -23,34 +23,21 @@ import {RedirectToADFS} from './Auth/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
-import CacheBuster from './CacheBuster';
+import CacheBuster, {CacheBusterProps} from './CacheBuster';
 import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
-import flagsmith, {IFlags} from 'flagsmith';
+import {IFlags} from 'flagsmith';
 
 import axe from '@axe-core/react';
 import {RecoilRoot} from 'recoil';
 import {FlagsState, simplifyFlags} from './State/FlagsState';
+import {getBrowserInfo} from './Utils/getBrowserInfo';
+import FlagSmithService from './Services/FlagSmithService';
+import reactDomRender from './Utils/reactDomRender';
+import EnvironmentConfigService from './Services/Api/EnvironmentConfigService';
 
 if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
-}
-
-declare global {
-    interface Window {
-        runConfig: RunConfig;
-    }
-}
-
-export interface RunConfig {
-    auth_enabled: boolean;
-    ford_labs_url: string;
-    invite_users_to_space_enabled: boolean;
-    adfs_url_template: string;
-    adfs_client_id: string;
-    adfs_resource: string;
-    flagsmith_environment_id: string;
-    flagsmith_url: string;
 }
 
 window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
@@ -68,56 +55,19 @@ Axios.interceptors.response.use(
         return Promise.reject(error);
     },
 );
+const { isNotSupported, browserName } = getBrowserInfo()
 
-let browserName = '';
-
-/* eslint-disable */
-function isUnsupportedBrowser(): boolean {
-    // Safari 3.0+ "[object HTMLElementConstructor]"
-    // @ts-ignore
-    const isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean {
-        return p.toString() === '[object SafariRemoteNotification]';
-    // @ts-ignore
-    })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
-    if (isSafari) browserName = 'Safari';
-
-    // Internet Explorer 6-11
-    // @ts-ignore
-    const isIE = /*@cc_on!@*/!!document.documentMode;
-    if (isIE) browserName = 'Internet Explorer';
-
-    // Edge 20+
-    // @ts-ignore
-    const isEdge = !isIE && !!window.StyleMedia;
-    if (isEdge) browserName = 'Edge';
-
-    return isSafari || isIE || isEdge;
-}
-/* eslint-enable */
-
-interface CacheBusterProps {
-    loading: boolean;
-    isLatestVersion: boolean;
-    refreshCacheAndReload: Function;
-}
-
-if (isUnsupportedBrowser()) {
-    ReactDOM.render(
-        <UnsupportedBrowserPage browserName={browserName}/>,
-        document.getElementById('root'),
-    );
+if (isNotSupported) {
+    reactDomRender(<UnsupportedBrowserPage browserName={browserName}/>);
 } else {
-    Axios.get( '/api/config', {headers: {'Content-Type': 'application/json'}})
-        .then(async (response) => {
-            window.runConfig = Object.freeze(response.data);
-            let flags: IFlags;
+    EnvironmentConfigService.get()
+        .then(async (runConfig) => {
+            const flags: IFlags | null = await FlagSmithService.initAndGetFlags(
+                runConfig.flagsmith_url,
+                runConfig.flagsmith_environment_id
+            );
 
-            flagsmith.init({
-                environmentID : window.runConfig.flagsmith_environment_id,
-                api: window.runConfig.flagsmith_url,
-            }).then(() => { flags = flagsmith.getAllFlags() }, () => console.log('Flagsmith client failed to initialize'));
-
-            ReactDOM.render(
+            reactDomRender(
                 <CacheBuster>
                     {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
                         if (loading) return null;
@@ -131,8 +81,7 @@ if (isUnsupportedBrowser()) {
                             </RecoilRoot>
                         );
                     }}
-                </CacheBuster>,
-                document.getElementById('root')
+                </CacheBuster>
             );
         });
 }
