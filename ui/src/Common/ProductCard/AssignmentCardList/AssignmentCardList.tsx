@@ -16,7 +16,7 @@
  */
 
 import React, {RefObject, useCallback, useRef, useState} from 'react';
-import AssignmentCard from 'Assignments/AssignmentCard/AssignmentCard';
+import AssignmentCard from 'Common/ProductCard/AssignmentCardList/AssignmentCard/AssignmentCard';
 import {isUnassignedProduct} from 'Services/ProductService';
 import {
     getLocalStorageFiltersByType,

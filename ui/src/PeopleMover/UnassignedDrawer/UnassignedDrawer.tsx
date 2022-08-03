@@ -24,7 +24,7 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
 import {UnassignedProductSelector} from 'State/ProductsState';
 
-import '../PersonDrawer.scss';
+import 'Styles/PersonDrawer.scss';
 import './UnassignedDrawer.scss';
 
 function UnassignedDrawer(): JSX.Element {

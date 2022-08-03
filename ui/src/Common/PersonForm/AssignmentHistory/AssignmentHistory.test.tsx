@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import TestData from '../../Utils/TestData';
+import TestData from 'Utils/TestData';
 import React from 'react';
-import AssignmentClient from '../../Services/Api/AssignmentClient';
+import AssignmentClient from 'Services/Api/AssignmentClient';
 import {act, render, RenderResult} from '@testing-library/react';
 import {AssignmentHistory} from './AssignmentHistory';
-import ProductClient from '../../Services/Api/ProductClient';
+import ProductClient from 'Services/Api/ProductClient';
 import moment, {now} from 'moment';
 import {fireEvent} from '@testing-library/dom';
-import {Assignment} from '../../Types/Assignment';
+import {Assignment} from 'Types/Assignment';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/AssignmentClient');

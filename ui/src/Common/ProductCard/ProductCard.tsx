@@ -19,7 +19,7 @@ import React, {useState} from 'react';
 import EditMenu, {EditMenuOption} from 'Common/EditMenu/EditMenu';
 import ProductClient from 'Services/Api/ProductClient';
 import {isUnassignedProduct} from 'Services/ProductService';
-import AssignmentCardList from 'Assignments/AssignmentCardList/AssignmentCardList';
+import AssignmentCardList from 'Common/ProductCard/AssignmentCardList/AssignmentCardList';
 
 import moment from 'moment';
 import {createDataTestId} from 'Utils/ReactUtils';
@@ -35,7 +35,7 @@ import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
 import ProductForm from '../ProductForm/ProductForm';
-import AssignmentForm from 'Assignments/AssignmentForm/AssignmentForm';
+import AssignmentForm from 'Common/ProductCard/AssignmentForm/AssignmentForm';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 

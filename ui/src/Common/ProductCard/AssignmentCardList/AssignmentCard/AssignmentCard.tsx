@@ -23,7 +23,7 @@ import AssignmentClient from 'Services/Api/AssignmentClient';
 import {calculateDuration} from 'Services/AssignmentService';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
-import PersonAndRoleInfo from '../PersonAndRoleInfo/PersonAndRoleInfo';
+import PersonAndRoleInfo from 'Common/PersonAndRoleInfo/PersonAndRoleInfo';
 import {createDataTestId} from 'Utils/ReactUtils';
 import PeopleClient from 'Services/Api/PeopleClient';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';

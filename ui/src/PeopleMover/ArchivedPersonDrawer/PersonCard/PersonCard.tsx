@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {createDataTestId} from 'Utils/ReactUtils';
-import PersonAndRoleInfo from 'Assignments/PersonAndRoleInfo/PersonAndRoleInfo';
+import PersonAndRoleInfo from 'Common/PersonAndRoleInfo/PersonAndRoleInfo';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import PersonForm from 'Common/PersonForm/PersonForm';

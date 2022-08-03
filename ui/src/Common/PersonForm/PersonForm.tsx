@@ -37,7 +37,7 @@ import FormTagsField from 'Common/FormTagsField/FormTagsField';
 import PersonTagClient from 'Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
 import ToolTip from 'Common/ToolTips/ToolTip';
-import {AssignmentHistory} from 'Assignments/History/AssignmentHistory';
+import {AssignmentHistory} from 'Common/PersonForm/AssignmentHistory/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
