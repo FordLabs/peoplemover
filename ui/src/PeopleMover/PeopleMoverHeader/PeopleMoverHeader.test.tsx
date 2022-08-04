@@ -16,7 +16,7 @@
  */
 
 import {axe} from 'jest-axe';
-import {RenderResult, screen} from '@testing-library/react';
+import {screen} from '@testing-library/react';
 import {renderWithRecoil} from '../../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {MutableSnapshot} from 'recoil';
@@ -24,16 +24,23 @@ import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import React from 'react';
 import TestData from '../../Utils/TestData';
 import {dashboardUrl} from '../../Routes';
-import {shouldShowAllAccountDropdownOptions} from '../../Header/Header.test';
+import {enableInviteUsersToSpace, shouldShowAllAccountDropdownOptions} from '../../Header/Header.test';
 import PeopleMoverHeader from './PeopleMoverHeader';
-import {RunConfig} from '../../Types/RunConfig';
 
 describe('People Mover Header', () => {
     let container: string | Element;
 
     beforeEach(() => {
-        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
-        ({container} = renderPeopleMoverHeader(`/${TestData.space.uuid}`));
+        enableInviteUsersToSpace();
+
+        ({container} = renderWithRecoil(
+            <MemoryRouter initialEntries={[`/${TestData.space.uuid}`]}>
+                <PeopleMoverHeader />
+            </MemoryRouter>,
+            ({set}: MutableSnapshot) => {
+                set(CurrentSpaceState, TestData.space)
+            }
+        ));
     })
 
     it('should have no axe violations', async () => {
@@ -46,7 +53,8 @@ describe('People Mover Header', () => {
     });
 
     it('should show space name', () => {
-        expect(screen.getByText(TestData.space.name)).toBeDefined();
+        const headerSpaceName = screen.getByTestId('headerSpaceName');
+        expect(headerSpaceName).toHaveTextContent(TestData.space.name);
     });
 
     it('should render "Skip to main content" accessibility link', () => {
@@ -71,14 +79,3 @@ describe('People Mover Header', () => {
         shouldShowAllAccountDropdownOptions();
     });
 });
-
-function renderPeopleMoverHeader(initialRoute: string): RenderResult {
-    return renderWithRecoil(
-        <MemoryRouter initialEntries={[initialRoute]}>
-            <PeopleMoverHeader />
-        </MemoryRouter>,
-        ({set}: MutableSnapshot) => {
-            set(CurrentSpaceState, TestData.space)
-        }
-    );
-}

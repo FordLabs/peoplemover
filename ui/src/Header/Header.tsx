@@ -49,7 +49,11 @@ function Header({
         <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
             <div className="headerLeftContainer">
                 <PeopleMoverLogo href={peopleMoverLogoUrl}/>
-                {spaceName && <h1 className="spaceName">{spaceName}</h1>}
+                {spaceName && (
+                    <h1 className="spaceName" data-testid="headerSpaceName">
+                        {spaceName}
+                    </h1>
+                )}
                 {children}
                 {isTimeOnProductPage && (
                     <Link

@@ -45,36 +45,6 @@ xdescribe('Header', () => {
         });
     });
 
-    describe('Dashboard Page', () => {
-        beforeEach(() => {
-            ({container} = renderHeader('/user/dashboard'));
-        })
-
-        it('should have no axe violations', async () => {
-            const results = await axe(container);
-            expect(results).toHaveNoViolations();
-        });
-
-        it('should show header', () => {
-            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
-        });
-
-        it('should NOT show space name', () => {
-            shouldNotShowSpaceName();
-        });
-
-        it('should show logo that is NOT a link', () => {
-            const staticLogo = screen.getByTestId('peopleMoverStaticLogo');
-            expect(staticLogo).not.toHaveAttribute('href');
-            expect(staticLogo).toHaveTextContent('PEOPLEMOVER');
-            expect(screen.queryByTestId('peopleMoverLogoLink')).toBeNull();
-        });
-
-        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
-            shouldOnlyShowSignoutButtonInAccountDropdown();
-        });
-    });
-
     describe('Contact Us Page', () => {
         beforeEach(() => {
             ({container} = renderHeader('/contact-us', TestData.space));
@@ -231,7 +201,7 @@ function shouldRenderLogoAsDashboardLink() {
     expect(screen.queryByTestId('peopleMoverStaticLogo')).toBeNull();
 }
 
-function shouldOnlyShowSignoutButtonInAccountDropdown() {
+export function shouldOnlyShowSignoutButtonInAccountDropdown() {
     openAccountDropdown();
 
     expect(screen.getByText('Sign Out')).toBeDefined();
@@ -245,4 +215,8 @@ function shouldNotShowSpaceName() {
 
 function shouldShowSpaceName() {
     expect(screen.getByText(TestData.space.name)).toBeDefined();
+}
+
+export function enableInviteUsersToSpace() {
+    window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 }

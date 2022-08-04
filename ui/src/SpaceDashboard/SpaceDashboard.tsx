@@ -28,6 +28,7 @@ import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm/SpaceForm';
 import Modal from '../Modal/Modal';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import Header from '../Header/Header';
 
 import './SpaceDashboard.scss';
 
@@ -107,11 +108,14 @@ function SpaceDashboard(): JSX.Element {
     }
 
     return (
-        <div className="spaceDashboard">
-            {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
-            <Branding />
-            <Modal />
-        </div>
+        <>
+            <Header onlyShowSignOutButton />
+            <div className="spaceDashboard">
+                {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
+                <Branding />
+                <Modal />
+            </div>
+        </>
     );
 }
 

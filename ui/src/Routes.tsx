@@ -40,7 +40,6 @@ function Routes(): JSX.Element {
     return (
         <Router>
             <AnnouncementBanner/>
-            {/*<Header/>*/}
             <ReactRoutes>
                 <Route path="/" element={<LandingPage/>} />
                 <Route path="/adfs/catch" element={<OAuthRedirect/>} />
