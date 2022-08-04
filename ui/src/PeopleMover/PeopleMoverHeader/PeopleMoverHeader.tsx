@@ -19,22 +19,21 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import Header from '../../Header/Header';
 import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
+import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import {dashboardUrl} from '../../Routes';
 
 function PeopleMoverHeader() {
-    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
     return (
         <>
-            <a href="PeopleMover/PeopleMoverHeader/PeopleMoverHeader.tsx" className="skipToProducts" data-testid="skipToContentLink">
+            <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
                 Skip to main content
             </a>
             <Header spaceName={currentSpace.name} peopleMoverLogoUrl={dashboardUrl}>
                 <Link
                     className="timeOnProductLink"
-                    to={`/${uuid}/timeonproduct`}>
+                    to={`/${currentSpace.uuid}/timeonproduct`}>
                     <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
                 </Link>
             </Header>

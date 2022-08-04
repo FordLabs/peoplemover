@@ -58,7 +58,8 @@ describe('People Mover Header', () => {
     });
 
     it('should render "Skip to main content" accessibility link', () => {
-        expect(screen.getByText('Skip to main content')).toBeDefined();
+        const skipButton = screen.getByText('Skip to main content');
+        expect(skipButton).toHaveAttribute('href', '#main-content-landing-target')
     });
 
     it('should show logo that links back to the dashboard', () => {
