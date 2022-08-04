@@ -23,7 +23,6 @@ import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
-import kotlin.collections.HashSet
 
 data class PersonRequest(
 

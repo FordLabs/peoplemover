@@ -18,9 +18,6 @@
 package com.ford.internalprojects.peoplemover.user
 
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
-import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
-import com.ford.internalprojects.peoplemover.user.exceptions.InvalidUserModification
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
