@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {fireEvent, RenderResult, screen} from '@testing-library/react';
+import {fireEvent, RenderResult, screen, within} from '@testing-library/react';
 import {axe} from 'jest-axe';
 import Header from './Header';
 import {renderWithRecoil} from '../Utils/TestUtils';
@@ -42,33 +42,6 @@ xdescribe('Header', () => {
         it('should not show header at all', () => {
             renderHeader('/');
             expect(screen.queryByTestId('peopleMoverHeader')).toBeNull();
-        });
-    });
-
-    describe('Contact Us Page', () => {
-        beforeEach(() => {
-            ({container} = renderHeader('/contact-us', TestData.space));
-        })
-
-        it('should have no axe violations', async () => {
-            const results = await axe(container);
-            expect(results).toHaveNoViolations();
-        });
-
-        it('should show header', () => {
-            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
-        });
-
-        it('should NOT show space name', () => {
-            shouldNotShowSpaceName();
-        });
-
-        it('should show logo that links back to the dashboard', () => {
-            shouldRenderLogoAsDashboardLink();
-        });
-
-        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
-            shouldOnlyShowSignoutButtonInAccountDropdown();
         });
     });
 
@@ -194,11 +167,12 @@ export function shouldShowAllAccountDropdownOptions() {
     expect(screen.getByText('Download Report')).toBeDefined();
 }
 
-function shouldRenderLogoAsDashboardLink() {
-    const logoLink = screen.getByTestId('peopleMoverLogoLink');
+export function shouldRenderLogoAsDashboardLink() {
+    const header = screen.getByTestId('peopleMoverHeader');
+    const logoLink = within(header).getByTestId('peopleMoverLogoLink');
     expect(logoLink).toHaveAttribute('href', dashboardUrl);
     expect(logoLink).toHaveTextContent('PEOPLEMOVER');
-    expect(screen.queryByTestId('peopleMoverStaticLogo')).toBeNull();
+    expect(within(header).queryByTestId('peopleMoverStaticLogo')).toBeNull();
 }
 
 export function shouldOnlyShowSignoutButtonInAccountDropdown() {
@@ -209,11 +183,11 @@ export function shouldOnlyShowSignoutButtonInAccountDropdown() {
     expect(screen.queryByText('Download Report')).toBeNull();
 }
 
-function shouldNotShowSpaceName() {
+export function shouldNotShowSpaceName() {
     expect(screen.queryByText(TestData.space.name)).toBeNull();
 }
 
-function shouldShowSpaceName() {
+export function shouldShowSpaceName() {
     expect(screen.getByText(TestData.space.name)).toBeDefined();
 }
 

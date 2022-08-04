@@ -16,11 +16,18 @@
  */
 import React from 'react';
 import ContactUsPage from './ContactUsPage';
-import {render, screen, waitFor} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import ContactUsClient from '../Services/Api/ContactUsClient';
 import {ContactUsRequest, UserType} from '../Types/ContactUsRequest';
+import {axe} from 'jest-axe';
+import {
+    shouldNotShowSpaceName,
+    shouldOnlyShowSignoutButtonInAccountDropdown,
+    shouldRenderLogoAsDashboardLink,
+} from '../Header/Header.test';
+import {renderWithRecoil} from '../Utils/TestUtils';
 
 jest.mock('Services/Api/ContactUsClient');
 
@@ -34,11 +41,8 @@ describe('Contact Us Page', () => {
             message: 'Something isn\'t working right.'
         }
 
-        render(
-            <MemoryRouter>
-                <ContactUsPage />
-            </MemoryRouter>
-        );
+        renderContactUsPage();
+
         await userEvent.type(screen.getByLabelText('Name:'), expectedFormValues.name);
         await userEvent.type(screen.getByLabelText('Email:'), expectedFormValues.email);
         const radioButtonToClick = screen.getByLabelText(expectedFormValues.userType);
@@ -58,4 +62,41 @@ describe('Contact Us Page', () => {
         expect(screen.queryByText('Send')).toBeNull();
         expect(screen.getByText(confirmationMessage)).toBeDefined();
     });
+
+    describe('Contact Us Header', () => {
+        let container: string | Element;
+
+        beforeEach(() => {
+            ({container} = renderContactUsPage());
+        })
+
+        it('should have no axe violations', async () => {
+            const results = await axe(container);
+            expect(results).toHaveNoViolations();
+        });
+
+        it('should show header', () => {
+            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
+        });
+
+        it('should NOT show space name', () => {
+            shouldNotShowSpaceName();
+        });
+
+        it('should show logo that links back to the dashboard', () => {
+            shouldRenderLogoAsDashboardLink();
+        });
+
+        it('should ONLY show the "Sign Out" button in the account dropdown', () => {
+            shouldOnlyShowSignoutButtonInAccountDropdown();
+        });
+    });
 });
+
+function renderContactUsPage() {
+    return renderWithRecoil(
+        <MemoryRouter initialEntries={['/contact-us']}>
+            <ContactUsPage />
+        </MemoryRouter>
+    );
+}

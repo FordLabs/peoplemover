@@ -21,10 +21,12 @@ import Branding from 'Common/Branding/Branding';
 import PeopleMoverLogo from 'Common/PeopleMoverLogo/PeopleMoverLogo';
 import Input from 'Common/Input/Input';
 import Textarea from 'Common/Textarea/Textarea';
-
-import './ContactUsPage.scss';
 import {UserType} from '../Types/ContactUsRequest';
 import ContactUsClient from '../Services/Api/ContactUsClient';
+import Header from '../Header/Header';
+import {dashboardUrl} from '../Routes';
+
+import './ContactUsPage.scss';
 
 type TargetType = {
     email: { value: string };
@@ -55,54 +57,57 @@ function ContactUsPage() {
     }
 
     return (
-        <div className="contact-us-page">
-            <main className="main-content">
-                <h1 className="contact-us-page-title">Contact Us</h1>
-                <div className="right-content">
-                    <PeopleMoverLogo/>
-                    <h2>The People’s Feedback</h2>
-                    <p>Getting started? Have questions? Let us know how we can help you with your PeopleMover space!</p>
-                    <div className="required-text">All fields required.</div>
-                    <form className="contact-us-page-form" onSubmit={onSubmit}>
-                        <Input label="Name:" name="name" id="name" required />
-                        <Input label="Email:" name="email" id="email" type="email" required />
-                        <fieldset className="fieldset">
-                            <legend>I am:</legend>
-                            <Input
-                                label={UserType.NEW_USER} value={UserType.NEW_USER}
-                                id="new-user" type="radio" name="userType"
-                                required
-                            />
-                            <Input
-                                label={UserType.EXISTING_USER} value={UserType.EXISTING_USER}
-                                id="existing-user" type="radio" name="userType"
-                                required
-                            />
-                            <Input
-                                label={UserType.OTHER} value={UserType.OTHER}
-                                id="other-user" type="radio" name="userType"
-                                required
-                            />
-                        </fieldset>
-                        <Textarea label="How can we help?" id="textarea" name="message" required />
-                        {isSubmitted ? (
-                            <div className="success-message">
-                                <p>Thanks! A member of our team will reach out to help you.</p>
-                                <a href="/user/dashboard">Back to Dashboard</a>
-                            </div>
-                        ) : (
-                            <button className="contact-us-page-submit-button" type="submit">
+        <>
+            <Header onlyShowSignOutButton peopleMoverLogoUrl={dashboardUrl} />
+            <div className="contact-us-page">
+                <main className="main-content">
+                    <h1 className="contact-us-page-title">Contact Us</h1>
+                    <div className="right-content">
+                        <PeopleMoverLogo/>
+                        <h2>The People’s Feedback</h2>
+                        <p>Getting started? Have questions? Let us know how we can help you with your PeopleMover space!</p>
+                        <div className="required-text">All fields required.</div>
+                        <form className="contact-us-page-form" onSubmit={onSubmit}>
+                            <Input label="Name:" name="name" id="name" required />
+                            <Input label="Email:" name="email" id="email" type="email" required />
+                            <fieldset className="fieldset">
+                                <legend>I am:</legend>
+                                <Input
+                                    label={UserType.NEW_USER} value={UserType.NEW_USER}
+                                    id="new-user" type="radio" name="userType"
+                                    required
+                                />
+                                <Input
+                                    label={UserType.EXISTING_USER} value={UserType.EXISTING_USER}
+                                    id="existing-user" type="radio" name="userType"
+                                    required
+                                />
+                                <Input
+                                    label={UserType.OTHER} value={UserType.OTHER}
+                                    id="other-user" type="radio" name="userType"
+                                    required
+                                />
+                            </fieldset>
+                            <Textarea label="How can we help?" id="textarea" name="message" required />
+                            {isSubmitted ? (
+                                <div className="success-message">
+                                    <p>Thanks! A member of our team will reach out to help you.</p>
+                                    <a href="/user/dashboard">Back to Dashboard</a>
+                                </div>
+                            ) : (
+                                <button className="contact-us-page-submit-button" type="submit">
                                 Send
-                            </button>
-                        )}
-                    </form>
-                </div>
-            </main>
-            <footer className="footer">
-                <Branding/>
-            </footer>
-            <img className="contact-us-background-image" src={PurpleGradientBackgroundImage} alt="" role="presentation"/>
-        </div>
+                                </button>
+                            )}
+                        </form>
+                    </div>
+                </main>
+                <footer className="footer">
+                    <Branding/>
+                </footer>
+                <img className="contact-us-background-image" src={PurpleGradientBackgroundImage} alt="" role="presentation"/>
+            </div>
+        </>
     )
 }
 

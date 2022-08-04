@@ -18,9 +18,6 @@
 import React, {ReactChild} from 'react';
 import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
 import AccountDropdown from './AccountDropdown/AccountDropdown';
-import {Link, useLocation} from 'react-router-dom';
-import {useRecoilValue} from 'recoil';
-import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 import './Headers.scss';
 
@@ -39,11 +36,11 @@ function Header({
     onlyShowSignOutButton,
     children
 }: HeaderProps): JSX.Element {
-    const location = useLocation();
+    // const location = useLocation();
+    //
+    // const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
-    const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
-
-    const isTimeOnProductPage = location.pathname.includes('timeonproduct');
+    // const isTimeOnProductPage = location.pathname.includes('timeonproduct');
 
     return  (
         <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
@@ -55,13 +52,13 @@ function Header({
                     </h1>
                 )}
                 {children}
-                {isTimeOnProductPage && (
-                    <Link
-                        className="timeOnProductLink"
-                        to={`/${uuid}`}>
-                                &#60; Back
-                    </Link>
-                )}
+                {/*{isTimeOnProductPage && (*/}
+                {/*    <Link*/}
+                {/*        className="timeOnProductLink"*/}
+                {/*        to={`/${uuid}`}>*/}
+                {/*                &#60; Back*/}
+                {/*    </Link>*/}
+                {/*)}*/}
             </div>
             {!hideAccountDropdown && (
                 <div className="headerRightContainer">
