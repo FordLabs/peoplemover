@@ -87,7 +87,7 @@ function PeopleMover(): JSX.Element {
     return (
         <>
             <PeopleMoverHeader />
-            {products.length && !!currentSpace && (
+            {!!products.length && !!currentSpace && (
                 <div className="peoplemover-page">
                     <SubHeader/>
                     <main>
