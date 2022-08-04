@@ -23,9 +23,9 @@ import ContactUsClient from '../Services/Api/ContactUsClient';
 import {ContactUsRequest, UserType} from '../Types/ContactUsRequest';
 import {axe} from 'jest-axe';
 import {
-    shouldNotShowSpaceName,
+    shouldNotShowSpaceNameInHeader,
     shouldOnlyShowSignoutButtonInAccountDropdown,
-    shouldRenderLogoAsDashboardLink,
+    shouldRenderLogoAsDashboardLinkInHeader,
 } from '../Header/Header.test';
 import {renderWithRecoil} from '../Utils/TestUtils';
 
@@ -80,11 +80,11 @@ describe('Contact Us Page', () => {
         });
 
         it('should NOT show space name', () => {
-            shouldNotShowSpaceName();
+            shouldNotShowSpaceNameInHeader();
         });
 
         it('should show logo that links back to the dashboard', () => {
-            shouldRenderLogoAsDashboardLink();
+            shouldRenderLogoAsDashboardLinkInHeader();
         });
 
         it('should ONLY show the "Sign Out" button in the account dropdown', () => {

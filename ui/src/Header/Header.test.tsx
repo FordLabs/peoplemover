@@ -64,7 +64,7 @@ xdescribe('Header', () => {
         });
 
         it('should show logo that links back to the dashboard', () => {
-            shouldRenderLogoAsDashboardLink();
+            shouldRenderLogoAsDashboardLinkInHeader();
         });
 
         it('should show logo that links back to the dashboard', () => {
@@ -84,31 +84,6 @@ xdescribe('Header', () => {
             shouldShowAllAccountDropdownOptions();
         });
     })
-
-    describe('Error Page', () => {
-        beforeEach(() => {
-            renderHeader('/error/404');
-        })
-
-        it('should show header', () => {
-            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
-        });
-
-        it('should NOT show space name', () => {
-            shouldNotShowSpaceName();
-        });
-
-        it('should show logo that links back to the dashboard', () => {
-            shouldRenderLogoAsDashboardLink();
-        });
-
-        it('should not show the account dropdown at all when user is on the error page', () => {
-            expect(screen.queryByText('bob')).toBeNull();
-            expect(screen.queryByText('Sign Out')).toBeNull();
-            expect(screen.queryByText('Share Access')).toBeNull();
-            expect(screen.queryByText('Download Report')).toBeNull();
-        });
-    });
 
     describe('Account Dropdown', () => {
         beforeEach(async () => {
@@ -167,7 +142,7 @@ export function shouldShowAllAccountDropdownOptions() {
     expect(screen.getByText('Download Report')).toBeDefined();
 }
 
-export function shouldRenderLogoAsDashboardLink() {
+export function shouldRenderLogoAsDashboardLinkInHeader() {
     const header = screen.getByTestId('peopleMoverHeader');
     const logoLink = within(header).getByTestId('peopleMoverLogoLink');
     expect(logoLink).toHaveAttribute('href', dashboardUrl);
@@ -183,7 +158,7 @@ export function shouldOnlyShowSignoutButtonInAccountDropdown() {
     expect(screen.queryByText('Download Report')).toBeNull();
 }
 
-export function shouldNotShowSpaceName() {
+export function shouldNotShowSpaceNameInHeader() {
     expect(screen.queryByText(TestData.space.name)).toBeNull();
 }
 
