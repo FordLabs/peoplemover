@@ -16,14 +16,15 @@
  */
 
 import React, {ReactChild} from 'react';
-import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
+import PeopleMoverLogo from 'Common/PeopleMoverLogo/PeopleMoverLogo';
 import AccountDropdown from './AccountDropdown/AccountDropdown';
+import {dashboardUrl} from '../Routes';
 
 import './Headers.scss';
 
 interface HeaderProps {
     spaceName?: string;
-    peopleMoverLogoUrl?: string;
+    showStaticPeopleMoverLogo?: boolean;
     hideAccountDropdown?: boolean;
     onlyShowSignOutButton?: boolean
     children?: ReactChild;
@@ -31,15 +32,17 @@ interface HeaderProps {
 
 function Header({
     spaceName,
-    peopleMoverLogoUrl,
+    showStaticPeopleMoverLogo,
     hideAccountDropdown,
     onlyShowSignOutButton,
     children
 }: HeaderProps): JSX.Element {
+    const logoLink = showStaticPeopleMoverLogo ? '' : dashboardUrl;
+
     return  (
         <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
             <div className="headerLeftContainer">
-                <PeopleMoverLogo href={peopleMoverLogoUrl}/>
+                <PeopleMoverLogo href={logoLink}/>
                 {spaceName && (
                     <h1 className="spaceName" data-testid="headerSpaceName">
                         {spaceName}

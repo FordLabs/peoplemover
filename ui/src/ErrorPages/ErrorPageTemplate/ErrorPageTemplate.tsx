@@ -19,7 +19,6 @@ import React from 'react';
 import Branding from 'Common/Branding/Branding';
 import FormButton from 'Common/FormButton/FormButton';
 import Header from '../../Header/Header';
-import {dashboardUrl} from '../../Routes';
 
 import './ErrorPageTemplate.scss';
 
@@ -31,7 +30,7 @@ interface Props {
 function ErrorPageTemplate({errorGraphic, errorText}: Props): JSX.Element {
     return (
         <>
-            <Header hideAccountDropdown peopleMoverLogoUrl={dashboardUrl} />
+            <Header hideAccountDropdown />
             <div className="ErrorPageContainer" data-testid="errorPageTemplate">
                 <main className="ErrorImageAndTextContainer">
                     <h1 className="oopsText">Oops!</h1>

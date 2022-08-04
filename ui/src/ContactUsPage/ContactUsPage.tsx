@@ -24,7 +24,6 @@ import Textarea from 'Common/Textarea/Textarea';
 import {UserType} from '../Types/ContactUsRequest';
 import ContactUsClient from '../Services/Api/ContactUsClient';
 import Header from '../Header/Header';
-import {dashboardUrl} from '../Routes';
 
 import './ContactUsPage.scss';
 
@@ -58,7 +57,7 @@ function ContactUsPage() {
 
     return (
         <>
-            <Header onlyShowSignOutButton peopleMoverLogoUrl={dashboardUrl} />
+            <Header onlyShowSignOutButton />
             <div className="contact-us-page">
                 <main className="main-content">
                     <h1 className="contact-us-page-title">Contact Us</h1>

@@ -20,7 +20,6 @@ import {screen} from '@testing-library/react';
 import Header from './Header';
 import {RunConfig} from 'Types/RunConfig';
 import flagsmith from 'flagsmith';
-import {dashboardUrl} from '../Routes';
 import {renderWithRecoil} from '../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {
@@ -57,13 +56,13 @@ describe('Header', () => {
     });
 
     describe('PeopleMover Logo', () => {
-        it('should render logo as a link when href is provided', () => {
-            renderWithRecoil(<Header peopleMoverLogoUrl={dashboardUrl} />);
+        it('should render logo as a link by default', () => {
+            renderHeaderWithoutProps();
             shouldRenderLogoAsDashboardLinkInHeader();
         });
 
-        it('should render static logo as a link when href is not provided', () => {
-            renderHeaderWithoutProps();
+        it('should render static logo as a link when showStaticPeopleMoverLogo prop is provided', () => {
+            renderWithRecoil(<Header showStaticPeopleMoverLogo />);
             shouldRenderStaticLogo();
         });
     });

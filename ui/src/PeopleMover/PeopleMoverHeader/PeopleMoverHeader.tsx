@@ -20,7 +20,6 @@ import {Link} from 'react-router-dom';
 import Header from '../../Header/Header';
 import {useRecoilValue} from 'recoil';
 import {CurrentSpaceState} from '../../State/CurrentSpaceState';
-import {dashboardUrl} from '../../Routes';
 
 function PeopleMoverHeader() {
     const currentSpace = useRecoilValue(CurrentSpaceState);
@@ -30,7 +29,7 @@ function PeopleMoverHeader() {
             <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
                 Skip to main content
             </a>
-            <Header spaceName={currentSpace.name} peopleMoverLogoUrl={dashboardUrl}>
+            <Header spaceName={currentSpace.name}>
                 <Link
                     className="timeOnProductLink"
                     to={`/${currentSpace.uuid}/timeonproduct`}>
