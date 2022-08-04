@@ -15,30 +15,34 @@
  * limitations under the License.
  */
 
-import {axe} from 'jest-axe';
 import {screen} from '@testing-library/react';
 import {renderWithRecoil} from '../../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {MutableSnapshot} from 'recoil';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import React from 'react';
+import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import TestData from '../../Utils/TestData';
-import {dashboardUrl} from '../../Routes';
-import PeopleMoverHeader from './PeopleMoverHeader';
-import {enableInviteUsersToSpace, shouldShowAllAccountDropdownOptions} from '../../Utils/HeaderTestUtils';
+import {axe} from 'jest-axe';
+import {
+    enableInviteUsersToSpace,
+    shouldRenderLogoAsDashboardLinkInHeader,
+    shouldShowAllAccountDropdownOptions,
+    shouldShowSpaceNameInHeader,
+} from '../../Utils/HeaderTestUtils';
+import TimeOnProductHeader from './TimeOnProductHeader';
 
-describe('People Mover Header', () => {
+describe('Time On Product Page Header', () => {
     let container: string | Element;
 
     beforeEach(() => {
         enableInviteUsersToSpace();
 
         ({container} = renderWithRecoil(
-            <MemoryRouter initialEntries={[`/${TestData.space.uuid}`]}>
-                <PeopleMoverHeader />
+            <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
+                <TimeOnProductHeader />
             </MemoryRouter>,
             ({set}: MutableSnapshot) => {
-                set(CurrentSpaceState, TestData.space)
+                set(CurrentSpaceState,  TestData.space)
             }
         ));
     })
@@ -53,27 +57,17 @@ describe('People Mover Header', () => {
     });
 
     it('should show space name', () => {
-        const headerSpaceName = screen.getByTestId('headerSpaceName');
-        expect(headerSpaceName).toHaveTextContent(TestData.space.name);
-    });
-
-    it('should render "Skip to main content" accessibility link', () => {
-        const skipButton = screen.getByText('Skip to main content');
-        expect(skipButton).toHaveAttribute('href', '#main-content-landing-target')
+        shouldShowSpaceNameInHeader();
     });
 
     it('should show logo that links back to the dashboard', () => {
-        const logoLink = screen.getByTestId('peopleMoverLogoLink');
-        expect(logoLink).toHaveAttribute('href', dashboardUrl);
-        expect(logoLink).toHaveTextContent('PEOPLEMOVER');
-        expect(screen.queryByTestId('peopleMoverStaticLogo')).toBeNull();
+        shouldRenderLogoAsDashboardLinkInHeader();
     });
 
-    it('should show "Time On Product" link', () => {
-        const timeOnProductLink = screen.getByText('Time On Product >');
-        expect(timeOnProductLink).toBeDefined();
-        expect(timeOnProductLink).toHaveAttribute('href', `/${TestData.space.uuid}/timeonproduct`);
-        expect(screen.queryByText('< Back')).toBeNull();
+    it('should show "Back" to space link', async () => {
+        const backToSpaceLink = screen.getByText('< Back');
+        expect(backToSpaceLink).toBeDefined();
+        expect(backToSpaceLink).toHaveAttribute('href', `/${TestData.space.uuid}`);
     });
 
     it('should show all account dropdown options', () => {

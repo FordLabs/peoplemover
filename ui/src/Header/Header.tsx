@@ -36,12 +36,6 @@ function Header({
     onlyShowSignOutButton,
     children
 }: HeaderProps): JSX.Element {
-    // const location = useLocation();
-    //
-    // const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
-
-    // const isTimeOnProductPage = location.pathname.includes('timeonproduct');
-
     return  (
         <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
             <div className="headerLeftContainer">
@@ -52,13 +46,6 @@ function Header({
                     </h1>
                 )}
                 {children}
-                {/*{isTimeOnProductPage && (*/}
-                {/*    <Link*/}
-                {/*        className="timeOnProductLink"*/}
-                {/*        to={`/${uuid}`}>*/}
-                {/*                &#60; Back*/}
-                {/*    </Link>*/}
-                {/*)}*/}
             </div>
             {!hideAccountDropdown && (
                 <div className="headerRightContainer">

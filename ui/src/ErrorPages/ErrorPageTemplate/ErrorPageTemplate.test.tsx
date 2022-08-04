@@ -16,12 +16,16 @@
  */
 
 import {screen} from '@testing-library/react';
-import {shouldNotShowSpaceNameInHeader, shouldRenderLogoAsDashboardLinkInHeader} from '../../Header/Header.test';
 import {renderWithRecoil} from '../../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import React from 'react';
 import ErrorPageTemplate from './ErrorPageTemplate';
 import errorImageSrc from 'Assets/403.png';
+import {
+    shouldHideHeaderAccountDropdown,
+    shouldNotShowSpaceNameInHeader,
+    shouldRenderLogoAsDashboardLinkInHeader,
+} from '../../Utils/HeaderTestUtils';
 
 describe('Error Page Template', () => {
     const errorPageText = 'Error Text!';
@@ -52,10 +56,7 @@ describe('Error Page Template', () => {
         });
 
         it('should not show the account dropdown at all when user is on the error page', () => {
-            expect(screen.queryByText('bob')).toBeNull();
-            expect(screen.queryByText('Sign Out')).toBeNull();
-            expect(screen.queryByText('Share Access')).toBeNull();
-            expect(screen.queryByText('Download Report')).toBeNull();
+            shouldHideHeaderAccountDropdown();
         });
     });
 });

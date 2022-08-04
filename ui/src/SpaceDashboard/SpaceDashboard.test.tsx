@@ -28,8 +28,12 @@ import {RecoilObserver} from '../Utils/RecoilObserver';
 import {ViewingDateState} from '../State/ViewingDateState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import TestData from '../Utils/TestData';
-import {enableInviteUsersToSpace, shouldOnlyShowSignoutButtonInAccountDropdown} from '../Header/Header.test';
 import {axe} from 'jest-axe';
+import {
+    enableInviteUsersToSpace,
+    shouldOnlyShowSignoutButtonInAccountDropdown,
+    shouldRenderStaticLogo,
+} from '../Utils/HeaderTestUtils';
 
 class MockDate extends Date {
     constructor() {
@@ -179,10 +183,7 @@ describe('SpaceDashboard', () => {
         });
 
         it('should show logo that is NOT a link', () => {
-            const staticLogo = screen.getByTestId('peopleMoverStaticLogo');
-            expect(staticLogo).not.toHaveAttribute('href');
-            expect(staticLogo).toHaveTextContent('PEOPLEMOVER');
-            expect(screen.queryByTestId('peopleMoverLogoLink')).toBeNull();
+            shouldRenderStaticLogo();
         });
 
         it('should ONLY show the "Sign Out" button in the account dropdown', () => {

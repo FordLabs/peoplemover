@@ -22,12 +22,12 @@ import {MemoryRouter} from 'react-router-dom';
 import ContactUsClient from '../Services/Api/ContactUsClient';
 import {ContactUsRequest, UserType} from '../Types/ContactUsRequest';
 import {axe} from 'jest-axe';
+import {renderWithRecoil} from '../Utils/TestUtils';
 import {
     shouldNotShowSpaceNameInHeader,
     shouldOnlyShowSignoutButtonInAccountDropdown,
     shouldRenderLogoAsDashboardLinkInHeader,
-} from '../Header/Header.test';
-import {renderWithRecoil} from '../Utils/TestUtils';
+} from '../Utils/HeaderTestUtils';
 
 jest.mock('Services/Api/ContactUsClient');
 

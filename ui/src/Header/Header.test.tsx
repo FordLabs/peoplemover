@@ -16,91 +16,91 @@
  */
 
 import React from 'react';
-import {fireEvent, RenderResult, screen, within} from '@testing-library/react';
-import {axe} from 'jest-axe';
+import {screen} from '@testing-library/react';
 import Header from './Header';
-import {renderWithRecoil} from '../Utils/TestUtils';
 import {RunConfig} from 'Types/RunConfig';
-import {MemoryRouter} from 'react-router-dom';
 import flagsmith from 'flagsmith';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
-import TestData from '../Utils/TestData';
-import {MutableSnapshot} from 'recoil';
 import {dashboardUrl} from '../Routes';
-import {createEmptySpace, Space} from '../Types/Space';
+import {renderWithRecoil} from '../Utils/TestUtils';
+import {MemoryRouter} from 'react-router-dom';
+import {
+    enableInviteUsersToSpace,
+    openAccountDropdown,
+    shouldHideHeaderAccountDropdown,
+    shouldOnlyShowSignoutButtonInAccountDropdown,
+    shouldRenderLogoAsDashboardLinkInHeader,
+    shouldRenderStaticLogo,
+    shouldShowAllAccountDropdownOptions,
+} from '../Utils/HeaderTestUtils';
+import {MutableSnapshot} from 'recoil';
+import {CurrentUserState} from '../State/CurrentUserState';
 
 const debounceTimeToWait = 100;
 
-xdescribe('Header', () => {
-    let container: string | Element;
-
+describe('Header', () => {
     beforeEach(() => {
         window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
     })
 
-    describe('Landing Page', () => {
-        it('should not show header at all', () => {
-            renderHeader('/');
-            expect(screen.queryByTestId('peopleMoverHeader')).toBeNull();
+    describe('Space Name', () => {
+        it('should show name when name prop is populated', () => {
+            const expectedSpaceName = 'Test Space Name';
+            renderWithRecoil(<Header spaceName={expectedSpaceName} />);
+            const spaceNameComponent = screen.getByTestId('headerSpaceName');
+            expect(spaceNameComponent).toHaveTextContent(expectedSpaceName)
+        });
+
+        it('should not show name when name prop is not populated', async () => {
+            await renderHeaderWithoutProps();
+            expect(screen.queryByTestId('headerSpaceName')).toBeNull();
         });
     });
 
-    describe('Time On Product Page', () => {
-        beforeEach(() => {
-            ({container} = renderHeader(`/${TestData.space.uuid}/timeonproduct`, TestData.space));
-        })
-
-        it('should have no axe violations', async () => {
-            const results = await axe(container);
-            expect(results).toHaveNoViolations();
-        });
-
-        it('should show header', () => {
-            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
-        });
-
-        it('should show space name', () => {
-            shouldShowSpaceName();
-        });
-
-        it('should show logo that links back to the dashboard', () => {
+    describe('PeopleMover Logo', () => {
+        it('should render logo as a link when href is provided', () => {
+            renderWithRecoil(<Header peopleMoverLogoUrl={dashboardUrl} />);
             shouldRenderLogoAsDashboardLinkInHeader();
         });
 
-        it('should show logo that links back to the dashboard', () => {
-            const logoLink = screen.getByTestId('peopleMoverLogoLink');
-            expect(logoLink).toHaveAttribute('href', dashboardUrl);
-            expect(logoLink).toHaveTextContent('PEOPLEMOVER');
+        it('should render static logo as a link when href is not provided', () => {
+            renderHeaderWithoutProps();
+            shouldRenderStaticLogo();
         });
-
-        it('should show "Back" to space link and NOT "Time on Product" link', async () => {
-            const backToSpaceLink = screen.getByText('< Back');
-            expect(backToSpaceLink).toBeDefined();
-            expect(backToSpaceLink).toHaveAttribute('href', `/${TestData.space.uuid}`);
-            expect(screen.queryByText('Time On Product >')).toBeNull();
-        });
-
-        it('should show all account dropdown options', () => {
-            shouldShowAllAccountDropdownOptions();
-        });
-    })
+    });
 
     describe('Account Dropdown', () => {
         beforeEach(async () => {
             jest.useFakeTimers();
             flagsmith.hasFeature = jest.fn().mockReturnValue(true);
+        });
 
-            renderHeader(`/${TestData.space.uuid}`);
+        it('should hide account dropdown when hideAccountDropdown prop is set', () => {
+            renderWithRecoil(<Header hideAccountDropdown />);
+            shouldHideHeaderAccountDropdown();
+        });
 
-            await screen.findByTestId('accountDropdownToggle');
+        it('should show account dropdown when hideAccountDropdown prop is not set', async () => {
+            await renderHeaderWithoutProps();
+            shouldShowAllAccountDropdownOptions();
+        });
+
+        it('should only show signout button when onlyShowSignOutButton prop is set', async () => {
+            renderWithRecoil(
+                <MemoryRouter>
+                    <Header onlyShowSignOutButton />
+                </MemoryRouter>
+            );
+            shouldOnlyShowSignoutButtonInAccountDropdown();
         });
 
         it('should show username', async () => {
+            await renderHeaderWithoutProps();
             expect(screen.getByText('USER_ID')).toBeDefined();
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
             window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
+            await renderHeaderWithoutProps();
 
             openAccountDropdown();
             jest.advanceTimersByTime(debounceTimeToWait);
@@ -109,7 +109,8 @@ xdescribe('Header', () => {
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
-            window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+            enableInviteUsersToSpace();
+            await renderHeaderWithoutProps();
 
             openAccountDropdown();
             jest.advanceTimersByTime(debounceTimeToWait);
@@ -119,53 +120,14 @@ xdescribe('Header', () => {
     });
 });
 
-function renderHeader(initialRoute: string, currentSpace: Space = createEmptySpace()): RenderResult {
-    return renderWithRecoil(
-        <MemoryRouter initialEntries={[initialRoute]}>
+async function renderHeaderWithoutProps() {
+    renderWithRecoil(
+        <MemoryRouter>
             <Header />
         </MemoryRouter>,
         ({set}: MutableSnapshot) => {
-            set(CurrentSpaceState, currentSpace)
+            set(CurrentUserState, 'USER_ID')
         }
     );
-}
-
-export function openAccountDropdown() {
-    const userIconButton = screen.getByTestId('accountDropdownToggle');
-    fireEvent.click(userIconButton);
-}
-
-export function shouldShowAllAccountDropdownOptions() {
-    openAccountDropdown();
-    expect(screen.getByText('Sign Out')).toBeDefined();
-    expect(screen.getByText('Share Access')).toBeDefined();
-    expect(screen.getByText('Download Report')).toBeDefined();
-}
-
-export function shouldRenderLogoAsDashboardLinkInHeader() {
-    const header = screen.getByTestId('peopleMoverHeader');
-    const logoLink = within(header).getByTestId('peopleMoverLogoLink');
-    expect(logoLink).toHaveAttribute('href', dashboardUrl);
-    expect(logoLink).toHaveTextContent('PEOPLEMOVER');
-    expect(within(header).queryByTestId('peopleMoverStaticLogo')).toBeNull();
-}
-
-export function shouldOnlyShowSignoutButtonInAccountDropdown() {
-    openAccountDropdown();
-
-    expect(screen.getByText('Sign Out')).toBeDefined();
-    expect(screen.queryByText('Share Access')).toBeNull();
-    expect(screen.queryByText('Download Report')).toBeNull();
-}
-
-export function shouldNotShowSpaceNameInHeader() {
-    expect(screen.queryByText(TestData.space.name)).toBeNull();
-}
-
-export function shouldShowSpaceName() {
-    expect(screen.getByText(TestData.space.name)).toBeDefined();
-}
-
-export function enableInviteUsersToSpace() {
-    window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+    await screen.findByTestId('accountDropdownToggle');
 }
