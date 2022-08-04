@@ -18,10 +18,6 @@
 package com.ford.internalprojects.peoplemover.person
 
 import com.ford.internalprojects.peoplemover.assignment.AssignmentService
-import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
-import com.ford.internalprojects.peoplemover.assignment.ProductPlaceholderPair
-import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 

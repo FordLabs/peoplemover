@@ -23,7 +23,6 @@ import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.ZoneOffset

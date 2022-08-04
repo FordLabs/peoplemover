@@ -22,7 +22,6 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import java.time.LocalDate
 import javax.persistence.*
-import kotlin.collections.HashSet
 
 @Entity
 data class Person(

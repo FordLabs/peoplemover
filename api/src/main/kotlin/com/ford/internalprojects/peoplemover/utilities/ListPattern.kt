@@ -20,8 +20,8 @@ package com.ford.internalprojects.peoplemover.utilities
 import javax.validation.Constraint
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
-import kotlin.reflect.KClass
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.reflect.KClass
 
 @Constraint(validatedBy = [ListPatternValidator::class])
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, FIELD, ANNOTATION_CLASS, CONSTRUCTOR, VALUE_PARAMETER)

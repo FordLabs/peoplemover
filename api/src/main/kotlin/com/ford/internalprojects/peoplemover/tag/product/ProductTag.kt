@@ -18,7 +18,6 @@
 package com.ford.internalprojects.peoplemover.tag.product
 
 import com.ford.internalprojects.peoplemover.space.NamedSpaceComponent
-import com.ford.internalprojects.peoplemover.space.SpaceComponent
 import javax.persistence.*
 
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["name", "space_uuid"])])
