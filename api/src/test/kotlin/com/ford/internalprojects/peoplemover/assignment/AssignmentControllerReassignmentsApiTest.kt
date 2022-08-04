@@ -31,6 +31,8 @@ import java.time.format.DateTimeFormatter
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest() {
+    val goodToken = "GOOD_TOKEN"
+
     @Test
     fun `GET should return all reassignments for the given spaceUuid and exact requested date`() {
         assignmentRepository.save(
@@ -67,7 +69,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -125,7 +127,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -176,7 +178,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april2))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -212,7 +214,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, march1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -239,7 +241,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, march1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -304,7 +306,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -365,7 +367,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -440,7 +442,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -516,7 +518,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -579,7 +581,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(editableSpace.uuid, april1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -629,7 +631,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
 
         val result = mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, today))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -648,7 +650,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
         val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
         mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, tomorrow))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -659,7 +661,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
         val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
         mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, yesterday))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -669,7 +671,7 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     fun `GET should return FORBIDDEN when requested date is not valid for read only space`() {
         mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, march1))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $goodToken")
         )
             .andExpect(status().isForbidden)
             .andReturn()
