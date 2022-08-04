@@ -15,69 +15,56 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {ReactChild} from 'react';
 import PeopleMoverLogo from '../Common/PeopleMoverLogo/PeopleMoverLogo';
 import AccountDropdown from './AccountDropdown/AccountDropdown';
 import {Link, useLocation} from 'react-router-dom';
 import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
-import {contactUsPath, dashboardUrl} from '../Routes';
+import {UUIDForCurrentSpaceSelector} from '../State/CurrentSpaceState';
 
 import './Headers.scss';
 
-function Header(): JSX.Element {
+interface HeaderProps {
+    spaceName?: string;
+    peopleMoverLogoUrl?: string;
+    hideAccountDropdown?: boolean;
+    onlyShowSignOutButton?: boolean
+    children?: ReactChild;
+}
+
+function Header({
+    spaceName,
+    peopleMoverLogoUrl,
+    hideAccountDropdown,
+    onlyShowSignOutButton,
+    children
+}: HeaderProps): JSX.Element {
     const location = useLocation();
 
-    const currentSpace = useRecoilValue(CurrentSpaceState);
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
     const isTimeOnProductPage = location.pathname.includes('timeonproduct');
-    const isSpacePage = location.pathname === `/${uuid}`;
-    const isLandingPage = location.pathname === '/';
-    const isErrorPage = location.pathname.includes('error');
-    const isDashboardPage = location.pathname === dashboardUrl;
-    const isContactUsPage = location.pathname === contactUsPath;
 
-    const spaceName = currentSpace?.name;
-
-    function showSpaceName(): boolean {
-        return (isSpacePage || isTimeOnProductPage) && !!spaceName;
-    }
-
-    return (
-        isLandingPage ? <></>
-            : <>
-                {isSpacePage && (
-                    <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
-                        Skip to main content
-                    </a>
-                )}
-                <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
-                    <div className="headerLeftContainer">
-                        <PeopleMoverLogo href={isDashboardPage ? '' : dashboardUrl}/>
-                        {showSpaceName() && <h1 className="spaceName">{spaceName}</h1>}
-                        {isSpacePage && (
-                            <Link
-                                className="timeOnProductLink"
-                                to={`/${uuid}/timeonproduct`}>
-                                <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
-                            </Link>
-                        )}
-                        {isTimeOnProductPage && (
-                            <Link
-                                className="timeOnProductLink"
-                                to={`/${uuid}`}>
+    return  (
+        <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
+            <div className="headerLeftContainer">
+                <PeopleMoverLogo href={peopleMoverLogoUrl}/>
+                {spaceName && <h1 className="spaceName">{spaceName}</h1>}
+                {children}
+                {isTimeOnProductPage && (
+                    <Link
+                        className="timeOnProductLink"
+                        to={`/${uuid}`}>
                                 &#60; Back
-                            </Link>
-                        )}
-                    </div>
-                    {!isErrorPage && (
-                        <div className="headerRightContainer">
-                            <AccountDropdown showAllDropDownOptions={!isDashboardPage && !isContactUsPage}/>
-                        </div>
-                    )}
-                </header>
-            </>
+                    </Link>
+                )}
+            </div>
+            {!hideAccountDropdown && (
+                <div className="headerRightContainer">
+                    <AccountDropdown showAllDropDownOptions={!onlyShowSignOutButton}/>
+                </div>
+            )}
+        </header>
     );
 }
 

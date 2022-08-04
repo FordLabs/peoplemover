@@ -31,7 +31,7 @@ import {createEmptySpace, Space} from '../Types/Space';
 
 const debounceTimeToWait = 100;
 
-describe('Header', () => {
+xdescribe('Header', () => {
     let container: string | Element;
 
     beforeEach(() => {
@@ -72,44 +72,6 @@ describe('Header', () => {
 
         it('should ONLY show the "Sign Out" button in the account dropdown', () => {
             shouldOnlyShowSignoutButtonInAccountDropdown();
-        });
-    });
-
-    describe('Space Page', () => {
-        beforeEach(() => {
-            ({container} = renderHeader(`/${TestData.space.uuid}`, TestData.space));
-        })
-
-        it('should have no axe violations', async () => {
-            const results = await axe(container);
-            expect(results).toHaveNoViolations();
-        });
-
-        it('should show header', () => {
-            expect(screen.getByTestId('peopleMoverHeader')).toBeDefined();
-        });
-
-        it('should show space name', () => {
-            shouldShowSpaceName();
-        });
-
-        it('should render "Skip to main content" accessibility link', () => {
-            expect(screen.getByText('Skip to main content')).toBeDefined();
-        });
-
-        it('should show logo that links back to the dashboard', () => {
-            shouldRenderLogoAsDashboardLink();
-        });
-
-        it('should show "Time On Product" link and NOT "Back" link', () => {
-            const timeOnProductLink = screen.getByText('Time On Product >');
-            expect(timeOnProductLink).toBeDefined();
-            expect(timeOnProductLink).toHaveAttribute('href', `/${TestData.space.uuid}/timeonproduct`);
-            expect(screen.queryByText('< Back')).toBeNull();
-        });
-
-        it('should show all account dropdown options', () => {
-            shouldShowAllAccountDropdownOptions();
         });
     });
 
@@ -250,12 +212,12 @@ function renderHeader(initialRoute: string, currentSpace: Space = createEmptySpa
     );
 }
 
-function openAccountDropdown() {
+export function openAccountDropdown() {
     const userIconButton = screen.getByTestId('accountDropdownToggle');
     fireEvent.click(userIconButton);
 }
 
-function shouldShowAllAccountDropdownOptions() {
+export function shouldShowAllAccountDropdownOptions() {
     openAccountDropdown();
     expect(screen.getByText('Sign Out')).toBeDefined();
     expect(screen.getByText('Share Access')).toBeDefined();

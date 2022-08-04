@@ -39,6 +39,7 @@ import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import DragAndDrop from './DragAndDrop/DragAndDrop';
+import PeopleMoverHeader from './PeopleMoverHeader/PeopleMoverHeader';
 
 import 'Styles/Main.scss';
 import './PeopleMover.scss';
@@ -83,45 +84,50 @@ function PeopleMover(): JSX.Element {
         }
     }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts]);
 
-    return products.length && !!currentSpace ? (
-        <div className="App">
-            <SubHeader/>
-            <main>
-                <div id="main-content-landing-target"/>
-                <Counter />
-                <DragAndDrop>
-                    <div className="productAndAccordionContainer">
-                        <ProductList/>
-                        {!isReadOnly && (
-                            <div className="accordionContainer">
-                                <div className="accordionHeaderContainer">
-                                    <button
-                                        type="button"
-                                        className="addPersonButton"
-                                        data-testid="addPersonButton"
-                                        onClick={(): void => setModalContents({
-                                            title: 'Add New Person',
-                                            component: <PersonForm isEditPersonForm={false} />,
-                                        })}>
-                                        <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
-                                        <span>Add Person</span>
-                                    </button>
-                                    <UnassignedDrawer/>
-                                    <ReassignedDrawer/>
-                                    <ArchivedPersonDrawer/>
-                                    <ArchivedProductsDrawer/>
-                                </div>
+    return (
+        <>
+            <PeopleMoverHeader />
+            {products.length && !!currentSpace && (
+                <div className="peoplemover-page">
+                    <SubHeader/>
+                    <main>
+                        <div id="main-content-landing-target"/>
+                        <Counter />
+                        <DragAndDrop>
+                            <div className="productAndAccordionContainer">
+                                <ProductList/>
+                                {!isReadOnly && (
+                                    <div className="accordionContainer">
+                                        <div className="accordionHeaderContainer">
+                                            <button
+                                                type="button"
+                                                className="addPersonButton"
+                                                data-testid="addPersonButton"
+                                                onClick={(): void => setModalContents({
+                                                    title: 'Add New Person',
+                                                    component: <PersonForm isEditPersonForm={false} />,
+                                                })}>
+                                                <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
+                                                <span>Add Person</span>
+                                            </button>
+                                            <UnassignedDrawer/>
+                                            <ReassignedDrawer/>
+                                            <ArchivedPersonDrawer/>
+                                            <ArchivedProductsDrawer/>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                </DragAndDrop>
-                <Modal />
-            </main>
-            <footer>
-                <Branding/>
-            </footer>
-        </div>
-    ) : <></>;
+                        </DragAndDrop>
+                        <Modal />
+                    </main>
+                    <footer>
+                        <Branding/>
+                    </footer>
+                </div>
+            )}
+        </>
+    )
 }
 
 export default PeopleMover;
