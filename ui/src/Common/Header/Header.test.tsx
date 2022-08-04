@@ -20,7 +20,7 @@ import {screen} from '@testing-library/react';
 import Header from './Header';
 import {RunConfig} from 'Types/RunConfig';
 import flagsmith from 'flagsmith';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {
     enableInviteUsersToSpace,
@@ -30,9 +30,9 @@ import {
     shouldRenderLogoAsDashboardLinkInHeader,
     shouldRenderStaticLogo,
     shouldShowAllAccountDropdownOptions,
-} from '../Utils/HeaderTestUtils';
+} from 'Utils/HeaderTestUtils';
 import {MutableSnapshot} from 'recoil';
-import {CurrentUserState} from '../State/CurrentUserState';
+import {CurrentUserState} from 'State/CurrentUserState';
 
 const debounceTimeToWait = 100;
 

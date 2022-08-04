@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import {Link} from 'react-router-dom';
-import Header from '../../Header/Header';
 import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import {Link} from 'react-router-dom';
+import Header from 'Common/Header/Header';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 function PeopleMoverHeader() {
     const currentSpace = useRecoilValue(CurrentSpaceState);

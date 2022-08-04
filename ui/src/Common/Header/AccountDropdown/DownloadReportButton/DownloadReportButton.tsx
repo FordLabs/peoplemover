@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 import React from 'react';
-import ReportClient from '../../../Services/Api/ReportClient';
+import ReportClient from 'Services/Api/ReportClient';
 import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from '../../../State/ViewingDateState';
-import {CurrentSpaceState} from '../../../State/CurrentSpaceState';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 function DownloadReportButton(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);

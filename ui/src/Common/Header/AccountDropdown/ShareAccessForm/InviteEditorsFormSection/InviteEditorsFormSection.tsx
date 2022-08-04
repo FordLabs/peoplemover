@@ -22,7 +22,7 @@ import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 
 import UserAccessList
-    from 'Header/AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
+    from 'Common/Header/AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
 import Creatable from 'react-select/creatable';
 import {reactSelectStyles} from 'Common/ReactSelectStyles/ReactSelectStyles';
 import {InputActionMeta, Props} from 'react-select';

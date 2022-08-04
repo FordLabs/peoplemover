@@ -18,7 +18,7 @@
 import React, {ReactChild} from 'react';
 import PeopleMoverLogo from 'Common/PeopleMoverLogo/PeopleMoverLogo';
 import AccountDropdown from './AccountDropdown/AccountDropdown';
-import {dashboardUrl} from '../Routes';
+import {dashboardUrl} from '../../Routes';
 
 import './Headers.scss';
 

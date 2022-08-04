@@ -1,5 +1,5 @@
-/*!
- * Copyright (c) 2021 Ford Motor Company
+/*
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,41 +15,35 @@
  * limitations under the License.
  */
 
+@import '../../../../../Styles/Variables';
 @import '../../../../../Styles/Colors';
+@import '../../../../../Styles/Breakpoints';
 
-.userAccess-dropdown {
-  font-size: 0.875rem;
-  color: $gray-1;
-  min-width: 5rem;
-}
+.modalCardBanner.multiModal{
+  margin: 0 auto;
+  width: $form-width;
+  justify-content: space-between;
+  padding-bottom: 18px;
 
-.userAccess-option {
-  height: 2rem;
-  font-size: 0.75rem;
-  display: flex;
-  align-items:center;
-  cursor: pointer;
-  padding: 0.25rem 1rem;
-  margin: 2px;
-
-  &:hover {
-    background-color: $gray-6;
-    color: $purple;
+  @include phone {
+    width: 100%;
   }
 
-  &:first-child {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-  }
+  .expand-collapse-toggle-button {
+    background: none;
+    display: flex;
+    padding: 0;
 
-  &:last-child {
-    border-top: 2px solid $gray-5;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-  }
+    .modalTitle {
+      margin: 0 1rem 0 0;
+    }
 
-  .material-icons {
-    font-size: 0.75rem;
-    margin-left: auto;
+    .focusedModalArrow {
+      background-color: $sec-5;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      align-self: center;
+    }
   }
 }

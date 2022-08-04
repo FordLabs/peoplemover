@@ -24,7 +24,7 @@ import Cookies from 'universal-cookie';
 import SpaceClient from 'Services/Api/SpaceClient';
 import {Space} from 'Types/Space';
 import {CurrentUserState} from 'State/CurrentUserState';
-import {CurrentSpaceState} from '../../../../State/CurrentSpaceState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
 jest.mock('Services/Api/SpaceClient');
 

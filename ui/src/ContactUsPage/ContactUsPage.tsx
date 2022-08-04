@@ -23,7 +23,7 @@ import Input from 'Common/Input/Input';
 import Textarea from 'Common/Textarea/Textarea';
 import {UserType} from '../Types/ContactUsRequest';
 import ContactUsClient from '../Services/Api/ContactUsClient';
-import Header from '../Header/Header';
+import Header from 'Common/Header/Header';
 
 import './ContactUsPage.scss';
 

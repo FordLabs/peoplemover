@@ -18,7 +18,7 @@
 import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 import React from 'react';
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import {renderWithRecoil} from '../../../../Utils/TestUtils';
+import {renderWithRecoil} from 'Utils/TestUtils';
 
 Object.assign(navigator, {
     clipboard: {

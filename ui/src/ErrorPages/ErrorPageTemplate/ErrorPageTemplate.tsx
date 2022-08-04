@@ -18,7 +18,7 @@
 import React from 'react';
 import Branding from 'Common/Branding/Branding';
 import FormButton from 'Common/FormButton/FormButton';
-import Header from '../../Header/Header';
+import Header from 'Common/Header/Header';
 
 import './ErrorPageTemplate.scss';
 

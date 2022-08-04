@@ -16,19 +16,19 @@
  */
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
-import TestData from '../../Utils/TestData';
+import {renderWithRecoil} from 'Utils/TestUtils';
+import TestData from 'Utils/TestData';
 import React from 'react';
 import Cookies from 'universal-cookie';
 import {RunConfig} from 'Types/RunConfig';
 import AccountDropdown from './AccountDropdown';
-import ReportClient from '../../Services/Api/ReportClient';
-import {ViewingDateState} from '../../State/ViewingDateState';
-import {IsReadOnlyState} from '../../State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
-import {RecoilObserver} from '../../Utils/RecoilObserver';
+import ReportClient from 'Services/Api/ReportClient';
+import {ViewingDateState} from 'State/ViewingDateState';
+import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import {RecoilObserver} from 'Utils/RecoilObserver';
 import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {MemoryRouter} from 'react-router-dom';
 
 describe('Account Dropdown', () => {
