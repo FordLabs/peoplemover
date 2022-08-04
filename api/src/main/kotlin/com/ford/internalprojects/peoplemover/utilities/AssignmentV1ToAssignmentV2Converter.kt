@@ -6,6 +6,7 @@ import com.ford.internalprojects.peoplemover.assignment.CreateAssignmentsRequest
 import com.ford.internalprojects.peoplemover.person.Person
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import kotlin.streams.toList
 
 @Component
 class AssignmentV1ToAssignmentV2Converter {

@@ -26,6 +26,7 @@ import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.ZoneOffset
+import kotlin.streams.toList
 
 @Service
 class ReportGeneratorService(
