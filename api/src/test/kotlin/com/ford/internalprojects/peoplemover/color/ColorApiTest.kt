@@ -43,6 +43,8 @@ class ColorApiTest {
     private lateinit var colorRepository: ColorRepository
 
     private val colors = listOf("33", "66")
+    private val postColorUrl = "/api/color"
+    private val token = "GOOD_TOKEN"
 
     @BeforeEach
     fun setUp() {
@@ -52,8 +54,8 @@ class ColorApiTest {
     @Test
     fun `POST should add all the colors to the repository`() {
         assertThat(colorRepository.count()).isZero()
-        mockMvc.perform(post("/api/color")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(postColorUrl)
+                .header("Authorization", "Bearer $token")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isOk)
@@ -64,8 +66,8 @@ class ColorApiTest {
     fun `POST should 409 when trying to add the same color twice`() {
         assertThat(colorRepository.count()).isZero()
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
-        mockMvc.perform(post("/api/color")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(postColorUrl)
+                .header("Authorization", "Bearer $token")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isConflict)
@@ -75,8 +77,8 @@ class ColorApiTest {
     fun `GET should return all the colors in the repository in ascending ID order`() {
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         assertThat(colorRepository.count()).isNotZero()
-        val result = mockMvc.perform(get("/api/color")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        val result = mockMvc.perform(get(postColorUrl)
+                .header("Authorization", "Bearer $token")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andReturn()
