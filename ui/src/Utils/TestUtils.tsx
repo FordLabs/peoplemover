@@ -22,6 +22,7 @@ import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import PeopleMover from '../PeopleMover/PeopleMover';
 import DragAndDrop from '../PeopleMover/DragAndDrop/DragAndDrop';
+import {RunConfig} from '../Types/RunConfig';
 
 async function renderPeopleMoverComponent(
     initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
@@ -103,7 +104,12 @@ export const RecoilObserver = ({
     return null;
 };
 
+function enableInviteUsersToSpace(inviteUsersToSpaceEnabled = true) {
+    window.runConfig = {invite_users_to_space_enabled: inviteUsersToSpaceEnabled} as RunConfig;
+}
+
 const TestUtils = {
+    enableInviteUsersToSpace,
     renderPeopleMoverComponent,
     RecoilObserver,
     createDataTestId,

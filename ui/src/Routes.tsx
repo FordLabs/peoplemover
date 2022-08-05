@@ -25,7 +25,6 @@ import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
 import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
 import PeopleMover from './PeopleMover/PeopleMover';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
-import Header from './Header/Header';
 import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
 import ContactUsPage from './ContactUsPage/ContactUsPage';
 import NotFoundErrorPage from './ErrorPages/NotFoundErrorPage';
@@ -41,7 +40,6 @@ function Routes(): JSX.Element {
     return (
         <Router>
             <AnnouncementBanner/>
-            <Header/>
             <ReactRoutes>
                 <Route path="/" element={<LandingPage/>} />
                 <Route path="/adfs/catch" element={<OAuthRedirect/>} />
