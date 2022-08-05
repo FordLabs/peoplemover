@@ -19,7 +19,7 @@ import {fireEvent, waitFor} from '@testing-library/dom';
 import {screen} from '@testing-library/react';
 import TestData from 'Utils/TestData';
 import React from 'react';
-import SpaceDashboardTile from './SpaceDashboardTile';
+import SpaceTile from './SpaceTile';
 import SpaceClient from 'Services/Api/SpaceClient';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
 import {CurrentUserState} from 'State/CurrentUserState';
@@ -170,7 +170,7 @@ async function renderSpaceDashboardList(onClick: () => void) {
                     modalContent = value;
                 }}
             />
-            <SpaceDashboardTile space={TestData.space} onClick={onClick}/>
+            <SpaceTile space={TestData.space} onClick={onClick}/>
         </>,
         ({set}) => {
             set(CurrentUserState, 'USER_ID')

@@ -21,7 +21,7 @@ import LandingPage from './LandingPage/LandingPage';
 import {OAuthRedirect} from './Auth/OAuthRedirect/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import RedirectWrapper from './RedirectWrapper';
-import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
+import DashboardPage from './DashboardPage/DashboardPage';
 import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
 import PeopleMover from './PeopleMover/PeopleMover';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
@@ -50,7 +50,7 @@ function Routes(): JSX.Element {
                 } />
                 <Route path={dashboardUrl} element={
                     <AuthenticatedRoute>
-                        <SpaceDashboard/>
+                        <DashboardPage/>
                     </AuthenticatedRoute>
                 } />
                 <Route path="/:teamUUID">
