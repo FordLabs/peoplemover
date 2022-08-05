@@ -18,6 +18,7 @@
 package com.ford.internalprojects.peoplemover.color
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,7 +45,6 @@ class ColorApiTest {
 
     private val colors = listOf("33", "66")
     private val postColorUrl = "/api/color"
-    private val token = "GOOD_TOKEN"
 
     @BeforeEach
     fun setUp() {
@@ -55,7 +55,7 @@ class ColorApiTest {
     fun `POST should add all the colors to the repository`() {
         assertThat(colorRepository.count()).isZero()
         mockMvc.perform(post(postColorUrl)
-                .header("Authorization", "Bearer $token")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isOk)
@@ -67,7 +67,7 @@ class ColorApiTest {
         assertThat(colorRepository.count()).isZero()
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         mockMvc.perform(post(postColorUrl)
-                .header("Authorization", "Bearer $token")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isConflict)
@@ -78,7 +78,7 @@ class ColorApiTest {
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         assertThat(colorRepository.count()).isNotZero()
         val result = mockMvc.perform(get(postColorUrl)
-                .header("Authorization", "Bearer $token")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andReturn()

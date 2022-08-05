@@ -32,8 +32,10 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.utilities.ANONYMOUS_TOKEN
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -95,8 +97,6 @@ class PersonControllerApiTest {
     private lateinit var tag: PersonTag
 
     var basePeopleUrl: String = ""
-    private val goodToken = "GOOD_TOKEN"
-    private val anonymousToken = "ANONYMOUS_TOKEN"
     private val softwareEngineerRole = "Software Engineer"
 
     private fun getBasePeopleUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/people"
@@ -152,7 +152,7 @@ class PersonControllerApiTest {
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(personToCreate))
         )
@@ -194,7 +194,7 @@ class PersonControllerApiTest {
         assertThat(personRepository.count()).isZero()
         val result = mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(personToCreate))
         )
@@ -213,7 +213,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $anonymousToken")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject))
         )
@@ -227,7 +227,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject))
         )
@@ -255,7 +255,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("$basePeopleUrl/${requestBodyObject.id}/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivePersonRequest))
         )
@@ -280,7 +280,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("$basePeopleUrl/${requestBodyObject.id}/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivePersonRequest))
         )
@@ -303,7 +303,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("$basePeopleUrl/${requestBodyObject.id}/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivePersonRequest))
         )
@@ -322,7 +322,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("$basePeopleUrl/1/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivePersonRequest))
         )
@@ -335,7 +335,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post(getBasePeopleUrl("fake-uuid") + "/1/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivePersonRequest))
         )
@@ -350,7 +350,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
-                .header("Authorization", "Bearer $anonymousToken")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(archivePersonRequest))
         )
@@ -364,7 +364,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
@@ -383,7 +383,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             post("${basePeopleUrl}/${requestBodyObject.id!!}/archive")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest)
@@ -396,7 +396,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
-                .header("Authorization", "Bearer $anonymousToken")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject))
         )
@@ -410,7 +410,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             put("${getBasePeopleUrl(spaceUuid = space.uuid)}/${requestBodyObject.id!!}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject))
         )
@@ -431,7 +431,7 @@ class PersonControllerApiTest {
         val result = mockMvc
             .perform(
                 get(getBasePeopleUrl(emptySpace.uuid))
-                    .header("Authorization", "Bearer $goodToken")
+                    .header("Authorization", "Bearer $GOOD_TOKEN")
             )
             .andExpect(status().isOk)
             .andReturn()
@@ -460,7 +460,7 @@ class PersonControllerApiTest {
         val result = mockMvc
             .perform(
                 get(basePeopleUrl)
-                    .header("Authorization", "Bearer $goodToken")
+                    .header("Authorization", "Bearer $GOOD_TOKEN")
             )
             .andExpect(status().isOk)
             .andReturn()
@@ -476,7 +476,7 @@ class PersonControllerApiTest {
     fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
         mockMvc.perform(
             get(basePeopleUrl)
-                .header("Authorization", "Bearer $anonymousToken")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         )
             .andExpect(status().isForbidden)
             .andReturn()
@@ -488,7 +488,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             get(getBasePeopleUrl(space1.uuid))
-                .header("Authorization", "Bearer $anonymousToken")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -498,7 +498,7 @@ class PersonControllerApiTest {
     fun `GET should return 400 when requesting people from invalid space`() {
         mockMvc.perform(
             get(getBasePeopleUrl("FiveNightsAtFreddys"))
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isBadRequest)
             .andReturn()
@@ -534,7 +534,7 @@ class PersonControllerApiTest {
         )
         val result = mockMvc.perform(
             put(basePeopleUrl + "/${person.id}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatePersonRequest))
         )
@@ -556,7 +556,7 @@ class PersonControllerApiTest {
         val notSavedPersonId = 1103
         mockMvc.perform(
             delete("$basePeopleUrl/$notSavedPersonId")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest)
@@ -568,7 +568,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             delete("$basePeopleUrl/${personToDelete.id!!}")
-                .header("Authorization", "Bearer $anonymousToken")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         )
             .andExpect(status().isForbidden)
     }
@@ -579,7 +579,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             delete("$basePeopleUrl/${personToDelete.id!!}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isBadRequest)
     }
@@ -609,7 +609,7 @@ class PersonControllerApiTest {
 
         mockMvc.perform(
             delete("$basePeopleUrl/${personToDelete.id}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
@@ -626,7 +626,7 @@ class PersonControllerApiTest {
         val nameTooLong = Person(name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong))
         )
@@ -635,7 +635,7 @@ class PersonControllerApiTest {
         val nameBlank = Person(name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameBlank))
         )
@@ -644,7 +644,7 @@ class PersonControllerApiTest {
         val notesTooLong = Person(name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
         mockMvc.perform(
             post(basePeopleUrl)
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notesTooLong))
         )
@@ -658,7 +658,7 @@ class PersonControllerApiTest {
         val nameTooLong = Person(id = person.id!!, name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(
             put(basePeopleUrl + "/${person.id}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong))
         )
@@ -667,7 +667,7 @@ class PersonControllerApiTest {
         val nameBlank = Person(id = person.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(
             put(basePeopleUrl + "/${person.id}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameBlank))
         )
@@ -676,7 +676,7 @@ class PersonControllerApiTest {
         val notesTooLong = Person(id = person.id!!, name = "person name", spaceUuid = space.uuid, notes = CHAR_260)
         mockMvc.perform(
             put(basePeopleUrl + "/${person.id}")
-                .header("Authorization", "Bearer $goodToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notesTooLong))
         )
