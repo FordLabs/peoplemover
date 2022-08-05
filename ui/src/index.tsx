@@ -21,7 +21,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {RedirectToADFS} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import Axios from 'axios';
-import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
+import UnsupportedBrowserPage from './Pages/UnsupportedBrowserPage/UnsupportedBrowserPage';
 import FocusRing from './FocusRing';
 import CacheBuster, {CacheBusterProps} from './CacheBuster';
 import {removeToken} from './Services/TokenService';

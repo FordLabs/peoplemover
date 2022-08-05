@@ -17,18 +17,18 @@
 
 import React from 'react';
 import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
-import LandingPage from './LandingPage/LandingPage';
+import LandingPage from './Pages/LandingPage/LandingPage';
 import {OAuthRedirect} from './Auth/OAuthRedirect/OAuthRedirect';
 import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import RedirectWrapper from './RedirectWrapper';
-import DashboardPage from './DashboardPage/DashboardPage';
+import DashboardPage from './Pages/DashboardPage/DashboardPage';
 import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
-import SpacePage from './SpacePage/SpacePage';
-import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
+import SpacePage from './Pages/SpacePage/SpacePage';
+import TimeOnProduct from './Pages/TimeOnProductPage/TimeOnProduct';
 import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
-import ContactUsPage from './ContactUsPage/ContactUsPage';
-import NotFoundErrorPage from './ErrorPages/NotFoundErrorPage';
-import ForbiddenErrorPage from './ErrorPages/ForbiddenErrorPage';
+import ContactUsPage from './Pages/ContactUsPage/ContactUsPage';
+import NotFoundErrorPage from './Pages/ErrorPages/NotFoundErrorPage';
+import ForbiddenErrorPage from './Pages/ErrorPages/ForbiddenErrorPage';
 
 export const contactUsPath = '/contact-us';
 export const dashboardUrl = '/user/dashboard';

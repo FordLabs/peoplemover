@@ -20,9 +20,9 @@ import SpaceClient from '../Services/Api/SpaceClient';
 import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
 import {render, RenderResult, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import SpacePage from '../SpacePage/SpacePage';
-import DragAndDrop from '../SpacePage/DragAndDrop/DragAndDrop';
-import {RunConfig} from '../Types/RunConfig';
+import SpacePage from 'Pages/SpacePage/SpacePage';
+import DragAndDrop from 'Pages/SpacePage/DragAndDrop/DragAndDrop';
+import {RunConfig} from 'Types/RunConfig';
 
 async function renderPeopleMoverComponent(
     initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
