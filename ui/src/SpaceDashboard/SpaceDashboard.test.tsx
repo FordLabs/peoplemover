@@ -18,7 +18,7 @@
 import Cookies from 'universal-cookie';
 import SpaceDashboard from './SpaceDashboard';
 import React from 'react';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import {fireEvent, RenderResult, screen, waitFor} from '@testing-library/react';
 import SpaceClient from '../Services/Api/SpaceClient';
 import moment from 'moment';
@@ -29,11 +29,7 @@ import {ViewingDateState} from '../State/ViewingDateState';
 import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import TestData from '../Utils/TestData';
 import {axe} from 'jest-axe';
-import {
-    enableInviteUsersToSpace,
-    shouldOnlyShowSignoutButtonInAccountDropdown,
-    shouldRenderStaticLogo,
-} from '../Utils/HeaderTestUtils';
+import {shouldOnlyShowSignoutButtonInAccountDropdown, shouldRenderStaticLogo} from '../Utils/HeaderTestUtils';
 
 class MockDate extends Date {
     constructor() {
@@ -162,7 +158,7 @@ describe('SpaceDashboard', () => {
         let container: string | Element;
 
         beforeEach(async () => {
-            enableInviteUsersToSpace();
+            TestUtils.enableInviteUsersToSpace();
 
             ({ renderResult: { container }} = await renderDashboard());
 

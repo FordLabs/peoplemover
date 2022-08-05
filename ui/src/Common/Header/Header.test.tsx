@@ -18,12 +18,10 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import Header from './Header';
-import {RunConfig} from 'Types/RunConfig';
 import flagsmith from 'flagsmith';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {
-    enableInviteUsersToSpace,
     openAccountDropdown,
     shouldHideHeaderAccountDropdown,
     shouldOnlyShowSignoutButtonInAccountDropdown,
@@ -38,7 +36,7 @@ const debounceTimeToWait = 100;
 
 describe('Header', () => {
     beforeEach(() => {
-        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+        TestUtils.enableInviteUsersToSpace()
     })
 
     describe('Space Name', () => {
@@ -98,7 +96,7 @@ describe('Header', () => {
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
-            window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
+            TestUtils.enableInviteUsersToSpace(false)
             await renderHeaderWithoutProps();
 
             openAccountDropdown();
@@ -108,7 +106,7 @@ describe('Header', () => {
         });
 
         it('should show invite users to space button when the feature flag is toggled on', async () => {
-            enableInviteUsersToSpace();
+            TestUtils.enableInviteUsersToSpace();
             await renderHeaderWithoutProps();
 
             openAccountDropdown();

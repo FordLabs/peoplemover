@@ -17,9 +17,8 @@
 
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
-import {RecoilObserver, renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils, {RecoilObserver, renderWithRecoil} from 'Utils/TestUtils';
 import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RunConfig} from 'Types/RunConfig';
 import ShareAccessForm from '../ShareAccessForm/ShareAccessForm';
 import ShareAccessButton from './ShareAccessButton';
 
@@ -28,7 +27,7 @@ describe('Share Access Button', () => {
 
     it('should open share access modal on click', async () => {
         let modalContents: ModalContents | null = null;
-        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+        TestUtils.enableInviteUsersToSpace();
 
         renderWithRecoil(
             <>
@@ -55,13 +54,13 @@ describe('Share Access Button', () => {
     });
 
     it('should show button if runConfig.invite_users_to_space_enabled is set to true', () => {
-        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+        TestUtils.enableInviteUsersToSpace();
         renderWithRecoil(<ShareAccessButton />);
         expect(screen.getByText(buttonText)).toBeDefined();
     });
 
     it('should not show button if runConfig.invite_users_to_space_enabled is set to false', () => {
-        window.runConfig = {invite_users_to_space_enabled: false} as RunConfig;
+        TestUtils.enableInviteUsersToSpace(false);
         renderWithRecoil(<ShareAccessButton />);
         expect(screen.queryByText(buttonText)).toBeNull();
     });

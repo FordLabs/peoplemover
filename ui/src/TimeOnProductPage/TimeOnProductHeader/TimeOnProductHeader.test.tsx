@@ -16,7 +16,7 @@
  */
 
 import {screen} from '@testing-library/react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {MutableSnapshot} from 'recoil';
 import React from 'react';
@@ -24,7 +24,6 @@ import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import TestData from '../../Utils/TestData';
 import {axe} from 'jest-axe';
 import {
-    enableInviteUsersToSpace,
     shouldRenderLogoAsDashboardLinkInHeader,
     shouldShowAllAccountDropdownOptions,
     shouldShowSpaceNameInHeader,
@@ -35,7 +34,7 @@ describe('Time On Product Page Header', () => {
     let container: string | Element;
 
     beforeEach(() => {
-        enableInviteUsersToSpace();
+        TestUtils.enableInviteUsersToSpace();
 
         ({container} = renderWithRecoil(
             <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>

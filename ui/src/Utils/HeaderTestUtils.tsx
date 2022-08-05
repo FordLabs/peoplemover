@@ -18,7 +18,6 @@
 import {fireEvent, screen, within} from '@testing-library/react';
 import {dashboardUrl} from '../Routes';
 import TestData from './TestData';
-import {RunConfig} from '../Types/RunConfig';
 
 export function openAccountDropdown() {
     const userIconButton = screen.getByTestId('accountDropdownToggle');
@@ -62,10 +61,6 @@ export function shouldNotShowSpaceNameInHeader() {
 
 export function shouldShowSpaceNameInHeader() {
     expect(screen.getByText(TestData.space.name)).toBeDefined();
-}
-
-export function enableInviteUsersToSpace() {
-    window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
 }
 
 export function shouldHideHeaderAccountDropdown() {

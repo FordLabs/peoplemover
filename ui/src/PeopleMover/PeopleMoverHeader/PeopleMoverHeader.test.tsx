@@ -17,7 +17,7 @@
 
 import {axe} from 'jest-axe';
 import {screen} from '@testing-library/react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from '../../Utils/TestUtils';
 import {MemoryRouter} from 'react-router-dom';
 import {MutableSnapshot} from 'recoil';
 import {CurrentSpaceState} from '../../State/CurrentSpaceState';
@@ -25,13 +25,13 @@ import React from 'react';
 import TestData from '../../Utils/TestData';
 import {dashboardUrl} from '../../Routes';
 import PeopleMoverHeader from './PeopleMoverHeader';
-import {enableInviteUsersToSpace, shouldShowAllAccountDropdownOptions} from '../../Utils/HeaderTestUtils';
+import {shouldShowAllAccountDropdownOptions} from '../../Utils/HeaderTestUtils';
 
 describe('People Mover Header', () => {
     let container: string | Element;
 
     beforeEach(() => {
-        enableInviteUsersToSpace();
+        TestUtils.enableInviteUsersToSpace();
 
         ({container} = renderWithRecoil(
             <MemoryRouter initialEntries={[`/${TestData.space.uuid}`]}>

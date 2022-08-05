@@ -16,11 +16,10 @@
  */
 
 import {fireEvent, screen, waitFor} from '@testing-library/react';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import React from 'react';
 import Cookies from 'universal-cookie';
-import {RunConfig} from 'Types/RunConfig';
 import AccountDropdown from './AccountDropdown';
 import ReportClient from 'Services/Api/ReportClient';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -32,8 +31,8 @@ import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {MemoryRouter} from 'react-router-dom';
 
 describe('Account Dropdown', () => {
-    beforeEach(async () => {
-        window.runConfig = {invite_users_to_space_enabled: true} as RunConfig;
+    beforeEach(() => {
+        TestUtils.enableInviteUsersToSpace()
     });
 
     it('should show current user\'s name', () => {
