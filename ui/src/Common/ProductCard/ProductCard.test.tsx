@@ -28,6 +28,8 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import {ProductsState} from 'State/ProductsState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Product} from 'Types/Product';
+import {Person} from '../../Types/Person';
+import {IsReadOnlyState} from '../../State/IsReadOnlyState';
 
 jest.mock('Services/Api/AssignmentClient');
 
@@ -44,19 +46,233 @@ describe('ProductCard', () => {
         ]},
     ];
 
-    it('should render product name NOT as a link if url is not present', async () => {
-        renderProductCard({...emptyProduct(), name: 'testProduct'});
-        const productNameLink = await screen.findByTestId('productName');
-        expect(productNameLink).not.toHaveAttribute('href');
+    describe('Product Name', () => {
+        it('should render product name NOT as a link if url is not present', async () => {
+            const expectedProductName = 'testProduct'
+            renderProductCard({...emptyProduct(), name: expectedProductName});
+            const productNameLink = await screen.findByTestId('productName');
+            expect(productNameLink).toHaveTextContent(expectedProductName)
+            expect(productNameLink).not.toHaveAttribute('href');
+        });
+
+        it('should render product name as a link if url is present', async () => {
+            const expectedUrl = 'www.any-old-url.com'
+            renderProductCard({...emptyProduct(), name: 'testProduct', url: expectedUrl });
+
+            const productNameLink = await screen.findByTestId('productName');
+            expect(productNameLink).toHaveAttribute('href', expectedUrl);
+            expect(within(productNameLink).getByTestId('productUrl')).toBeDefined();
+        });
     });
 
-    it('should render product name as a link if url is present', async () => {
-        const expectedUrl = 'www.any-old-url.com'
-        renderProductCard({...emptyProduct(), name: 'testProduct', url: expectedUrl });
+    it('should displays product location and product tags', async () => {
+        renderProductCard(TestData.productWithoutAssignments);
+        await screen.findByText('Dearborn');
+        await screen.findByText('AV');
+        expect(screen.queryByText('FordX')).not.toBeInTheDocument();
+    });
 
-        const productNameLink = await screen.findByTestId('productName');
-        expect(productNameLink).toHaveAttribute('href', expectedUrl);
-        expect(within(productNameLink).getByTestId('productUrl')).toBeDefined();
+    it('should displays the add person icon when not read only', async () => {
+        renderProductCard(TestData.productWithoutAssignments, false);
+        await screen.findByTestId('addPersonToProductIcon__product_3');
+    });
+
+    describe('Read only view', () => {
+        beforeEach(() => {
+            renderProductCard(TestData.productWithAssignments, true)
+        });
+
+        it('should not show edit product icon', async () => {
+            expect(screen.queryByTestId(/editProductIcon/i)).not.toBeInTheDocument();
+        });
+
+        it('should not show add assignment icon', async () => {
+            expect(screen.queryByTestId(/addPersonToProductIcon/i)).not.toBeInTheDocument();
+        });
+
+        it('should hide the add person icon when read only', () => {
+            expect(screen.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
+        });
+    });
+
+    it('should display message when product has no assignments', async () => {
+        renderProductCard(TestData.productWithoutAssignments);
+        await screen.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
+    });
+
+    it('should not display message when product has assignments', async () => {
+        renderProductCard(TestData.productWithoutAssignments);
+        expect(screen.queryByText('Add a person by clicking')).not.toBeInTheDocument();
+    });
+
+    it('should not make an update assignment call when dragging assignment card to same product', async () => {
+        renderProductCard(TestData.productWithAssignments);
+
+        AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({});
+
+        const person1AssignmentCard = await screen.findByText('Person 1');
+        fireEvent.click(person1AssignmentCard);
+        expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
+    });
+
+    it('should order the AssignmentCards on the product by role, then name, then id', async () => {
+        const productWithManyAssignments: Product = {
+            id: 2,
+            name: 'Product 1',
+            startDate: '2011-01-01',
+            endDate: '2022-02-02',
+            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+            assignments: [
+                {
+                    id: 1,
+                    productId: 2,
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    person: {
+                        newPerson: false,
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 1,
+                        name: 'Person 1',
+                        spaceRole: {
+                            name: 'herp',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                            id: 2,
+                            color: {color: '1', id: 2},
+                        },
+                        tags: [],
+                    },
+                    placeholder: false,
+                },
+                {
+                    id: 900,
+                    productId: 2,
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    person: {
+                        newPerson: false,
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 900,
+                        name: 'Bobby',
+                        spaceRole: {
+                            name: 'herp',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                            id: 2,
+                            color: {color: '1', id: 2},
+                        },
+                        tags: [],
+                    },
+                    placeholder: false,
+                },
+                {
+                    id: 4,
+                    productId: 2,
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    person: {
+                        newPerson: false,
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 4,
+                        name: 'Hank 2',
+                        spaceRole: {
+                            name: 'herp',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                            id: 2,
+                            color: {color: '1', id: 2},
+                        },
+                        tags: [],
+                    },
+                    placeholder: false,
+                },
+                {
+                    id: 3,
+                    productId: 2,
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    person: {
+                        newPerson: false,
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        id: 3,
+                        name: 'Hank 1',
+                        spaceRole: {
+                            name: 'herp',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                            id: 2,
+                            color: {color: '1', id: 2},
+                        },
+                        tags: [],
+                    },
+                    placeholder: false,
+                },
+            ],
+            spaceLocation: {
+                name: 'Ann Arbor',
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                id: 3,
+            },
+            archived: false,
+            tags: [],
+        };
+
+        renderProductCard(productWithManyAssignments);
+
+        const expectedPersonsInOrder: Person[] = [
+            {
+                name: 'Bobby',
+                id: 900,
+                newPerson: false,
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                spaceRole: {
+                    name: 'herp',
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    id: 2,
+                    color: {color: '1', id: 2},
+                },
+                tags: [],
+            },
+            {
+                name: 'Hank 1',
+                id: 3,
+                newPerson: false,
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                spaceRole: {
+                    name: 'herp',
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    id: 2,
+                    color: {color: '1', id: 2},
+                },
+                tags: [],
+            },
+            {
+                name: 'Hank 2',
+                id: 4,
+                newPerson: false,
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                spaceRole: {
+                    name: 'herp',
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    id: 2,
+                    color: {color: '1', id: 2},
+                },
+                tags: [],
+            },
+            {
+                name: 'Person 1',
+                id: 1,
+                newPerson: false,
+                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                spaceRole: {
+                    name: 'herp',
+                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                    id: 2,
+                    color: {color: '1', id: 2},
+                },
+                tags: [],
+            },
+        ];
+
+        const assignmentCardIds = productWithManyAssignments.assignments.map(assignment => assignment.id);
+        expect(assignmentCardIds.length).toBe(4);
+
+        expectedPersonsInOrder.forEach((person) => {
+            const assignmentContainerDiv = screen.getByTestId(createDataTestId('assignmentCard', person.name));
+            expect(assignmentContainerDiv.textContent).toContain(person.name);
+        });
     });
 
     it('archiving a product sets the appropriate fields in the product and moves all people to unassigned', async () => {
@@ -95,13 +311,14 @@ describe('ProductCard', () => {
         expect(await screen.queryByText('Are you sure?')).not.toBeInTheDocument();
     });
 
-    function renderProductCard(product: Product) {
+    function renderProductCard(product: Product, isReadOnly = false) {
         renderWithRecoil(
             <ProductCard product={product}/>,
             ({set}) => {
                 set(ViewingDateState, mayFourteenth2020);
                 set(ProductsState, products);
                 set(CurrentSpaceState, TestData.space)
+                set(IsReadOnlyState, isReadOnly)
             }
         );
     }

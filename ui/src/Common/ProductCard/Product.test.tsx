@@ -15,21 +15,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
-import AssignmentClient from 'Services/Api/AssignmentClient';
 import ProductClient from 'Services/Api/ProductClient';
-import TestUtils, {createDataTestId, renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import ProductTagClient from 'Services/Api/ProductTagClient';
 import LocationClient from 'Services/Api/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
-import ProductCard from './ProductCard';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {Product} from 'Types/Product';
-import {Person} from 'Types/Person';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/SpaceClient');
@@ -44,212 +38,6 @@ describe('Products', () => {
     const addProductModalTitle = 'Add New Product';
 
     describe('Home page', () => {
-        it('displays the product names', async () => {
-            renderProductCard();
-            await screen.findByText('Product 3');
-        });
-
-        it('displays the product location', async () => {
-            renderProductCard();
-            await screen.findByText('Dearborn');
-        });
-
-        it('displays the product tags', async () => {
-            renderProductCard();
-
-            await screen.findByText('AV');
-            expect(screen.queryByText('FordX')).not.toBeInTheDocument();
-        });
-
-        it('displays the empty product text', async () => {
-            renderProductCard();
-            await screen.findAllByText('Add a person by clicking Add Person icon above or drag them in.');
-        });
-
-        it('should not make an update assignment call when dragging assignment card to same product', async () => {
-            renderProductCard({ product: TestData.productWithAssignments });
-
-            AssignmentClient.createAssignmentForDate = jest.fn().mockResolvedValue({});
-
-            const person1AssignmentCard = await screen.findByText('Person 1');
-            fireEvent.click(person1AssignmentCard);
-            expect(AssignmentClient.createAssignmentForDate).not.toHaveBeenCalled();
-        });
-
-        it('does not display the empty product text for a product with people', async () => {
-            renderProductCard();
-            expect(screen.queryByText('Add a person by clicking')).not.toBeInTheDocument();
-        });
-
-        it('orders the AssignmentCards on the product by role, then name, then id', async () => {
-            const productWithManyAssignments: Product = {
-                id: 2,
-                name: 'Product 1',
-                startDate: '2011-01-01',
-                endDate: '2022-02-02',
-                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                assignments: [
-                    {
-                        id: 1,
-                        productId: 2,
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        person: {
-                            newPerson: false,
-                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                            id: 1,
-                            name: 'Person 1',
-                            spaceRole: {
-                                name: 'herp',
-                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                                id: 2,
-                                color: {color: '1', id: 2},
-                            },
-                            tags: [],
-                        },
-                        placeholder: false,
-                    },
-                    {
-                        id: 900,
-                        productId: 2,
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        person: {
-                            newPerson: false,
-                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                            id: 900,
-                            name: 'Bobby',
-                            spaceRole: {
-                                name: 'herp',
-                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                                id: 2,
-                                color: {color: '1', id: 2},
-                            },
-                            tags: [],
-                        },
-                        placeholder: false,
-                    },
-                    {
-                        id: 4,
-                        productId: 2,
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        person: {
-                            newPerson: false,
-                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                            id: 4,
-                            name: 'Hank 2',
-                            spaceRole: {
-                                name: 'herp',
-                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                                id: 2,
-                                color: {color: '1', id: 2},
-                            },
-                            tags: [],
-                        },
-                        placeholder: false,
-                    },
-                    {
-                        id: 3,
-                        productId: 2,
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        person: {
-                            newPerson: false,
-                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                            id: 3,
-                            name: 'Hank 1',
-                            spaceRole: {
-                                name: 'herp',
-                                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                                id: 2,
-                                color: {color: '1', id: 2},
-                            },
-                            tags: [],
-                        },
-                        placeholder: false,
-                    },
-                ],
-                spaceLocation: {
-                    name: 'Ann Arbor',
-                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    id: 3,
-                },
-                archived: false,
-                tags: [],
-            };
-
-            renderProductCard({ product: productWithManyAssignments });
-
-            const expectedPersonsInOrder: Person[] = [
-                {
-                    name: 'Bobby',
-                    id: 900,
-                    newPerson: false,
-                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {
-                        name: 'herp',
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        id: 2,
-                        color: {color: '1', id: 2},
-                    },
-                    tags: [],
-                },
-                {
-                    name: 'Hank 1',
-                    id: 3,
-                    newPerson: false,
-                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {
-                        name: 'herp',
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        id: 2,
-                        color: {color: '1', id: 2},
-                    },
-                    tags: [],
-                },
-                {
-                    name: 'Hank 2',
-                    id: 4,
-                    newPerson: false,
-                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {
-                        name: 'herp',
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        id: 2,
-                        color: {color: '1', id: 2},
-                    },
-                    tags: [],
-                },
-                {
-                    name: 'Person 1',
-                    id: 1,
-                    newPerson: false,
-                    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                    spaceRole: {
-                        name: 'herp',
-                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-                        id: 2,
-                        color: {color: '1', id: 2},
-                    },
-                    tags: [],
-                },
-            ];
-
-            const assignmentCardIds = productWithManyAssignments.assignments.map(assignment => assignment.id);
-            expect(assignmentCardIds.length).toBe(4);
-
-            expectedPersonsInOrder.forEach((person) => {
-                const assignmentContainerDiv = screen.getByTestId(createDataTestId('assignmentCard', person.name));
-                expect(assignmentContainerDiv.textContent).toContain(person.name);
-            });
-        });
-
-        it('displays the add person icon', async () => {
-            renderProductCard();
-            await screen.findByTestId('addPersonToProductIcon__product_3');
-        });
-
-        it('does not display the add person icon on the unassigned product', () => {
-            renderProductCard();
-            expect(screen.queryByTestId('addPersonToProductIcon__unassigned')).not.toBeInTheDocument();
-        });
 
         // @todo should be a cypress test or more granular unit test
         xit('opens AssignmentForm component when button clicked with product populated', async () => {
@@ -565,30 +353,4 @@ describe('Products', () => {
             await screen.findByText('Product 1');
         });
     });
-
-    describe('Read only view', () => {
-        beforeEach(() => {
-            renderProductCard({ product: TestData.productWithAssignments, isReadOnly: true})
-        });
-
-        it('should not show edit product icon', async () => {
-            expect(screen.queryByTestId(/editProductIcon/i)).not.toBeInTheDocument();
-        });
-
-        it('should not show add assignment icon', async () => {
-            expect(screen.queryByTestId(/addPersonToProductIcon/i)).not.toBeInTheDocument();
-        });
-    });
 });
-
-function renderProductCard(params?: { product?: Product, isReadOnly?: boolean }) {
-    const { product = TestData.productWithoutAssignments, isReadOnly = false } = params || {}
-
-    renderWithRecoil(
-        <ProductCard product={product}/>,
-        ({set}) => {
-            set(ViewingDateState, new Date(2020, 4, 14));
-            set(IsReadOnlyState, isReadOnly)
-        }
-    );
-}
