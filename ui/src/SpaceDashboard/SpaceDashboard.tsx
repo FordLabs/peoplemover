@@ -19,7 +19,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from 'Types/Space';
 import SpaceDashboardTile from './SpaceDashboardTile/SpaceDashboardTile';
 
-import Branding from '../Common/Branding/Branding';
+import Branding from 'Common/Branding/Branding';
 import {useNavigate} from 'react-router-dom';
 import {useRecoilState, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -27,7 +27,8 @@ import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm/SpaceForm';
 import Modal from '../Modal/Modal';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import Header from 'Common/Header/Header';
 
 import './SpaceDashboard.scss';
 
@@ -107,11 +108,14 @@ function SpaceDashboard(): JSX.Element {
     }
 
     return (
-        <div className="spaceDashboard">
-            {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
-            <Branding />
-            <Modal />
-        </div>
+        <>
+            <Header onlyShowSignOutButton showStaticPeopleMoverLogo />
+            <div className="spaceDashboard">
+                {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
+                <Branding />
+                <Modal />
+            </div>
+        </>
     );
 }
 
