@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import product from '../fixtures/product';
+import product from '../../fixtures/product';
 import * as moment from 'moment';
 
 const activeDateString = '01/16/2019'
