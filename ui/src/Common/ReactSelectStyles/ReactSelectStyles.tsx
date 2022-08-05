@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -134,10 +134,6 @@ export const reactSelectStyles = {
         ...provided,
         padding: '0px',
     }),
-};
-
-export const isUserTabbingAndFocusedOnElement = ({isFocused}: Props): boolean => {
-    return isFocused && document.body.classList.contains('user-is-tabbing');
 };
 
 export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>): JSX.Element => (

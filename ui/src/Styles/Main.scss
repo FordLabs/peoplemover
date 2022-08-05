@@ -26,6 +26,18 @@ $focus-state-border: 2px solid $prime-1;
 body {
   margin: 0;
   font-family: Helvetica, sans-serif;
+
+  // Use box shadow to make focus ring for all buttons, inputs, selects and textareas except in React Select Library
+  :not([class*="css-"]) > * > *:focus {
+    box-shadow: 0 0 0 2px $outline-focus-blue;
+  }
+
+  button:focus:not(:focus-visible),
+  a:focus:not(:focus-visible),
+  div:focus:not(:focus-visible),
+  input:focus:not(:focus-visible), {
+    box-shadow: none;
+  }
 }
 
 h1, h2, h3, p, label, a {

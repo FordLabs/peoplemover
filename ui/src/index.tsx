@@ -22,7 +22,6 @@ import ReactDOM from 'react-dom';
 import {RedirectToADFS} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
-import FocusRing from './FocusRing';
 import CacheBuster, {CacheBusterProps} from './CacheBuster';
 import {removeToken} from './Services/TokenService';
 import Routes from './Routes';
@@ -39,8 +38,6 @@ import EnvironmentConfigService from './Services/Api/EnvironmentConfigService';
 if (process.env.NODE_ENV !== 'production') {
     axe(React, ReactDOM, 1000);
 }
-
-window.addEventListener('keydown', FocusRing.turnOnWhenTabbing);
 
 const UNAUTHORIZED = 401;
 Axios.interceptors.response.use(
