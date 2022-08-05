@@ -20,7 +20,7 @@ import {JSX} from '@babel/types';
 import moment from 'moment';
 import ProductClient from 'Services/Api/ProductClient';
 import {emptyProduct} from 'Services/ProductService';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Common/Modal/ConfirmationModal/ConfirmationModal';
 import {Tag} from 'Types/Tag';
 import ProductFormLocationField from './ProductFormFields/ProductFormLocationField';
 import ProductFormStartDateField from './ProductFormFields/ProductFormStartDateField';

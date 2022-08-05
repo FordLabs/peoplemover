@@ -18,7 +18,7 @@
 import {LocationTag, RoleTag, Tag} from 'Types/Tag';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import {Color} from 'Types/Color';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';

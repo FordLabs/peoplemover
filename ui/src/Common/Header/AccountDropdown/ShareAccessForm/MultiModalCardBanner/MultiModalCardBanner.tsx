@@ -17,7 +17,7 @@
 
 import {JSX} from '@babel/types';
 import React from 'react';
-import {CloseModalButton, ModalTitle} from 'Modal/ModalCardBanner/ModalCardBanner';
+import {CloseModalButton, ModalTitle} from 'Common/Modal/ModalCardBanner/ModalCardBanner';
 
 import './MultiModalCardBanner.scss';
 

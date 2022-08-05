@@ -19,14 +19,14 @@ import React, {useEffect, useState} from 'react';
 
 import {UNASSIGNED_PRODUCT_NAME} from 'Services/ProductService';
 import {calculateDuration} from 'Services/AssignmentService';
-import SubHeader from 'SubHeader/SubHeader';
+import SubHeader from 'Common/SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
-import Modal from 'Modal/Modal';
+import Modal from 'Common/Modal/Modal';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {useParams} from 'react-router-dom';
 import {Product} from 'Types/Product';

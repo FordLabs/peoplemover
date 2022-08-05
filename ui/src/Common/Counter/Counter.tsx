@@ -22,7 +22,7 @@ import {
     personTagsFilterKey,
     productTagsFilterKey,
     roleTagsFilterKey,
-} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import {
     isActiveProduct,
     isProductMatchingSelectedFilters,

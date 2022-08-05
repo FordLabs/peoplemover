@@ -26,7 +26,7 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm/SpaceForm';
-import Modal from 'Modal/Modal';
+import Modal from 'Common/Modal/Modal';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import Header from 'Common/Header/Header';
 

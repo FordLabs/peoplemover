@@ -22,7 +22,7 @@ import {
     getLocalStorageFiltersByType,
     personTagsFilterKey,
     roleTagsFilterKey,
-} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import {isPersonMatchingSelectedFilters} from 'Services/PersonService';
 import useOnStorageChange from 'Hooks/useOnStorageChange/useOnStorageChange';
 import {Draggable, Droppable} from 'react-beautiful-dnd';

@@ -18,7 +18,7 @@
 import {JSX} from '@babel/types';
 import React, {ReactNode} from 'react';
 import {createDataTestId} from 'Utils/ReactUtils';
-import {TagType} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {TagType} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import {Tag} from 'Types/Tag';
 
 interface Props {

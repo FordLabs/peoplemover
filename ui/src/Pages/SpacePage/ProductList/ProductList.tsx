@@ -27,7 +27,7 @@ import {
     getLocalStorageFiltersByType,
     locationTagsFilterKey,
     productTagsFilterKey,
-} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import useOnStorageChange from 'Hooks/useOnStorageChange/useOnStorageChange';
 import {Product} from 'Types/Product';
 

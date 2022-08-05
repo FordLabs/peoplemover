@@ -19,7 +19,7 @@ import {screen} from '@testing-library/react';
 import TestData from 'Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
-import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {LocalStorageFilters} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {renderWithRecoil} from 'Utils/TestUtils';

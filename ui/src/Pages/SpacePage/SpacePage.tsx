@@ -19,7 +19,7 @@ import React, {useEffect} from 'react';
 
 import ProductList from 'Pages/SpacePage/ProductList/ProductList';
 import Branding from 'Common/Branding/Branding';
-import SubHeader from 'SubHeader/SubHeader';
+import SubHeader from 'Common/SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from 'Pages/SpacePage/UnassignedDrawer/UnassignedDrawer';
@@ -37,7 +37,7 @@ import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
-import Modal from 'Modal/Modal';
+import Modal from 'Common/Modal/Modal';
 import DragAndDrop from './DragAndDrop/DragAndDrop';
 import SpacePageHeader from './SpacePageHeader/SpacePageHeader';
 

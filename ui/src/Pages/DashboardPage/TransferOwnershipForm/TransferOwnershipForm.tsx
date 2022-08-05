@@ -21,7 +21,7 @@ import SpaceClient from 'Services/Api/SpaceClient';
 import FormButton from 'Common/FormButton/FormButton';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
+import NotificationModal, {NotificationModalProps} from 'Common/Modal/NotificationModal/NotificationModal';
 import {CurrentUserState} from 'State/CurrentUserState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import {ModalContentsState} from 'State/ModalContentsState';

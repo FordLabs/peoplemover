@@ -25,7 +25,7 @@ import {isActiveProduct, isUnassignedProduct} from 'Services/ProductService';
 import SelectWithNoCreateOption, {
     MetadataMultiSelectProps,
 } from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Common/Modal/ConfirmationModal/ConfirmationModal';
 import {Option} from 'Types/Option';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';

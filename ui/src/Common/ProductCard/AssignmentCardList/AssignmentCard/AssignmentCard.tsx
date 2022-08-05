@@ -26,7 +26,7 @@ import moment from 'moment';
 import PersonAndRoleInfo from 'Common/PersonAndRoleInfo/PersonAndRoleInfo';
 import {createDataTestId} from 'Utils/ReactUtils';
 import PeopleClient from 'Services/Api/PeopleClient';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Common/Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';

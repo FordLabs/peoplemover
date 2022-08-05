@@ -25,7 +25,7 @@ import moment from 'moment';
 import {createDataTestId} from 'Utils/ReactUtils';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import AssignmentClient from 'Services/Api/AssignmentClient';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import ConfirmationModal, {ConfirmationModalProps} from 'Common/Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {getAssignments} from 'Services/PersonService';
 import {useRecoilValue, useSetRecoilState} from 'recoil';

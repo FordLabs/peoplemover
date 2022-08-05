@@ -20,7 +20,7 @@ import React, {useState} from 'react';
 import {createDataTestId} from 'Utils/ReactUtils';
 import EditTagRow from '../EditTagRow/EditTagRow';
 import {TagRequest} from 'Types/TagRequest';
-import {TagNameType, TagType} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import {TagNameType, TagType} from 'Common/SubHeader/SortingAndFiltering/FilterLibraries';
 import {Color} from 'Types/Color';
 
 interface Props {
