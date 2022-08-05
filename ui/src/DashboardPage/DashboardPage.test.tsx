@@ -46,7 +46,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('Services/Api/SpaceClient');
 
-describe('SpaceDashboard', () => {
+describe('Dashboard Page', () => {
     describe('Resetting Space Date', () => {
         const tempDate = Date;
 

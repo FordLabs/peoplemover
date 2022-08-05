@@ -23,7 +23,7 @@ import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import RedirectWrapper from './RedirectWrapper';
 import DashboardPage from './DashboardPage/DashboardPage';
 import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
-import PeopleMover from './PeopleMover/PeopleMover';
+import SpacePage from './SpacePage/SpacePage';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
 import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
 import ContactUsPage from './ContactUsPage/ContactUsPage';
@@ -56,7 +56,7 @@ function Routes(): JSX.Element {
                 <Route path="/:teamUUID">
                     <Route path="" element={
                         <AuthorizedRoute>
-                            <PeopleMover/>
+                            <SpacePage/>
                         </AuthorizedRoute>
                     } />
                     <Route path="timeonproduct" element={

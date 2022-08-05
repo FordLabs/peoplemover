@@ -32,7 +32,7 @@ import {renderWithRecoil} from 'Utils/TestUtils';
 
 let modalContent: ModalContents | null;
 
-describe('SpaceDashboardTile tests', () => {
+describe('Space Tile', () => {
     let onClick: () => void;
 
     beforeEach(async () => {
