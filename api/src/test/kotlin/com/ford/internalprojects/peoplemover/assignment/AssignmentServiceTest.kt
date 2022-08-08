@@ -35,6 +35,12 @@ class AssignmentServiceTest {
 
     private lateinit var assignmentService: AssignmentService
 
+    private val testSpaceUuid = "Test Space"
+    private val personName = "Test Person"
+    private val juneAssignmentDate= LocalDate.parse("2021-06-06")
+    private val juneAssignmentDate2= LocalDate.parse("2021-06-07")
+    private val julyAssignmentDate = LocalDate.parse("2021-07-06")
+
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this)
@@ -43,13 +49,13 @@ class AssignmentServiceTest {
 
     @Test
     fun `calculateStartDatesForAssignments should return effectiveDate`() {
-        var testPerson = Person(name = "Test Person", spaceUuid = "Test Space")
-        val assignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-06"))
-        val assignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"))
-        val assignment3 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"))
+        val testPerson = Person(name = personName, spaceUuid = testSpaceUuid)
+        val assignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate)
+        val assignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate2)
+        val assignment3 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate2)
 
-        val expectedAssignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"), startDate = LocalDate.parse("2021-06-06"))
-        val expectedAssignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-07"), startDate = LocalDate.parse("2021-06-07"))
+        val expectedAssignment1 = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate2, startDate = juneAssignmentDate)
+        val expectedAssignment2 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate2, startDate = LocalDate.parse("2021-06-07"))
 
         val allAssignmentsForPerson: List<AssignmentV1> = listOf(assignment1, assignment2, assignment3)
         val assignmentsToUpdate: List<AssignmentV1> = listOf(assignment2, assignment3)
@@ -64,14 +70,14 @@ class AssignmentServiceTest {
 
     @Test
     fun `calculateStartDatesForAssignments should return oldest effectiveDate with multiple assignments`() {
-        var testPerson = Person(name = "Test Person", spaceUuid = "Test Space")
-        val juneAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-06-06"))
-        val julyAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"))
+        val testPerson = Person(name = personName, spaceUuid = testSpaceUuid)
+        val juneAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate)
+        val julyAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = julyAssignmentDate)
 
         val allAssignmentsForPerson: List<AssignmentV1> = listOf(julyAssignment, juneAssignment)
         val assignmentsToUpdate: List<AssignmentV1> = listOf(julyAssignment)
 
-        val expectedAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = LocalDate.parse("2021-07-06"), startDate = LocalDate.parse("2021-06-06"))
+        val expectedAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = julyAssignmentDate, startDate = juneAssignmentDate)
         val expectedAssignments: List<AssignmentV1> = listOf(expectedAssignment)
 
         val localAssignmentService = AssignmentService(assignmentRepository, personRepository, productRepository, assignmentConverter, AssignmentDateHandler())
@@ -82,13 +88,10 @@ class AssignmentServiceTest {
 
     @Test
     fun `calculateStartDatesForAssignments should call dependencies`() {
-        var testPerson = Person(name = "Test Person", spaceUuid = "Test Space")
+        val testPerson = Person(name = personName, spaceUuid = testSpaceUuid)
 
-        var juneDate = LocalDate.parse("2021-06-06")
-        var julyDate = LocalDate.parse("2021-07-06")
-
-        val juneAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = juneDate)
-        val julyAssignment = AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = julyDate)
+        val juneAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate)
+        val julyAssignment = AssignmentV1(person = testPerson, productId = 2, spaceUuid = testSpaceUuid, effectiveDate = julyAssignmentDate)
 
         val allAssignmentsForPerson: List<AssignmentV1> = listOf(julyAssignment, juneAssignment)
         val assignmentsToUpdate: List<AssignmentV1> = listOf(julyAssignment, juneAssignment)
@@ -96,8 +99,8 @@ class AssignmentServiceTest {
         val pretendStartDate: LocalDate = LocalDate.parse("2020-01-01")
 
         val updatedAssignmentList: List<AssignmentV1> = listOf(
-                AssignmentV1(person = testPerson, productId = 1, spaceUuid = "Test Space", effectiveDate = juneDate, startDate = pretendStartDate),
-                AssignmentV1(person = testPerson, productId = 2, spaceUuid = "Test Space", effectiveDate = julyDate, startDate = pretendStartDate)
+                AssignmentV1(person = testPerson, productId = 1, spaceUuid = testSpaceUuid, effectiveDate = juneAssignmentDate, startDate = pretendStartDate),
+                AssignmentV1(person = testPerson, productId = 2, spaceUuid = testSpaceUuid, effectiveDate = julyAssignmentDate, startDate = pretendStartDate)
         )
 
         val dummyDates: List<LocalDate> = listOf(LocalDate.now())
@@ -115,9 +118,9 @@ class AssignmentServiceTest {
     @Test
     fun `isUnassigned says 'yes' and does not throw exceptions if the person has 0 assignments`() {
         val date = LocalDate.now()
-        val product = Product(100, "unassigned", "Test Space")
-        var testPerson = Person(id =  101, name = "Test Person", spaceUuid = "Test Space")
-        every{productRepository.findProductByNameAndSpaceUuid("unassigned", "Test Space")} returns product
+        val product = Product(100, "unassigned", testSpaceUuid)
+        val testPerson = Person(id =  101, name = personName, spaceUuid = testSpaceUuid)
+        every{productRepository.findProductByNameAndSpaceUuid("unassigned", testSpaceUuid)} returns product
         every{assignmentRepository.findAllByPersonIdAndEffectiveDateLessThanEqualOrderByEffectiveDateAsc(101, date)} returns emptyList()
         every{assignmentRepository.findAllByEffectiveDateIsNullAndPersonId(101)} returns emptyList()
         val underTest = assignmentService.isUnassigned(testPerson, date)
