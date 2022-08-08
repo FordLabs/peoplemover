@@ -38,21 +38,6 @@ describe('Products', () => {
     const addProductModalTitle = 'Add New Product';
 
     describe('Home page', () => {
-
-        // @todo should be a cypress test or more granular unit test
-        xit('opens AssignmentForm component when button clicked with product populated', async () => {
-            await TestUtils.renderPeopleMoverComponent();
-
-            const addPersonButton = await screen.findByTestId('addPersonToProductIcon__product_1');
-            fireEvent.click(addPersonButton);
-
-            expect(screen.getByText('Assign a Person'));
-
-            const multiSelectContainer = await screen.findByLabelText('Assign to');
-            const inputElement: HTMLInputElement = multiSelectContainer.children[1].children[0] as HTMLInputElement;
-            expect(inputElement.value).toEqual('Product 1');
-        });
-
         it('ProductForm allows choices of locations provided by the API', async () => {
             await TestUtils.renderPeopleMoverComponent();
 
