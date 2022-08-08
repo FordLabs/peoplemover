@@ -17,15 +17,15 @@
 
 import React, {useEffect} from 'react';
 
-import ProductList from 'PeopleMover/ProductList/ProductList';
+import ProductList from 'SpacePage/ProductList/ProductList';
 import Branding from 'Common/Branding/Branding';
 import SubHeader from 'SubHeader/SubHeader';
 import {useParams} from 'react-router-dom';
 import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
-import UnassignedDrawer from 'PeopleMover/UnassignedDrawer/UnassignedDrawer';
-import ArchivedProductsDrawer from 'PeopleMover/ArchiveProductsDrawer/ArchivedProductsDrawer';
+import UnassignedDrawer from 'SpacePage/UnassignedDrawer/UnassignedDrawer';
+import ArchivedProductsDrawer from 'SpacePage/ArchiveProductsDrawer/ArchivedProductsDrawer';
 import Counter from 'Common/Counter/Counter';
-import ArchivedPersonDrawer from 'PeopleMover/ArchivedPersonDrawer/ArchivedPersonDrawer';
+import ArchivedPersonDrawer from 'SpacePage/ArchivedPersonDrawer/ArchivedPersonDrawer';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
@@ -39,12 +39,12 @@ import {ModalContentsState} from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import DragAndDrop from './DragAndDrop/DragAndDrop';
-import PeopleMoverHeader from './PeopleMoverHeader/PeopleMoverHeader';
+import SpacePageHeader from './SpacePageHeader/SpacePageHeader';
 
 import 'Styles/Main.scss';
-import './PeopleMover.scss';
+import './SpacePage.scss';
 
-function PeopleMover(): JSX.Element {
+function SpacePage(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
 
     const isReadOnly = useRecoilValue(IsReadOnlyState);
@@ -86,7 +86,7 @@ function PeopleMover(): JSX.Element {
 
     return (
         <>
-            <PeopleMoverHeader />
+            <SpacePageHeader />
             {!!products.length && !!currentSpace && (
                 <div className="peoplemover-page">
                     <SubHeader/>
@@ -130,5 +130,5 @@ function PeopleMover(): JSX.Element {
     )
 }
 
-export default PeopleMover;
+export default SpacePage;
 

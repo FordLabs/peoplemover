@@ -16,7 +16,7 @@
  */
 
 import Cookies from 'universal-cookie';
-import SpaceDashboard from './SpaceDashboard';
+import DashboardPage from './DashboardPage';
 import React from 'react';
 import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
 import {fireEvent, RenderResult, screen, waitFor} from '@testing-library/react';
@@ -46,7 +46,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('Services/Api/SpaceClient');
 
-describe('SpaceDashboard', () => {
+describe('Dashboard Page', () => {
     describe('Resetting Space Date', () => {
         const tempDate = Date;
 
@@ -69,7 +69,7 @@ describe('SpaceDashboard', () => {
                             actualViewingDate = value;
                         }}
                     />
-                    <SpaceDashboard/>
+                    <DashboardPage/>
                 </MemoryRouter>,
             );
 
@@ -89,7 +89,7 @@ describe('SpaceDashboard', () => {
                         currentSpace = value;
                     }}
                 />
-                <SpaceDashboard/>
+                <DashboardPage/>
             </MemoryRouter>,
             ({set}) => {
                 set(CurrentSpaceState, TestData.space)
@@ -201,7 +201,7 @@ describe('SpaceDashboard', () => {
 
         const renderResult = renderWithRecoil(
             <MemoryRouter initialEntries={['/user/dashboard']}>
-                <SpaceDashboard/>
+                <DashboardPage/>
             </MemoryRouter>
         );
 

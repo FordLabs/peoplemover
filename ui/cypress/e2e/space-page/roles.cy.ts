@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import person from '../fixtures/person';
+import person from '../../fixtures/person';
 
 describe('Roles', () => {
     const mockRole = person.role;

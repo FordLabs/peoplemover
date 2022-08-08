@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as moment from 'moment';
-import person, {Person} from '../fixtures/person';
+import person, {Person} from '../../fixtures/person';
 
 const activeDateString = '07/13/2022';
 const notActiveDateString = '07/20/2022';

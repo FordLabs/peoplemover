@@ -28,14 +28,14 @@ import SpaceForm from '../SpaceForm/SpaceForm';
 import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
 import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
 
-import './SpaceDashboardTile.scss';
+import './SpaceTile.scss';
 
 interface Props {
     space: Space;
     onClick: (space: Space) => void;
 }
 
-function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
+function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
@@ -175,4 +175,4 @@ function SpaceDashboardTile({space, onClick: openSpace}: Props): JSX.Element {
     ) : <></>;
 }
 
-export default SpaceDashboardTile;
+export default SpaceTile;

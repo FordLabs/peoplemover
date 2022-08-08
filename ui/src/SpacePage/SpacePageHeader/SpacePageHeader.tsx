@@ -21,7 +21,7 @@ import {Link} from 'react-router-dom';
 import Header from 'Common/Header/Header';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 
-function PeopleMoverHeader() {
+function SpacePageHeader() {
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
     return (
@@ -40,4 +40,4 @@ function PeopleMoverHeader() {
     )
 }
 
-export default PeopleMoverHeader;
+export default SpacePageHeader;
