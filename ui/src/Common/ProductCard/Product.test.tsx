@@ -20,7 +20,6 @@ import ProductClient from 'Services/Api/ProductClient';
 import TestUtils from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import ProductTagClient from 'Services/Api/ProductTagClient';
-import LocationClient from 'Services/Api/LocationClient';
 import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -38,40 +37,6 @@ describe('Products', () => {
     const addProductModalTitle = 'Add New Product';
 
     describe('Home page', () => {
-        it('ProductForm allows choices of locations provided by the API', async () => {
-            await TestUtils.renderPeopleMoverComponent();
-
-            const newProductButton = await screen.findByText(addProductButtonText);
-            fireEvent.click(newProductButton);
-
-            await screen.findByLabelText('Name');
-            const location = await screen.findByLabelText('Location');
-            fireEvent.change(location, {target: {value: 'hi'}});
-            await screen.findByText('hi');
-            expect(screen.queryByText('Inner Sphere')).not.toBeInTheDocument();
-        });
-
-        it('should allow to create new location', async () => {
-            await TestUtils.renderPeopleMoverComponent();
-            const newProductButton = await screen.findByText(addProductButtonText);
-            fireEvent.click(newProductButton);
-
-            await screen.findByLabelText('Name');
-
-            const locationLabelElement = await screen.findByLabelText('Location');
-            const containerToFindOptionsIn = {
-                container: await screen.findByTestId('productForm'),
-                createOptionText: TestUtils.expectedCreateOptionText('Ahmedabad'),
-            };
-            await act(async () => {
-                await selectEvent.create(locationLabelElement, 'Ahmedabad', containerToFindOptionsIn);
-            });
-            const productForm = await screen.findByTestId('productForm');
-
-            await waitFor(() => expect(LocationClient.add).toBeCalledTimes(1));
-            expect(productForm).toHaveFormValues({location: '11'});
-        });
-
         it('ProductForm allows choices of product tags provided by the API', async () => {
             await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);

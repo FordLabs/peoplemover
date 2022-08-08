@@ -28,7 +28,7 @@ describe('Product', () => {
 
     it('Create a new product', () => {
         cy.intercept('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
-        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
+        cy.intercept('POST', Cypress.env('API_LOCATION_PATH'), cy.spy().as('locationCall')).as('postNewLocation');
         cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
 
         cy.get(product.name).should('not.exist');
@@ -37,7 +37,19 @@ describe('Product', () => {
 
         cy.getModal().should('contain', 'Add New Product');
 
+        cy.log('**Already created locations should be in the locations dropdown**')
+        getProductForm()
+            .find('[id=location]')
+            .focus()
+            .type('location1{enter}', {force: true});
+
+        getProductForm()
+            .contains('location1')
+            .should('exist');
+
+        cy.get('@locationCall').its('callCount').should('equal', 0);
         populateProductForm(product, moment(activeDate).format('MM/DD/yyyy'));
+        cy.get('@locationCall').its('callCount').should('equal', 1);
 
         submitProductForm('Add');
 
@@ -173,12 +185,11 @@ describe('Product', () => {
 const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate): void => {
     cy.log('Populate Product Form');
 
-    cy.get('[data-testid=productForm]').as('productForm');
-    cy.get('@productForm').should('be.visible');
+    getProductForm().should('be.visible');
 
     cy.get('[data-testid=productFormNameField]').clear().focus().type(name).should('have.value', name);
 
-    cy.get('@productForm')
+    getProductForm()
         .find('[id=location]')
         .focus()
         .type(location + '{enter}', {force: true});
@@ -186,7 +197,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
     cy.wait('@postNewLocation');
 
     tags.forEach(tag => {
-        cy.get('@productForm').find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
+        getProductForm().find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
 
         cy.wait('@postNewTag');
     });
@@ -220,5 +231,9 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
 
 const submitProductForm = (expectedSubmitButtonText: string): void => {
     cy.get('[data-testid=productFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
-    cy.get('@productForm').should('not.exist');
+    getProductForm().should('not.exist');
 };
+
+function getProductForm() {
+    return cy.get('[data-testid=productForm]');
+}
