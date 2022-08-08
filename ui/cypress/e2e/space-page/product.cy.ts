@@ -131,20 +131,38 @@ describe('Product', () => {
             .should('contain', updateProduct.tags[1]);
     });
 
-    it('Delete a product', () => {
+    it('Delete an active product', () => {
         cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
         cy.get('[data-testid=editMenuOption__edit_product]').click();
 
-        cy.get('[data-testid=deleteProduct]').click();
+        cy.get('[data-testid=deleteProduct]').contains('Delete').click();
+        cy.get('[data-testid=confirmationModalArchive]').should('exist');
         cy.get('[data-testid=confirmDeleteButton]').click();
 
         cy.wait('@deleteProduct')
             .its('response.statusCode').should('eq', 200);
 
         cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
+    });
 
+    it('Delete an archived product', () => {
+        cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
+
+        cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
+        cy.contains('[data-testid=archivedProductsDrawerCaret]', 'Archived Products').click();
+
+        cy.contains('[data-testid*="archivedProduct_"]', 'Archived Product').click();
+
+        cy.get('[data-testid=deleteProduct]').contains('Delete').click();
+        cy.get('[data-testid=confirmationModalArchive]').should('not.exist');
+        cy.get('[data-testid=confirmDeleteButton]').click();
+
+        cy.wait('@deleteProduct')
+            .its('response.statusCode').should('eq', 200);
+
+        cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('not.exist');
     });
 
     it('Archive a product', () => {
@@ -238,10 +256,13 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
 
     cy.get('@calendarEndDate').should('have.value', nextPhaseDate.format('MM/DD/yyyy'));
 
+    getProductForm().contains(`0 (255 characters max)`)
     cy.get('[data-testid=formNotesToField]')
         .focus()
         .type(notes)
         .should('have.value', notes);
+
+    getProductForm().contains(`${notes.length} (255 characters max)`)
 };
 
 const submitProductForm = (expectedSubmitButtonText: string): void => {
