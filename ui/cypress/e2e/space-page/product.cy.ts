@@ -29,7 +29,7 @@ describe('Product', () => {
     it('Create a new product', () => {
         cy.intercept('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
         cy.intercept('POST', Cypress.env('API_LOCATION_PATH'), cy.spy().as('locationCall')).as('postNewLocation');
-        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH'), cy.spy().as('productTagsCall')).as('postNewTag');
 
         cy.get(product.name).should('not.exist');
 
@@ -37,7 +37,7 @@ describe('Product', () => {
 
         cy.getModal().should('contain', 'Add New Product');
 
-        cy.log('**Already created locations should be in the locations dropdown**')
+        cy.log('**Existing location tags should be in the locations dropdown**')
         getProductForm()
             .find('[id=location]')
             .focus()
@@ -46,10 +46,25 @@ describe('Product', () => {
         getProductForm()
             .contains('location1')
             .should('exist');
-
         cy.get('@locationCall').its('callCount').should('equal', 0);
+
+
+        cy.log('**Existing product tags should be in the product tags dropdown**')
+        getProductForm()
+            .find('[id=productTags]')
+            .focus()
+            .type('productTag1{enter}', {force: true});
+
+        getProductForm()
+            .contains('productTag1')
+            .should('exist');
+
+        getProductForm().find('.productTags__multi-value__remove').click();
+        cy.get('@productTagsCall').its('callCount').should('equal', 0);
+
         populateProductForm(product, moment(activeDate).format('MM/DD/yyyy'));
         cy.get('@locationCall').its('callCount').should('equal', 1);
+        cy.get('@productTagsCall').its('callCount').should('equal', 2);
 
         submitProductForm('Add');
 

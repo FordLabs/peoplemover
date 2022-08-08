@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-import {act, fireEvent, screen, waitFor} from '@testing-library/react';
+import {fireEvent, screen, waitFor} from '@testing-library/react';
 import ProductClient from 'Services/Api/ProductClient';
 import TestUtils from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
-import ProductTagClient from 'Services/Api/ProductTagClient';
-import selectEvent from 'react-select-event';
 import moment from 'moment';
 import {ViewingDateState} from 'State/ViewingDateState';
 
@@ -37,52 +35,6 @@ describe('Products', () => {
     const addProductModalTitle = 'Add New Product';
 
     describe('Home page', () => {
-        it('ProductForm allows choices of product tags provided by the API', async () => {
-            await TestUtils.renderPeopleMoverComponent();
-            const newProductButton = await screen.findByText(addProductButtonText);
-            fireEvent.click(newProductButton);
-
-            await screen.findByLabelText('Name');
-            const productTags = await screen.findByLabelText('Product Tags');
-            fireEvent.change(productTags, {target: {value: ' '}});
-            await screen.findByText('EV');
-        });
-
-        it('ProductForm allows to create product tag provided by user', async () => {
-            await TestUtils.renderPeopleMoverComponent();
-            const newProductButton = await screen.findByText(addProductButtonText);
-            fireEvent.click(newProductButton);
-
-            await screen.findByLabelText('Name');
-            const tagsLabelElement = await screen.findByLabelText('Product Tags');
-            const containerToCreateFinTech = {
-                container: await screen.findByTestId('productForm'),
-                createOptionText: 'Create "Fin Tech"',
-            };
-            await act(async () => {
-                await selectEvent.create(tagsLabelElement, 'Fin Tech', containerToCreateFinTech);
-            })
-
-            expect(ProductTagClient.add).toBeCalledTimes(1);
-
-            ProductTagClient.add = jest.fn().mockResolvedValue({
-                data: {id: 10, name: 'Some tag'},
-            });
-
-            const containerToCreateSomeTag = {
-                container: await screen.findByTestId('productForm'),
-                createOptionText: TestUtils.expectedCreateOptionText('Some tag'),
-            };
-
-            await act(async () => {
-                await selectEvent.create(tagsLabelElement, 'Some tag', containerToCreateSomeTag);
-            });
-            expect(ProductTagClient.add).toBeCalledTimes(1);
-
-            const productForm = await screen.findByTestId('productForm');
-            expect(productForm).toHaveFormValues({productTags: ['9_Fin Tech', '10_Some tag']});
-        });
-
         it('opens ProductForm with correct placeholder text in input fields', async () => {
             await TestUtils.renderPeopleMoverComponent();
             const newProductButton = await screen.findByText(addProductButtonText);
