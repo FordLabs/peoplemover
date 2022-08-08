@@ -38,6 +38,7 @@ import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -158,7 +159,7 @@ class ReportGeneratorControllerTest {
     fun `GET should return people, products, roles, and tags for a space and omit future assignments given a date`() {
         val result = mockMvc
                 .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar1}")
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                        .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -179,7 +180,7 @@ class ReportGeneratorControllerTest {
     fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
                 .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar2}")
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                        .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -210,7 +211,7 @@ class ReportGeneratorControllerTest {
 
     @Test
     fun `GET should return all space names, who created the space, when it was created, and all users related to that space if users is authorized`() {
-        val request = get(baseSpaceReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
+        val request = get(baseSpaceReportsUrl).header("Authorization", "Bearer $GOOD_TOKEN")
         val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
                 .andReturn()
@@ -232,7 +233,7 @@ class ReportGeneratorControllerTest {
 
     @Test
     fun `GET user should return all user ids`() {
-        val request = get(baseUserReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
+        val request = get(baseUserReportsUrl).header("Authorization", "Bearer $GOOD_TOKEN")
         val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
                 .andReturn()
