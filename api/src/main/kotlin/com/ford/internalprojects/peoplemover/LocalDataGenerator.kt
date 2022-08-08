@@ -151,17 +151,18 @@ class LocalDataGenerator(
 
         val productTags: Set<ProductTag> = HashSet(listOf(productTag))
         val personTags: Set<PersonTag> = HashSet(listOf(personTag))
+        val productStartDate = "2019-01-01"
 
         productRepository.save(Product(
             name = "My Product",
             tags = productTags,
-            startDate = LocalDate.parse("2019-01-01"),
+            startDate = LocalDate.parse(productStartDate),
             spaceUuid =  createdSpace.uuid
         ))
         productRepository.save(Product(
             name = "Baguette Bakery",
             spaceLocation = location,
-            startDate = LocalDate.parse("2019-01-01"),
+            startDate = LocalDate.parse(productStartDate),
             spaceUuid =  createdSpace.uuid
         ))
 
@@ -176,7 +177,7 @@ class LocalDataGenerator(
             )
         )
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
-            requestedDate = LocalDate.parse("2019-01-01"),
+            requestedDate = LocalDate.parse(productStartDate),
             products = setOf(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = false
