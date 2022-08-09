@@ -24,10 +24,10 @@ import {CurrentSpaceState} from '../../State/CurrentSpaceState';
 import React from 'react';
 import TestData from '../../Utils/TestData';
 import {dashboardUrl} from '../../Routes';
-import PeopleMoverHeader from './PeopleMoverHeader';
+import SpacePageHeader from './SpacePageHeader';
 import {shouldShowAllAccountDropdownOptions} from '../../Utils/HeaderTestUtils';
 
-describe('People Mover Header', () => {
+describe('Space Page Header', () => {
     let container: string | Element;
 
     beforeEach(() => {
@@ -35,7 +35,7 @@ describe('People Mover Header', () => {
 
         ({container} = renderWithRecoil(
             <MemoryRouter initialEntries={[`/${TestData.space.uuid}`]}>
-                <PeopleMoverHeader />
+                <SpacePageHeader />
             </MemoryRouter>,
             ({set}: MutableSnapshot) => {
                 set(CurrentSpaceState, TestData.space)

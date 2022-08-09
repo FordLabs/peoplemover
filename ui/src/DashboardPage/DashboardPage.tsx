@@ -17,7 +17,7 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import {createEmptySpace, Space} from 'Types/Space';
-import SpaceDashboardTile from './SpaceDashboardTile/SpaceDashboardTile';
+import SpaceTile from './SpaceTile/SpaceTile';
 
 import Branding from 'Common/Branding/Branding';
 import {useNavigate} from 'react-router-dom';
@@ -30,9 +30,9 @@ import Modal from '../Modal/Modal';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import Header from 'Common/Header/Header';
 
-import './SpaceDashboard.scss';
+import './DashboardPage.scss';
 
-function SpaceDashboard(): JSX.Element {
+function DashboardPage(): JSX.Element {
     const navigate = useNavigate();
 
     const setModalContents = useSetRecoilState(ModalContentsState);
@@ -84,7 +84,7 @@ function SpaceDashboard(): JSX.Element {
         return (
             <div className="userSpaceItemContainer">
                 {userSpaces.map((space, index) => (
-                    <SpaceDashboardTile
+                    <SpaceTile
                         key={index} space={space}
                         onClick={onSpaceClicked}
                     />
@@ -119,4 +119,4 @@ function SpaceDashboard(): JSX.Element {
     );
 }
 
-export default SpaceDashboard;
+export default DashboardPage;

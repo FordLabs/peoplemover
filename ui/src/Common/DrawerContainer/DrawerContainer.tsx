@@ -17,7 +17,7 @@
 
 import React from 'react';
 import 'Styles/PersonDrawer.scss';
-import 'PeopleMover/UnassignedDrawer/UnassignedDrawer.scss';
+import 'SpacePage/UnassignedDrawer/UnassignedDrawer.scss';
 import './DrawerContainer.scss';
 
 interface DrawerContainerProps {
