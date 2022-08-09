@@ -17,7 +17,7 @@
 
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import MaskedInput from 'react-text-mask';
+import InputMask from 'react-input-mask';
 import React, {useState} from 'react';
 import {useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -55,14 +55,14 @@ function ProductFormStartDateField({ currentProduct, updateProductField }: Props
     const CustomInput = ({ value, onClick, onChange }: React.PropsWithChildren<any>): JSX.Element => {
         return (
             <div onClick={onClick} onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}>
-                <MaskedInput
+                <InputMask
                     className="formInput formTextInput"
                     name="start"
                     id="start"
-                    value={value}
-                    onChange={onChange}
                     mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                    defaultValue={value}
                     placeholder="MM/DD/YYYY"
+                    onChange={onChange}
                 />
                 <i className="material-icons calendar-icon">date_range</i>
             </div>
