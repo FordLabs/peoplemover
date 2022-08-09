@@ -174,7 +174,6 @@ const userAccessStyle = {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
-            // boxShadow: 'none !important',
             cursor: 'pointer',
         },
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
