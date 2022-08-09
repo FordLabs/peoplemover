@@ -16,11 +16,7 @@
  */
 
 import Select, {OptionProps, OptionTypeBase, Props} from 'react-select';
-import {
-    CustomIndicator,
-    isUserTabbingAndFocusedOnElement,
-    reactSelectStyles,
-} from 'Common/ReactSelectStyles/ReactSelectStyles';
+import {CustomIndicator, reactSelectStyles} from 'Common/ReactSelectStyles/ReactSelectStyles';
 import React, {CSSProperties, useState} from 'react';
 import {Space} from 'Types/Space';
 import {UserSpaceMapping} from 'Types/UserSpaceMapping';
@@ -175,12 +171,15 @@ const userAccessStyle = {
         ...provided,
         border: '1px solid transparent',
         backgroundColor: 'transparent',
-        boxShadow: isUserTabbingAndFocusedOnElement(props) ? '0 0 0 2px #4C8EF5' : 'none',
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         '&:hover': {
-            boxShadow: 'none !important',
             cursor: 'pointer',
+        },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        '&:focus:not(:focus-visible)': {
+            boxShadow: '0 0 0 6px #4C8EF5',
         },
         flexWrap: 'unset',
     }),

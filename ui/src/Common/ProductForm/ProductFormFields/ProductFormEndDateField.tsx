@@ -17,9 +17,9 @@
 
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import MaskedInput from 'react-text-mask';
 import React, {useState} from 'react';
 import {Product} from 'Types/Product';
+import InputMask from "react-input-mask";
 
 interface Props {
     currentProduct: Product;
@@ -46,7 +46,7 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
     const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
         return (
             <div onClick={onClick} onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}>
-                <MaskedInput
+                <InputMask
                     className="formInput formTextInput"
                     name="end"
                     id="end"
