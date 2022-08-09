@@ -131,55 +131,66 @@ describe('Product', () => {
             .should('contain', updateProduct.tags[1]);
     });
 
-    it('Delete an active product', () => {
-        cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
+    context('Delete a product', () => {
+        it('that is active', () => {
+            cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
 
-        cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
-        cy.get('[data-testid=editMenuOption__edit_product]').click();
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+            cy.get('[data-testid=editMenuOption__edit_product]').click();
 
-        cy.get('[data-testid=deleteProduct]').contains('Delete').click();
-        cy.get('[data-testid=confirmationModalArchive]').should('exist');
-        cy.get('[data-testid=confirmDeleteButton]').click();
+            cy.get('[data-testid=deleteProduct]').contains('Delete').click();
+            cy.get('[data-testid=confirmationModalArchive]').should('exist');
+            cy.get('[data-testid=confirmDeleteButton]').click();
 
-        cy.wait('@deleteProduct')
-            .its('response.statusCode').should('eq', 200);
+            cy.wait('@deleteProduct')
+                .its('response.statusCode').should('eq', 200);
 
-        cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
-    });
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
+        });
 
-    it('Delete an archived product', () => {
-        cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
+        it('that is archived', () => {
+            cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
 
-        cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
-        cy.contains('[data-testid=archivedProductsDrawerCaret]', 'Archived Products').click();
+            cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
+            cy.contains('[data-testid=archivedProductsDrawerCaret]', 'Archived Products').click();
 
-        cy.contains('[data-testid*="archivedProduct_"]', 'Archived Product').click();
+            cy.contains('[data-testid*="archivedProduct_"]', 'Archived Product').click();
 
-        cy.get('[data-testid=deleteProduct]').contains('Delete').click();
-        cy.get('[data-testid=confirmationModalArchive]').should('not.exist');
-        cy.get('[data-testid=confirmDeleteButton]').click();
+            cy.get('[data-testid=deleteProduct]').contains('Delete').click();
+            cy.get('[data-testid=confirmationModalArchive]').should('not.exist');
+            cy.get('[data-testid=confirmDeleteButton]').click();
 
-        cy.wait('@deleteProduct')
-            .its('response.statusCode').should('eq', 200);
+            cy.wait('@deleteProduct')
+                .its('response.statusCode').should('eq', 200);
 
-        cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('not.exist');
-    });
+            cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('not.exist');
+        });
+    })
 
-    it('Archive a product', () => {
-        cy.contains('Baguette Bakery').should('exist');
-        cy.get('[data-testid="editProductIcon__baguette_bakery"]').click();
+    context('Archive a product', () => {
+        beforeEach(() => {
+            cy.contains('Baguette Bakery').should('exist');
+            cy.get('[data-testid="editProductIcon__baguette_bakery"]').click();
+            cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
+        })
 
-        cy.contains('Archive Product').click();
+        it('through the product\'s actions dropdown', () => {
+            cy.contains('Archive Product').click();
 
-        cy.contains('Are you sure?').should('exist');
-        cy.contains('Archive').click();
-        cy.contains('Baguette Bakery').should('not.exist');
+            cy.contains('Are you sure?').should('exist');
+            cy.contains('Archive').click();
 
-        cy.get('[data-testid="calendarToggle"]').click();
-        const newDate = moment(activeDateString).subtract(1, 'days').format('dddd, MMMM Do, YYYY');
-        cy.get(`[aria-label="Choose ${newDate}"]`).click();
-        cy.contains('Baguette Bakery').should('exist');
-    });
+            baguetteBakeryProductShouldBeArchived();
+        });
+
+        it('through the product\'s delete modal', () => {
+            cy.contains('Edit Product').click();
+            cy.contains('Delete').click();
+            cy.contains('[data-testid="confirmationModalArchive"]', 'Archive').click();
+
+            baguetteBakeryProductShouldBeArchived();
+        });
+    })
 
     context('Product name field warnings', () => {
         beforeEach(() => {
@@ -272,4 +283,17 @@ const submitProductForm = (expectedSubmitButtonText: string): void => {
 
 function getProductForm() {
     return cy.get('[data-testid=productForm]');
+}
+
+function baguetteBakeryProductShouldBeArchived() {
+    cy.contains('Baguette Bakery').should('not.exist');
+    cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 2);
+    cy.contains('[data-testid=archivedProductsDrawerCaret]', 'Archived Products').click();
+    cy.contains('[data-testid*="archivedProduct_"]', 'Baguette Bakery').should('exist');
+
+    cy.get('[data-testid="calendarToggle"]').click();
+    const newDate = moment(activeDateString).subtract(1, 'days').format('dddd, MMMM Do, YYYY');
+    cy.get(`[aria-label="Choose ${newDate}"]`).click();
+    cy.contains('Baguette Bakery').should('exist');
+    cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
 }

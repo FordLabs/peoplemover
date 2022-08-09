@@ -31,32 +31,6 @@ jest.mock('Services/Api/ProductTagClient');
 jest.mock('Services/Api/PersonTagClient');
 
 describe('Products', () => {
-    describe('Archiving a product via the delete modal', () => {
-        it('should use the product client to archive products', async () => {
-            ProductClient.editProduct = jest.fn().mockResolvedValue({});
-
-            const viewingDate = new Date(2020, 6, 17);
-            await TestUtils.renderPeopleMoverComponent((({set}) => {
-                set(ViewingDateState, viewingDate)
-            }));
-
-            const editProduct3Button = await screen.findByTestId('editProductIcon__product_3');
-            fireEvent.click(editProduct3Button);
-            const editProductMenuOption = await screen.findByText('Edit Product');
-            fireEvent.click(editProductMenuOption);
-            const deleteProductButton = await screen.findByText('Delete Product');
-            fireEvent.click(deleteProductButton);
-            const archiveButton = await screen.findByText('Archive');
-            fireEvent.click(archiveButton);
-
-            await waitFor(() => expect(ProductClient.editProduct).toBeCalledTimes(1));
-            const cloneWithEndDateSet = JSON.parse(JSON.stringify(TestData.productWithoutAssignments));
-            cloneWithEndDateSet.endDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
-            expect(ProductClient.editProduct).toBeCalledWith(TestData.space, cloneWithEndDateSet);
-            await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith('uuid', viewingDate))
-        });
-    });
-
     describe('Edit Menu for Product', () => {
         it('should pop the edit menu options', async () => {
             await TestUtils.renderPeopleMoverComponent();
