@@ -152,6 +152,7 @@ class LocalDataGenerator(
         val productTags: Set<ProductTag> = HashSet(listOf(productTag))
         val personTags: Set<PersonTag> = HashSet(listOf(personTag))
         val productStartDate = "2019-01-01"
+        val productEndDate = "2019-01-10"
 
         productRepository.save(Product(
             name = "My Product",
@@ -163,6 +164,13 @@ class LocalDataGenerator(
             name = "Baguette Bakery",
             spaceLocation = location,
             startDate = LocalDate.parse(productStartDate),
+            spaceUuid =  createdSpace.uuid
+        ))
+        productRepository.save(Product(
+            name = "Archived Product",
+            spaceLocation = location,
+            startDate = LocalDate.parse(productStartDate),
+            endDate = LocalDate.parse(productEndDate),
             spaceUuid =  createdSpace.uuid
         ))
 

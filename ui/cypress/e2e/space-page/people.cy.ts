@@ -39,7 +39,7 @@ describe('People', () => {
         cy.visitSpace(undefined, '', activeDate);
     });
 
-    it('Add a new assigned person', () => {
+    it('Create a new assigned person', () => {
         cy.spyOnGetProductsByDate(activeDateString);
 
         getCalendarToggle().click();
@@ -98,8 +98,31 @@ describe('People', () => {
                 cy.getCalendarDate(notActiveDateString).should('have.class', highlightClass).click();
             });
     });
+
+    it('Add an existing person to a product', () => {
+        cy.get('[data-testid="addPersonToProductIcon__my_product"]').click();
+        cy.getModal().contains('Assign a Person').should('exist');
+
+        cy.log('**Form should be pre-populated with desired product name**');
+        cy.getModal().contains('My Product').should('exist');
+
+        const existingPersonName = 'Adam Sandler';
+        cy.getModal().find('[id=person]')
+            .type(`${existingPersonName}{enter}`, { force: true })
+
+        cy.getModal().contains(existingPersonName).should('exist');
+
+        cy.route('POST', '**/assignment/create').as('postReassignPerson');
+
+        cy.getModal().contains('[data-testid="assignButton"]', 'Assign').click();
+
+        cy.wait(['@postReassignPerson', '@getProductsByDate', '@getPeople']);
+
+        cy.get('[data-testid="productCardContainer__my_product"]')
+            .should('contain', existingPersonName);
+    });
     
-    it('Add a new unassigned person', () => {
+    it('Create a new unassigned person', () => {
         cy.clock().then((clock) => {
             clock.restore()
         })

@@ -53,6 +53,17 @@ describe('ProductForm', function() {
         resetCreateRange();
     });
 
+    it('should have correct placeholder text', async () => {
+        renderWithRecoil(<ProductForm editing={false} product={TestData.productWithoutLocation}/>, recoilState);
+        await screen.findByLabelText('Name');
+
+        await screen.findByPlaceholderText('e.g. Product 1');
+        await screen.findByText('Add product tags');
+        await screen.findByText('Add a location tag');
+
+        expect(screen.getByTestId('productFormUrlField')).toHaveAttribute('placeholder', 'e.g. https://www.fordlabs.com');
+    });
+
     it('should close the modal when you click the cancel button', async () => {
         renderWithRecoil(
             <>

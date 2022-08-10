@@ -28,8 +28,8 @@ describe('Product', () => {
 
     it('Create a new product', () => {
         cy.intercept('POST', Cypress.env('API_PRODUCTS_PATH')).as('postNewProduct');
-        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewTag');
+        cy.intercept('POST', Cypress.env('API_LOCATION_PATH'), cy.spy().as('locationCall')).as('postNewLocation');
+        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH'), cy.spy().as('productTagsCall')).as('postNewTag');
 
         cy.get(product.name).should('not.exist');
 
@@ -37,7 +37,34 @@ describe('Product', () => {
 
         cy.getModal().should('contain', 'Add New Product');
 
+        cy.log('**Existing location tags should be in the locations dropdown**')
+        getProductForm()
+            .find('[id=location]')
+            .focus()
+            .type('location1{enter}', {force: true});
+
+        getProductForm()
+            .contains('location1')
+            .should('exist');
+        cy.get('@locationCall').its('callCount').should('equal', 0);
+
+
+        cy.log('**Existing product tags should be in the product tags dropdown**')
+        getProductForm()
+            .find('[id=productTags]')
+            .focus()
+            .type('productTag1{enter}', {force: true});
+
+        getProductForm()
+            .contains('productTag1')
+            .should('exist');
+
+        getProductForm().find('.productTags__multi-value__remove').click();
+        cy.get('@productTagsCall').its('callCount').should('equal', 0);
+
         populateProductForm(product, moment(activeDate).format('MM/DD/yyyy'));
+        cy.get('@locationCall').its('callCount').should('equal', 1);
+        cy.get('@productTagsCall').its('callCount').should('equal', 2);
 
         submitProductForm('Add');
 
@@ -104,37 +131,66 @@ describe('Product', () => {
             .should('contain', updateProduct.tags[1]);
     });
 
-    it('Delete a product', () => {
-        cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
+    context('Delete a product', () => {
+        it('that is active', () => {
+            cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
 
-        cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
-        cy.get('[data-testid=editMenuOption__edit_product]').click();
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').click();
+            cy.get('[data-testid=editMenuOption__edit_product]').click();
 
-        cy.get('[data-testid=deleteProduct]').click();
-        cy.get('[data-testid=confirmDeleteButton]').click();
+            cy.get('[data-testid=deleteProduct]').contains('Delete').click();
+            cy.get('[data-testid=confirmationModalArchive]').should('exist');
+            cy.get('[data-testid=confirmDeleteButton]').click();
 
-        cy.wait('@deleteProduct')
-            .its('response.statusCode').should('eq', 200);
+            cy.wait('@deleteProduct')
+                .its('response.statusCode').should('eq', 200);
 
-        cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
+            cy.get('[data-testid=editProductIcon__baguette_bakery]').should('not.exist');
+        });
 
-    });
+        it('that is archived', () => {
+            cy.intercept('DELETE', Cypress.env('API_PRODUCTS_PATH') + '/**').as('deleteProduct');
 
-    it('Archive a product', () => {
-        cy.contains('Baguette Bakery').should('exist');
-        cy.get('[data-testid="editProductIcon__baguette_bakery"]').click();
+            cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
+            cy.contains('[data-testid=archivedProductsDrawerCaret]', 'Archived Products').click();
 
-        cy.contains('Archive Product').click();
+            cy.contains('[data-testid*="archivedProduct_"]', 'Archived Product').click();
 
-        cy.contains('Are you sure?').should('exist');
-        cy.contains('Archive').click();
-        cy.contains('Baguette Bakery').should('not.exist');
+            cy.get('[data-testid=deleteProduct]').contains('Delete').click();
+            cy.get('[data-testid=confirmationModalArchive]').should('not.exist');
+            cy.get('[data-testid=confirmDeleteButton]').click();
 
-        cy.get('[data-testid="calendarToggle"]').click();
-        const newDate = moment(activeDateString).subtract(1, 'days').format('dddd, MMMM Do, YYYY');
-        cy.get(`[aria-label="Choose ${newDate}"]`).click();
-        cy.contains('Baguette Bakery').should('exist');
-    });
+            cy.wait('@deleteProduct')
+                .its('response.statusCode').should('eq', 200);
+
+            cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('not.exist');
+        });
+    })
+
+    context('Archive a product', () => {
+        beforeEach(() => {
+            cy.contains('Baguette Bakery').should('exist');
+            cy.get('[data-testid="editProductIcon__baguette_bakery"]').click();
+            cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
+        })
+
+        it('through the product\'s actions dropdown', () => {
+            cy.contains('Archive Product').click();
+
+            cy.contains('Are you sure?').should('exist');
+            cy.contains('Archive').click();
+
+            baguetteBakeryProductShouldBeArchived();
+        });
+
+        it('through the product\'s delete modal', () => {
+            cy.contains('Edit Product').click();
+            cy.contains('Delete').click();
+            cy.contains('[data-testid="confirmationModalArchive"]', 'Archive').click();
+
+            baguetteBakeryProductShouldBeArchived();
+        });
+    })
 
     context('Product name field warnings', () => {
         beforeEach(() => {
@@ -173,12 +229,11 @@ describe('Product', () => {
 const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDate, notes}, defaultStartDate): void => {
     cy.log('Populate Product Form');
 
-    cy.get('[data-testid=productForm]').as('productForm');
-    cy.get('@productForm').should('be.visible');
+    getProductForm().should('be.visible');
 
     cy.get('[data-testid=productFormNameField]').clear().focus().type(name).should('have.value', name);
 
-    cy.get('@productForm')
+    getProductForm()
         .find('[id=location]')
         .focus()
         .type(location + '{enter}', {force: true});
@@ -186,7 +241,7 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
     cy.wait('@postNewLocation');
 
     tags.forEach(tag => {
-        cy.get('@productForm').find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
+        getProductForm().find('[id=productTags]').focus().type(tag + '{enter}', {force: true});
 
         cy.wait('@postNewTag');
     });
@@ -212,13 +267,33 @@ const populateProductForm = ({name, location, tags = [], startDate, nextPhaseDat
 
     cy.get('@calendarEndDate').should('have.value', nextPhaseDate.format('MM/DD/yyyy'));
 
+    getProductForm().contains(`0 (255 characters max)`)
     cy.get('[data-testid=formNotesToField]')
         .focus()
         .type(notes)
         .should('have.value', notes);
+
+    getProductForm().contains(`${notes.length} (255 characters max)`)
 };
 
 const submitProductForm = (expectedSubmitButtonText: string): void => {
     cy.get('[data-testid=productFormSubmitButton]').should('have.text', expectedSubmitButtonText).click();
-    cy.get('@productForm').should('not.exist');
+    getProductForm().should('not.exist');
 };
+
+function getProductForm() {
+    return cy.get('[data-testid=productForm]');
+}
+
+function baguetteBakeryProductShouldBeArchived() {
+    cy.contains('Baguette Bakery').should('not.exist');
+    cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 2);
+    cy.contains('[data-testid=archivedProductsDrawerCaret]', 'Archived Products').click();
+    cy.contains('[data-testid*="archivedProduct_"]', 'Baguette Bakery').should('exist');
+
+    cy.get('[data-testid="calendarToggle"]').click();
+    const newDate = moment(activeDateString).subtract(1, 'days').format('dddd, MMMM Do, YYYY');
+    cy.get(`[aria-label="Choose ${newDate}"]`).click();
+    cy.contains('Baguette Bakery').should('exist');
+    cy.get('[data-testid=archivedProductsDrawerCountBadge]').should('have.text', 1);
+}
