@@ -51,6 +51,66 @@ describe('Person Form', () => {
         AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
     })
 
+    it('should have initially selected product name populated', async () => {
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+                initiallySelectedProduct={TestData.productWithAssignments}
+            />,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+        await screen.findByText(TestData.productWithAssignments.name);
+    });
+
+    it('should not show the unassigned product or archived products in product list', async () => {
+        const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+            />,
+            ({set}) => {
+                set(ProductsState, products)
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+
+        expect(screen.getByText('unassigned')).toBeDefined();
+
+        const productTextToSelect = 'Product 1';
+        const productsMultiSelectField = await screen.findByLabelText('Assign to');
+        await selectEvent.select(productsMultiSelectField, productTextToSelect);
+
+        const product1Option = screen.getByText(productTextToSelect);
+        expect(product1Option).toBeDefined();
+        expect(product1Option).toHaveClass('product__multi-value__label');
+
+        expect(screen.queryByText('I am archived')).toBeNull();
+        expect(screen.queryByText('unassigned')).toBeNull();
+    });
+
+    it('should remove the unassigned product when a product is selected from dropdown', async () => {
+        const products = [TestData.productWithAssignments, TestData.unassignedProduct];
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+            />,
+            ({set}) => {
+                set(ProductsState, products)
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+        const productDropDown = screen.getByLabelText('Assign to');
+        expect(screen.getByText('unassigned')).toBeDefined();
+        await selectEvent.select(productDropDown, 'Product 1');
+
+        expect(screen.queryByText('unassigned')).not.toBeInTheDocument();
+    });
+
     describe('Creating a new person', () => {
         beforeEach(async () => {
             renderWithRecoil(<PersonForm isEditPersonForm={false}/>, recoilState);
@@ -116,7 +176,7 @@ describe('Person Form', () => {
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
         }
 
-        it('display the person\'s existing tags when editing a person', async () => {
+        it('should display the person\'s existing tags when editing a person', async () => {
             await setupPersonForm();
             expect(await screen.findByText('The lil boss')).toBeDefined();
         });

@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import {act, fireEvent, screen, waitFor} from '@testing-library/react';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import PeopleClient from 'Services/Api/PeopleClient';
-import PersonForm from 'Common/PersonForm/PersonForm';
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import selectEvent from 'react-select-event';
 import {emptyPerson} from 'Services/PersonService';
 import moment from 'moment';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Person} from 'Types/Person';
@@ -318,66 +315,6 @@ describe('People actions', () => {
 
             await waitFor(checkForCreatedPerson);
         });
-    });
-
-    it('should have initially selected product selected', async () => {
-        renderWithRecoil(
-            <PersonForm
-                isEditPersonForm={false}
-                initialPersonName="BRADLEY"
-                initiallySelectedProduct={TestData.productWithAssignments}
-            />,
-            ({set}) => {
-                set(CurrentSpaceState, TestData.space)
-            }
-        );
-        await screen.findByText('Product 1');
-    });
-
-    it('should not show the unassigned product or archived products in product list', async () => {
-        const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
-        renderWithRecoil(
-            <PersonForm
-                isEditPersonForm={false}
-                initialPersonName="BRADLEY"
-            />,
-            ({set}) => {
-                set(ProductsState, products)
-                set(CurrentSpaceState, TestData.space)
-            }
-        );
-
-        expect(screen.getByText('unassigned')).toBeDefined();
-
-        const productTextToSelect = 'Product 1';
-        const productsMultiSelectField = await screen.findByLabelText('Assign to');
-        await selectEvent.select(productsMultiSelectField, productTextToSelect);
-
-        const product1Option = screen.getByText(productTextToSelect);
-        expect(product1Option).toBeDefined();
-        expect(product1Option).toHaveClass('product__multi-value__label');
-
-        expect(screen.queryByText('I am archived')).toBeNull();
-        expect(screen.queryByText('unassigned')).toBeNull();
-    });
-
-    it('should remove the unassigned product when a product is selected from dropdown', async () => {
-        const products = [TestData.productWithAssignments, TestData.unassignedProduct];
-        renderWithRecoil(
-            <PersonForm
-                isEditPersonForm={false}
-                initialPersonName="BRADLEY"
-            />,
-            ({set}) => {
-                set(ProductsState, products)
-                set(CurrentSpaceState, TestData.space)
-            }
-        );
-        const productDropDown = screen.getByLabelText('Assign to');
-        expect(screen.getByText('unassigned')).toBeDefined();
-        await selectEvent.select(productDropDown, 'Product 1');
-
-        expect(screen.queryByText('unassigned')).not.toBeInTheDocument();
     });
 
     describe('Editing people/assignments', () => {
