@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 
-import {fireEvent, screen, waitFor} from '@testing-library/react';
+import {fireEvent, screen} from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
-import UnassignedDrawer from '../UnassignedDrawer/UnassignedDrawer';
 import {act} from 'react-dom/test-utils';
-import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
-import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
 import {ProductTagsState} from 'State/ProductTagsState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {Product} from 'Types/Product';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/SpaceClient');
@@ -64,42 +59,6 @@ describe('Unassigned Products', () => {
 
             fireEvent.click(unassignedDrawerCaret);
             expect(screen.queryByText('unassignedPeopleContainer')).toBeNull();
-        });
-    });
-
-    describe('showing the unassigned product, but...', () => {
-        const renderWithUnassignedProduct = (products: Product[]) => {
-            renderWithRecoil(
-                <UnassignedDrawer/>,
-                ({set}) => {
-                    set(IsUnassignedDrawerOpenState, true)
-                    set(ProductsState, products)
-                    set(CurrentSpaceState, TestData.space)
-                }
-            );
-        }
-
-        it('hides the number of unassigned people when there are less than 1', async () => {
-            const emptyUnassignedProduct: Product = {
-                ...TestData.unassignedProduct,
-                assignments: [],
-                spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            };
-            renderWithUnassignedProduct([emptyUnassignedProduct])
-
-            await waitFor(() => expect(screen.queryByTestId('countBadge')).toBeNull());
-        });
-
-        it('does not show archived people as unassigned', async () => {
-            renderWithUnassignedProduct( [TestData.unassignedProduct])
-
-            await waitFor(() => expect(screen.queryByText(TestData.archivedPerson.name)).toBeNull());
-        });
-
-        it('should show an archived person as unassigned if their archive date has not passed', async () => {
-            const product = {...TestData.unassignedProduct, assignments:[TestData.assignmentForHank]};
-            renderWithUnassignedProduct( [product])
-            screen.getByText(TestData.hank.name);
         });
     });
 
