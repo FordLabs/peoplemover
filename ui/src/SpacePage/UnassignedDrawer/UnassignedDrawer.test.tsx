@@ -45,16 +45,26 @@ describe('Unassigned Drawer', () => {
 
     it('should show an archived person as unassigned if their archive date has not passed', async () => {
         const product = {...TestData.unassignedProduct, assignments:[TestData.assignmentForHank]};
-        renderWithUnassignedProduct( [product])
-        screen.getByText(TestData.hank.name);
+        renderWithUnassignedProduct( [product]);
+        expect(screen.getByText(TestData.hank.name)).toBeDefined();
+    });
+
+    it('should render unassigned drawer as open when IsUnassignedDrawerOpenState flag is set to true', () => {
+        renderWithUnassignedProduct( [TestData.unassignedProduct], true);
+        expect(screen.getByText(TestData.unassignedPerson.name)).toBeDefined();
+    });
+
+    it('should render unassigned drawer as closed when IsUnassignedDrawerOpenState flag is set to false', () => {
+        renderWithUnassignedProduct( [TestData.unassignedProduct], false);
+        expect(screen.queryByText(TestData.unassignedPerson.name)).toBeNull();
     });
 });
 
-const renderWithUnassignedProduct = (products: Product[]) => {
+const renderWithUnassignedProduct = (products: Product[], isDrawerOpen = true) => {
     renderWithRecoil(
         <UnassignedDrawer/>,
         ({set}) => {
-            set(IsUnassignedDrawerOpenState, true)
+            set(IsUnassignedDrawerOpenState, isDrawerOpen)
             set(ProductsState, products)
             set(CurrentSpaceState, TestData.space)
         }
