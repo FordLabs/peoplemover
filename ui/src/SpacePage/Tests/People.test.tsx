@@ -39,7 +39,6 @@ jest.mock('Services/Api/ProductTagClient');
 
 describe('People actions', () => {
     const addPersonButtonText = 'Add Person';
-    const addPersonModalTitle = 'Add New Person';
     const submitFormButtonText = 'Add';
 
     beforeEach(() => {
@@ -57,57 +56,6 @@ describe('People actions', () => {
                 set(CurrentSpaceState, TestData.space)
             });
             await screen.findByText(addPersonButtonText);
-        });
-
-        it('opens PersonForm component in editing mode when hamburger icon is clicked', async () => {
-            const editPersonIcon = await screen.findByTestId('editPersonIconContainer__person_1');
-            fireEvent.click(editPersonIcon);
-
-            const editPersonButton = await screen.findByText('Edit Person');
-            fireEvent.click(editPersonButton);
-
-            await waitFor(() => expect(screen.findByText('Save')).toBeDefined());
-        });
-
-        it('opens PersonForm component when Add Person button is clicked', async () => {
-            const createPersonButton = await screen.findByText(addPersonButtonText);
-            fireEvent.click(createPersonButton);
-
-            expect(await screen.findByText(addPersonModalTitle)).toBeDefined();
-        });
-
-        it('While editing, queries the Assignment Client on load for products this person is assigned to', async () => {
-            const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');
-            fireEvent.click(editPersonButton);
-
-            await waitFor(() => expect(screen.getByText('Edit Person')).toBeDefined());
-
-            fireEvent.click(await screen.findByText('Edit Person'));
-
-            const saveButton = screen.getByText('Save');
-            fireEvent.click(saveButton);
-
-            await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
-                .toBeCalledWith(
-                    TestData.space.uuid,
-                    TestData.person1.id,
-                    new Date(2020, 5, 5)
-                )
-            );
-        });
-
-        it('should show placeholder text for the person name', async () => {
-            const createPersonButton = screen.getByText(addPersonButtonText);
-            fireEvent.click(createPersonButton);
-
-            await waitFor(() => expect(screen.getByPlaceholderText('e.g. Jane Smith')).toBeDefined());
-        });
-
-        it('should show placeholder text for the person cdsid', async () => {
-            const createPersonButton = screen.getByText(addPersonButtonText);
-            fireEvent.click(createPersonButton);
-
-            await waitFor(() => expect(screen.getByPlaceholderText('e.g. jsmith12')).toBeDefined());
         });
 
         it('should not submit assignment when nothing changed', async () => {

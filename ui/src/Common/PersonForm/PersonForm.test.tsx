@@ -51,18 +51,56 @@ describe('Person Form', () => {
         AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
     })
 
-    it('should have initially selected product name populated', async () => {
+    it('should have correct placeholder texts and defaults', async () => {
         renderWithRecoil(
-            <PersonForm
-                isEditPersonForm={false}
-                initialPersonName="BRADLEY"
-                initiallySelectedProduct={TestData.productWithAssignments}
-            />,
+            <PersonForm isEditPersonForm={false} />,
             ({set}) => {
                 set(CurrentSpaceState, TestData.space)
             }
         );
-        await screen.findByText(TestData.productWithAssignments.name);
+
+        await waitFor(() => expect(screen.getByPlaceholderText('e.g. Jane Smith')).toBeDefined());
+        const isNewCheckbox = screen.getByTestId('personFormIsNewCheckbox');
+        expect(isNewCheckbox).not.toBeChecked();
+        expect(screen.getByPlaceholderText('e.g. jsmith12')).toBeDefined();
+        expect(screen.getByText('Add a role')).toBeDefined();
+        expect(screen.getByText('unassigned')).toBeDefined();
+        expect(screen.getByText('Add person tags')).toBeDefined();
+        expect(screen.getByText('0 (255 characters max)')).toBeDefined();
+    });
+
+    it('should pre-populate form', async () => {
+        const viewingDate = new Date(2021, 4, 13);
+        const person = {...TestData.person1, newPerson: true}
+        renderWithRecoil(
+            <PersonForm isEditPersonForm personEdited={person} />,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+                set(ViewingDateState, viewingDate)
+                set(ProductsState, [TestData.productWithAssignments])
+            }
+        );
+        await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toHaveBeenCalledWith(
+            TestData.space.uuid, person.id, viewingDate
+        ))
+        const expectedPersonName = person.name;
+        expect(screen.getByDisplayValue(expectedPersonName)).toBeDefined();
+
+        const isNewCheckbox = screen.getByTestId('personFormIsNewCheckbox');
+        expect(isNewCheckbox).toBeChecked();
+
+        const expectedCDSID = person.customField1!;
+        expect(screen.getByDisplayValue(expectedCDSID)).toBeDefined();
+        const expectedRole = TestData.softwareEngineer.name;
+        expect(screen.getByDisplayValue(expectedRole)).toBeDefined();
+        const expectedProductName = TestData.productWithAssignments.name
+        expect(screen.getByDisplayValue(expectedProductName)).toBeDefined();
+
+        const expectedPersonTag = person.tags[0].name;
+        expect(screen.getByText(expectedPersonTag)).toBeDefined();
+        const expectedNote = person.notes!;
+        expect(screen.getByDisplayValue(expectedNote)).toBeDefined();
+        expect(screen.getByText(`${expectedNote.length} (255 characters max)`)).toBeDefined();
     });
 
     it('should not show the unassigned product or archived products in product list', async () => {
