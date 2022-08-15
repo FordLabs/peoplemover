@@ -24,7 +24,6 @@ import selectEvent from 'react-select-event';
 import {emptyPerson} from 'Services/PersonService';
 import moment from 'moment';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Person} from 'Types/Person';
 
 jest.mock('Services/Api/ProductClient');
@@ -195,41 +194,6 @@ describe('People actions', () => {
             fireEvent.click(screen.getByText(submitFormButtonText));
 
             await waitFor(checkForCreatedPerson);
-        });
-    });
-
-    describe('Editing people/assignments', () => {
-        beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(({set}) => {
-                set(ViewingDateState, new Date(2019, 0, 1))
-                set(CurrentSpaceState, TestData.space)
-            })
-
-            const editPersonButton = await screen.findByTestId('editPersonIconContainer__person_1');
-            fireEvent.click(editPersonButton);
-        });
-
-        it('should show Edit Person Modal when you click on edit person option', async () => {
-            const editPersonButton = await screen.findByText('Edit Person');
-
-            fireEvent.click(editPersonButton);
-
-            await screen.findByText('Save');
-        });
-
-        it('should cancel an assignment when you click on Cancel Assignment option', async () => {
-            const cancelAssignmentButton = await screen.findByText('Cancel Assignment');
-
-            fireEvent.click(cancelAssignmentButton);
-
-            await waitFor(() => {
-                expect(AssignmentClient.createAssignmentForDate).toBeCalledWith(
-                    TestData.originDateString,
-                    [],
-                    TestData.space,
-                    TestData.person1
-                );
-            });
         });
     });
 });
