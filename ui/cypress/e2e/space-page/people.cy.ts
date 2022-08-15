@@ -37,6 +37,10 @@ describe('People', () => {
 
         cy.clock(activeDate);
         cy.visitSpace(undefined, '', activeDate);
+
+        cy.log('**The archived and unassigned drawers should be closed by default**');
+        cy.contains('Adam Sandler').should('not.exist');
+        cy.contains('[data-testid*=archivedProduct_]', 'Archived Product').should('not.exist');
     });
 
     it('Create a new assigned person', () => {
@@ -81,7 +85,8 @@ describe('People', () => {
                 expect(personData.notes).to.equal(assignedPerson.notes);
                 expect(personData.spaceRole.name).to.equal(assignedPerson.role);
             }).then(() => {
-                cy.get(`[data-testid=assignmentCard__person_name]`)
+                cy.get(`[data-testid=productCardContainer__my_product]`)
+                    .find(`[data-testid=assignmentCard__person_name]`)
                     .should('contain', assignedPerson.name)
                     .should('contain', assignedPerson.role)
                     .then(() => {
@@ -92,7 +97,7 @@ describe('People', () => {
                         }
                     });
 
-                ensureNewAssignmentIsPresentInAssignmentDrawer(assignedPerson);
+                ensureNewAssignmentIsPresentInReassignmentDrawer(assignedPerson);
 
                 getCalendarToggle().click();
                 cy.getCalendarDate(notActiveDateString).should('have.class', highlightClass).click();
@@ -165,7 +170,8 @@ describe('People', () => {
                     expect(unassignedPerson.tags).to.contain(tag.name);
                 });
             }).then(() => {
-                cy.get(`[data-testid=assignmentCard__person_name]`)
+                cy.get('[data-testid=unassignedPeopleContainer]')
+                    .find(`[data-testid=assignmentCard__person_name]`)
                     .should('contain', unassignedPerson.name)
                     .should('contain', unassignedPerson.role)
                     .then(() => {
@@ -364,7 +370,7 @@ const submitPersonForm = (expectedSubmitButtonText: string): void => {
     cy.get('@personForm').should('not.exist');
 };
 
-const ensureNewAssignmentIsPresentInAssignmentDrawer = (assignedPerson: Person): void => {
+const ensureNewAssignmentIsPresentInReassignmentDrawer = (assignedPerson: Person): void => {
     cy.get('@reassignmentDrawer')
         .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
         .should('have.length', 1)
