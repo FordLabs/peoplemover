@@ -24,7 +24,6 @@ import selectEvent from 'react-select-event';
 import {emptyPerson} from 'Services/PersonService';
 import moment from 'moment';
 import {ViewingDateState} from 'State/ViewingDateState';
-import {PeopleState} from 'State/PeopleState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Person} from 'Types/Person';
 
@@ -44,72 +43,6 @@ describe('People actions', () => {
     beforeEach(() => {
         localStorage.removeItem('filters');
     })
-
-    describe('Person Form', () => {
-        localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
-        const viewingDate = new Date(2020, 5, 5)
-
-        beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(({set}) => {
-                set(ViewingDateState, viewingDate)
-                set(PeopleState,  TestData.people)
-                set(CurrentSpaceState, TestData.space)
-            });
-            await screen.findByText(addPersonButtonText);
-        });
-
-        it('should not submit assignment when nothing changed', async () => {
-            const createPersonButton = screen.getByText(addPersonButtonText);
-            fireEvent.click(createPersonButton);
-
-            fireEvent.click(screen.getByText(submitFormButtonText));
-
-            await waitFor(() =>
-                expect(AssignmentClient.createAssignmentForDate).not.toBeCalled()
-            );
-        });
-
-        it('creates the person specified by the PersonForm', async () => {
-            fireEvent.click(screen.getByText(addPersonButtonText));
-
-            fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'New Bobby'}});
-            fireEvent.change(screen.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
-            fireEvent.change(screen.getByLabelText('CDSID'), {target: {value: 'btables1'}});
-            fireEvent.click(screen.getByLabelText('Mark as New'));
-
-            await selectEvent.create(await screen.findByLabelText('Person Tags'), 'Low Achiever');
-            await screen.findByText('Low Achiever')
-
-            fireEvent.click(screen.getByText(submitFormButtonText));
-
-            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1));
-            const expectedPerson: Person = {
-                ...emptyPerson(),
-                name: 'New Bobby',
-                customField1: 'btables1',
-                newPerson: true,
-                newPersonDate: viewingDate,
-                tags: [{
-                    id: 1337,
-                    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                    name: 'Low Achiever',
-                }],
-            };
-            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson);
-        });
-
-        it('should not create person with empty value and display proper error message', async () => {
-            const createPersonButton = screen.getByText(addPersonButtonText);
-            fireEvent.click(createPersonButton);
-
-            fireEvent.change(screen.getByLabelText('Name'), {target: {value: ''}});
-            fireEvent.click(screen.getByText(submitFormButtonText));
-
-            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0));
-
-            expect(screen.getByText('Please enter a person name.')).toBeInTheDocument();
-        });
-    });
 
     describe('Roles', () => {
         const viewingDate: Date = new Date(2020, 5, 5)

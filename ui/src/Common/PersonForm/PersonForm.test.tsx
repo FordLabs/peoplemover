@@ -40,9 +40,9 @@ jest.mock('Services/Api/ProductTagClient');
 jest.mock('Services/Api/PersonTagClient');
 
 describe('Person Form', () => {
-    const mayFourteen: Date = new Date(2020, 4, 14);
+    const viewingDate: Date = new Date(2020, 4, 14);
     const recoilState = ({set}: MutableSnapshot) => {
-        set(ViewingDateState, mayFourteen);
+        set(ViewingDateState, viewingDate);
         set(ProductsState, TestData.products)
         set(CurrentSpaceState, TestData.space)
     }
@@ -155,6 +155,11 @@ describe('Person Form', () => {
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
         });
 
+        it('should not submit assignment when nothing changed', async () => {
+            fireEvent.click(screen.getByText('Add'));
+            await waitFor(() => expect(AssignmentClient.createAssignmentForDate).not.toBeCalled());
+        });
+
         it('create new person tags when one is typed in which does not already exist', async () => {
             const personTagsLabel = await screen.findByLabelText('Person Tags');
             await selectEvent.create(personTagsLabel, 'Low Achiever');
@@ -173,9 +178,45 @@ describe('Person Form', () => {
                 ...emptyPerson(),
                 name: 'person',
                 newPerson: true,
-                newPersonDate: mayFourteen,
+                newPersonDate: viewingDate,
             };
             await waitFor(() => expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson));
+        });
+
+        it('should populate person form and create person', async () => {
+            fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'New Bobby'}});
+            fireEvent.change(screen.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+            fireEvent.change(screen.getByLabelText('CDSID'), {target: {value: 'btables1'}});
+            fireEvent.click(screen.getByLabelText('Mark as New'));
+
+            await selectEvent.create(await screen.findByLabelText('Person Tags'), 'Low Achiever');
+            await screen.findByText('Low Achiever')
+
+            fireEvent.click(screen.getByText('Add'));
+
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1));
+            const expectedPerson: Person = {
+                ...emptyPerson(),
+                name: 'New Bobby',
+                customField1: 'btables1',
+                newPerson: true,
+                newPersonDate: viewingDate,
+                tags: [{
+                    id: 1337,
+                    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                    name: 'Low Achiever',
+                }],
+            };
+            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson);
+        });
+
+        it('should not create person with empty value and display proper error message', async () => {
+            fireEvent.change(screen.getByLabelText('Name'), {target: {value: ''}});
+            fireEvent.click(screen.getByText('Add'));
+
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0));
+
+            expect(screen.getByText('Please enter a person name.')).toBeInTheDocument();
         });
     });
 
@@ -195,7 +236,7 @@ describe('Person Form', () => {
                     personEdited={TestData.hank}
                 />,
                 ({set}) => {
-                    set(ViewingDateState, mayFourteen);
+                    set(ViewingDateState, viewingDate);
                     set(ProductsState, [
                         ...TestData.products,
                         {
@@ -316,7 +357,7 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            const expectedPerson: Person =  {...TestData.hank, newPerson: true, newPersonDate: mayFourteen};
+            const expectedPerson: Person =  {...TestData.hank, newPerson: true, newPersonDate: viewingDate};
             await waitFor(() => expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, expectedPerson));
         });
 
@@ -334,7 +375,7 @@ describe('Person Form', () => {
                     personEdited={TestData.archivedPerson}
                 />,
                 ({set}) => {
-                    set(ViewingDateState, mayFourteen);
+                    set(ViewingDateState, viewingDate);
                     set(ProductsState, [TestData.unassignedProduct, TestData.productWithoutAssignments]);
                     set(CurrentSpaceState, TestData.space)
                 }
@@ -348,7 +389,7 @@ describe('Person Form', () => {
 
             await waitFor( async () => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(1));
             await waitFor( async () => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-                moment(mayFourteen).format('YYYY-MM-DD'),
+                moment(viewingDate).format('YYYY-MM-DD'),
                 [{'placeholder': false, 'productId': TestData.productWithoutAssignments.id}],
                 TestData.space,
                 updatedPerson
