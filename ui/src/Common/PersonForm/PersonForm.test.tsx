@@ -396,4 +396,28 @@ describe('Person Form', () => {
             ));
         });
     });
+
+    describe('Deleting a person', () => {
+        beforeEach(async () => {
+            renderWithRecoil(<PersonForm isEditPersonForm={true}/>, recoilState);
+            await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
+            fireEvent.click(await screen.findByText('Delete'));
+        });
+
+        it('should shows the confirmation modal when the delete button is clicked', () => {
+            expect(screen.getByText(/Are you sure?/i)).toBeDefined();
+        });
+
+        it('should not show the confirmation modal after the cancel button is clicked', () => {
+            fireEvent.click(screen.getByTestId('confirmationModalCancel'));
+            expect(screen.queryByTestId('confirmationModalCancel')).toBeNull();
+            expect(screen.queryByText(/Are you sure?/i)).toBeNull();
+        });
+
+        it('should not show the confirmation modal after the delete button is clicked', () => {
+            fireEvent.click(screen.getByTestId('confirmDeleteButton'));
+            expect(screen.queryByText(/Are you sure you want to delete/i)).toBeNull();
+            expect(screen.queryByText(/Edit Person/i)).toBeNull();
+        });
+    });
 });
