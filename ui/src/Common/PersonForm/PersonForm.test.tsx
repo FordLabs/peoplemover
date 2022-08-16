@@ -40,9 +40,9 @@ jest.mock('Services/Api/ProductTagClient');
 jest.mock('Services/Api/PersonTagClient');
 
 describe('Person Form', () => {
-    const mayFourteen: Date = new Date(2020, 4, 14);
+    const viewingDate: Date = new Date(2020, 4, 14);
     const recoilState = ({set}: MutableSnapshot) => {
-        set(ViewingDateState, mayFourteen);
+        set(ViewingDateState, viewingDate);
         set(ProductsState, TestData.products)
         set(CurrentSpaceState, TestData.space)
     }
@@ -51,10 +51,113 @@ describe('Person Form', () => {
         AssignmentClient.getAssignmentsUsingPersonIdAndDate = jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] });
     })
 
+    it('should have correct placeholder texts and defaults', async () => {
+        renderWithRecoil(
+            <PersonForm isEditPersonForm={false} />,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+
+        await waitFor(() => expect(screen.getByPlaceholderText('e.g. Jane Smith')).toBeDefined());
+        const isNewCheckbox = screen.getByTestId('personFormIsNewCheckbox');
+        expect(isNewCheckbox).not.toBeChecked();
+        expect(screen.getByPlaceholderText('e.g. jsmith12')).toBeDefined();
+        expect(screen.getByText('Add a role')).toBeDefined();
+        expect(screen.getByText('unassigned')).toBeDefined();
+        expect(screen.getByText('Add person tags')).toBeDefined();
+        expect(screen.getByText('0 (255 characters max)')).toBeDefined();
+    });
+
+    it('should pre-populate form', async () => {
+        const viewingDate = new Date(2021, 4, 13);
+        const person = {...TestData.person1, newPerson: true}
+        renderWithRecoil(
+            <PersonForm isEditPersonForm personEdited={person} />,
+            ({set}) => {
+                set(CurrentSpaceState, TestData.space)
+                set(ViewingDateState, viewingDate)
+                set(ProductsState, [TestData.productWithAssignments])
+            }
+        );
+        await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toHaveBeenCalledWith(
+            TestData.space.uuid, person.id, viewingDate
+        ))
+        const expectedPersonName = person.name;
+        expect(screen.getByDisplayValue(expectedPersonName)).toBeDefined();
+
+        const isNewCheckbox = screen.getByTestId('personFormIsNewCheckbox');
+        expect(isNewCheckbox).toBeChecked();
+
+        const expectedCDSID = person.customField1!;
+        expect(screen.getByDisplayValue(expectedCDSID)).toBeDefined();
+        const expectedRole = TestData.softwareEngineer.name;
+        expect(screen.getByDisplayValue(expectedRole)).toBeDefined();
+        const expectedProductName = TestData.productWithAssignments.name
+        expect(screen.getByDisplayValue(expectedProductName)).toBeDefined();
+
+        const expectedPersonTag = person.tags[0].name;
+        expect(screen.getByText(expectedPersonTag)).toBeDefined();
+        const expectedNote = person.notes!;
+        expect(screen.getByDisplayValue(expectedNote)).toBeDefined();
+        expect(screen.getByText(`${expectedNote.length} (255 characters max)`)).toBeDefined();
+    });
+
+    it('should not show the unassigned product or archived products in product list', async () => {
+        const products = [TestData.productWithAssignments, TestData.archivedProduct, TestData.unassignedProduct];
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+            />,
+            ({set}) => {
+                set(ProductsState, products)
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+
+        expect(screen.getByText('unassigned')).toBeDefined();
+
+        const productTextToSelect = 'Product 1';
+        const productsMultiSelectField = await screen.findByLabelText('Assign to');
+        await selectEvent.select(productsMultiSelectField, productTextToSelect);
+
+        const product1Option = screen.getByText(productTextToSelect);
+        expect(product1Option).toBeDefined();
+        expect(product1Option).toHaveClass('product__multi-value__label');
+
+        expect(screen.queryByText('I am archived')).toBeNull();
+        expect(screen.queryByText('unassigned')).toBeNull();
+    });
+
+    it('should remove the unassigned product when a product is selected from dropdown', async () => {
+        const products = [TestData.productWithAssignments, TestData.unassignedProduct];
+        renderWithRecoil(
+            <PersonForm
+                isEditPersonForm={false}
+                initialPersonName="BRADLEY"
+            />,
+            ({set}) => {
+                set(ProductsState, products)
+                set(CurrentSpaceState, TestData.space)
+            }
+        );
+        const productDropDown = screen.getByLabelText('Assign to');
+        expect(screen.getByText('unassigned')).toBeDefined();
+        await selectEvent.select(productDropDown, 'Product 1');
+
+        expect(screen.queryByText('unassigned')).not.toBeInTheDocument();
+    });
+
     describe('Creating a new person', () => {
         beforeEach(async () => {
             renderWithRecoil(<PersonForm isEditPersonForm={false}/>, recoilState);
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
+        });
+
+        it('should not submit assignment when nothing changed', async () => {
+            fireEvent.click(screen.getByText('Add'));
+            await waitFor(() => expect(AssignmentClient.createAssignmentForDate).not.toBeCalled());
         });
 
         it('create new person tags when one is typed in which does not already exist', async () => {
@@ -75,9 +178,45 @@ describe('Person Form', () => {
                 ...emptyPerson(),
                 name: 'person',
                 newPerson: true,
-                newPersonDate: mayFourteen,
+                newPersonDate: viewingDate,
             };
             await waitFor(() => expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson));
+        });
+
+        it('should populate person form and create person', async () => {
+            fireEvent.change(screen.getByLabelText('Name'), {target: {value: 'New Bobby'}});
+            fireEvent.change(screen.getByLabelText('Role'), {target: {value: 'Software Engineer'}});
+            fireEvent.change(screen.getByLabelText('CDSID'), {target: {value: 'btables1'}});
+            fireEvent.click(screen.getByLabelText('Mark as New'));
+
+            await selectEvent.create(await screen.findByLabelText('Person Tags'), 'Low Achiever');
+            await screen.findByText('Low Achiever')
+
+            fireEvent.click(screen.getByText('Add'));
+
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(1));
+            const expectedPerson: Person = {
+                ...emptyPerson(),
+                name: 'New Bobby',
+                customField1: 'btables1',
+                newPerson: true,
+                newPersonDate: viewingDate,
+                tags: [{
+                    id: 1337,
+                    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                    name: 'Low Achiever',
+                }],
+            };
+            expect(PeopleClient.createPersonForSpace).toHaveBeenCalledWith(TestData.space, expectedPerson);
+        });
+
+        it('should not create person with empty value and display proper error message', async () => {
+            fireEvent.change(screen.getByLabelText('Name'), {target: {value: ''}});
+            fireEvent.click(screen.getByText('Add'));
+
+            await waitFor(() => expect(PeopleClient.createPersonForSpace).toBeCalledTimes(0));
+
+            expect(screen.getByText('Please enter a person name.')).toBeInTheDocument();
         });
     });
 
@@ -97,7 +236,7 @@ describe('Person Form', () => {
                     personEdited={TestData.hank}
                 />,
                 ({set}) => {
-                    set(ViewingDateState, mayFourteen);
+                    set(ViewingDateState, viewingDate);
                     set(ProductsState, [
                         ...TestData.products,
                         {
@@ -116,7 +255,7 @@ describe('Person Form', () => {
             await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
         }
 
-        it('display the person\'s existing tags when editing a person', async () => {
+        it('should display the person\'s existing tags when editing a person', async () => {
             await setupPersonForm();
             expect(await screen.findByText('The lil boss')).toBeDefined();
         });
@@ -218,7 +357,7 @@ describe('Person Form', () => {
             fireEvent.click(await screen.findByTestId('personFormIsNewCheckbox'));
             fireEvent.click(await screen.findByText('Save'));
 
-            const expectedPerson: Person =  {...TestData.hank, newPerson: true, newPersonDate: mayFourteen};
+            const expectedPerson: Person =  {...TestData.hank, newPerson: true, newPersonDate: viewingDate};
             await waitFor(() => expect(PeopleClient.updatePerson).toHaveBeenCalledWith(TestData.space, expectedPerson));
         });
 
@@ -236,7 +375,7 @@ describe('Person Form', () => {
                     personEdited={TestData.archivedPerson}
                 />,
                 ({set}) => {
-                    set(ViewingDateState, mayFourteen);
+                    set(ViewingDateState, viewingDate);
                     set(ProductsState, [TestData.unassignedProduct, TestData.productWithoutAssignments]);
                     set(CurrentSpaceState, TestData.space)
                 }
@@ -250,11 +389,35 @@ describe('Person Form', () => {
 
             await waitFor( async () => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledTimes(1));
             await waitFor( async () => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-                moment(mayFourteen).format('YYYY-MM-DD'),
+                moment(viewingDate).format('YYYY-MM-DD'),
                 [{'placeholder': false, 'productId': TestData.productWithoutAssignments.id}],
                 TestData.space,
                 updatedPerson
             ));
+        });
+    });
+
+    describe('Deleting a person', () => {
+        beforeEach(async () => {
+            renderWithRecoil(<PersonForm isEditPersonForm={true}/>, recoilState);
+            await waitFor(() => expect(PersonTagClient.get).toHaveBeenCalled())
+            fireEvent.click(await screen.findByText('Delete'));
+        });
+
+        it('should shows the confirmation modal when the delete button is clicked', () => {
+            expect(screen.getByText(/Are you sure?/i)).toBeDefined();
+        });
+
+        it('should not show the confirmation modal after the cancel button is clicked', () => {
+            fireEvent.click(screen.getByTestId('confirmationModalCancel'));
+            expect(screen.queryByTestId('confirmationModalCancel')).toBeNull();
+            expect(screen.queryByText(/Are you sure?/i)).toBeNull();
+        });
+
+        it('should not show the confirmation modal after the delete button is clicked', () => {
+            fireEvent.click(screen.getByTestId('confirmDeleteButton'));
+            expect(screen.queryByText(/Are you sure you want to delete/i)).toBeNull();
+            expect(screen.queryByText(/Edit Person/i)).toBeNull();
         });
     });
 });

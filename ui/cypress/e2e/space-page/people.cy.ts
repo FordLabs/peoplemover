@@ -287,7 +287,7 @@ describe('People', () => {
         });
     });
 
-    context('Edit Menu', () => {
+    context('Person/Assignment Menu', () => {
         beforeEach(() => {
             cy.clock().then((clock) => {
                 clock.restore()
@@ -319,6 +319,22 @@ describe('People', () => {
             cy.contains('Unmark as Placeholder').click();
 
             cy.get('[data-testid=assignmentCard__jane_smith]').should('not.have.class', 'placeholder');
+        });
+
+        it('Cancel an assignment', () => {
+            const assignmentName = 'Bob Barker';
+            cy.get('[data-testid="productCardContainer__my_product"]').should('contain', assignmentName);
+            cy.get('[data-testid="unassignedDrawerCaret"]').click();
+            cy.get('[data-testid="unassignedDrawer"]').should('not.contain', assignmentName);
+
+            cy.get('[data-testid="reassignmentDrawer"]').should('contain', assignmentName);
+
+            cy.get('[data-testid=editPersonIconContainer__bob_barker]').click();
+            cy.contains('Cancel Assignment').click();
+
+            cy.get('[data-testid="productCardContainer__my_product"]').should('not.contain', assignmentName);
+            cy.get('[data-testid="unassignedDrawer"]').should('contain', assignmentName);
+            cy.get('[data-testid="reassignmentDrawer"]').should('not.contain', assignmentName);
         });
     });
 });
