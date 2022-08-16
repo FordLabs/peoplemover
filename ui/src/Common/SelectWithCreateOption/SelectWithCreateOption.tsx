@@ -100,8 +100,8 @@ export interface Metadata {
 export interface ReactSelectProps {
     className?: string;
     metadata: Metadata;
-    value?: Option | undefined;
-    values?: Option[] | undefined;
+    value?: Option;
+    values?: Option[];
     options: Option[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (option: any) => void;
