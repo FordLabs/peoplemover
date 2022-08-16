@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 internal class AssignmentV1ToAssignmentV2ConverterTest {
-
     private val spaceName = "Bugs Bunny"
     private val spaceUuid = "Outer Space"
     private val personName = "Luke Skywalker"
@@ -22,6 +21,14 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     private val june6th2016 = LocalDate.parse("2021-06-16")
     private val june6th2021 = LocalDate.parse("2021-06-06")
     private val june26th2026 = LocalDate.parse("2021-06-26")
+    private val jan1st2275 = LocalDate.parse("2275-01-01")
+    private val jan2nd2275 = LocalDate.parse("2275-01-02")
+    private val jan3rd2275 = LocalDate.parse("2275-01-03")
+    private val jan4th2275 = LocalDate.parse("2275-01-04")
+    private val jan5th2275 = LocalDate.parse("2275-01-05")
+    private val jan10th2275 = LocalDate.parse("2275-01-10")
+    private val jan14th2275 = LocalDate.parse("2275-01-14")
+    private val jan15th2275 = LocalDate.parse("2275-01-15")
 
 
     @Test
@@ -51,7 +58,7 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `convert can merge two old assignments to the same product that are contiguous when there's one that isn't the same product`() {
         val testPerson = Person(id = 1, name = spaceName, spaceUuid = spaceUuid)
         val juneAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = spaceUuid, effectiveDate = june6th2021)
-        val date = LocalDate.parse("2021-06-12");
+        val date = LocalDate.parse("2021-06-12")
         val assignment4 = AssignmentV1(person = testPerson, productId = 2, spaceUuid = spaceUuid, effectiveDate = date)
         val julyAssignment = AssignmentV1(person = testPerson, productId = 1, spaceUuid = spaceUuid, effectiveDate = july6th2021)
 
@@ -151,18 +158,18 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = spaceName, spaceUuid = spaceUuid)
         val testPerson2 = Person(id = 2, name = spaceName, spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null)
-        val assignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = null)
+        val assignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=jan2nd2275, endDate = null)
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,
                 assignment2
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(3,false)))
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson2, preExistingAssignments)
 
-        val expectedAssignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-03"))
-        val expectedAssignment3 = AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null)
+        val expectedAssignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=jan2nd2275, endDate = jan3rd2275)
+        val expectedAssignment3 = AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate = jan3rd2275, endDate = null)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, expectedAssignment2, expectedAssignment3))
     }
 
@@ -171,23 +178,23 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Al Capone", spaceUuid = spaceUuid)
         val testPerson2 = Person(id = 2, name = "John Dillinger", spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null)
-        val assignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
-        val assignment3 = AssignmentV2(person=testPerson2, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = null)
+        val assignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=jan2nd2275, endDate = null)
+        val assignment3 = AssignmentV2(person=testPerson2, productId = 2, spaceUuid = spaceUuid, startDate=jan2nd2275, endDate = null)
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,
                 assignment2,
                 assignment3
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(1,false),
                 ProductPlaceholderPair(3,false)
         ))
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson2, preExistingAssignments)
 
-        val expectedAssignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = null)
-        val expectedAssignment3 = AssignmentV2(person=testPerson2, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-03"))
-        val expectedAssignment4 = AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-03"), endDate = null)
+        val expectedAssignment2 = AssignmentV2(person=testPerson2, productId = 1, spaceUuid = spaceUuid, startDate=jan2nd2275, endDate = null)
+        val expectedAssignment3 = AssignmentV2(person=testPerson2, productId = 2, spaceUuid = spaceUuid, startDate=jan2nd2275, endDate = jan3rd2275)
+        val expectedAssignment4 = AssignmentV2(person=testPerson2, productId = 3, spaceUuid = spaceUuid, startDate=jan3rd2275, endDate = null)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, expectedAssignment2, expectedAssignment3, expectedAssignment4))
     }
 
@@ -195,7 +202,7 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can make an assignment that is before any of their current assignments is created appropriately` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = personName, spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = null)
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = null)
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1
         )
@@ -205,8 +212,8 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 0, spaceUuid = spaceUuid, startDate = LocalDate.parse("2274-01-01"), endDate = LocalDate.parse("2275-01-01"))
-        val expectedAssignment2 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = null)
+        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 0, spaceUuid = spaceUuid, startDate = LocalDate.parse("2274-01-01"), endDate = jan1st2275)
+        val expectedAssignment2 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = null)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, expectedAssignment2))
     }
 
@@ -214,21 +221,21 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can merge two assignments because of an incoming assignment` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = personName, spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-04"), endDate = LocalDate.parse("2275-01-05"))
-        val assignmentToAnotherProduct = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan2nd2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan4th2275, endDate = jan5th2275)
+        val assignmentToAnotherProduct = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,assignment3,assignmentToAnotherProduct
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(1,false)
         ))
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-05"))
-        val expectedAssignmentToAnotherProduct = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-03"))
+        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = jan5th2275)
+        val expectedAssignmentToAnotherProduct = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan3rd2275)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, expectedAssignmentToAnotherProduct))
     }
 
@@ -236,21 +243,21 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can merge two assignments separated by any length of time because of an incoming assignment` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = personName, spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-14"), endDate = LocalDate.parse("2275-01-15"))
-        val assignmentToAnotherProduct = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan2nd2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan14th2275, endDate = jan15th2275)
+        val assignmentToAnotherProduct = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,assignment3,assignmentToAnotherProduct
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(1,false),
                 ProductPlaceholderPair(2,false)
         ))
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-15"))
+        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = jan15th2275)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, assignmentToAnotherProduct))
     }
 
@@ -258,21 +265,21 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can unassign by omitting a product from the request` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = personName, spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-14"), endDate = LocalDate.parse("2275-01-15"))
-        val assignmentToProduct2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan2nd2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan14th2275, endDate = jan15th2275)
+        val assignmentToProduct2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,assignment3,assignmentToProduct2
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(1,false)
         ))
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-15"))
-        val expectedAssignmentToProduct2 = AssignmentV2(person=testPerson1, productId=2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-03"))
+        val expectedAssignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = jan15th2275)
+        val expectedAssignmentToProduct2 = AssignmentV2(person=testPerson1, productId=2, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = jan3rd2275)
 
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, expectedAssignmentToProduct2))
     }
@@ -281,34 +288,34 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put does not transform input` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Darth Vader", spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-14"), endDate = LocalDate.parse("2275-01-15"))
-        val assignmentToProduct2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan2nd2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan14th2275, endDate = jan15th2275)
+        val assignmentToProduct2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,assignment3,assignmentToProduct2
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(1,false)
         ))
 
         AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        assertThat(assignmentToProduct2).isEqualTo( AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10")))
+        assertThat(assignmentToProduct2).isEqualTo( AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275))
     }
 
     @Test
     fun `put can merge with a later assignment` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = personName, spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-05"))
-        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-03"), endDate = LocalDate.parse("2275-01-05"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-04"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan5th2275)
+        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan3rd2275, endDate = jan5th2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan4th2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1,assignment2,assignment3
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-02"), setOf(
+        val toPut = CreateAssignmentsRequest(jan2nd2275, setOf(
                 ProductPlaceholderPair(1,false),
                 ProductPlaceholderPair(2,false),
                 ProductPlaceholderPair(3,false)
@@ -316,7 +323,7 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-02"), endDate = LocalDate.parse("2275-01-05"))
+        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = jan2nd2275, endDate = jan5th2275)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, expectedMergedAssignment, assignment3))
     }
 
@@ -324,15 +331,15 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can insert a set of assignments, skipping and merging as necessary` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Han Solo", spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
-        val assignment2a = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
-        val assignment2b = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-06"), endDate = LocalDate.parse("2275-01-10"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-04"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
+        val assignment2a = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan2nd2275)
+        val assignment2b = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-06"), endDate = jan10th2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan4th2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1, assignment2a, assignment2b,assignment3
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-04"), setOf(
+        val toPut = CreateAssignmentsRequest(jan4th2275, setOf(
                 ProductPlaceholderPair(1,false),
                 ProductPlaceholderPair(2,false),
                 ProductPlaceholderPair(3,false)
@@ -340,7 +347,7 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-04"), endDate = LocalDate.parse("2275-01-10"))
+        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = jan4th2275, endDate = jan10th2275)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, assignment2a, expectedMergedAssignment, assignment3))
     }
 
@@ -348,14 +355,14 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can ignore assignment requests that cause no change to existing assignments` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "Kylo Ren", spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
-        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-03"), endDate = LocalDate.parse("2275-01-10"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-03"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
+        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan3rd2275, endDate = jan10th2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan3rd2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1, assignment2,assignment3
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(1,false),
                 ProductPlaceholderPair(2,false),
                 ProductPlaceholderPair(3,false)
@@ -370,9 +377,9 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can extend the start date of a product if it needs to start earlier` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "BB8", spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
-        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-10"))
-        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-02"))
+        val assignment1 = AssignmentV2(person=testPerson1, productId = 1, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
+        val assignment2 = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan10th2275)
+        val assignment3 = AssignmentV2(person=testPerson1, productId = 3, spaceUuid = spaceUuid, startDate=jan1st2275, endDate = jan2nd2275)
 
         val preExistingAssignments : List<AssignmentV2> = listOf(
                 assignment1, assignment2,assignment3
@@ -383,7 +390,7 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2274-12-01"), endDate = LocalDate.parse("2275-01-10"))
+        val expectedMergedAssignment = AssignmentV2(person=testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2274-12-01"), endDate = jan10th2275)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(assignment1, expectedMergedAssignment, assignment3))
     }
 
@@ -391,19 +398,19 @@ internal class AssignmentV1ToAssignmentV2ConverterTest {
     fun `put can end an assignment and then start a new assignment` () {
         val spaceUuid = "doesntmatter"
         val testPerson1 = Person(id = 1, name = "C3PO", spaceUuid = spaceUuid)
-        val assignment1 = AssignmentV2(person = testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = null)
+        val assignment1 = AssignmentV2(person = testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = null)
 
         val preExistingAssignments: List<AssignmentV2> = listOf(
                 assignment1
         )
-        val toPut = CreateAssignmentsRequest(LocalDate.parse("2275-01-03"), setOf(
+        val toPut = CreateAssignmentsRequest(jan3rd2275, setOf(
                 ProductPlaceholderPair(2, false)
         ))
 
         val result = AssignmentV1ToAssignmentV2Converter().put(toPut, testPerson1, preExistingAssignments)
 
-        val expectedAssignment1 = AssignmentV2(person = testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-01"), endDate = LocalDate.parse("2275-01-03"))
-        val expectedAssignment2 = AssignmentV2(person = testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = LocalDate.parse("2275-01-03"), endDate = null)
+        val expectedAssignment1 = AssignmentV2(person = testPerson1, productId = 1, spaceUuid = spaceUuid, startDate = jan1st2275, endDate = jan3rd2275)
+        val expectedAssignment2 = AssignmentV2(person = testPerson1, productId = 2, spaceUuid = spaceUuid, startDate = jan3rd2275, endDate = null)
         assertThat(result).containsExactlyInAnyOrderElementsOf(listOf(expectedAssignment1, expectedAssignment2))
     }
 }
