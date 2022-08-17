@@ -18,7 +18,6 @@
 import CalendarHeader from './CalendarHeader';
 import CalendarInputLabel from './CalendarInputLabel';
 import DatePicker from 'react-datepicker';
-import ReactDatePicker from 'react-datepicker';
 import React, {createRef, useEffect, useState} from 'react';
 import AssignmentClient from '../../Services/Api/AssignmentClient';
 import moment from 'moment';
@@ -38,7 +37,7 @@ function Calendar(): JSX.Element {
     const [viewingDate, setViewingDate] = useRecoilState(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
-    const calendarRef = createRef<ReactDatePicker>();
+    const calendarRef = createRef<DatePicker>();
 
     useEffect(() => {
         if (isCalendarOpen) {
