@@ -22,6 +22,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Description
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -33,7 +34,8 @@ import java.time.format.DateTimeFormatter
 @AutoConfigureMockMvc
 class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest() {
     @Test
-    fun `GET should return all reassignments for the given spaceUuid and exact requested date`() {
+    @Description("GET should return all reassignments for the given spaceUuid and exact requested date")
+    fun getReassignmentsByDate() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -83,7 +85,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should handle reassignment logic for person with multiple assignments changing only one of the assignments`() {
+    @Description("GET should handle reassignment logic for person with multiple assignments changing only one of the assignments")
+    fun getReassignmentsShouldChangeOnlyOneAssignment() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -141,8 +144,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should return all reassignments should handle multiple historical assignments in db`() {
-
+    @Description("GET should return all reassignments should handle multiple historical assignments in db")
+    fun getReassignmentsShouldHandleMultipleAssignments() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -191,11 +194,9 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
         assertThat(actualReassignments).contains(reassignment)
     }
 
-    private fun baseReassignmentUrl(spaceUuid: String, date: String) = "/api/spaces/$spaceUuid/reassignment/$date"
-
     @Test
-    fun `GET should return reassignments with empty string fromProductName when there are no previous assignments`() {
-
+    @Description("GET should return reassignments with empty string fromProductName when there are no previous assignments")
+    fun getReassignmentsWhenNoPreviousAssignments() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -228,7 +229,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should return no reassignment when fromProductName is empty and toProductName is unassigned`() {
+    @Description("GET should return no reassignment when fromProductName is empty and toProductName is unassigned")
+    fun getReassignmentsReturnNone() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -254,9 +256,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should handle reassignments for multiple people being reassigned and sort in reverse chronological order`() {
-
-
+    @Description("GET should handle reassignments for multiple people being reassigned and sort in reverse chronological order")
+    fun getReassignmentsAndHandleForMultiplePeople() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -321,7 +322,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should handle one assignment being cancelled when a person is on multiple assignments`() {
+    @Description("GET should handle one assignment being cancelled when a person is on multiple assignments")
+    fun getReassignmentsAndHandleOneAssignmentOnMultiple() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -381,7 +383,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should handle one assignment being cancelled when a person is on multiple assignments and there is more than one reassignment`() {
+    @Description("GET should handle one assignment being cancelled when a person is on multiple assignments and there is more than one reassignment")
+    fun getReassignmentsCancelOne() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -457,7 +460,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should handle one assignment being cancelled and one being reassigned when a person is on multiple assignments and there is more than one reassignment`() {
+    @Description("GET should handle one assignment being cancelled and one being reassigned when a person is on multiple assignments and there is more than one reassignment")
+    fun getReassignmentsCancelOneReassignOne() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -533,7 +537,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should handle when one person is moved from two products to another two products `() {
+    @Description("GET should handle when one person is moved from two products to another two products")
+    fun getReassignmentsMoveAssignmentFrom2ProductsToDifferent2Products() {
         assignmentRepository.save(
             AssignmentV1(
                 person = person,
@@ -595,7 +600,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should return all reassignments when requested date is today for read only space`() {
+    @Description("GET should return all reassignments when requested date is today for read only space")
+    fun getReassignmentsForToday() {
         assignmentRepository.save(
             AssignmentV1(
                 person = personInReadOnlySpace,
@@ -645,7 +651,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should return all reassignments when requested date is tomorrow for read only space`() {
+    @Description("GET should return all reassignments when requested date is tomorrow for read only space")
+    fun getReassignmentsForTomorrow() {
         val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
         mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, tomorrow))
@@ -656,7 +663,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should return all reassignments when requested date is yesterday for read only space`() {
+    @Description("GET should return all reassignments when requested date is yesterday for read only space")
+    fun getReassignmentsForYesterday() {
         val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
         mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, yesterday))
@@ -667,7 +675,8 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
     }
 
     @Test
-    fun `GET should return FORBIDDEN when requested date is not valid for read only space`() {
+    @Description("GET should return FORBIDDEN when requested date is not valid for read only space")
+    fun getReassignmentsReturnForbiddenForInvalidDate() {
         mockMvc.perform(
             get(baseReassignmentUrl(readOnlySpace.uuid, march1))
                 .header("Authorization", "Bearer $GOOD_TOKEN")
@@ -676,4 +685,6 @@ class AssignmentControllerReassignmentsApiTest : AssignmentControllerApiBaseTest
             .andReturn()
 
     }
+
+    private fun baseReassignmentUrl(spaceUuid: String, date: String) = "/api/spaces/$spaceUuid/reassignment/$date"
 }
