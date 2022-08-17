@@ -59,20 +59,20 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
         setEditRoleIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
-    const editRole = async (role: RoleTagRequest): Promise<unknown> => {
-        return await RoleClient.edit(role, currentSpace)
+    const editRole = (role: RoleTagRequest): Promise<void> => {
+        return RoleClient.edit(role, currentSpace)
             .then(() => {
                 fetchRoles();
                 returnToViewState();
             });
     };
 
-    const addRole = async (role: RoleTagRequest): Promise<unknown> => {
+    const addRole = (role: RoleTagRequest): Promise<void> => {
         const newRole = {
             name: role.name,
             colorId: role.colorId,
         };
-        return await RoleClient.add(newRole, currentSpace)
+        return RoleClient.add(newRole, currentSpace)
             .then(() => {
                 fetchRoles();
                 returnToViewState();
