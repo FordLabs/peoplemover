@@ -50,6 +50,7 @@ import {RoleTagRequest} from 'Types/TagRequest';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 import {Assignment} from 'Types/Assignment';
+import CDSIDInput from "./CDSIDInput/CDSIDInput";
 
 import './PersonForm.scss';
 
@@ -317,21 +318,12 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                         <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
                     </div>
                 </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="cdsid">CDSID</label>
-                    <input className="formInput formTextInput"
-                        data-testid="personFormCustomField1"
-                        type="text"
-                        name="cdsid"
-                        id="cdsid"
-                        value={person.customField1 || ''}
-                        onChange={(event): void => {
-                            updatePersonField('customField1', event.target.value);
-                        }}
-                        autoComplete="off"
-                        placeholder="e.g. jsmith12"
-                    />
-                </div>
+                <CDSIDInput
+                    value={person.customField1}
+                    onChange={(event): void => {
+                        updatePersonField('customField1', event.target.value);
+                    }}
+                />
                 <SelectWithCreateOption
                     metadata={ROLE_TAGS}
                     useColorBadge
