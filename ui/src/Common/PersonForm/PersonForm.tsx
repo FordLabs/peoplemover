@@ -51,6 +51,8 @@ import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 import {Assignment} from 'Types/Assignment';
 import CDSIDInput from "./CDSIDInput/CDSIDInput";
+import MarkAsNewCheckbox from "./MarkAsNewCheckbox/MarkAsNewCheckbox";
+import NameInput from "./NameInput/NameInput";
 
 import './PersonForm.scss';
 
@@ -285,38 +287,19 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                 data-testid="personForm"
                 onSubmit={(event): Promise<void> => handleSubmit(event)}>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="name">Name</label>
-                    <input className="formInput formTextInput"
-                        data-testid="personFormNameField"
-                        type="text"
-                        name="name"
-                        id="name"
+                    <NameInput
                         value={person.name}
-                        onChange={(event): void => {
-                            updatePersonField('name', event.target.value);
-                        }}
-                        autoComplete="off"
-                        placeholder="e.g. Jane Smith"
+                        onChange={(event): void => updatePersonField('name', event.target.value)}
+                        isPersonNameInvalid={isPersonNameInvalid}
                     />
-                    {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
-                    <div className="isNewContainer">
-                        <input className="checkbox"
-                            data-testid="personFormIsNewCheckbox"
-                            id="isNew"
-                            type="checkbox"
-                            checked={person.newPerson}
-                            onChange={(): void => {
-                                const newPersonFlag = !person.newPerson;
-                                updatePersonField('newPerson', newPersonFlag);
-                                if (newPersonFlag === initialNewPersonFlag) {
-                                    setHasNewPersonChanged(false);
-                                } else {
-                                    setHasNewPersonChanged(true);
-                                }
-                            }}
-                        />
-                        <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
-                    </div>
+                    <MarkAsNewCheckbox
+                        isChecked={person.newPerson}
+                        onChange={(): void => {
+                            const newPersonFlag = !person.newPerson;
+                            updatePersonField('newPerson', newPersonFlag);
+                            setHasNewPersonChanged(!(newPersonFlag === initialNewPersonFlag));
+                        }}
+                    />
                 </div>
                 <CDSIDInput
                     value={person.customField1}
