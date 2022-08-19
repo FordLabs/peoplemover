@@ -191,10 +191,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
 
-    const getAssignmentHistoryContent = (): JSX.Element => {
-        return (personEdited ? (<AssignmentHistory person={personEdited}/>) : <></>);
-    };
-
     return (
         <div className="formContainer">
             <form className="form" data-testid="personForm" onSubmit={handleSubmit}>
@@ -233,7 +229,11 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                         setSelectedProducts(updatedProducts);
                     }}
                 />
-                {isEditPersonForm && <div className="formItem">{getAssignmentHistoryContent()}</div>}
+                {isEditPersonForm && personEdited && (
+                    <div className="formItem">
+                        <AssignmentHistory person={personEdited}/>
+                    </div>
+                )}
                 <FormTagsField
                     tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
                     tagClient={PersonTagClient}
