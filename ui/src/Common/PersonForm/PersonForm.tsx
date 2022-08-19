@@ -24,11 +24,7 @@ import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
 import FormNotesTextArea from 'Common/FormNotesTextArea/FormNotesTextArea';
 import FormButton from 'Common/FormButton/FormButton';
-import {MetadataReactSelectProps} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
-import FormTagsField from 'Common/FormTagsField/FormTagsField';
-import PersonTagClient from 'Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
-import ToolTip from 'Common/ToolTips/ToolTip';
 import {AssignmentHistory} from 'Common/PersonForm/AssignmentHistory/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
@@ -44,10 +40,11 @@ import CDSIDInput from "./CDSIDInput/CDSIDInput";
 import MarkAsNewCheckbox from "./MarkAsNewCheckbox/MarkAsNewCheckbox";
 import NameInput from "./NameInput/NameInput";
 import RoleTagsDropdown from "./RoleTagsDropdown/RoleTagsDropdown";
-
-import './PersonForm.scss';
 import AssignToProductDropdown from "./AssignToProductDropdown/AssignToProductDropdown";
 import DeleteButton from "./DeleteButton/DeleteButton";
+import PersonTagsDropdown from "./PersonTagsDropdown/PersonTagsDropdown";
+
+import './PersonForm.scss';
 
 interface Props {
     isEditPersonForm: boolean
@@ -187,10 +184,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
 
-    const toolTipContent = (): JSX.Element => {
-        return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
-    };
-
     return (
         <div className="formContainer">
             <form className="form" data-testid="personForm" onSubmit={handleSubmit}>
@@ -234,20 +227,17 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                         <AssignmentHistory person={personEdited}/>
                     </div>
                 )}
-                <FormTagsField
-                    tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
-                    tagClient={PersonTagClient}
-                    currentTagsState={{currentTags: person.tags}}
-                    selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
-                    loadingState={{isLoading, setIsLoading}}
-                    toolTip={<ToolTip toolTipLabel="What's this?" contentElement={toolTipContent()}/>}
+                <PersonTagsDropdown
+                    value={person.tags}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    selectedPersonTags={selectedPersonTags}
+                    setSelectedPersonTags={setSelectedPersonTags}
                 />
                 <div className="formItem">
                     <FormNotesTextArea
                         notes={person.notes}
-                        callBack={(notes): void => {
-                            updatePersonField('notes', notes);
-                        }}
+                        callBack={(notes): void => updatePersonField('notes', notes)}
                     />
                 </div>
                 <div className="yesNoButtons">
