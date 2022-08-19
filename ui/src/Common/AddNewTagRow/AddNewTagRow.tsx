@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
-import React, {useState} from 'react';
-import {createDataTestId} from 'Utils/ReactUtils';
+import { JSX } from '@babel/types';
+import React, { useState } from 'react';
+import { createDataTestId } from 'Utils/ReactUtils';
 import EditTagRow from '../EditTagRow/EditTagRow';
-import {TagRequest} from 'Types/TagRequest';
-import {TagNameType, TagType} from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {Color} from 'Types/Color';
+import { TagRequest } from 'Types/TagRequest';
+import {
+    TagNameType,
+    TagType,
+} from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import { Color } from 'Types/Color';
 
 interface Props {
     colors?: Array<Color>;
@@ -65,11 +68,13 @@ const AddNewTagRow = ({
     };
 
     return !showAddTagState ? (
-        <button className="addNewTagRow"
+        <button
+            className="addNewTagRow"
             disabled={disabled}
             data-testid={createDataTestId('addNewButton', testIdSuffix)}
             onClick={(): void => updateViewState(true)}
-            onKeyDown={(e): void => openAddTagRow(e)}>
+            onKeyDown={(e): void => openAddTagRow(e)}
+        >
             <div className="addNewTagCircle" data-testid="addNewTraitCircle">
                 <i className="material-icons">add_circle</i>
             </div>

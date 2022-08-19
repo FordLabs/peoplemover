@@ -23,9 +23,9 @@ function ForbiddenErrorPage() {
     return (
         <ErrorPageTemplate
             errorGraphic={errorImageSrc}
-            errorText="You don&apos;t have access to this page. Please request access."
+            errorText="You don't have access to this page. Please request access."
         />
-    )
+    );
 }
 
 export default ForbiddenErrorPage;

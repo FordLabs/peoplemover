@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-import {axe} from 'jest-axe';
-import {screen} from '@testing-library/react';
-import TestUtils, {renderWithRecoil} from '../../Utils/TestUtils';
-import {MemoryRouter} from 'react-router-dom';
-import {MutableSnapshot} from 'recoil';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import { axe } from 'jest-axe';
+import { screen } from '@testing-library/react';
+import TestUtils, { renderWithRecoil } from '../../Utils/TestUtils';
+import { MemoryRouter } from 'react-router-dom';
+import { MutableSnapshot } from 'recoil';
+import { CurrentSpaceState } from '../../State/CurrentSpaceState';
 import React from 'react';
 import TestData from '../../Utils/TestData';
-import {dashboardUrl} from '../../Routes';
+import { dashboardUrl } from '../../Routes';
 import SpacePageHeader from './SpacePageHeader';
-import {shouldShowAllAccountDropdownOptions} from '../../Utils/HeaderTestUtils';
+import { shouldShowAllAccountDropdownOptions } from '../../Utils/HeaderTestUtils';
 
 describe('Space Page Header', () => {
     let container: string | Element;
@@ -33,15 +33,15 @@ describe('Space Page Header', () => {
     beforeEach(() => {
         TestUtils.enableInviteUsersToSpace();
 
-        ({container} = renderWithRecoil(
+        ({ container } = renderWithRecoil(
             <MemoryRouter initialEntries={[`/${TestData.space.uuid}`]}>
                 <SpacePageHeader />
             </MemoryRouter>,
-            ({set}: MutableSnapshot) => {
-                set(CurrentSpaceState, TestData.space)
+            ({ set }: MutableSnapshot) => {
+                set(CurrentSpaceState, TestData.space);
             }
         ));
-    })
+    });
 
     it('should have no axe violations', async () => {
         const results = await axe(container);
@@ -59,7 +59,10 @@ describe('Space Page Header', () => {
 
     it('should render "Skip to main content" accessibility link', () => {
         const skipButton = screen.getByText('Skip to main content');
-        expect(skipButton).toHaveAttribute('href', '#main-content-landing-target')
+        expect(skipButton).toHaveAttribute(
+            'href',
+            '#main-content-landing-target'
+        );
     });
 
     it('should show logo that links back to the dashboard', () => {
@@ -72,7 +75,10 @@ describe('Space Page Header', () => {
     it('should show "Time On Product" link', () => {
         const timeOnProductLink = screen.getByText('Time On Product >');
         expect(timeOnProductLink).toBeDefined();
-        expect(timeOnProductLink).toHaveAttribute('href', `/${TestData.space.uuid}/timeonproduct`);
+        expect(timeOnProductLink).toHaveAttribute(
+            'href',
+            `/${TestData.space.uuid}/timeonproduct`
+        );
         expect(screen.queryByText('< Back')).toBeNull();
     });
 

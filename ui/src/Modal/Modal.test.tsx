@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import {render, screen, waitFor} from '@testing-library/react';
-import {axe} from 'jest-axe';
-import {RecoilRoot} from 'recoil';
-import {RecoilObserver} from 'Utils/RecoilObserver';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import { render, screen, waitFor } from '@testing-library/react';
+import { axe } from 'jest-axe';
+import { RecoilRoot } from 'recoil';
+import { RecoilObserver } from 'Utils/RecoilObserver';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
 
 import Modal from './Modal';
 

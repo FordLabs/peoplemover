@@ -15,16 +15,17 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect} from 'react';
-import {useA11yDialog} from 'react-a11y-dialog';
-import {useRecoilState} from 'recoil';
+import React, { useCallback, useEffect } from 'react';
+import { useA11yDialog } from 'react-a11y-dialog';
+import { useRecoilState } from 'recoil';
 
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
 
 import './Modal.scss';
 
 function Modal() {
-    const [modalContents, setModalContents] = useRecoilState<ModalContents | null>(ModalContentsState);
+    const [modalContents, setModalContents] =
+        useRecoilState<ModalContents | null>(ModalContentsState);
 
     const [modalInstance, attr] = useA11yDialog({
         id: 'modal-container',
@@ -65,12 +66,15 @@ function Modal() {
             <div
                 {...attr.dialog}
                 data-testid="modalContent"
-                className={ `modal-content ${ modalContents?.hideBackground ? '' : 'form-container' }`}
+                className={`modal-content ${
+                    modalContents?.hideBackground ? '' : 'form-container'
+                }`}
             >
-                <p {...attr.title}
+                <p
+                    {...attr.title}
                     className="modal-title"
                     data-testid="modalTitle"
-                    style={{ display: modalContents?.hideTitle ? 'none': '' }}
+                    style={{ display: modalContents?.hideTitle ? 'none' : '' }}
                 >
                     {modalContents?.title}
                 </p>

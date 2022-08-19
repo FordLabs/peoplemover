@@ -1,8 +1,10 @@
-import {JSX} from '@babel/types';
-import SelectWithHTMLOptions, {OptionType} from 'Common/SelectWithHTMLOptions/SelectWithHTMLOptions';
+import { JSX } from '@babel/types';
+import SelectWithHTMLOptions, {
+    OptionType,
+} from 'Common/SelectWithHTMLOptions/SelectWithHTMLOptions';
 import React from 'react';
 import ColorCircle from 'Common/ColorCircle/ColorCircle';
-import {Color} from 'Types/Color';
+import { Color } from 'Types/Color';
 
 const colorMapping: { [key: string]: string } = {
     '#81C0FA': 'Blue',
@@ -22,9 +24,15 @@ interface Props {
     handleColorChange: (selectedOption: OptionType) => void;
 }
 
-const ColorDropdown = ({ selectedColorId, colors, handleColorChange }: Props, ): JSX.Element => {
+const ColorDropdown = ({
+    selectedColorId,
+    colors,
+    handleColorChange,
+}: Props): JSX.Element => {
     const selectedColorOption = (selectedColorId?: number): OptionType => {
-        const color = colors.find(color => color.id === selectedColorId ) || colors[colors.length - 1];
+        const color =
+            colors.find((color) => color.id === selectedColorId) ||
+            colors[colors.length - 1];
         return {
             value: color,
             ariaLabel: colorMapping[color.color],
@@ -42,12 +50,14 @@ const ColorDropdown = ({ selectedColorId, colors, handleColorChange }: Props, ):
         });
     };
 
-    return (<SelectWithHTMLOptions
-        ariaLabel="Color"
-        selectedOption={selectedColorOption(selectedColorId)}
-        options={colorOptions()}
-        onChange={handleColorChange}
-    />);
+    return (
+        <SelectWithHTMLOptions
+            ariaLabel="Color"
+            selectedOption={selectedColorOption(selectedColorId)}
+            options={colorOptions()}
+            onChange={handleColorChange}
+        />
+    );
 };
 
 export default ColorDropdown;

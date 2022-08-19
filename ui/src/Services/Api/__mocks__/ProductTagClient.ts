@@ -19,11 +19,15 @@ import TestData from 'Utils/TestData';
 
 const ProductTagClient = {
     get: jest.fn().mockResolvedValue({ data: [...TestData.productTags] }),
-    add: jest.fn().mockResolvedValue({ data: {id: 9, name: 'Fin Tech'} }),
+    add: jest.fn().mockResolvedValue({ data: { id: 9, name: 'Fin Tech' } }),
     edit: jest.fn().mockResolvedValue({
-        data: {id: 6, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+        data: {
+            id: 6,
+            name: 'Finance',
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        },
     }),
-    delete:  jest.fn().mockResolvedValue({ data: {} })
-}
+    delete: jest.fn().mockResolvedValue({ data: {} }),
+};
 
 export default ProductTagClient;

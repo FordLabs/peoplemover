@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import PersonAndRoleInfo from './PersonAndRoleInfo';
-import {fireEvent, screen} from '@testing-library/react';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import { fireEvent, screen } from '@testing-library/react';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
 
 describe('Tooltip behavior on hover', () => {
     it('should show the notes of the person being hovered over', async () => {
@@ -32,7 +32,9 @@ describe('Tooltip behavior on hover', () => {
             />
         );
 
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
         expect(screen.queryByTestId('note-icon')).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
         expect(screen.getByText('Notes:')).toBeInTheDocument();
@@ -49,10 +51,14 @@ describe('Tooltip behavior on hover', () => {
             />
         );
 
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
         expect(screen.queryByText('Notes:')).not.toBeInTheDocument();
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
     });
 
     it('should show the time on product of the person being hovered over', async () => {
@@ -79,15 +85,21 @@ describe('Tooltip behavior on hover', () => {
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />
-        )
+        );
 
         expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('local_offer-icon')).not.toBeInTheDocument();
-        expect(screen.queryByText('The lil boss, The big boss')).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('local_offer-icon')
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText('The lil boss, The big boss')
+        ).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
         expect(screen.getByText('Person Tags:')).toBeInTheDocument();
         expect(screen.getByTestId('local_offer-icon')).toBeInTheDocument();
-        expect(screen.getByText('The lil boss, The big boss')).toBeInTheDocument();
+        expect(
+            screen.getByText('The lil boss, The big boss')
+        ).toBeInTheDocument();
     });
 
     it('should not show the person tags of the person being hovered over if they have none', async () => {
@@ -97,7 +109,7 @@ describe('Tooltip behavior on hover', () => {
                 isUnassignedProduct={false}
                 duration={parseInt('dontcare', 1)}
             />
-        )
+        );
 
         expect(screen.queryByText('Person Tags:')).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
@@ -111,15 +123,19 @@ describe('Tooltip behavior on hover', () => {
                 duration={0}
                 isUnassignedProduct={false}
             />,
-            ({set}) => {
-                set(IsReadOnlyState, true)
+            ({ set }) => {
+                set(IsReadOnlyState, true);
             }
-        )
+        );
 
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
         expect(screen.queryByText('Notes:')).not.toBeInTheDocument();
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
     });
 
     it('should not show the hover if it is part of the Unassigned product', async () => {
@@ -129,12 +145,16 @@ describe('Tooltip behavior on hover', () => {
                 duration={0}
                 isUnassignedProduct={true}
             />
-        )
+        );
 
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
         getItemAndFireMouseOverEvent('assignmentCardPersonInfo');
         expect(screen.queryByText('Notes:')).not.toBeInTheDocument();
-        expect(screen.queryByText("Don't forget the WD-40!")).not.toBeInTheDocument();
+        expect(
+            screen.queryByText("Don't forget the WD-40!")
+        ).not.toBeInTheDocument();
     });
 });
 

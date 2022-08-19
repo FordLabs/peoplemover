@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
-export const localStorageEventListenerKey = 'storage'
+export const localStorageEventListenerKey = 'storage';
 
 function useOnStorageChange(callback: () => void) {
     useEffect(() => {
@@ -25,7 +25,8 @@ function useOnStorageChange(callback: () => void) {
 
         window.addEventListener(localStorageEventListenerKey, callback);
 
-        return () => window.removeEventListener(localStorageEventListenerKey, callback);
+        return () =>
+            window.removeEventListener(localStorageEventListenerKey, callback);
     }, [callback]);
 }
 

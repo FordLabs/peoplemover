@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {useCallback} from 'react';
-import {ProductsState} from 'State/ProductsState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { useCallback } from 'react';
+import { ProductsState } from 'State/ProductsState';
 import ProductClient from 'Services/Api/ProductClient';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {Product} from '../../Types/Product';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { Product } from '../../Types/Product';
 
 interface UseFetchProducts {
     products: Product[];
-    fetchProducts(): void
+    fetchProducts(): void;
 }
 
 function useFetchProducts(spaceUUID: string): UseFetchProducts {
@@ -33,12 +33,13 @@ function useFetchProducts(spaceUUID: string): UseFetchProducts {
 
     const fetchProducts = useCallback(() => {
         ProductClient.getProductsForDate(spaceUUID, viewingDate)
-            .then(result => setProducts(result.data || [])).catch(console.error);
-    }, [setProducts, spaceUUID, viewingDate])
+            .then((result) => setProducts(result.data || []))
+            .catch(console.error);
+    }, [setProducts, spaceUUID, viewingDate]);
 
     return {
         products: products || [],
-        fetchProducts
+        fetchProducts,
     };
 }
 

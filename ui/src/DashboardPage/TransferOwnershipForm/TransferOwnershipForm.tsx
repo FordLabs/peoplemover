@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-import React, {FormEvent, useEffect, useState} from 'react';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import SpaceClient from 'Services/Api/SpaceClient';
 import FormButton from 'Common/FormButton/FormButton';
-import {Space} from 'Types/Space';
-import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
-import {CurrentUserState} from 'State/CurrentUserState';
+import { Space } from 'Types/Space';
+import { UserSpaceMapping } from 'Types/UserSpaceMapping';
+import NotificationModal, {
+    NotificationModalProps,
+} from 'Modal/NotificationModal/NotificationModal';
+import { CurrentUserState } from 'State/CurrentUserState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { ModalContentsState } from 'State/ModalContentsState';
 
 import './TransferOwnershipForm.scss';
 
@@ -38,7 +40,9 @@ function TransferOwnershipForm({ spaceToTransfer }: Props): JSX.Element {
 
     const { fetchUserSpaces } = useFetchUserSpaces();
 
-    const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(null);
+    const [selectedUser, setSelectedUser] = useState<UserSpaceMapping | null>(
+        null
+    );
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [me, setMe] = useState<UserSpaceMapping>();
     const [submitted, setSubmitted] = useState<boolean>(false);
@@ -46,8 +50,13 @@ function TransferOwnershipForm({ spaceToTransfer }: Props): JSX.Element {
     useEffect(() => {
         if (spaceToTransfer.uuid) {
             SpaceClient.getUsersForSpace(spaceToTransfer.uuid).then((users) => {
-                setUsersList(users.filter(u => u.permission === 'editor'));
-                setMe(users.find(u => u.userId.toUpperCase() === currentUser.toUpperCase()));
+                setUsersList(users.filter((u) => u.permission === 'editor'));
+                setMe(
+                    users.find(
+                        (u) =>
+                            u.userId.toUpperCase() === currentUser.toUpperCase()
+                    )
+                );
             });
         }
     }, [spaceToTransfer, setUsersList, currentUser]);
@@ -59,62 +68,96 @@ function TransferOwnershipForm({ spaceToTransfer }: Props): JSX.Element {
         const currentOwner = me;
         const newOwner = selectedUser;
         if (!currentOwner || !newOwner) return;
-        SpaceClient.changeOwner(spaceToTransfer, currentOwner, newOwner).then(() => {
-            SpaceClient.removeUser(spaceToTransfer, currentOwner).then(() => {
-                fetchUserSpaces().catch();
-                setSubmitted(true);
-            });
-        });
+        SpaceClient.changeOwner(spaceToTransfer, currentOwner, newOwner).then(
+            () => {
+                SpaceClient.removeUser(spaceToTransfer, currentOwner).then(
+                    () => {
+                        fetchUserSpaces().catch();
+                        setSubmitted(true);
+                    }
+                );
+            }
+        );
     };
 
     const renderOption = (person: UserSpaceMapping): JSX.Element => {
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-        return <label key={person.id} className={'transferOwnershipFormRadioControl'}
-            data-testid={'transferOwnershipFormRadioControl-' + person.userId}>
-            <i className={'material-icons'} aria-hidden>account_circle</i>
-            <span className={'personRadioUserId'}>{person.userId.toLowerCase()}</span>
-            <input type={'radio'} name={'newOwner'} value={person.userId} checked={selectedUser ? selectedUser.id === person.id : false} onChange={() => {setSelectedUser(person)}}/>
-        </label>;
+        return (
+            <label
+                key={person.id}
+                className={'transferOwnershipFormRadioControl'}
+                data-testid={
+                    'transferOwnershipFormRadioControl-' + person.userId
+                }
+            >
+                <i className={'material-icons'} aria-hidden>
+                    account_circle
+                </i>
+                <span className={'personRadioUserId'}>
+                    {person.userId.toLowerCase()}
+                </span>
+                <input
+                    type={'radio'}
+                    name={'newOwner'}
+                    value={person.userId}
+                    checked={
+                        selectedUser ? selectedUser.id === person.id : false
+                    }
+                    onChange={() => {
+                        setSelectedUser(person);
+                    }}
+                />
+            </label>
+        );
     };
 
     const notificationModalProps = {
-        content:<span>{'Ownership has been transferred to ' + selectedUser?.userId +
-        ' and you have been removed from the space ' +
-            spaceToTransfer.name +
-        '.'}</span>,
+        content: (
+            <span>
+                {'Ownership has been transferred to ' +
+                    selectedUser?.userId +
+                    ' and you have been removed from the space ' +
+                    spaceToTransfer.name +
+                    '.'}
+            </span>
+        ),
         title: 'Confirmed',
-        close: closeModal
+        close: closeModal,
     } as NotificationModalProps;
 
-    if (submitted) return (<NotificationModal {...notificationModalProps}/>);
-
-    else return (
-        <form className="transferOwnershipForm form" onSubmit={handleSubmit}>
-            <div className="transferOwnershipFormPrompt">
-                Please choose who you would like to be the new owner of {spaceToTransfer.name}
-            </div>
-            <div className="transferOwnershipFormRadioContainer">
-                {usersList.map((user) => renderOption(user))}
-            </div>
-            <div className="buttonsContainer">
-                <FormButton
-                    buttonStyle="secondary"
-                    className="cancelButton"
-                    onClick={closeModal}>
+    if (submitted) return <NotificationModal {...notificationModalProps} />;
+    else
+        return (
+            <form
+                className="transferOwnershipForm form"
+                onSubmit={handleSubmit}
+            >
+                <div className="transferOwnershipFormPrompt">
+                    Please choose who you would like to be the new owner of{' '}
+                    {spaceToTransfer.name}
+                </div>
+                <div className="transferOwnershipFormRadioContainer">
+                    {usersList.map((user) => renderOption(user))}
+                </div>
+                <div className="buttonsContainer">
+                    <FormButton
+                        buttonStyle="secondary"
+                        className="cancelButton"
+                        onClick={closeModal}
+                    >
                         Cancel
-                </FormButton>
-                <FormButton
-                    type="submit"
-                    buttonStyle="primary"
-                    testId="transferOwnershipFormSubmitButton"
-                    disabled={!selectedUser}
-                >
-                    Transfer ownership
-                </FormButton>
-            </div>
-        </form>
-    );
+                    </FormButton>
+                    <FormButton
+                        type="submit"
+                        buttonStyle="primary"
+                        testId="transferOwnershipFormSubmitButton"
+                        disabled={!selectedUser}
+                    >
+                        Transfer ownership
+                    </FormButton>
+                </div>
+            </form>
+        );
 }
 
 export default TransferOwnershipForm;
-

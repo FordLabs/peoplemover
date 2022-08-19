@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 
 import ProductList from 'SpacePage/ProductList/ProductList';
 import Branding from 'Common/Branding/Branding';
 import SubHeader from 'SubHeader/SubHeader';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ReassignedDrawer from './ReassignedDrawer/ReassignedDrawer';
 import UnassignedDrawer from 'SpacePage/UnassignedDrawer/UnassignedDrawer';
 import ArchivedProductsDrawer from 'SpacePage/ArchiveProductsDrawer/ArchivedProductsDrawer';
 import Counter from 'Common/Counter/Counter';
 import ArchivedPersonDrawer from 'SpacePage/ArchivedPersonDrawer/ArchivedPersonDrawer';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
@@ -35,7 +35,7 @@ import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { ModalContentsState } from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import DragAndDrop from './DragAndDrop/DragAndDrop';
@@ -48,11 +48,12 @@ function SpacePage(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
 
     const isReadOnly = useRecoilValue(IsReadOnlyState);
-    const [modalContents, setModalContents] = useRecoilState(ModalContentsState);
+    const [modalContents, setModalContents] =
+        useRecoilState(ModalContentsState);
 
     const { fetchPeople } = useFetchPeople(teamUUID);
     const { fetchRoles } = useFetchRoles(teamUUID);
-    const { fetchLocations } = useFetchLocations(teamUUID)
+    const { fetchLocations } = useFetchLocations(teamUUID);
     const { fetchProducts, products } = useFetchProducts(teamUUID);
     const { fetchProductTags } = useFetchProductTags(teamUUID);
     const { fetchPersonTags } = useFetchPersonTags(teamUUID);
@@ -69,7 +70,7 @@ function SpacePage(): JSX.Element {
 
     useEffect(() => {
         if (!modalContents && teamUUID) {
-            fetchCurrentSpace()
+            fetchCurrentSpace();
         }
     }, [modalContents, fetchCurrentSpace, teamUUID]);
 
@@ -82,20 +83,28 @@ function SpacePage(): JSX.Element {
             fetchRoles();
             fetchPeople();
         }
-    }, [currentSpace, fetchPeople, fetchProductTags, fetchPersonTags, fetchLocations, fetchRoles, fetchProducts]);
+    }, [
+        currentSpace,
+        fetchPeople,
+        fetchProductTags,
+        fetchPersonTags,
+        fetchLocations,
+        fetchRoles,
+        fetchProducts,
+    ]);
 
     return (
         <>
             <SpacePageHeader />
             {!!products.length && !!currentSpace && (
                 <div className="peoplemover-page">
-                    <SubHeader/>
+                    <SubHeader />
                     <main>
-                        <div id="main-content-landing-target"/>
+                        <div id="main-content-landing-target" />
                         <Counter />
                         <DragAndDrop>
                             <div className="productAndAccordionContainer">
-                                <ProductList/>
+                                <ProductList />
                                 {!isReadOnly && (
                                     <div className="accordionContainer">
                                         <div className="accordionHeaderContainer">
@@ -103,17 +112,32 @@ function SpacePage(): JSX.Element {
                                                 type="button"
                                                 className="addPersonButton"
                                                 data-testid="addPersonButton"
-                                                onClick={(): void => setModalContents({
-                                                    title: 'Add New Person',
-                                                    component: <PersonForm isEditPersonForm={false} />,
-                                                })}>
-                                                <i className="material-icons" aria-hidden data-testid="addPersonIcon">add</i>
+                                                onClick={(): void =>
+                                                    setModalContents({
+                                                        title: 'Add New Person',
+                                                        component: (
+                                                            <PersonForm
+                                                                isEditPersonForm={
+                                                                    false
+                                                                }
+                                                            />
+                                                        ),
+                                                    })
+                                                }
+                                            >
+                                                <i
+                                                    className="material-icons"
+                                                    aria-hidden
+                                                    data-testid="addPersonIcon"
+                                                >
+                                                    add
+                                                </i>
                                                 <span>Add Person</span>
                                             </button>
-                                            <UnassignedDrawer/>
-                                            <ReassignedDrawer/>
-                                            <ArchivedPersonDrawer/>
-                                            <ArchivedProductsDrawer/>
+                                            <UnassignedDrawer />
+                                            <ReassignedDrawer />
+                                            <ArchivedPersonDrawer />
+                                            <ArchivedProductsDrawer />
                                         </div>
                                     </div>
                                 )}
@@ -122,13 +146,12 @@ function SpacePage(): JSX.Element {
                         <Modal />
                     </main>
                     <footer>
-                        <Branding/>
+                        <Branding />
                     </footer>
                 </div>
             )}
         </>
-    )
+    );
 }
 
 export default SpacePage;
-

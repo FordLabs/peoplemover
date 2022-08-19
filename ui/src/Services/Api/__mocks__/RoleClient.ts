@@ -20,12 +20,22 @@ import TestData from '../../../Utils/TestData';
 const RoleClient = {
     get: jest.fn().mockResolvedValue({ data: [...TestData.roles] }),
     add: jest.fn().mockResolvedValue({
-        data: {name: 'Product Owner', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: {color: '1', id: 2}},
+        data: {
+            name: 'Product Owner',
+            id: 1,
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            color: { color: '1', id: 2 },
+        },
     }),
     edit: jest.fn().mockResolvedValue({
-        data: {name: 'Architecture', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',  color: TestData.color3},
+        data: {
+            name: 'Architecture',
+            id: 1,
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            color: TestData.color3,
+        },
     }),
-    delete:  jest.fn().mockResolvedValue({ data: {} })
-}
+    delete: jest.fn().mockResolvedValue({ data: {} }),
+};
 
 export default RoleClient;

@@ -15,17 +15,20 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {useRecoilValue} from 'recoil';
+import React, { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import AssignmentClient from 'Services/Api/AssignmentClient';
-import {isArchived} from 'Services/PersonService';
+import { isArchived } from 'Services/PersonService';
 import PeopleClient from 'Services/Api/PeopleClient';
-import {ViewingDateState} from 'State/ViewingDateState';
+import { ViewingDateState } from 'State/ViewingDateState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import useFetchPeople from 'Hooks/useFetchPeople/useFetchPeople';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
-import {Person} from 'Types/Person';
+import {
+    CurrentSpaceState,
+    UUIDForCurrentSpaceSelector,
+} from 'State/CurrentSpaceState';
+import { Person } from 'Types/Person';
 
 import './ReassignedDrawer.scss';
 
@@ -48,35 +51,41 @@ function ReassignedDrawer(): JSX.Element {
 
     /* eslint-disable */
     useEffect(() => {
-        AssignmentClient.getReassignments(currentSpace.uuid!, viewingDate)
-            .then( reassignmentResponse =>
+        AssignmentClient.getReassignments(currentSpace.uuid!, viewingDate).then(
+            (reassignmentResponse) =>
                 setReassignments(reassignmentResponse.data)
-            );
+        );
     }, [products]);
     /* eslint-enable */
 
-    const listOfHTMLReassignments: Array<JSX.Element> = reassignments.map((reassignment: Reassignment, index: number) => (
-        mapsReassignments(reassignment, index)
-    ));
+    const listOfHTMLReassignments: Array<JSX.Element> = reassignments.map(
+        (reassignment: Reassignment, index: number) =>
+            mapsReassignments(reassignment, index)
+    );
 
     return (
         <DrawerContainer
             drawerIcon="how_to_reg"
             testId="reassignmentDrawer"
             containerTitle="Reassigned"
-            containee={(
+            containee={
                 <div
                     className="reassignmentContainer"
-                    data-testid="reassignmentContainer">
+                    data-testid="reassignmentContainer"
+                >
                     {listOfHTMLReassignments}
                 </div>
-            )}
+            }
             isDrawerOpen={showDrawer}
             setIsDrawerOpen={setShowDrawer}
-            numberForCountBadge={reassignments.length}/>
+            numberForCountBadge={reassignments.length}
+        />
     );
 
-    function mapsReassignments(reassignment: Reassignment, index: number): JSX.Element {
+    function mapsReassignments(
+        reassignment: Reassignment,
+        index: number
+    ): JSX.Element {
         let oneWayReassignment: string | undefined;
         if (!reassignment.destinationProductName) {
             oneWayReassignment = `${reassignment.originProductName} assignment cancelled`;
@@ -88,21 +97,35 @@ function ReassignedDrawer(): JSX.Element {
             toProductName = 'archived';
         }
 
-        return  (
-            <div key={index} className="reassignmentSection" data-testid="reassignmentSection">
+        return (
+            <div
+                key={index}
+                className="reassignmentSection"
+                data-testid="reassignmentSection"
+            >
                 <div className="name">{reassignment.person.name}</div>
-                <div className="additionalInfo role">{reassignment.person.spaceRole ? reassignment.person.spaceRole.name : ''}</div>
-                {!oneWayReassignment &&
-                    <div className="additionalInfo">{reassignment.originProductName}
+                <div className="additionalInfo role">
+                    {reassignment.person.spaceRole
+                        ? reassignment.person.spaceRole.name
+                        : ''}
+                </div>
+                {!oneWayReassignment && (
+                    <div className="additionalInfo">
+                        {reassignment.originProductName}
                         <i className="material-icons">east</i>
                         {toProductName}
                     </div>
-                }
-                {oneWayReassignment &&
+                )}
+                {oneWayReassignment && (
                     <div className="additionalInfo">{oneWayReassignment}</div>
-                }
-                <button className="revertButton" onClick={(): Promise<void> => revert(reassignment.person)}>
-                    <i className="material-icons" aria-hidden>undo</i>
+                )}
+                <button
+                    className="revertButton"
+                    onClick={(): Promise<void> => revert(reassignment.person)}
+                >
+                    <i className="material-icons" aria-hidden>
+                        undo
+                    </i>
                     Revert
                 </button>
             </div>
@@ -111,13 +134,18 @@ function ReassignedDrawer(): JSX.Element {
 
     async function revert(person: Person): Promise<void> {
         if (isArchived(person, viewingDate)) {
-            PeopleClient.updatePerson(currentSpace, {...person, archiveDate: undefined});
-        }
-        await AssignmentClient.deleteAssignmentForDate(viewingDate, person)
-            .then(() => {
-                fetchProducts();
-                fetchPeople();
+            PeopleClient.updatePerson(currentSpace, {
+                ...person,
+                archiveDate: undefined,
             });
+        }
+        await AssignmentClient.deleteAssignmentForDate(
+            viewingDate,
+            person
+        ).then(() => {
+            fetchProducts();
+            fetchPeople();
+        });
     }
 }
 

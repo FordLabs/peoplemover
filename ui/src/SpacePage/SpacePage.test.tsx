@@ -17,13 +17,13 @@
 
 import TestUtils from '../Utils/TestUtils';
 import TestData from '../Utils/TestData';
-import {screen, waitFor} from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import SpaceClient from '../Services/Api/SpaceClient';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
-import {ProductsState} from '../State/ProductsState';
-import {LocationsState} from '../State/LocationsState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import { ViewingDateState } from '../State/ViewingDateState';
+import { IsReadOnlyState } from '../State/IsReadOnlyState';
+import { ProductsState } from '../State/ProductsState';
+import { LocationsState } from '../State/LocationsState';
+import { CurrentSpaceState } from '../State/CurrentSpaceState';
 
 jest.mock('Services/Api/SpaceClient');
 jest.mock('Services/Api/ProductClient');
@@ -44,16 +44,16 @@ jest.mock('react-router-dom', () => ({
 describe('PeopleMover', () => {
     const addProductButtonText = 'Add Product';
 
-    describe('Read Only Mode', function() {
+    describe('Read Only Mode', function () {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({ set }) => {
                 set(IsReadOnlyState, true);
                 set(ProductsState, TestData.products);
                 set(CurrentSpaceState, TestData.space);
             });
         });
 
-        it('should not show unassigned drawer', function() {
+        it('should not show unassigned drawer', function () {
             expect(screen.queryByTestId('unassignedDrawer')).toBeNull();
             expect(screen.queryByTestId('archivedProductsDrawer')).toBeNull();
             expect(screen.queryByTestId('reassignmentDrawer')).toBeNull();
@@ -61,16 +61,20 @@ describe('PeopleMover', () => {
         });
 
         it('should display Add Person button on startup', async () => {
-            expect(await screen.queryByText('Add Person')).not.toBeInTheDocument();
-            expect(await screen.queryByTestId('addPersonIcon')).not.toBeInTheDocument();
+            expect(
+                await screen.queryByText('Add Person')
+            ).not.toBeInTheDocument();
+            expect(
+                await screen.queryByTestId('addPersonIcon')
+            ).not.toBeInTheDocument();
         });
     });
 
     describe('Header and Footer Content', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent((({set}) => {
-                set(ViewingDateState, new Date(2020, 10, 14))
-            }));
+            await TestUtils.renderPeopleMoverComponent(({ set }) => {
+                set(ViewingDateState, new Date(2020, 10, 14));
+            });
         });
 
         it('Should contain calendar button', async () => {
@@ -96,19 +100,25 @@ describe('PeopleMover', () => {
 
     describe('Read only view Header and Footer Content', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({ set }) => {
                 set(IsReadOnlyState, true);
             });
         });
 
         it('Should contains My Tags on initial load of People Mover', async () => {
             expect(await screen.queryByText('My Tags')).not.toBeInTheDocument();
-            expect(await screen.queryByTestId('myTagsIcon')).not.toBeInTheDocument();
+            expect(
+                await screen.queryByTestId('myTagsIcon')
+            ).not.toBeInTheDocument();
         });
 
         it('should display My Roles button on startup', async () => {
-            expect(await screen.queryByText('My Roles')).not.toBeInTheDocument();
-            expect(await screen.queryByTestId('myRolesIcon')).not.toBeInTheDocument();
+            expect(
+                await screen.queryByText('My Roles')
+            ).not.toBeInTheDocument();
+            expect(
+                await screen.queryByTestId('myRolesIcon')
+            ).not.toBeInTheDocument();
         });
 
         it('should display Sort By dropdown on startup', async () => {
@@ -130,7 +140,7 @@ describe('PeopleMover', () => {
         let unmount: () => void;
 
         beforeEach(async () => {
-            ({unmount} = await TestUtils.renderPeopleMoverComponent());
+            ({ unmount } = await TestUtils.renderPeopleMoverComponent());
         });
 
         it('should update the page title with the space name', () => {
@@ -154,29 +164,38 @@ describe('PeopleMover', () => {
             await screen.findAllByText(TestData.productForHank.name);
         });
 
-        it('should sort products by name by default',  async () => {
-            const productNameElements = await screen.findAllByTestId('productName');
-            const actualProductNames = productNameElements.map((element) => element.innerHTML);
-            expect(actualProductNames).toEqual(
-                [
-                    TestData.productWithoutLocation.name,
-                    TestData.productForHank.name,
-                    TestData.productWithAssignments.name,
-                    TestData.productWithoutAssignments.name,
-                ]
+        it('should sort products by name by default', async () => {
+            const productNameElements = await screen.findAllByTestId(
+                'productName'
             );
+            const actualProductNames = productNameElements.map(
+                (element) => element.innerHTML
+            );
+            expect(actualProductNames).toEqual([
+                TestData.productWithoutLocation.name,
+                TestData.productForHank.name,
+                TestData.productWithAssignments.name,
+                TestData.productWithoutAssignments.name,
+            ]);
         });
 
         it('should include a properly formatted ID on the product cards', async () => {
-            const expectedId = 'product-card-0'
-            expect(screen.getByTestId(expectedId)).toHaveAttribute('id', expectedId);
+            const expectedId = 'product-card-0';
+            expect(screen.getByTestId(expectedId)).toHaveAttribute(
+                'id',
+                expectedId
+            );
         });
 
-        it('should group products by location',  async () => {
-            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
+        it('should group products by location', async () => {
+            const sortByDropdownButton = await screen.findByTestId(
+                'sortByDropdownButton'
+            );
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_location');
+            const sortByDropdownLocation = await screen.findByTestId(
+                'sortDropdownOption_location'
+            );
             sortByDropdownLocation.click();
 
             const productGroups = await screen.findAllByTestId('productGroup');
@@ -206,21 +225,32 @@ describe('PeopleMover', () => {
         it('should include a properly formatted ID on the product cards containing the value for the current groups sorted field', async () => {
             const expectedLocationId = 'ann-arbor';
 
-            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
+            const sortByDropdownButton = await screen.findByTestId(
+                'sortByDropdownButton'
+            );
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_location');
+            const sortByDropdownLocation = await screen.findByTestId(
+                'sortDropdownOption_location'
+            );
             sortByDropdownLocation.click();
 
-            const expectedId = `product-card-${expectedLocationId}-0`
-            expect(screen.getByTestId(expectedId)).toHaveAttribute('id', expectedId);
+            const expectedId = `product-card-${expectedLocationId}-0`;
+            expect(screen.getByTestId(expectedId)).toHaveAttribute(
+                'id',
+                expectedId
+            );
         });
 
-        it('should group products by product tag',  async () => {
-            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
+        it('should group products by product tag', async () => {
+            const sortByDropdownButton = await screen.findByTestId(
+                'sortByDropdownButton'
+            );
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_product-tag');
+            const sortByDropdownLocation = await screen.findByTestId(
+                'sortDropdownOption_product-tag'
+            );
             sortByDropdownLocation.click();
 
             const productGroups = await screen.findAllByTestId('productGroup');
@@ -245,17 +275,21 @@ describe('PeopleMover', () => {
 
     describe('Products in read only view', () => {
         beforeEach(async () => {
-            await TestUtils.renderPeopleMoverComponent(({set}) => {
+            await TestUtils.renderPeopleMoverComponent(({ set }) => {
                 set(IsReadOnlyState, true);
                 set(LocationsState, TestData.locations);
             });
         });
 
-        it('should group products by location without add product buttons',  async () => {
-            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
+        it('should group products by location without add product buttons', async () => {
+            const sortByDropdownButton = await screen.findByTestId(
+                'sortByDropdownButton'
+            );
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_location');
+            const sortByDropdownLocation = await screen.findByTestId(
+                'sortDropdownOption_location'
+            );
             sortByDropdownLocation.click();
 
             const productGroups = await screen.findAllByTestId('productGroup');
@@ -282,11 +316,15 @@ describe('PeopleMover', () => {
             expect(productGroup4).not.toHaveTextContent(addProductButtonText);
         });
 
-        it('should group products by product tag without add product buttons',  async () => {
-            const sortByDropdownButton = await screen.findByTestId('sortByDropdownButton');
+        it('should group products by product tag without add product buttons', async () => {
+            const sortByDropdownButton = await screen.findByTestId(
+                'sortByDropdownButton'
+            );
             sortByDropdownButton.click();
 
-            const sortByDropdownLocation = await screen.findByTestId('sortDropdownOption_product-tag');
+            const sortByDropdownLocation = await screen.findByTestId(
+                'sortDropdownOption_product-tag'
+            );
             sortByDropdownLocation.click();
 
             const productGroups = await screen.findAllByTestId('productGroup');
@@ -313,22 +351,36 @@ describe('PeopleMover', () => {
         const BAD_REQUEST = 400;
         const FORBIDDEN = 403;
         const expectedSpaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-SomeBadNames';
-        const spaceUuidPath = '/' + expectedSpaceUuid
+        const spaceUuidPath = '/' + expectedSpaceUuid;
 
         beforeEach(() => {
             jest.clearAllMocks();
         });
 
-        it('should route to 404 page when bad space name is provided',  async () => {
-            SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: BAD_REQUEST}});
-            await TestUtils.renderPeopleMoverComponent( undefined, spaceUuidPath);
-            await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/404'));
+        it('should route to 404 page when bad space name is provided', async () => {
+            SpaceClient.getSpaceFromUuid = jest
+                .fn()
+                .mockRejectedValue({ response: { status: BAD_REQUEST } });
+            await TestUtils.renderPeopleMoverComponent(
+                undefined,
+                spaceUuidPath
+            );
+            await waitFor(() =>
+                expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/404')
+            );
         });
 
         it('should route to 403 page when user does not have access to a space', async () => {
-            SpaceClient.getSpaceFromUuid = jest.fn().mockRejectedValue({response: {status: FORBIDDEN}});
-            await TestUtils.renderPeopleMoverComponent(undefined, spaceUuidPath);
-            await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/403'));
+            SpaceClient.getSpaceFromUuid = jest
+                .fn()
+                .mockRejectedValue({ response: { status: FORBIDDEN } });
+            await TestUtils.renderPeopleMoverComponent(
+                undefined,
+                spaceUuidPath
+            );
+            await waitFor(() =>
+                expect(mockedUsedNavigate).toHaveBeenCalledWith('/error/403')
+            );
         });
     });
 });

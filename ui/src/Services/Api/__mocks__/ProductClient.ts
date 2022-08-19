@@ -18,10 +18,12 @@
 import TestData from '../../../Utils/TestData';
 
 const ProductClient = {
-    getProductsForDate: jest.fn().mockResolvedValue({ data: TestData.products }),
+    getProductsForDate: jest
+        .fn()
+        .mockResolvedValue({ data: TestData.products }),
     createProduct: jest.fn().mockResolvedValue({ data: {} }),
     deleteProduct: jest.fn().mockResolvedValue({ data: {} }),
     editProduct: jest.fn().mockResolvedValue({ data: {} }),
-}
+};
 
 export default ProductClient;

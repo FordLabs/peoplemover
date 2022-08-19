@@ -11,13 +11,13 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  div:first-child{
+
+  div:first-child {
     padding-left: 3rem;
     margin-right: auto;
   }
-  button:last-child{
+
+  button:last-child {
     margin-right: 3rem;
   }
 }
-
-

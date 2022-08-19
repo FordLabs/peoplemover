@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import React, {createRef, FormEvent, useEffect, useState} from 'react';
+import React, { createRef, FormEvent, useEffect, useState } from 'react';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {createEmptySpace, Space} from 'Types/Space';
+import { createEmptySpace, Space } from 'Types/Space';
 
 import FormButton from 'Common/FormButton/FormButton';
-import {useSetRecoilState} from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { ModalContentsState } from 'State/ModalContentsState';
 
 import './SpaceForm.scss';
 
@@ -40,7 +40,8 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
     const maxLength = 40;
     const [formSpace, setFormSpace] = useState<Space>(initializeSpace());
     const spaceNameInputRef = createRef<HTMLInputElement>();
-    const [showWarningMessage, setShowWarningMessage] = useState<boolean>(false);
+    const [showWarningMessage, setShowWarningMessage] =
+        useState<boolean>(false);
 
     useEffect(() => {
         spaceNameInputRef.current?.focus();
@@ -59,10 +60,10 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
 
         if (formSpace.name.trim().length === 0) {
             setShowWarningMessage(true);
-            return
+            return;
         }
 
-        const spaceToSend = {...formSpace, name:  formSpace.name.trim() };
+        const spaceToSend = { ...formSpace, name: formSpace.name.trim() };
 
         if (!!selectedSpace && formSpace.uuid) {
             SpaceClient.editSpaceName(formSpace.uuid, spaceToSend)
@@ -75,7 +76,9 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
         }
     }
 
-    function onSpaceNameFieldChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+    function onSpaceNameFieldChanged(
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void {
         setFormSpace({
             ...formSpace,
             name: event.target.value,
@@ -86,8 +89,11 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
 
     return (
         <form className="createSpaceContainer" onSubmit={handleSubmit}>
-            <label className="createSpaceLabel" htmlFor="spaceNameField">Space Name</label>
-            <input className="createSpaceInputField"
+            <label className="createSpaceLabel" htmlFor="spaceNameField">
+                Space Name
+            </label>
+            <input
+                className="createSpaceInputField"
                 id="spaceNameField"
                 aria-describedby="createSpaceFieldText"
                 type="text"
@@ -97,15 +103,25 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
                 onChange={onSpaceNameFieldChanged}
                 ref={spaceNameInputRef}
             />
-            <span id="createSpaceFieldText"
-                className={`createSpaceFieldText ${spaceNameLength >= maxLength ? 'createSpaceFieldTooLong' : ''}`}
-                data-testid="createSpaceFieldText">
+            <span
+                id="createSpaceFieldText"
+                className={`createSpaceFieldText ${
+                    spaceNameLength >= maxLength
+                        ? 'createSpaceFieldTooLong'
+                        : ''
+                }`}
+                data-testid="createSpaceFieldText"
+            >
                 {spaceNameLength} ({maxLength} characters max)
             </span>
             <div className="createSpaceErrorMessageContainer">
                 {showWarningMessage && (
-                    <span data-testid="createSpaceErrorMessage" className="createSpaceErrorMessage">
-                      To create or rename a space, please enter an alpha-numeric name.
+                    <span
+                        data-testid="createSpaceErrorMessage"
+                        className="createSpaceErrorMessage"
+                    >
+                        To create or rename a space, please enter an
+                        alpha-numeric name.
                     </span>
                 )}
             </div>
@@ -113,7 +129,8 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
                 <FormButton
                     buttonStyle="secondary"
                     type="button"
-                    onClick={closeModal}>
+                    onClick={closeModal}
+                >
                     Cancel
                 </FormButton>
                 <FormButton
@@ -121,7 +138,8 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
                     buttonStyle="primary"
                     type="submit"
                     disabled={spaceNameLength <= 0}
-                    testId="createSpaceButton">
+                    testId="createSpaceButton"
+                >
                     {selectedSpace ? 'Save' : 'Create'}
                 </FormButton>
             </div>
@@ -130,4 +148,3 @@ function SpaceForm({ selectedSpace }: Props): JSX.Element {
 }
 
 export default SpaceForm;
-

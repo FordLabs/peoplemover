@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {fireEvent, render, RenderResult} from '@testing-library/react';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import AccessibleDropdownContainer from './AccessibleDropdownContainer';
-import React, {createRef} from 'react';
+import React, { createRef } from 'react';
 
 describe('Accessibility Dropdown Container', () => {
     let dropdownContainer: RenderResult;
@@ -26,9 +26,15 @@ describe('Accessibility Dropdown Container', () => {
     beforeEach(() => {
         dropdownContainer = render(
             <AccessibleDropdownContainer handleClose={jest.fn()}>
-                <button ref={createRef()} id={'button1'}>Button 1</button>
-                <button ref={createRef()} id={'button2'}>Button 2</button>
-                <button ref={createRef()} id={'button3'}>Button 3</button>
+                <button ref={createRef()} id="button1">
+                    Button 1
+                </button>
+                <button ref={createRef()} id="button2">
+                    Button 2
+                </button>
+                <button ref={createRef()} id="button3">
+                    Button 3
+                </button>
             </AccessibleDropdownContainer>
         );
 
@@ -38,22 +44,22 @@ describe('Accessibility Dropdown Container', () => {
     });
 
     it('should allow user to change the focused option using the arrow down key and wrap to top when pressed on last element', async () => {
-        fireEvent.keyUp(button2, {key: 'ArrowDown'});
-        const button3 =  dropdownContainer.getByText('Button 3');
+        fireEvent.keyUp(button2, { key: 'ArrowDown' });
+        const button3 = dropdownContainer.getByText('Button 3');
         expect(button3).toHaveFocus();
 
-        fireEvent.keyUp(button3, {key: 'ArrowDown'});
-        const button1 =  dropdownContainer.getByText('Button 1');
+        fireEvent.keyUp(button3, { key: 'ArrowDown' });
+        const button1 = dropdownContainer.getByText('Button 1');
         expect(button1).toHaveFocus();
     });
 
     it('should allow user to change the focused option using the arrow up key and wrap to bottom when pressed on first element', async () => {
-        fireEvent.keyUp(button2, {key: 'ArrowUp'});
-        const button1 =  dropdownContainer.getByText('Button 1');
+        fireEvent.keyUp(button2, { key: 'ArrowUp' });
+        const button1 = dropdownContainer.getByText('Button 1');
         expect(button1).toHaveFocus();
 
-        fireEvent.keyUp(button1, {key: 'ArrowUp'});
-        const button3 =  dropdownContainer.getByText('Button 3');
+        fireEvent.keyUp(button1, { key: 'ArrowUp' });
+        const button3 = dropdownContainer.getByText('Button 3');
         expect(button3).toHaveFocus();
     });
 });

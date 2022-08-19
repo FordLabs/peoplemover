@@ -16,17 +16,17 @@
  */
 
 import React from 'react';
-import {useRecoilValue} from 'recoil';
-import {JSX} from '@babel/types';
+import { useRecoilValue } from 'recoil';
+import { JSX } from '@babel/types';
 import TagsModalContent from './TagsModalContent';
-import {FilterType, FilterTypeListings} from '../FilterLibraries';
+import { FilterType, FilterTypeListings } from '../FilterLibraries';
 import ProductTagClient from 'Services/Api/ProductTagClient';
 import LocationClient from 'Services/Api/LocationClient';
 import PersonTagClient from 'Services/Api/PersonTagClient';
 import useFetchLocations from 'Hooks/useFetchLocations/useFetchLocations';
 import useFetchPersonTags from 'Hooks/useFetchPersonTags/useFetchPersonTags';
 import useFetchProductTags from 'Hooks/useFetchProductTags/useFetchProductTags';
-import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import { UUIDForCurrentSpaceSelector } from 'State/CurrentSpaceState';
 
 import 'Styles/TagRowsContainer.scss';
 
@@ -52,42 +52,47 @@ function MyTagsForm({ filterType }: Props): JSX.Element {
 
     return (
         <div data-testid="myTagsModal" className="myTraitsContainer">
-            {filterType === FilterTypeListings.Location &&
-            <>
-                <TagsModalContent
-                    tags={locations}
-                    tagClient={LocationClient}
-                    filterType={filterType}
-                    fetchCommand={fetchLocations}
-                />
-                {getWarningMessageElement('Editing or deleting a tag will affect any product currently tagged with it.')}
-            </>
-            }
-            {filterType === FilterTypeListings.ProductTag &&
-            <>
-                <TagsModalContent
-                    tags={productTags}
-                    tagClient={ProductTagClient}
-                    filterType={filterType}
-                    fetchCommand={fetchProductTags}
-                />
-                {getWarningMessageElement('Editing or deleting a tag will affect any product currently tagged with it.')}
-            </>
-            }
-            {filterType === FilterTypeListings.PersonTag &&
-            <>
-                <TagsModalContent
-                    tags={personTags}
-                    tagClient={PersonTagClient}
-                    filterType={filterType}
-                    fetchCommand={fetchPersonTags}
-                />
-                {getWarningMessageElement('Editing or deleting a tag will affect any person currently tagged with it.')}
-            </>
-            }
+            {filterType === FilterTypeListings.Location && (
+                <>
+                    <TagsModalContent
+                        tags={locations}
+                        tagClient={LocationClient}
+                        filterType={filterType}
+                        fetchCommand={fetchLocations}
+                    />
+                    {getWarningMessageElement(
+                        'Editing or deleting a tag will affect any product currently tagged with it.'
+                    )}
+                </>
+            )}
+            {filterType === FilterTypeListings.ProductTag && (
+                <>
+                    <TagsModalContent
+                        tags={productTags}
+                        tagClient={ProductTagClient}
+                        filterType={filterType}
+                        fetchCommand={fetchProductTags}
+                    />
+                    {getWarningMessageElement(
+                        'Editing or deleting a tag will affect any product currently tagged with it.'
+                    )}
+                </>
+            )}
+            {filterType === FilterTypeListings.PersonTag && (
+                <>
+                    <TagsModalContent
+                        tags={personTags}
+                        tagClient={PersonTagClient}
+                        filterType={filterType}
+                        fetchCommand={fetchPersonTags}
+                    />
+                    {getWarningMessageElement(
+                        'Editing or deleting a tag will affect any person currently tagged with it.'
+                    )}
+                </>
+            )}
         </div>
     );
 }
 
 export default MyTagsForm;
-

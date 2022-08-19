@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 
-import React, {CSSProperties} from 'react';
-import Select, {Props} from 'react-select';
-import {CustomIndicator, reactSelectStyles} from '../ReactSelectStyles/ReactSelectStyles';
-import {ReactSelectProps} from '../SelectWithCreateOption/SelectWithCreateOption';
+import React, { CSSProperties } from 'react';
+import Select, { Props } from 'react-select';
+import {
+    CustomIndicator,
+    reactSelectStyles,
+} from '../ReactSelectStyles/ReactSelectStyles';
+import { ReactSelectProps } from '../SelectWithCreateOption/SelectWithCreateOption';
 
 export const multiSelectStyles = {
     ...reactSelectStyles,
     valueContainer: (provided: CSSProperties): CSSProperties => ({
         ...provided,
-        overflow:'unset',
+        overflow: 'unset',
         padding: '0 8px 0 6px',
     }),
     option: (provided: CSSProperties, props: Props): CSSProperties => ({
@@ -76,11 +79,7 @@ interface MultiSelectProps extends ReactSelectProps {
 }
 
 function SelectWithNoCreateOption({
-    metadata: {
-        title,
-        placeholder,
-        id,
-    },
+    metadata: { title, placeholder, id },
     values = [],
     options,
     onChange,
@@ -100,7 +99,7 @@ function SelectWithNoCreateOption({
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 styles={multiSelectStyles}
-                components={{DropdownIndicator: CustomIndicator}}
+                components={{ DropdownIndicator: CustomIndicator }}
                 onChange={onChange}
                 isDisabled={isDisabled || options.length === 0}
                 isMulti={true}

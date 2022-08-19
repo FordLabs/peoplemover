@@ -16,36 +16,40 @@
  */
 
 import React from 'react';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { useSetRecoilState } from 'recoil';
+import { ModalContentsState } from 'State/ModalContentsState';
 import ProductForm from 'Common/ProductForm/ProductForm';
-import {Product} from 'Types/Product';
+import { Product } from 'Types/Product';
 
-interface Props{
+interface Props {
     product: Product;
 }
 
-function ArchivedProduct({product}: Props): JSX.Element {
+function ArchivedProduct({ product }: Props): JSX.Element {
     const setModalContents = useSetRecoilState(ModalContentsState);
 
-    const openModal = (): void => setModalContents({
-        title: 'Edit Product',
-        component: <ProductForm
-            editing
-            product={product}/>,
-    })
+    const openModal = (): void =>
+        setModalContents({
+            title: 'Edit Product',
+            component: <ProductForm editing product={product} />,
+        });
 
     return (
         <div>
             <button
                 className="archivedProduct"
                 data-testid={`archivedProduct_${product.id}`}
-                onClick={openModal}>
+                onClick={openModal}
+            >
                 <span className="archivedProductName">{product.name}</span>
                 <div className="productInfoContainer">
                     <i>{product.spaceLocation && product.spaceLocation.name}</i>
                     <div className="assignmentCountContainer">
-                        <span className="archivedAssignmentCount">{product.assignments ? product.assignments.length : 0}</span>
+                        <span className="archivedAssignmentCount">
+                            {product.assignments
+                                ? product.assignments.length
+                                : 0}
+                        </span>
                         <i className="material-icons">person</i>
                     </div>
                 </div>

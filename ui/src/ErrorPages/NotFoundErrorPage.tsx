@@ -23,9 +23,9 @@ function NotFoundErrorPage() {
     return (
         <ErrorPageTemplate
             errorGraphic={AnimatedImageSrc}
-            errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."
+            errorText="We can't seem to find the page you're looking for. Please double check your link."
         />
-    )
+    );
 }
 
 export default NotFoundErrorPage;

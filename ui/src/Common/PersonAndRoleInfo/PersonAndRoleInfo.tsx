@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import React, {ReactElement, useState} from 'react';
-import {useRecoilValue} from 'recoil';
-import {isArchived} from 'Services/PersonService';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {IsDraggingState} from 'State/IsDraggingState';
-import {Person} from 'Types/Person';
+import React, { ReactElement, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isArchived } from 'Services/PersonService';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { IsDraggingState } from 'State/IsDraggingState';
+import { Person } from 'Types/Person';
 
 import './PersonAndRoleInfo.scss';
 
@@ -37,7 +37,11 @@ interface Props {
     duration: number;
 }
 
-const PersonAndRoleInfo = ({ isUnassignedProduct, duration, person }: Props): ReactElement => {
+const PersonAndRoleInfo = ({
+    isUnassignedProduct,
+    duration,
+    person,
+}: Props): ReactElement => {
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const isDragging = useRecoilValue(IsDraggingState);
@@ -83,16 +87,24 @@ const PersonAndRoleInfo = ({ isUnassignedProduct, duration, person }: Props): Re
     const HoverBox = (): JSX.Element => {
         const content = getDisplayContent();
         return (
-            <div className={`hoverBoxContainer ${isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''}`}>
-                {content.map(hoverInfo => {
+            <div
+                className={`hoverBoxContainer ${
+                    isUnassignedProduct ? 'unassignedHoverBoxContainer' : ''
+                }`}
+            >
+                {content.map((hoverInfo) => {
                     return (
                         <div key={hoverInfo.title} className="flex-row">
-                            <i className="material-icons tooltip-icon"
-                                data-testid={hoverInfo.icon + '-icon'}>
+                            <i
+                                className="material-icons tooltip-icon"
+                                data-testid={hoverInfo.icon + '-icon'}
+                            >
                                 {hoverInfo.icon}
                             </i>
                             <div className="flex-col">
-                                <div className="hoverBoxTitle">{hoverInfo.title}:</div>
+                                <div className="hoverBoxTitle">
+                                    {hoverInfo.title}:
+                                </div>
                                 <div className="hoverBoxText">
                                     {hoverInfo.text}
                                 </div>
@@ -120,25 +132,49 @@ const PersonAndRoleInfo = ({ isUnassignedProduct, duration, person }: Props): Re
         } else return [];
     };
 
+    function showNoteIcon() {
+        return (
+            hasNotes(person) && !isReadOnly && !isArchived(person, viewingDate)
+        );
+    }
+
+    function showLocalOfferIcon() {
+        return (
+            hasTags(person) && !isReadOnly && !isArchived(person, viewingDate)
+        );
+    }
+
     return (
-        <div data-testid={`assignmentCardPersonInfo`}
+        <div
+            data-testid="assignmentCardPersonInfo"
             className="personNameAndRoleContainer"
             onMouseEnter={(): void => onHover(true)}
             onMouseLeave={(): void => onHover(false)}
         >
             <div
                 className={`${!isReadOnly ? 'notReadOnly' : ''}  personName`}
-                data-testid="personName">
+                data-testid="personName"
+            >
                 {person.name}
-                {hasTags(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>local_offer</i>}
-                {hasNotes(person) && !isReadOnly && !isArchived(person, viewingDate) && <i className={'material-icons'}>note</i>}
+                {showLocalOfferIcon() && (
+                    <i className="material-icons">local_offer</i>
+                )}
+                {showNoteIcon() && <i className="material-icons">note</i>}
             </div>
             {person?.spaceRole?.name && (
-                <div className={`${!isReadOnly ? 'notReadOnly' : ''}  personRole`}>
+                <div
+                    className={`${
+                        !isReadOnly ? 'notReadOnly' : ''
+                    }  personRole`}
+                >
                     {person.spaceRole.name}
                 </div>
             )}
-            {!isDragging && !isReadOnly && !isUnassignedProduct && !isArchived(person, viewingDate) && isHoverBoxOpen && <HoverBox/>}
+            {!isDragging &&
+                !isReadOnly &&
+                !isUnassignedProduct &&
+                !isArchived(person, viewingDate) &&
+                isHoverBoxOpen && <HoverBox />}
         </div>
     );
 };

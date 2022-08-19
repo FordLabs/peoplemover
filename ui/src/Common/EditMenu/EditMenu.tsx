@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import React, {createRef} from 'react';
+import React, { createRef } from 'react';
 import './EditMenu.scss';
 import AccessibleDropdownContainer from '../AccessibleDropdownContainer/AccessibleDropdownContainer';
-import {createDataTestId} from '../../Utils/ReactUtils';
+import { createDataTestId } from '../../Utils/ReactUtils';
 
 export interface EditMenuOption {
     callback(): void;
@@ -34,30 +34,47 @@ export interface EditMenuProps {
 }
 
 function EditMenu(props: EditMenuProps): JSX.Element {
-    function onOptionSelected(event: React.MouseEvent, callback: Function): void {
+    function onOptionSelected(
+        event: React.MouseEvent,
+        callback: Function
+    ): void {
         event.stopPropagation();
         event.preventDefault();
         callback();
     }
 
     return (
-        <AccessibleDropdownContainer handleClose={props.onClosed} className="editMenuContainer" testId={props.testId} dropdownOptionIds={props.idToPass !== undefined ? [props.idToPass] : []}>
-            {props.menuOptionList.map((menuOption, index) =>
-                <button key={index}
+        <AccessibleDropdownContainer
+            handleClose={props.onClosed}
+            className="editMenuContainer"
+            testId={props.testId}
+            dropdownOptionIds={
+                props.idToPass !== undefined ? [props.idToPass] : []
+            }
+        >
+            {props.menuOptionList.map((menuOption, index) => (
+                <button
+                    key={index}
                     autoFocus={index === 0}
                     className="editMenuContainerOption"
                     id={menuOption.text}
                     ref={createRef<HTMLButtonElement>()}
                     onClick={(event): void =>
                         onOptionSelected(event, menuOption.callback)
-                    }>
-                    <i className="material-icons"
-                        data-testid={createDataTestId('editMenuOption', menuOption.text)}>
+                    }
+                >
+                    <i
+                        className="material-icons"
+                        data-testid={createDataTestId(
+                            'editMenuOption',
+                            menuOption.text
+                        )}
+                    >
                         {menuOption.icon}
                     </i>
                     <span>{menuOption.text}</span>
                 </button>
-            )}
+            ))}
         </AccessibleDropdownContainer>
     );
 }

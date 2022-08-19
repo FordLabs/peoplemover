@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {render, RenderResult} from '@testing-library/react';
+import { render, RenderResult } from '@testing-library/react';
 import MultiModalCardBanner from './MultiModalCardBanner';
 
 describe('Multi Modal Card Banner', () => {
@@ -59,7 +59,9 @@ describe('Multi Modal Card Banner', () => {
                     collapsed={false}
                 />
             );
-            const actualArrowIcon = component.getByTestId('modalCardBannerArrowIcon');
+            const actualArrowIcon = component.getByTestId(
+                'modalCardBannerArrowIcon'
+            );
             expect(actualArrowIcon.innerHTML).toEqual('keyboard_arrow_up');
         });
 
@@ -71,14 +73,15 @@ describe('Multi Modal Card Banner', () => {
                     onCloseBtnClick={buttonClickCallback}
                 />
             );
-            const actualArrowIcon = component.getByTestId('modalCardBannerArrowIcon');
+            const actualArrowIcon = component.getByTestId(
+                'modalCardBannerArrowIcon'
+            );
             expect(actualArrowIcon.innerHTML).toEqual('keyboard_arrow_down');
         });
     });
 
     describe('Header Wrapper', () => {
-
-        it('should be a button when collapsed which automagically inherits its parent component\'s onClick', () => {
+        it("should be a button when collapsed which automagically inherits its parent component's onClick", () => {
             component = render(
                 <MultiModalCardBanner
                     title={testTitle}
@@ -87,7 +90,9 @@ describe('Multi Modal Card Banner', () => {
                 />
             );
 
-            const headerWrapper = component.getByTestId('multiModalExpandCollapseButton');
+            const headerWrapper = component.getByTestId(
+                'multiModalExpandCollapseButton'
+            );
             expect(headerWrapper.nodeName).toBe('BUTTON');
         });
     });

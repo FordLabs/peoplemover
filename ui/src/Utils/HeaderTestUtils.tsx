@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {fireEvent, screen, within} from '@testing-library/react';
-import {dashboardUrl} from '../Routes';
+import { fireEvent, screen, within } from '@testing-library/react';
+import { dashboardUrl } from '../Routes';
 import TestData from './TestData';
 
 export function openAccountDropdown() {

@@ -32,7 +32,7 @@
     letter-spacing: normal;
   }
 
-  .toolTipHover{
+  .toolTipHover {
     font-size: 12px;
     color: $gray-1;
     border-radius: 7px;
@@ -60,7 +60,8 @@
     height: 0;
   }
 
-  .toolTipHover .toolTipHoverNotchBorder-notch { border-bottom-color: $prime-1;
+  .toolTipHover .toolTipHoverNotchBorder-notch {
+    border-bottom-color: $prime-1;
     top: -11px;
   }
 }
@@ -72,4 +73,3 @@
 .toolTipHoverNotShow {
   display: none;
 }
-

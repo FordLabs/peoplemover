@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {TagClient} from 'Types/TagClient';
-import {Space} from 'Types/Space';
-import {RoleTagRequest} from 'Types/TagRequest';
-import {getAxiosConfig} from 'Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { TagClient } from 'Types/TagClient';
+import { Space } from 'Types/Space';
+import { RoleTagRequest } from 'Types/TagRequest';
+import { getAxiosConfig } from 'Utils/getAxiosConfig';
 
 function getBaseRolesUrl(spaceUuid: string): string {
     return '/api/spaces/' + spaceUuid + '/roles';
@@ -35,12 +35,18 @@ async function add(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
     return Axios.post(url, role, getAxiosConfig());
 }
 
-async function edit(role: RoleTagRequest, space: Space): Promise<AxiosResponse> {
+async function edit(
+    role: RoleTagRequest,
+    space: Space
+): Promise<AxiosResponse> {
     const url = `${getBaseRolesUrl(space.uuid || '')}/${role.id}`;
     return Axios.put(url, role, getAxiosConfig());
 }
 
-async function deleteRole(roleId: number, space: Space): Promise<AxiosResponse> {
+async function deleteRole(
+    roleId: number,
+    space: Space
+): Promise<AxiosResponse> {
     const url = getBaseRolesUrl(space.uuid!) + `/${roleId}`;
     return Axios.delete(url, getAxiosConfig());
 }
@@ -48,7 +54,7 @@ const RoleClient: TagClient = {
     get,
     add,
     edit,
-    delete: deleteRole
-}
+    delete: deleteRole,
+};
 
 export default RoleClient;

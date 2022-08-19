@@ -16,13 +16,13 @@
  */
 
 import React from 'react';
-import {stripAssignmentsForArchivedPeople} from 'Services/ProductService';
+import { stripAssignmentsForArchivedPeople } from 'Services/ProductService';
 import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import ProductCard from 'Common/ProductCard/ProductCard';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
-import {UnassignedProductSelector} from 'State/ProductsState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsUnassignedDrawerOpenState } from 'State/IsUnassignedDrawerOpenState';
+import { UnassignedProductSelector } from 'State/ProductsState';
 
 import 'Styles/PersonDrawer.scss';
 import './UnassignedDrawer.scss';
@@ -31,19 +31,29 @@ function UnassignedDrawer(): JSX.Element {
     const unassignedProduct = useRecoilValue(UnassignedProductSelector);
 
     const viewingDate = useRecoilValue(ViewingDateState);
-    const [isUnassignedDrawerOpen, setIsUnassignedDrawerOpen] = useRecoilState(IsUnassignedDrawerOpenState);
+    const [isUnassignedDrawerOpen, setIsUnassignedDrawerOpen] = useRecoilState(
+        IsUnassignedDrawerOpenState
+    );
 
-    const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(unassignedProduct, viewingDate);
+    const productWithoutArchivedPeople = stripAssignmentsForArchivedPeople(
+        unassignedProduct,
+        viewingDate
+    );
 
     return (
         <DrawerContainer
             drawerIcon="supervisor_account"
             testId="unassignedDrawer"
-            numberForCountBadge={productWithoutArchivedPeople.assignments ? productWithoutArchivedPeople.assignments.length : 0}
+            numberForCountBadge={
+                productWithoutArchivedPeople.assignments
+                    ? productWithoutArchivedPeople.assignments.length
+                    : 0
+            }
             containerTitle="Unassigned"
             containee={<ProductCard product={productWithoutArchivedPeople} />}
             isDrawerOpen={isUnassignedDrawerOpen}
-            setIsDrawerOpen={setIsUnassignedDrawerOpen}/>
+            setIsDrawerOpen={setIsUnassignedDrawerOpen}
+        />
     );
 }
 

@@ -15,29 +15,31 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
-import EditMenu, {EditMenuOption} from 'Common/EditMenu/EditMenu';
+import React, { useState } from 'react';
+import EditMenu, { EditMenuOption } from 'Common/EditMenu/EditMenu';
 import ProductClient from 'Services/Api/ProductClient';
-import {isUnassignedProduct} from 'Services/ProductService';
+import { isUnassignedProduct } from 'Services/ProductService';
 import AssignmentCardList from 'Common/ProductCard/AssignmentCardList/AssignmentCardList';
 
 import moment from 'moment';
-import {createDataTestId} from 'Utils/ReactUtils';
-import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
+import { createDataTestId } from 'Utils/ReactUtils';
+import { ProductPlaceholderPair } from 'Types/CreateAssignmentRequest';
 import AssignmentClient from 'Services/Api/AssignmentClient';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {JSX} from '@babel/types';
-import {getAssignments} from 'Services/PersonService';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import ConfirmationModal, {
+    ConfirmationModalProps,
+} from 'Modal/ConfirmationModal/ConfirmationModal';
+import { JSX } from '@babel/types';
+import { getAssignments } from 'Services/PersonService';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { ModalContentsState } from 'State/ModalContentsState';
 import ProductForm from '../ProductForm/ProductForm';
 import AssignmentForm from 'Common/ProductCard/AssignmentForm/AssignmentForm';
-import {Product} from 'Types/Product';
-import {Person} from 'Types/Person';
+import { Product } from 'Types/Product';
+import { Person } from 'Types/Person';
 
 import 'Styles/Product.scss';
 
@@ -51,7 +53,9 @@ function ProductCard({ product }: Props): JSX.Element {
     const setModalContents = useSetRecoilState(ModalContentsState);
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
-    const { fetchProducts, products } = useFetchProducts(currentSpace.uuid || '');
+    const { fetchProducts, products } = useFetchProducts(
+        currentSpace.uuid || ''
+    );
 
     const [isEditMenuOpen, setIsEditMenuOpen] = useState<boolean>(false);
     const [modal, setModal] = useState<JSX.Element | null>(null);
@@ -79,9 +83,7 @@ function ProductCard({ product }: Props): JSX.Element {
         setIsEditMenuOpen(false);
         setModalContents({
             title: 'Edit Product',
-            component: <ProductForm
-                editing
-                product={product}/>,
+            component: <ProductForm editing product={product} />,
         });
     }
 
@@ -93,8 +95,15 @@ function ProductCard({ product }: Props): JSX.Element {
             secondaryButton: undefined,
             content: (
                 <>
-                    <div>Archiving this product will move any people assigned to this product to Unassigned (unless they have already been assigned to another product).</div>
-                    <div><br/>You can access these people from the Unassigned drawer.</div>
+                    <div>
+                        Archiving this product will move any people assigned to
+                        this product to Unassigned (unless they have already
+                        been assigned to another product).
+                    </div>
+                    <div>
+                        <br />
+                        You can access these people from the Unassigned drawer.
+                    </div>
                 </>
             ),
             submitButtonLabel: 'Archive',
@@ -108,18 +117,29 @@ function ProductCard({ product }: Props): JSX.Element {
             return;
         }
         const assignmentEndDate = moment(viewingDate).format('YYYY-MM-DD');
-        const productEndDate = moment(viewingDate).subtract(1, 'day').format('YYYY-MM-DD');
-        product.assignments.forEach(assignment => {
-            AssignmentClient.createAssignmentForDate(assignmentEndDate, getRemainingAssignments(assignment.person), currentSpace, assignment.person);
+        const productEndDate = moment(viewingDate)
+            .subtract(1, 'day')
+            .format('YYYY-MM-DD');
+        product.assignments.forEach((assignment) => {
+            AssignmentClient.createAssignmentForDate(
+                assignmentEndDate,
+                getRemainingAssignments(assignment.person),
+                currentSpace,
+                assignment.person
+            );
         });
-        const archivedProduct = {...product, endDate: productEndDate};
-        ProductClient.editProduct(currentSpace, archivedProduct).then(fetchProducts);
+        const archivedProduct = { ...product, endDate: productEndDate };
+        ProductClient.editProduct(currentSpace, archivedProduct).then(
+            fetchProducts
+        );
     }
 
-    const getRemainingAssignments = (person: Person): Array<ProductPlaceholderPair> => {
+    const getRemainingAssignments = (
+        person: Person
+    ): Array<ProductPlaceholderPair> => {
         return getAssignments(person, products)
-            .filter(assignment => assignment.productId !== product.id)
-            .map(assignment => {
+            .filter((assignment) => assignment.productId !== product.id)
+            .map((assignment) => {
                 return {
                     productId: assignment.productId,
                     placeholder: assignment.placeholder || false,
@@ -127,12 +147,15 @@ function ProductCard({ product }: Props): JSX.Element {
             });
     };
 
-    const setCurrentModalToCreateAssignment = (): void => setModalContents({
-        title: 'Assign a Person',
-        component: <AssignmentForm initiallySelectedProduct={product}/>,
-    });
+    const setCurrentModalToCreateAssignment = (): void =>
+        setModalContents({
+            title: 'Assign a Person',
+            component: <AssignmentForm initiallySelectedProduct={product} />,
+        });
 
-    function handleKeyDownForSetCurrentModalToCreateAssignment(event: React.KeyboardEvent): void {
+    function handleKeyDownForSetCurrentModalToCreateAssignment(
+        event: React.KeyboardEvent
+    ): void {
         if (event.key === 'Enter') {
             setCurrentModalToCreateAssignment();
         }
@@ -153,7 +176,7 @@ function ProductCard({ product }: Props): JSX.Element {
         const locationTagExists = !!locationTag;
         const productTagExists = product.tags.length > 0;
 
-        return locationTagExists || productTagExists ?
+        return locationTagExists || productTagExists ? (
             <p className="productTagContainer">
                 <span>{locationTag}</span>
                 {locationTagExists && productTagExists && <span>, </span>}
@@ -164,13 +187,20 @@ function ProductCard({ product }: Props): JSX.Element {
                     return <span key={tag.id}>{tag.name}</span>;
                 })}
             </p>
-            : <></>;
+        ) : (
+            <></>
+        );
     };
 
-    const classNameAndDataTestId = isUnassignedProduct(product) ? 'productDrawerContainer' : 'productCardContainer';
+    const classNameAndDataTestId = isUnassignedProduct(product)
+        ? 'productDrawerContainer'
+        : 'productCardContainer';
 
     return (
-        <div className={classNameAndDataTestId} data-testid={createDataTestId(classNameAndDataTestId, product.name)}>
+        <div
+            className={classNameAndDataTestId}
+            data-testid={createDataTestId(classNameAndDataTestId, product.name)}
+        >
             <div key={product.name}>
                 {!isUnassignedProduct(product) && (
                     <div>
@@ -182,47 +212,78 @@ function ProductCard({ product }: Props): JSX.Element {
                                         target="_blank"
                                         rel="noreferrer"
                                         data-testid="productName"
-                                        className="productNameLink productName productNameUrl">
+                                        className="productNameLink productName productNameUrl"
+                                    >
                                         {product.name}
-                                        <i className="material-icons productUrlIcon productNameUrl"
+                                        <i
+                                            className="material-icons productUrlIcon productNameUrl"
                                             aria-label="Assign Person"
-                                            data-testid="productUrl">
-                                                open_in_new
+                                            data-testid="productUrl"
+                                        >
+                                            open_in_new
                                         </i>
                                     </a>
                                 ) : (
-                                    <div data-testid="productName" className="productName">
+                                    <div
+                                        data-testid="productName"
+                                        className="productName"
+                                    >
                                         {product.name}
                                     </div>
                                 )}
                                 {!isReadOnly && (
                                     <div className="productControlsContainer">
                                         <button
-                                            data-testid={createDataTestId('addPersonToProductIcon', product.name)}
+                                            data-testid={createDataTestId(
+                                                'addPersonToProductIcon',
+                                                product.name
+                                            )}
                                             className="addPersonIcon material-icons greyIcon clickableIcon"
-                                            onClick={setCurrentModalToCreateAssignment}
-                                            onKeyDown={(e): void => handleKeyDownForSetCurrentModalToCreateAssignment(e)}
+                                            onClick={
+                                                setCurrentModalToCreateAssignment
+                                            }
+                                            onKeyDown={(e): void =>
+                                                handleKeyDownForSetCurrentModalToCreateAssignment(
+                                                    e
+                                                )
+                                            }
                                         >
-                                            <i className="material-icons" aria-label="Assign Person">person_add</i>
+                                            <i
+                                                className="material-icons"
+                                                aria-label="Assign Person"
+                                            >
+                                                person_add
+                                            </i>
                                         </button>
                                         <button
                                             className="editIcon material-icons greyIcon clickableIcon"
-                                            data-testid={createDataTestId('editProductIcon', product.name)}
+                                            data-testid={createDataTestId(
+                                                'editProductIcon',
+                                                product.name
+                                            )}
                                             onClick={toggleEditMenu}
-                                            onKeyUp={(e): void => listenKeyUp(e)}
+                                            onKeyUp={(e): void =>
+                                                listenKeyUp(e)
+                                            }
                                         >
-                                            <i className="material-icons" aria-label="Product Menu"
-                                                id={generateIdName()}>more_vert</i>
+                                            <i
+                                                className="material-icons"
+                                                aria-label="Product Menu"
+                                                id={generateIdName()}
+                                            >
+                                                more_vert
+                                            </i>
                                         </button>
                                     </div>
                                 )}
                             </div>
-                            <TagList/>
+                            <TagList />
                             {isEditMenuOpen && (
                                 <EditMenu
                                     idToPass={generateIdName()}
                                     menuOptionList={getMenuOptionList()}
-                                    onClosed={toggleEditMenu}/>
+                                    onClosed={toggleEditMenu}
+                                />
                             )}
                         </div>
                     </div>
@@ -235,4 +296,3 @@ function ProductCard({ product }: Props): JSX.Element {
 }
 
 export default ProductCard;
-

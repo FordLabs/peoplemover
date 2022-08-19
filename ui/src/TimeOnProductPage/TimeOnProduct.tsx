@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {UNASSIGNED_PRODUCT_NAME} from 'Services/ProductService';
-import {calculateDuration} from 'Services/AssignmentService';
+import { UNASSIGNED_PRODUCT_NAME } from 'Services/ProductService';
+import { calculateDuration } from 'Services/AssignmentService';
 import SubHeader from 'SubHeader/SubHeader';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { ModalContentsState } from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
-import {useParams} from 'react-router-dom';
-import {Product} from 'Types/Product';
-import {Assignment} from 'Types/Assignment';
+import { useParams } from 'react-router-dom';
+import { Product } from 'Types/Product';
+import { Assignment } from 'Types/Assignment';
 import Branding from 'Common/Branding/Branding';
 import TimeOnProductHeader from './TimeOnProductHeader/TimeOnProductHeader';
 
@@ -47,15 +47,22 @@ export interface TimeOnProductItem {
     personId: number;
 }
 
-export const generateTimeOnProductItems = (products: Product[], viewingDate: Date): TimeOnProductItem[] => {
+export const generateTimeOnProductItems = (
+    products: Product[],
+    viewingDate: Date
+): TimeOnProductItem[] => {
     const timeOnProductItem: TimeOnProductItem[] = [];
-    products.forEach(product => {
-        const productName = product.name === UNASSIGNED_PRODUCT_NAME ? 'Unassigned' : product.name;
-        product.assignments.forEach(assignment => {
+    products.forEach((product) => {
+        const productName =
+            product.name === UNASSIGNED_PRODUCT_NAME
+                ? 'Unassigned'
+                : product.name;
+        product.assignments.forEach((assignment) => {
             timeOnProductItem.push({
                 personName: assignment.person.name,
                 productName: productName,
-                personRole: assignment.person.spaceRole?.name || 'No Role Assigned',
+                personRole:
+                    assignment.person.spaceRole?.name || 'No Role Assigned',
                 timeOnProduct: calculateDuration(assignment, viewingDate),
                 assignmentId: assignment.id,
                 personId: assignment.person.id,
@@ -65,7 +72,10 @@ export const generateTimeOnProductItems = (products: Product[], viewingDate: Dat
     return timeOnProductItem;
 };
 
-export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductItem): number => {
+export const sortTimeOnProductItems = (
+    a: TimeOnProductItem,
+    b: TimeOnProductItem
+): number => {
     let returnValue = b.timeOnProduct - a.timeOnProduct;
     if (returnValue === 0) {
         returnValue = a.personName.localeCompare(b.personName);
@@ -82,7 +92,8 @@ export const sortTimeOnProductItems = (a: TimeOnProductItem, b: TimeOnProductIte
 function TimeOnProduct(): JSX.Element {
     const { teamUUID = '' } = useParams<{ teamUUID: string }>();
 
-    const [modalContents, setModalContents] = useRecoilState(ModalContentsState)
+    const [modalContents, setModalContents] =
+        useRecoilState(ModalContentsState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
@@ -107,55 +118,86 @@ function TimeOnProduct(): JSX.Element {
     }, [products]);
 
     const onNameClick = (timeOnProductItem: TimeOnProductItem): void => {
-        const product = products.find(item => timeOnProductItem.productName.toLowerCase() === item.name.toLowerCase());
-        const assignment = product?.assignments.find((item: Assignment) => timeOnProductItem.assignmentId === item.id);
+        const product = products.find(
+            (item) =>
+                timeOnProductItem.productName.toLowerCase() ===
+                item.name.toLowerCase()
+        );
+        const assignment = product?.assignments.find(
+            (item: Assignment) => timeOnProductItem.assignmentId === item.id
+        );
         if (assignment) {
             setModalContents({
                 title: 'Edit Person',
-                component: <PersonForm
-                    isEditPersonForm
-                    personEdited={assignment.person}
-                />,
+                component: (
+                    <PersonForm
+                        isEditPersonForm
+                        personEdited={assignment.person}
+                    />
+                ),
             });
         }
     };
 
     const getPersonNameClassName = (): string => {
         let className = 'timeOnProductCell';
-        className += (isReadOnly ? ' timeOnProductCellNameDisabled' : ' timeOnProductCellName');
+        className += isReadOnly
+            ? ' timeOnProductCellNameDisabled'
+            : ' timeOnProductCellName';
         return className;
     };
 
-    const convertToRow = (timeOnProductItem: TimeOnProductItem): JSX.Element => {
-        const unit = (timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day');
+    const convertToRow = (
+        timeOnProductItem: TimeOnProductItem
+    ): JSX.Element => {
+        const unit = timeOnProductItem.timeOnProduct > 1 ? 'days' : 'day';
         return (
-            <div className="timeOnProductRow"
+            <div
+                className="timeOnProductRow"
                 data-testid={timeOnProductItem.assignmentId.toString()}
                 key={timeOnProductItem.assignmentId.toString()}
             >
-                <button className={getPersonNameClassName()}
-                    onClick={(): void => {onNameClick(timeOnProductItem);}}
+                <button
+                    className={getPersonNameClassName()}
+                    onClick={(): void => {
+                        onNameClick(timeOnProductItem);
+                    }}
                     disabled={isReadOnly}
                 >
                     {timeOnProductItem.personName}
                 </button>
-                <div className="timeOnProductCell">{timeOnProductItem.productName}</div>
-                <div className="timeOnProductCell">{timeOnProductItem.personRole}</div>
-                <div className="timeOnProductCell timeOnProductCellDays">{timeOnProductItem.timeOnProduct} {unit}</div>
+                <div className="timeOnProductCell">
+                    {timeOnProductItem.productName}
+                </div>
+                <div className="timeOnProductCell">
+                    {timeOnProductItem.personRole}
+                </div>
+                <div className="timeOnProductCell timeOnProductCellDays">
+                    {timeOnProductItem.timeOnProduct} {unit}
+                </div>
             </div>
         );
     };
 
-    const convertToTable = (timeOnProductItems: TimeOnProductItem[]): JSX.Element => {
+    const convertToTable = (
+        timeOnProductItems: TimeOnProductItem[]
+    ): JSX.Element => {
         return (
             <>
                 <div className="timeOnProductHeader">
-                    <div className="timeOnProductHeaderCell timeOnProductHeaderName">Name</div>
+                    <div className="timeOnProductHeaderCell timeOnProductHeaderName">
+                        Name
+                    </div>
                     <div className="timeOnProductHeaderCell">Product</div>
                     <div className="timeOnProductHeaderCell">Role</div>
-                    <div className="timeOnProductHeaderCell timeOnProductHeaderCellDays">Days On Product<i className="material-icons timeOnProductSortIcon">sort</i></div>
+                    <div className="timeOnProductHeaderCell timeOnProductHeaderCellDays">
+                        Days On Product
+                        <i className="material-icons timeOnProductSortIcon">
+                            sort
+                        </i>
+                    </div>
                 </div>
-                {timeOnProductItems.map(timeOnProductItem => {
+                {timeOnProductItems.map((timeOnProductItem) => {
                     return convertToRow(timeOnProductItem);
                 })}
             </>
@@ -165,7 +207,7 @@ function TimeOnProduct(): JSX.Element {
     return (
         <>
             <TimeOnProductHeader />
-            { currentSpace && (
+            {currentSpace && (
                 <div className="time-on-product-page">
                     <Modal />
                     <SubHeader
@@ -173,20 +215,30 @@ function TimeOnProduct(): JSX.Element {
                         showSortBy={false}
                         message={
                             <div className="timeOnProductHeaderMessage">
-                                <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
+                                <span
+                                    className="newBadge"
+                                    data-testid="newBadge"
+                                >
+                                    BETA
+                                </span>
+                                View People by Time On Product
                             </div>
                         }
                     />
-                    {isLoading ?
+                    {isLoading ? (
                         <div className="timeOnProductLoading">{LOADING}</div>
-                        : (
-                            <div className="timeOnProductTable">
-                                {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
-                            </div>
-                        )
-                    }
+                    ) : (
+                        <div className="timeOnProductTable">
+                            {convertToTable(
+                                generateTimeOnProductItems(
+                                    products,
+                                    viewingDate
+                                ).sort(sortTimeOnProductItems)
+                            )}
+                        </div>
+                    )}
                     <footer>
-                        <Branding/>
+                        <Branding />
                     </footer>
                 </div>
             )}
@@ -195,4 +247,3 @@ function TimeOnProduct(): JSX.Element {
 }
 
 export default TimeOnProduct;
-

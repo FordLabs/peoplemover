@@ -15,36 +15,43 @@
  * limitations under the License.
  */
 
-$white: #FFFFFF;
+$white: #ffffff;
 
-$red: #CF3F6A;
+$red: #cf3f6a;
 
-$gray-1: #403D3D;
-$gray-2: #6B6867;
+$gray-1: #403d3d;
+$gray-2: #6b6867;
 $gray-3: #999694;
-$gray-4: #BFBCBB;
-$gray-5: #EDEBEB;
-$gray-6: #F2F2F2;
+$gray-4: #bfbcbb;
+$gray-5: #edebeb;
+$gray-6: #f2f2f2;
 
-$prime-1: #5463B0;
+$prime-1: #5463b0;
 
-$orange-hover: #EB7B57;
+$orange-hover: #eb7b57;
 
-$outline-focus-blue: #4C8EF5;
+$outline-focus-blue: #4c8ef5;
 
-$role-1: #9ADAD3;
-$role-2: #A8CBFA;
-$role-3: #A7EEFE;
+$role-1: #9adad3;
+$role-2: #a8cbfa;
+$role-3: #a7eefe;
 
-$scrollbar-color: #ABABAB;
+$scrollbar-color: #ababab;
 $font-color: #323b3e;
-$purple: #4F5FAB;
-$light-purple: #C8D0F3;
-$purple-title: #984AA1;
+$purple: #4f5fab;
+$light-purple: #c8d0f3;
+$purple-title: #984aa1;
 $logo-gradient: linear-gradient(90deg, $purple-title 0%, $purple 76.03%);
-$logo-gradient-2: linear-gradient(90deg, rgba(152, 74, 161, 0.45) 0%, rgba(79, 95, 171, 0.84) 91.81%);;
-$logo-gradient-3: linear-gradient(90deg, rgba(152, 74, 161, 0.15) 0%, rgba(79, 95, 171, 0.6) 91.81%);
-$error-message: #C82656;
-$sec-5: #ECD5EF;
-$sec-6: #F2E7F3;
-
+$logo-gradient-2: linear-gradient(
+  90deg,
+  rgba(152, 74, 161, 0.45) 0%,
+  rgba(79, 95, 171, 0.84) 91.81%
+);
+$logo-gradient-3: linear-gradient(
+  90deg,
+  rgba(152, 74, 161, 0.15) 0%,
+  rgba(79, 95, 171, 0.6) 91.81%
+);
+$error-message: #c82656;
+$sec-5: #ecd5ef;
+$sec-6: #f2e7f3;

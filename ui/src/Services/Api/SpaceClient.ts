@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {Space} from 'Types/Space';
-import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import {getAxiosConfig} from '../../Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { Space } from 'Types/Space';
+import { UserSpaceMapping } from 'Types/UserSpaceMapping';
+import { getAxiosConfig } from '../../Utils/getAxiosConfig';
 
 const baseSpaceUrl = `/api/spaces`;
 
@@ -34,22 +34,29 @@ async function deleteSpaceByUuid(uuid: string): Promise<void> {
 
 async function getSpacesForUser(): Promise<Space[]> {
     const url = baseSpaceUrl + '/user';
-    return Axios.get(url, getAxiosConfig()).then(res => res.data);
+    return Axios.get(url, getAxiosConfig()).then((res) => res.data);
 }
 
-async function getSpaceFromUuid(spaceUuid: string): Promise<AxiosResponse<Space>> {
+async function getSpaceFromUuid(
+    spaceUuid: string
+): Promise<AxiosResponse<Space>> {
     const url = `${baseSpaceUrl}/${spaceUuid}`;
     return Axios.get(url, getAxiosConfig());
 }
 
-async function getUsersForSpace(spaceUuid: string): Promise<UserSpaceMapping[]> {
+async function getUsersForSpace(
+    spaceUuid: string
+): Promise<UserSpaceMapping[]> {
     const url = `${baseSpaceUrl}/${spaceUuid}/users`;
     return Axios.get(url, getAxiosConfig()).then((users) => {
         return users.data.sort(compareByPermissionThenByUserId);
     });
 }
 
-function compareByPermissionThenByUserId(a: UserSpaceMapping, b: UserSpaceMapping): number {
+function compareByPermissionThenByUserId(
+    a: UserSpaceMapping,
+    b: UserSpaceMapping
+): number {
     let comparison = 0;
     if (a.permission === b.permission) {
         if (a.userId > b.userId) comparison = 1;
@@ -61,35 +68,56 @@ function compareByPermissionThenByUserId(a: UserSpaceMapping, b: UserSpaceMappin
     return comparison;
 }
 
-async function createSpaceForUser(spaceName: string): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
+async function createSpaceForUser(
+    spaceName: string
+): Promise<AxiosResponse<SpaceWithAccessTokenResponse>> {
     const url = `${baseSpaceUrl}/user`;
     return Axios.post(url, { spaceName }, getAxiosConfig());
 }
 
-async function editSpaceName(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+async function editSpaceName(
+    uuid: string,
+    editedSpace: Space
+): Promise<AxiosResponse> {
     return editSpace(uuid, editedSpace);
 }
 
-async function editSpaceReadOnlyFlag(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+async function editSpaceReadOnlyFlag(
+    uuid: string,
+    editedSpace: Space
+): Promise<AxiosResponse> {
     return editSpace(uuid, editedSpace);
 }
 
-async function editSpace(uuid: string, editedSpace: Space): Promise<AxiosResponse> {
+async function editSpace(
+    uuid: string,
+    editedSpace: Space
+): Promise<AxiosResponse> {
     const url = `${baseSpaceUrl}/${uuid}`;
     return Axios.put(url, editedSpace, getAxiosConfig());
 }
 
-async function inviteUsersToSpace(space: Space, userIds: string[]): Promise<AxiosResponse<void>> {
+async function inviteUsersToSpace(
+    space: Space,
+    userIds: string[]
+): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users`;
     return Axios.post(url, { userIds }, getAxiosConfig());
 }
 
-function removeUser(space: Space, user: UserSpaceMapping): Promise<AxiosResponse<void>> {
+function removeUser(
+    space: Space,
+    user: UserSpaceMapping
+): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users/${user.userId}`;
     return Axios.delete(url, getAxiosConfig());
 }
 
-async function changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwner: UserSpaceMapping): Promise<AxiosResponse<void>> {
+async function changeOwner(
+    space: Space,
+    currentOwner: UserSpaceMapping,
+    newOwner: UserSpaceMapping
+): Promise<AxiosResponse<void>> {
     const url = `${baseSpaceUrl}/${space.uuid}/users/${newOwner.userId}`;
     return Axios.put(url, null, getAxiosConfig());
 }
@@ -104,7 +132,7 @@ const SpaceClient = {
     editSpaceReadOnlyFlag,
     inviteUsersToSpace,
     removeUser,
-    changeOwner
-}
+    changeOwner,
+};
 
 export default SpaceClient;

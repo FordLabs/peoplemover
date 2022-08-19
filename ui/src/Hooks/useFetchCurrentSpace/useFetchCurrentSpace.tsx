@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
-import {useCallback} from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SpaceClient from '../../Services/Api/SpaceClient';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
-import {Space} from 'Types/Space';
-import {AxiosError} from 'axios';
+import { CurrentSpaceState } from '../../State/CurrentSpaceState';
+import { Space } from 'Types/Space';
+import { AxiosError } from 'axios';
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
 
 interface UseFetchCurrentSpace {
     currentSpace: Space;
-    fetchCurrentSpace(): void
+    fetchCurrentSpace(): void;
 }
 
 function useFetchCurrentSpace(spaceUUID: string): UseFetchCurrentSpace {
@@ -36,27 +36,30 @@ function useFetchCurrentSpace(spaceUUID: string): UseFetchCurrentSpace {
 
     const [currentSpace, setCurrentSpace] = useRecoilState(CurrentSpaceState);
 
-    const handleErrors = useCallback((error: AxiosError): Error | null => {
-        if (error?.response?.status === BAD_REQUEST) {
-            navigate("/error/404");
-            return null;
-        } else if (error?.response?.status === FORBIDDEN) {
-            navigate("/error/403");
-            return null;
-        } else {
-            return error;
-        }
-    }, [navigate]);
+    const handleErrors = useCallback(
+        (error: AxiosError): Error | null => {
+            if (error?.response?.status === BAD_REQUEST) {
+                navigate('/error/404');
+                return null;
+            } else if (error?.response?.status === FORBIDDEN) {
+                navigate('/error/403');
+                return null;
+            } else {
+                return error;
+            }
+        },
+        [navigate]
+    );
 
     const fetchCurrentSpace = useCallback(() => {
         SpaceClient.getSpaceFromUuid(spaceUUID)
-            .then(result => setCurrentSpace(result.data))
+            .then((result) => setCurrentSpace(result.data))
             .catch(handleErrors);
-    }, [handleErrors, setCurrentSpace, spaceUUID])
+    }, [handleErrors, setCurrentSpace, spaceUUID]);
 
     return {
         currentSpace: currentSpace || [],
-        fetchCurrentSpace
+        fetchCurrentSpace,
     };
 }
 

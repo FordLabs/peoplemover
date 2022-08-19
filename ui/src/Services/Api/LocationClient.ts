@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {TagRequest} from 'Types/TagRequest';
-import {TagClient} from 'Types/TagClient';
-import {Space} from 'Types/Space';
-import {LocationTag} from 'Types/Tag';
-import {getAxiosConfig} from 'Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { TagRequest } from 'Types/TagRequest';
+import { TagClient } from 'Types/TagClient';
+import { Space } from 'Types/Space';
+import { LocationTag } from 'Types/Tag';
+import { getAxiosConfig } from 'Utils/getAxiosConfig';
 
 function getBaseLocationsUrl(spaceUuid: string): string {
     return '/api/spaces/' + spaceUuid + '/locations';
@@ -36,12 +36,18 @@ async function add(location: TagRequest, space: Space): Promise<AxiosResponse> {
     return Axios.post(url, location, getAxiosConfig());
 }
 
-async function edit(location: TagRequest, space: Space): Promise<AxiosResponse<LocationTag>> {
+async function edit(
+    location: TagRequest,
+    space: Space
+): Promise<AxiosResponse<LocationTag>> {
     const url = getBaseLocationsUrl(space.uuid || '') + `/${location.id}`;
     return Axios.put(url, location, getAxiosConfig());
 }
 
-async function deleteLocation(locationId: number, space: Space): Promise<AxiosResponse> {
+async function deleteLocation(
+    locationId: number,
+    space: Space
+): Promise<AxiosResponse> {
     const url = getBaseLocationsUrl(space.uuid!) + `/${locationId}`;
     return Axios.delete(url, getAxiosConfig());
 }
@@ -50,7 +56,7 @@ const LocationClient: TagClient = {
     get,
     add,
     edit,
-    delete: deleteLocation
-}
+    delete: deleteLocation,
+};
 
 export default LocationClient;

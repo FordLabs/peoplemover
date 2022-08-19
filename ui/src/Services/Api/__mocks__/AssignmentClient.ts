@@ -18,15 +18,23 @@
 import TestData from 'Utils/TestData';
 
 const AssignmentClient = {
-    createAssignmentForDate: jest.fn().mockResolvedValue({ data: [TestData.assignmentForPerson1] }),
-    getAssignmentsUsingPersonIdAndDate: jest.fn().mockResolvedValue({ data: [{...TestData.assignmentForPerson1}] }),
-    getAssignmentEffectiveDates: jest.fn().mockResolvedValue({ data: [
-        new Date(2020, 4, 15),
-        new Date(2020, 5, 1),
-        new Date(2020, 6, 1),
-    ]}),
+    createAssignmentForDate: jest
+        .fn()
+        .mockResolvedValue({ data: [TestData.assignmentForPerson1] }),
+    getAssignmentsUsingPersonIdAndDate: jest
+        .fn()
+        .mockResolvedValue({ data: [{ ...TestData.assignmentForPerson1 }] }),
+    getAssignmentEffectiveDates: jest.fn().mockResolvedValue({
+        data: [
+            new Date(2020, 4, 15),
+            new Date(2020, 5, 1),
+            new Date(2020, 6, 1),
+        ],
+    }),
     getReassignments: jest.fn().mockResolvedValue({ data: [] }),
-    getAssignmentsV2ForSpaceAndPerson: jest.fn().mockResolvedValue({ data: [] }),
-}
+    getAssignmentsV2ForSpaceAndPerson: jest
+        .fn()
+        .mockResolvedValue({ data: [] }),
+};
 
 export default AssignmentClient;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {RunConfig} from './RunConfig';
+import { RunConfig } from './RunConfig';
 
 declare global {
     interface Window {

@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import React, {ReactNode} from 'react';
-import {MemoryRouter} from 'react-router-dom';
-import {act, renderHook} from '@testing-library/react-hooks';
-import {RecoilRoot} from 'recoil';
+import React, { ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { RecoilRoot } from 'recoil';
 import useFetchProducts from './useFetchProducts';
 import ProductClient from 'Services/Api/ProductClient';
-import {ViewingDateState} from 'State/ViewingDateState';
+import { ViewingDateState } from 'State/ViewingDateState';
 import TestData from 'Utils/TestData';
 
 jest.mock('Services/Api/ProductClient');
@@ -31,24 +31,31 @@ const viewingDate = new Date();
 
 describe('useFetchProducts Hook', () => {
     it('should fetch all products and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchProducts(spaceUUID), { wrapper });
+        const { result } = renderHook(() => useFetchProducts(spaceUUID), {
+            wrapper,
+        });
 
-        expect(ProductClient.getProductsForDate).not.toHaveBeenCalled()
+        expect(ProductClient.getProductsForDate).not.toHaveBeenCalled();
         expect(result.current.products).toEqual([]);
 
         await act(async () => {
-            result.current.fetchProducts()
+            result.current.fetchProducts();
         });
-        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(spaceUUID, viewingDate);
+        expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(
+            spaceUUID,
+            viewingDate
+        );
         expect(result.current.products).toEqual(TestData.products);
     });
 });
 
 const wrapper = ({ children }: { children: ReactNode }) => (
     <MemoryRouter>
-        <RecoilRoot initializeState={({set}) => {
-            set(ViewingDateState, viewingDate)
-        }}>
+        <RecoilRoot
+            initializeState={({ set }) => {
+                set(ViewingDateState, viewingDate);
+            }}
+        >
             {children}
         </RecoilRoot>
     </MemoryRouter>

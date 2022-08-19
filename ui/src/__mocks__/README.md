@@ -1,4 +1,4 @@
-#Jest manual mocks: 
+#Jest manual mocks:
 Resource: https://jestjs.io/docs/en/manual-mocks
 
 Note:

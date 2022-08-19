@@ -15,14 +15,19 @@
  * limitations under the License.
  */
 
-import React, {ReactNode, useEffect} from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import SpaceClient from '../Services/Api/SpaceClient';
-import {MutableSnapshot, RecoilRoot, RecoilValue, useRecoilValue} from 'recoil';
-import {render, RenderResult, waitFor} from '@testing-library/react';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import {
+    MutableSnapshot,
+    RecoilRoot,
+    RecoilValue,
+    useRecoilValue,
+} from 'recoil';
+import { render, RenderResult, waitFor } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import SpacePage from '../SpacePage/SpacePage';
 import DragAndDrop from '../SpacePage/DragAndDrop/DragAndDrop';
-import {RunConfig} from '../Types/RunConfig';
+import { RunConfig } from '../Types/RunConfig';
 
 async function renderPeopleMoverComponent(
     initializedRecoilState?: (mutableSnapshot: MutableSnapshot) => void,
@@ -31,31 +36,32 @@ async function renderPeopleMoverComponent(
     const result = renderWithRecoil(
         <MemoryRouter initialEntries={[initialPath]}>
             <Routes>
-                <Route path="/:teamUUID" element={<SpacePage/>} />
+                <Route path="/:teamUUID" element={<SpacePage />} />
             </Routes>
         </MemoryRouter>,
         initializedRecoilState
     );
     const uuid = initialPath.replace('/', '');
-    await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(uuid))
+    await waitFor(() =>
+        expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(uuid)
+    );
     return result;
 }
 
-export function renderWithRecoil(component: JSX.Element, initializeState?: (mutableSnapshot: MutableSnapshot) => void): RenderResult {
+export function renderWithRecoil(
+    component: JSX.Element,
+    initializeState?: (mutableSnapshot: MutableSnapshot) => void
+): RenderResult {
     return render(
         <RecoilRoot initializeState={initializeState}>
-            <DragAndDrop>
-                {component}
-            </DragAndDrop>
+            <DragAndDrop>{component}</DragAndDrop>
         </RecoilRoot>
-    )
+    );
 }
 
 const hookWrapper = ({ children }: { children: ReactNode }) => (
     <MemoryRouter>
-        <RecoilRoot>
-            {children}
-        </RecoilRoot>
+        <RecoilRoot>{children}</RecoilRoot>
     </MemoryRouter>
 );
 
@@ -72,7 +78,7 @@ export function mockCreateRange(): () => void {
                 setEnd: () => null,
                 setStart: () => null,
                 getBoundingClientRect: (): DOMRect => {
-                    return {right: 0} as DOMRect;
+                    return { right: 0 } as DOMRect;
                 },
                 commonAncestorContainer: document.createElement('div'),
             } as unknown as Range;
@@ -105,7 +111,9 @@ export const RecoilObserver = ({
 };
 
 function enableInviteUsersToSpace(inviteUsersToSpaceEnabled = true) {
-    window.runConfig = {invite_users_to_space_enabled: inviteUsersToSpaceEnabled} as RunConfig;
+    window.runConfig = {
+        invite_users_to_space_enabled: inviteUsersToSpaceEnabled,
+    } as RunConfig;
 }
 
 const TestUtils = {
@@ -115,7 +123,7 @@ const TestUtils = {
     createDataTestId,
     mockCreateRange,
     expectedCreateOptionText,
-    hookWrapper
-}
+    hookWrapper,
+};
 
 export default TestUtils;

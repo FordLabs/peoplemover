@@ -16,16 +16,19 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../../../Utils/TestUtils';
-import {screen, waitFor} from '@testing-library/react';
+import { renderWithRecoil } from '../../../Utils/TestUtils';
+import { screen, waitFor } from '@testing-library/react';
 import TestData from '../../../Utils/TestData';
-import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from '../../../State/ModalContentsState';
-import {RecoilObserver} from '../../../Utils/RecoilObserver';
-import {localStorageEventListenerKey} from '../../../Hooks/useOnStorageChange/useOnStorageChange';
+import { LocalStorageFilters } from '../FilterLibraries';
+import {
+    ModalContents,
+    ModalContentsState,
+} from '../../../State/ModalContentsState';
+import { RecoilObserver } from '../../../Utils/RecoilObserver';
+import { localStorageEventListenerKey } from '../../../Hooks/useOnStorageChange/useOnStorageChange';
 import MyTagsForm from '../MyTagsForm/MyTagsForm';
 import PersonTagsFilter from './PersonTagsFilter';
-import {PersonTagsState} from '../../../State/PersonTagsState';
+import { PersonTagsState } from '../../../State/PersonTagsState';
 
 describe('Person Tags Filter', () => {
     let modalContent: ModalContents | null;
@@ -50,10 +53,11 @@ describe('Person Tags Filter', () => {
                 />
                 <PersonTagsFilter />
             </>,
-            ({set}) => {
-                set(PersonTagsState, TestData.personTags)
-            })
-    })
+            ({ set }) => {
+                set(PersonTagsState, TestData.personTags);
+            }
+        );
+    });
 
     it('should show "Person Tags:" label', () => {
         expect(getPersonTagsDropdownButton()).toHaveTextContent('Person Tags:');
@@ -61,14 +65,19 @@ describe('Person Tags Filter', () => {
 
     it('should show only person tags saved in local storage as selected', () => {
         getPersonTagsDropdownButton().click();
-        const personTag1Checkbox = screen.getByLabelText(TestData.personTag1.name);
+        const personTag1Checkbox = screen.getByLabelText(
+            TestData.personTag1.name
+        );
         expect(personTag1Checkbox).toBeChecked();
-        const personTag2Checkbox = screen.getByLabelText(TestData.personTag2.name);
+        const personTag2Checkbox = screen.getByLabelText(
+            TestData.personTag2.name
+        );
         expect(personTag2Checkbox).not.toBeChecked();
     });
 
     it('should update local storage and trigger storage event when product location option is checked or unchecked', () => {
-        const getPersonTag2Checkbox = () => screen.getByLabelText(TestData.personTag2.name);
+        const getPersonTag2Checkbox = () =>
+            screen.getByLabelText(TestData.personTag2.name);
         const dispatchEvent = jest.spyOn(window, 'dispatchEvent');
 
         getPersonTagsDropdownButton().click();
@@ -76,20 +85,31 @@ describe('Person Tags Filter', () => {
 
         expect(getPersonTag2Checkbox()).toBeChecked();
         expect(dispatchEvent).toHaveBeenCalledTimes(1);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify({
-            locationTagFilters: [],
-            productTagFilters: [],
-            roleTagFilters: [],
-            personTagFilters: [TestData.personTag1.name, TestData.personTag2.name],
-        }))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify({
+                locationTagFilters: [],
+                productTagFilters: [],
+                roleTagFilters: [],
+                personTagFilters: [
+                    TestData.personTag1.name,
+                    TestData.personTag2.name,
+                ],
+            })
+        );
 
         getPersonTag2Checkbox().click();
 
         expect(dispatchEvent).toHaveBeenCalledTimes(2);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
         expect(getPersonTag2Checkbox()).not.toBeChecked();
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify(initialFilters))
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify(initialFilters)
+        );
     });
 
     it('should open person tag modal when user selects "Add/Edit your Person Tags" from the dropdown', async () => {
@@ -97,10 +117,12 @@ describe('Person Tags Filter', () => {
         const openModalButton = screen.getByText('Add/Edit your Person Tags');
         openModalButton.click();
         await waitFor(() => expect(modalContent?.title).toBe('Person Tags'));
-        await waitFor(() => expect(modalContent?.component.type).toBe(MyTagsForm));
+        await waitFor(() =>
+            expect(modalContent?.component.type).toBe(MyTagsForm)
+        );
     });
 });
 
 function getPersonTagsDropdownButton() {
-    return screen.getByTestId('dropdownButton__person_tags')
+    return screen.getByTestId('dropdownButton__person_tags');
 }

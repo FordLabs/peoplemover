@@ -16,34 +16,39 @@
  */
 
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import FordLabsLogo from '../../Assets/fordlabs_logo.svg';
-import {contactUsPath} from '../../Routes';
+import { contactUsPath } from '../../Routes';
 
 import './Branding.scss';
 
 function Branding(): JSX.Element {
     const fordLabsUrl = window?.runConfig?.ford_labs_url || '';
     return (
-        <div className="brandingContainer"
-            aria-label="Powered by Ford Labs">
+        <div className="brandingContainer" aria-label="Powered by Ford Labs">
             <span className="brandingMessage">Powered by</span>
-            <img className="brandingImage"
+            <img
+                className="brandingImage"
                 src={FordLabsLogo}
                 alt=""
                 aria-hidden
                 width="20"
-                height="20"/>
-            <a target="_blank"
+                height="20"
+            />
+            <a
+                target="_blank"
                 rel="noopener noreferrer"
                 href={fordLabsUrl}
-                className="brandingMessage">
+                className="brandingMessage"
+            >
                 FordLabs
             </a>
-            <span className="brandingMessage brandingLeftPadSmall">|
+            <span className="brandingMessage brandingLeftPadSmall">
+                |
                 <Link
                     to={contactUsPath}
-                    className="brandingMessage brandingLeftPadSmall">
+                    className="brandingMessage brandingLeftPadSmall"
+                >
                     Contact Us
                 </Link>
             </span>

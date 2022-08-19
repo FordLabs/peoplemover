@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ArchivedProduct from './ArchivedProduct/ArchivedProduct';
-import {isArchivedOnDate} from 'Services/ProductService';
+import { isArchivedOnDate } from 'Services/ProductService';
 import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
-import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {ProductsState} from 'State/ProductsState';
-import {Product} from 'Types/Product';
+import { useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { ProductsState } from 'State/ProductsState';
+import { Product } from 'Types/Product';
 
 import 'Styles/Main.scss';
 import './ArchivedProductsDrawer.scss';
@@ -34,27 +34,31 @@ function ArchivedProductsDrawer(): JSX.Element {
     const [showDrawer, setShowDrawer] = useState(false);
 
     const getArchivedProducts = (): Array<Product> => {
-        return products.filter(product => isArchivedOnDate(product, viewingDate));
+        return products.filter((product) =>
+            isArchivedOnDate(product, viewingDate)
+        );
     };
 
     return (
-        <DrawerContainer drawerIcon="inbox"
+        <DrawerContainer
+            drawerIcon="inbox"
             numberForCountBadge={getArchivedProducts().length}
             containerTitle="Archived Products"
             testId="archivedProductsDrawer"
-            containee={(
+            containee={
                 <div className="archivedProductListContainer">
-                    {getArchivedProducts().map(product => {
+                    {getArchivedProducts().map((product) => {
                         return (
                             <div key={product.id}>
-                                <ArchivedProduct product={product}/>
+                                <ArchivedProduct product={product} />
                             </div>
                         );
                     })}
                 </div>
-            )}
+            }
             isDrawerOpen={showDrawer}
-            setIsDrawerOpen={setShowDrawer}/>
+            setIsDrawerOpen={setShowDrawer}
+        />
     );
 }
 

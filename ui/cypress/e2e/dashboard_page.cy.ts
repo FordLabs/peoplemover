@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 const newSpaceName = 'SpaceShip';
-const flippingSweetSpaceName = 'Flipping Sweet'
+const flippingSweetSpaceName = 'Flipping Sweet';
 
 describe('The Space Dashboard', () => {
     beforeEach(() => {
@@ -32,15 +32,20 @@ describe('The Space Dashboard', () => {
             .should('contain', flippingSweetSpaceName);
         cy.get('[data-testid=peopleMoverHeader]')
             .should('contain', 'PEOPLEMOVER')
-            .should('not.contain', flippingSweetSpaceName)
-    })
+            .should('not.contain', flippingSweetSpaceName);
+    });
 
     it('Add a space', () => {
         cy.contains('Create New Space').click();
         cy.get('[data-testid="createSpaceInputField"]').type(newSpaceName);
-        cy.get('[data-testid="createSpaceButton"]').should('contain', 'Create').click();
+        cy.get('[data-testid="createSpaceButton"]')
+            .should('contain', 'Create')
+            .click();
 
-        cy.get('[data-testid=peopleMoverHeader]').should('contain', newSpaceName)
+        cy.get('[data-testid=peopleMoverHeader]').should(
+            'contain',
+            newSpaceName
+        );
         cy.contains('Add Product').should('exist');
     });
 
@@ -75,10 +80,14 @@ describe('The Space Dashboard', () => {
         openSpaceActionsDropdown(flippingSweetSpaceName);
         cy.contains('Leave Space').click();
         cy.contains('Transfer Ownership of Space');
-        cy.get('[data-testid="transferOwnershipFormRadioControl-BBARKER"]').click();
+        cy.get(
+            '[data-testid="transferOwnershipFormRadioControl-BBARKER"]'
+        ).click();
         cy.get('[data-testid="transferOwnershipFormSubmitButton"]').click();
         cy.contains('Confirmed').should('exist');
-        cy.get('[data-testid="confirmationModalCancel"]').click({ force: true });
+        cy.get('[data-testid="confirmationModalCancel"]').click({
+            force: true,
+        });
 
         cy.wait(['@getSpacesForUser']);
 
@@ -95,10 +104,12 @@ describe('The Space Dashboard', () => {
     });
 });
 
-function checkPresenceOfDashboardWelcomeMessage(isPresent : boolean) {
+function checkPresenceOfDashboardWelcomeMessage(isPresent: boolean) {
     const isPresentAssertion = isPresent ? 'exist' : 'not.exist';
     cy.contains('Welcome to PeopleMover!').should(isPresentAssertion);
-    cy.contains('Get started by creating your own space.').should(isPresentAssertion);
+    cy.contains('Get started by creating your own space.').should(
+        isPresentAssertion
+    );
     cy.contains('Create New Space').should('exist');
 }
 

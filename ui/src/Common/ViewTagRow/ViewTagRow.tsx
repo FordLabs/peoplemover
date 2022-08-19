@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
-import React, {ReactNode} from 'react';
-import {createDataTestId} from 'Utils/ReactUtils';
-import {TagType} from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {Tag} from 'Types/Tag';
+import { JSX } from '@babel/types';
+import React, { ReactNode } from 'react';
+import { createDataTestId } from 'Utils/ReactUtils';
+import { TagType } from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import { Tag } from 'Types/Tag';
 
 interface Props {
     children?: ReactNode;
@@ -49,28 +49,40 @@ function ViewTagRow({
         setConfirmDeleteModal();
     };
 
-    const showDeleteConfirmationModalOnEnter = (event: React.KeyboardEvent): void => {
+    const showDeleteConfirmationModalOnEnter = (
+        event: React.KeyboardEvent
+    ): void => {
         if (event.key === 'Enter') showDeleteConfirmationModal();
     };
 
     return (
         <div className={`viewTagRow ${tagNameClass}`} data-testid="viewTagRow">
             {children}
-            <span className="tagName" data-testid={createDataTestId('tagName', testIdSuffix)}>
+            <span
+                className="tagName"
+                data-testid={createDataTestId('tagName', testIdSuffix)}
+            >
                 {tag.name}
             </span>
             {showEditButtons && (
                 <div>
-                    <button className="editTagIcon"
+                    <button
+                        className="editTagIcon"
                         data-testid={createDataTestId('editIcon', testIdSuffix)}
                         onClick={(): void => editTagCallback()}
-                        onKeyDown={openEditViewOnEnter}>
+                        onKeyDown={openEditViewOnEnter}
+                    >
                         <i className="material-icons">edit</i>
                     </button>
-                    <button className="deleteTagIcon"
-                        data-testid={createDataTestId('deleteIcon', testIdSuffix)}
+                    <button
+                        className="deleteTagIcon"
+                        data-testid={createDataTestId(
+                            'deleteIcon',
+                            testIdSuffix
+                        )}
                         onClick={(): void => showDeleteConfirmationModal()}
-                        onKeyDown={showDeleteConfirmationModalOnEnter}>
+                        onKeyDown={showDeleteConfirmationModalOnEnter}
+                    >
                         <i className="material-icons">delete</i>
                     </button>
                 </div>

@@ -17,7 +17,7 @@
 
 @import '../../Styles/Colors';
 
-.personNameWarning{
+.personNameWarning {
   color: $error-message;
   font-size: 12px;
   padding-top: 6px;
@@ -29,7 +29,7 @@
   box-sizing: border-box;
 }
 
-.isNewContainer{
+.isNewContainer {
   font-size: 1.05rem;
   display: flex;
   flex-direction: row;
@@ -46,5 +46,5 @@
 }
 
 .purple {
-  color: $prime-1
+  color: $prime-1;
 }

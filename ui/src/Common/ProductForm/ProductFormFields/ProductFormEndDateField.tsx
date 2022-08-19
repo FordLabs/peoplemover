@@ -17,26 +17,35 @@
 
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import React, {useState} from 'react';
-import {Product} from 'Types/Product';
-import InputMask from "react-input-mask";
+import React, { useState } from 'react';
+import { Product } from 'Types/Product';
+import InputMask from 'react-input-mask';
 
 interface Props {
     currentProduct: Product;
     updateProductField: (fieldName: string, fieldValue: string) => void;
 }
 
-function ProductFormEndDateField({ currentProduct, updateProductField }: Props): JSX.Element {
+function ProductFormEndDateField({
+    currentProduct,
+    updateProductField,
+}: Props): JSX.Element {
     const [endDate, setEndDate] = useState<Date | null>(
         currentProduct.endDate ? moment(currentProduct.endDate).toDate() : null
     );
 
     const onChange = (date: Date): void => {
         setEndDate(date ? date : null);
-        updateProductField('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
+        updateProductField(
+            'endDate',
+            date ? moment(date).format('YYYY-MM-DD') : ''
+        );
     };
 
-    function handleKeyDownForOnClick(event: React.KeyboardEvent, callback: Function): void {
+    function handleKeyDownForOnClick(
+        event: React.KeyboardEvent,
+        callback: Function
+    ): void {
         if (event.key === 'Enter') {
             callback();
         }
@@ -45,26 +54,46 @@ function ProductFormEndDateField({ currentProduct, updateProductField }: Props):
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const CustomInput = ({ value, onClick, onChange }: any): JSX.Element => {
         return (
-            <div onClick={onClick} onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}>
+            <div
+                onClick={onClick}
+                onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}
+            >
                 <InputMask
                     className="formInput formTextInput"
                     name="end"
                     id="end"
                     value={value}
                     onChange={onChange}
-                    mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                    mask={[
+                        /\d/,
+                        /\d/,
+                        '/',
+                        /\d/,
+                        /\d/,
+                        '/',
+                        /\d/,
+                        /\d/,
+                        /\d/,
+                        /\d/,
+                    ]}
                     placeholder="MM/DD/YYYY"
                 />
-                {!endDate && <i className="material-icons calendar-icon">date_range</i>}
+                {!endDate && (
+                    <i className="material-icons calendar-icon">date_range</i>
+                )}
             </div>
         );
     };
 
-    const DateInput = React.forwardRef((props, ref) => <CustomInput innerRef={ref} {...props} />);
+    const DateInput = React.forwardRef((props, ref) => (
+        <CustomInput innerRef={ref} {...props} />
+    ));
 
     return (
         <div className="formItem" data-testid="productFormNextPhaseDateField">
-            <label className="formItemLabel" htmlFor="end">End Date</label>
+            <label className="formItemLabel" htmlFor="end">
+                End Date
+            </label>
             <DatePicker
                 onChange={onChange}
                 selected={endDate}

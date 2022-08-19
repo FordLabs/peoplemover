@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import DrawerContainer from 'Common/DrawerContainer/DrawerContainer';
 import moment from 'moment';
 import PersonCard from './PersonCard/PersonCard';
-import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {PeopleState} from 'State/PeopleState';
-import {Person} from 'Types/Person';
+import { useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { PeopleState } from 'State/PeopleState';
+import { Person } from 'Types/Person';
 
 function ArchivedPersonDrawer(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
@@ -31,14 +31,18 @@ function ArchivedPersonDrawer(): JSX.Element {
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
     const getArchivedPeople = (): Person[] => {
-        return people.filter(person => person.archiveDate !== null && moment(person.archiveDate).isBefore(moment(viewingDate)));
+        return people.filter(
+            (person) =>
+                person.archiveDate !== null &&
+                moment(person.archiveDate).isBefore(moment(viewingDate))
+        );
     };
 
     const getArchivedPeopleElements = (): JSX.Element => {
         return (
             <div>
-                {getArchivedPeople().map(person => {
-                    return (<PersonCard person={person} key={person.id}/>);
+                {getArchivedPeople().map((person) => {
+                    return <PersonCard person={person} key={person.id} />;
                 })}
             </div>
         );
@@ -52,7 +56,8 @@ function ArchivedPersonDrawer(): JSX.Element {
             containerTitle="Archived People"
             containee={getArchivedPeopleElements()}
             isDrawerOpen={isDrawerOpen}
-            setIsDrawerOpen={setIsDrawerOpen}/>
+            setIsDrawerOpen={setIsDrawerOpen}
+        />
     );
 }
 

@@ -24,16 +24,22 @@ interface BrowserInfo {
 export function getBrowserInfo(): BrowserInfo {
     let browserName = '';
     // Safari 3.0+ "[object HTMLElementConstructor]"
-    // @ts-ignore
-    const isSafari = /constructor/i.test(window.HTMLElement) || (function(p): boolean {
-        return p.toString() === '[object SafariRemoteNotification]';
+    const isSafari =
         // @ts-ignore
-    })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        /constructor/i.test(window.HTMLElement) ||
+        (function (p): boolean {
+            return p.toString() === '[object SafariRemoteNotification]';
+        })(
+            // @ts-ignore
+            !window['safari'] ||
+                // @ts-ignore
+                (typeof safari !== 'undefined' && safari.pushNotification)
+        );
     if (isSafari) browserName = 'Safari';
 
     // Internet Explorer 6-11
     // @ts-ignore
-    const isIE = /*@cc_on!@*/!!document.documentMode;
+    const isIE = /*@cc_on!@*/ !!document.documentMode;
     if (isIE) browserName = 'Internet Explorer';
 
     // Edge 20+
@@ -43,7 +49,7 @@ export function getBrowserInfo(): BrowserInfo {
 
     return {
         isNotSupported: isSafari || isIE || isEdge,
-        browserName
+        browserName,
     };
 }
 /* eslint-enable */

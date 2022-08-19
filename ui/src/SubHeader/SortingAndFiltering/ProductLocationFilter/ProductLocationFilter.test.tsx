@@ -16,16 +16,16 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {screen, waitFor} from '@testing-library/react';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { screen, waitFor } from '@testing-library/react';
 import TestData from 'Utils/TestData';
-import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
-import {localStorageEventListenerKey} from 'Hooks/useOnStorageChange/useOnStorageChange';
+import { LocalStorageFilters } from '../FilterLibraries';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
+import { localStorageEventListenerKey } from 'Hooks/useOnStorageChange/useOnStorageChange';
 import MyTagsForm from '../MyTagsForm/MyTagsForm';
 import ProductLocationFilter from './ProductLocationFilter';
-import {LocationsState} from 'State/LocationsState';
+import { LocationsState } from 'State/LocationsState';
 
 describe('Product Location Filter', () => {
     let modalContent: ModalContents | null;
@@ -50,13 +50,16 @@ describe('Product Location Filter', () => {
                 />
                 <ProductLocationFilter />
             </>,
-            ({set}) => {
-                set(LocationsState, TestData.locations)
-            })
-    })
+            ({ set }) => {
+                set(LocationsState, TestData.locations);
+            }
+        );
+    });
 
     it('should show "Product Location:" label', () => {
-        expect(getProductLocationDropdownButton()).toHaveTextContent('Product Location:');
+        expect(getProductLocationDropdownButton()).toHaveTextContent(
+            'Product Location:'
+        );
     });
 
     it('should show only product location saved in local storage as selected', () => {
@@ -67,12 +70,15 @@ describe('Product Location Filter', () => {
         expect(dearbornCheckbox).not.toBeChecked();
         const detroitCheckbox = screen.getByLabelText(TestData.detroit.name);
         expect(detroitCheckbox).toBeChecked();
-        const southfieldCheckbox = screen.getByLabelText(TestData.southfield.name);
+        const southfieldCheckbox = screen.getByLabelText(
+            TestData.southfield.name
+        );
         expect(southfieldCheckbox).not.toBeChecked();
     });
 
     it('should update local storage and trigger storage event when product location option is checked or unchecked', () => {
-        const getSouthfieldCheckbox = () => screen.getByLabelText(TestData.southfield.name);
+        const getSouthfieldCheckbox = () =>
+            screen.getByLabelText(TestData.southfield.name);
         const dispatchEvent = jest.spyOn(window, 'dispatchEvent');
 
         getProductLocationDropdownButton().click();
@@ -80,31 +86,48 @@ describe('Product Location Filter', () => {
 
         expect(getSouthfieldCheckbox()).toBeChecked();
         expect(dispatchEvent).toHaveBeenCalledTimes(1);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify({
-            locationTagFilters: [TestData.detroit.name, TestData.southfield.name],
-            productTagFilters: [],
-            roleTagFilters: [],
-            personTagFilters: [],
-        }))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify({
+                locationTagFilters: [
+                    TestData.detroit.name,
+                    TestData.southfield.name,
+                ],
+                productTagFilters: [],
+                roleTagFilters: [],
+                personTagFilters: [],
+            })
+        );
 
         getSouthfieldCheckbox().click();
 
         expect(dispatchEvent).toHaveBeenCalledTimes(2);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
         expect(getSouthfieldCheckbox()).not.toBeChecked();
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify(initialFilters))
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify(initialFilters)
+        );
     });
 
     it('should open product location modal when user selects "Add/Edit your Product Location" from the dropdown', async () => {
         getProductLocationDropdownButton().click();
-        const openModalButton = screen.getByText('Add/Edit your Product Location');
+        const openModalButton = screen.getByText(
+            'Add/Edit your Product Location'
+        );
         openModalButton.click();
-        await waitFor(() => expect(modalContent?.title).toBe('Product Location'));
-        await waitFor(() => expect(modalContent?.component.type).toBe(MyTagsForm));
+        await waitFor(() =>
+            expect(modalContent?.title).toBe('Product Location')
+        );
+        await waitFor(() =>
+            expect(modalContent?.component.type).toBe(MyTagsForm)
+        );
     });
 });
 
 function getProductLocationDropdownButton() {
-    return screen.getByTestId('dropdownButton__product_location')
+    return screen.getByTestId('dropdownButton__product_location');
 }

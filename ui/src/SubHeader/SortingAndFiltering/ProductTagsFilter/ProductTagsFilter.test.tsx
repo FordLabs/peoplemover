@@ -16,15 +16,15 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {screen, waitFor} from '@testing-library/react';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { screen, waitFor } from '@testing-library/react';
 import TestData from 'Utils/TestData';
-import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
-import {localStorageEventListenerKey} from 'Hooks/useOnStorageChange/useOnStorageChange';
+import { LocalStorageFilters } from '../FilterLibraries';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
+import { localStorageEventListenerKey } from 'Hooks/useOnStorageChange/useOnStorageChange';
 import ProductTagsFilter from './ProductTagsFilter';
-import {ProductTagsState} from 'State/ProductTagsState';
+import { ProductTagsState } from 'State/ProductTagsState';
 import MyTagsForm from '../MyTagsForm/MyTagsForm';
 
 describe('Product Tags Filter', () => {
@@ -50,29 +50,41 @@ describe('Product Tags Filter', () => {
                 />
                 <ProductTagsFilter />
             </>,
-            ({set}) => {
-                set(ProductTagsState, TestData.productTags)
-            })
-    })
+            ({ set }) => {
+                set(ProductTagsState, TestData.productTags);
+            }
+        );
+    });
 
     it('should show "Product Tags:" label', () => {
-        expect(getProductTagsDropdownButton()).toHaveTextContent('Product Tags:');
+        expect(getProductTagsDropdownButton()).toHaveTextContent(
+            'Product Tags:'
+        );
     });
 
     it('should show only product tags saved in local storage as selected', () => {
         getProductTagsDropdownButton().click();
-        const productTag1Checkbox = screen.getByLabelText(TestData.productTag1.name);
+        const productTag1Checkbox = screen.getByLabelText(
+            TestData.productTag1.name
+        );
         expect(productTag1Checkbox).toBeChecked();
-        const productTag2Checkbox = screen.getByLabelText(TestData.productTag2.name);
+        const productTag2Checkbox = screen.getByLabelText(
+            TestData.productTag2.name
+        );
         expect(productTag2Checkbox).not.toBeChecked();
-        const productTag3Checkbox = screen.getByLabelText(TestData.productTag3.name);
+        const productTag3Checkbox = screen.getByLabelText(
+            TestData.productTag3.name
+        );
         expect(productTag3Checkbox).not.toBeChecked();
-        const productTag4Checkbox = screen.getByLabelText(TestData.productTag4.name);
+        const productTag4Checkbox = screen.getByLabelText(
+            TestData.productTag4.name
+        );
         expect(productTag4Checkbox).not.toBeChecked();
     });
 
     it('should update local storage and trigger storage event when product tag option is checked or unchecked', () => {
-        const getProductTag2Checkbox = () => screen.getByLabelText(TestData.productTag2.name);
+        const getProductTag2Checkbox = () =>
+            screen.getByLabelText(TestData.productTag2.name);
         const dispatchEvent = jest.spyOn(window, 'dispatchEvent');
 
         getProductTagsDropdownButton().click();
@@ -80,20 +92,31 @@ describe('Product Tags Filter', () => {
 
         expect(getProductTag2Checkbox()).toBeChecked();
         expect(dispatchEvent).toHaveBeenCalledTimes(1);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify({
-            locationTagFilters: [],
-            productTagFilters: [TestData.productTag1.name, TestData.productTag2.name],
-            roleTagFilters: [],
-            personTagFilters: [],
-        }))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify({
+                locationTagFilters: [],
+                productTagFilters: [
+                    TestData.productTag1.name,
+                    TestData.productTag2.name,
+                ],
+                roleTagFilters: [],
+                personTagFilters: [],
+            })
+        );
 
         getProductTag2Checkbox().click();
 
         expect(dispatchEvent).toHaveBeenCalledTimes(2);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
         expect(getProductTag2Checkbox()).not.toBeChecked();
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify(initialFilters))
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify(initialFilters)
+        );
     });
 
     it('should open product tags modal when user selects "Add/Edit your Product Tags" from the dropdown', async () => {
@@ -101,10 +124,12 @@ describe('Product Tags Filter', () => {
         const openModalButton = screen.getByText('Add/Edit your Product Tags');
         openModalButton.click();
         await waitFor(() => expect(modalContent?.title).toBe('Product Tags'));
-        await waitFor(() => expect(modalContent?.component.type).toBe(MyTagsForm));
+        await waitFor(() =>
+            expect(modalContent?.component.type).toBe(MyTagsForm)
+        );
     });
 });
 
 function getProductTagsDropdownButton() {
-    return screen.getByTestId('dropdownButton__product_tags')
+    return screen.getByTestId('dropdownButton__product_tags');
 }

@@ -19,141 +19,140 @@
 @import '../Styles/Variables.scss';
 
 .form {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    text-align: left;
-    max-width: $form-width;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  max-width: $form-width;
 }
 
 .formContainer {
-    margin: auto;
-    display: flex;
-    flex-direction: column;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .formItem {
-    padding-left: 50px;
-    padding-right: 50px;
-    margin-bottom: 16px;
-    font-size: 1.05rem;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 216px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 216px;
 }
 
 select.formInput {
-    padding-left:4px;
+  padding-left: 4px;
 }
 
 .formItemLabelContainer {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
 
-    .formItemLabel {
-        margin-bottom: 0;
-    }
+  .formItemLabel {
+    margin-bottom: 0;
+  }
 }
 
 .formItemLabel {
-    font-size: 14px;
-    line-height: 14px;
-    font-weight: bold;
-    color: $gray-1;
-    margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: bold;
+  color: $gray-1;
+  margin-bottom: 12px;
 }
 
-
 .formInputLabel {
-    display: block;
-    color: $gray-1;
-    font-size: 12px;
+  display: block;
+  color: $gray-1;
+  font-size: 12px;
 }
 
 .formInput {
-    color: $gray-1;
-    font-size: 12px;
+  color: $gray-1;
+  font-size: 12px;
 }
 
 .formTextInput {
-    border: 1px solid $gray-4;
-    border-radius: 2px;
-    min-height: 32px;
-    max-height: 200px;
-    max-width: 100%;
-    width: 100%;
-    box-sizing: border-box;
+  border: 1px solid $gray-4;
+  border-radius: 2px;
+  min-height: 32px;
+  max-height: 200px;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .formItem.inlineLabelContainer {
-    flex-direction: row;
-    align-items: center;
-    margin: 0 0 16px 0;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 0 16px 0;
 }
 
 .formInput.checkbox {
-    margin-right: 6px;
+  margin-right: 6px;
 }
 
-input[type=date]{
-    padding-left:4px;
+input[type='date'] {
+  padding-left: 4px;
 }
 
-input[type=date]::-webkit-calendar-picker-indicator {
-    color: rgba(0, 0, 0, 0);
-    opacity: 1;
-    display: block;
-    background: url("../Assets/calendar.svg") no-repeat;
-    width: 20px;
-    height: 20px;
-    border-width: thin;
-    transform: translate(30%, 15%);
+input[type='date']::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  background: url('../Assets/calendar.svg') no-repeat;
+  width: 20px;
+  height: 20px;
+  border-width: thin;
+  transform: translate(30%, 15%);
 }
 
-input[type=date]::-webkit-inner-spin-button,
-input[type=date]::-webkit-clear-button {
-    -webkit-appearance: none;
-    display: none;
+input[type='date']::-webkit-inner-spin-button,
+input[type='date']::-webkit-clear-button {
+  -webkit-appearance: none;
+  display: none;
 }
 
-input[type=date]::-webkit-datetime-edit {
-    text-transform: uppercase;
-    font-size: 12px;
-    line-height: 14px;
+input[type='date']::-webkit-datetime-edit {
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 14px;
 }
 
 .formInput.sub {
-    margin-left: 35px;
+  margin-left: 35px;
 }
 
 .errorMessage {
-    padding-top: 32px;
-    text-align: center;
-    color: $error-message;
-    margin: 0;
+  padding-top: 32px;
+  text-align: center;
+  color: $error-message;
+  margin: 0;
 }
 
 .yesNoButtons {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 50px !important;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50px !important;
 }
 
 .isDisabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-    text-decoration: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
 }
 
 .trashCanSpacer {
-    width: 9px;
+  width: 9px;
 }
 
 .nomargin {
-    margin: 0;
+  margin: 0;
 }

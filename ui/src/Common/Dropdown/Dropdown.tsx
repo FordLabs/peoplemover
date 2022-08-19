@@ -16,7 +16,7 @@
  */
 
 import AccessibleDropdownContainer from '../AccessibleDropdownContainer/AccessibleDropdownContainer';
-import React, {ReactNode, useState} from 'react';
+import React, { ReactNode, useState } from 'react';
 
 interface Props {
     buttonId: string;
@@ -37,7 +37,7 @@ function Dropdown({
     dropdownTestId,
     buttonTestId,
     closeOnSelect = false,
-    clearFilterButton
+    clearFilterButton,
 }: Props): JSX.Element {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
@@ -50,18 +50,25 @@ function Dropdown({
     return (
         <div className="dropdown-group">
             <button
-                onClick={(): void => {toggleDropdownMenu();}}
+                onClick={(): void => {
+                    toggleDropdownMenu();
+                }}
                 id={buttonId}
                 data-testid={buttonTestId}
                 className="dropdown-button"
             >
                 {dropdownButtonContent}
-                {dropdownToggle
-                    ? <i className="material-icons greyIcon" id={idArrowUp}>keyboard_arrow_up</i>
-                    : <i className="material-icons greyIcon" >keyboard_arrow_down</i>
-                }
+                {dropdownToggle ? (
+                    <i className="material-icons greyIcon" id={idArrowUp}>
+                        keyboard_arrow_up
+                    </i>
+                ) : (
+                    <i className="material-icons greyIcon">
+                        keyboard_arrow_down
+                    </i>
+                )}
             </button>
-            {dropdownToggle &&
+            {dropdownToggle && (
                 <div className="dropdown-contents-container">
                     <AccessibleDropdownContainer
                         testId={dropdownTestId}
@@ -69,12 +76,15 @@ function Dropdown({
                         handleClose={(): void => {
                             setDropdownToggle(false);
                         }}
-                        dropdownOptionIds={dropdownOptionIds.concat([idArrowUp])}
+                        dropdownOptionIds={dropdownOptionIds.concat([
+                            idArrowUp,
+                        ])}
                         closeOnSelect={closeOnSelect}
                     >
                         {dropdownContent}
                     </AccessibleDropdownContainer>
-                </div>}
+                </div>
+            )}
             {clearFilterButton}
         </div>
     );

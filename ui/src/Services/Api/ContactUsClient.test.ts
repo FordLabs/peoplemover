@@ -17,8 +17,8 @@
 
 import axios from 'axios';
 import ContactUsClient from './ContactUsClient';
-import {getAxiosConfig} from 'Utils/getAxiosConfig';
-import {ContactUsRequest, UserType} from 'Types/ContactUsRequest';
+import { getAxiosConfig } from 'Utils/getAxiosConfig';
+import { ContactUsRequest, UserType } from 'Types/ContactUsRequest';
 
 describe('Contact Us Service', () => {
     it('should send contact us form data', () => {
@@ -26,9 +26,13 @@ describe('Contact Us Service', () => {
             name: 'Test Name',
             email: 'a@b.c',
             userType: UserType.OTHER,
-            message: 'Hello There'
-        }
+            message: 'Hello There',
+        };
         ContactUsClient.send(contactUsRequest);
-        expect(axios.post).toHaveBeenCalledWith('/api/contact-us', contactUsRequest,getAxiosConfig())
+        expect(axios.post).toHaveBeenCalledWith(
+            '/api/contact-us',
+            contactUsRequest,
+            getAxiosConfig()
+        );
     });
 });

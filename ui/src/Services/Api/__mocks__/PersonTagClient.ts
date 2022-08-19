@@ -20,12 +20,20 @@ import TestData from 'Utils/TestData';
 const PersonTagClient = {
     get: jest.fn().mockResolvedValue({ data: [...TestData.personTags] }),
     add: jest.fn().mockResolvedValue({
-        data: {id: 1337, name: 'Low Achiever', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+        data: {
+            id: 1337,
+            name: 'Low Achiever',
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        },
     }),
     edit: jest.fn().mockResolvedValue({
-        data: {id: 6, name: 'Halo Group', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
+        data: {
+            id: 6,
+            name: 'Halo Group',
+            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        },
     }),
-    delete:  jest.fn().mockResolvedValue({ data: {} })
-}
+    delete: jest.fn().mockResolvedValue({ data: {} }),
+};
 
 export default PersonTagClient;

@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-import React, {ChangeEvent, useState} from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import SaveIcon from 'Assets/saveIcon.png';
 import CloseIcon from 'Assets/closeIcon.png';
-import {JSX} from '@babel/types';
-import {createDataTestId} from 'Utils/ReactUtils';
-import {RoleTagRequest, TagRequest} from 'Types/TagRequest';
+import { JSX } from '@babel/types';
+import { createDataTestId } from 'Utils/ReactUtils';
+import { RoleTagRequest, TagRequest } from 'Types/TagRequest';
 
-import {OptionType} from '../SelectWithHTMLOptions/SelectWithHTMLOptions';
+import { OptionType } from '../SelectWithHTMLOptions/SelectWithHTMLOptions';
 import ColorDropdown from 'Common/EditTagRow/ColorDropdown/ColorDropdown';
-import {TagType} from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {Color} from 'Types/Color';
+import { TagType } from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import { Color } from 'Types/Color';
 
 import 'Styles/TagRowsContainer.scss';
 
@@ -48,8 +48,10 @@ function EditTagRow({
 }: Props): JSX.Element {
     const testIdSuffix = tagType;
     const tagNameClass = tagType.replace(' ', '_');
-    const [tagInputValue, setTagInputValue] = useState<TagRequest>(initialValue);
-    const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] = useState<boolean>(false);
+    const [tagInputValue, setTagInputValue] =
+        useState<TagRequest>(initialValue);
+    const [showDuplicatedTagErrorMessage, setShowDuplicatedTagErrorMessage] =
+        useState<boolean>(false);
 
     const saveTag = (): void => {
         const newTag = tagInputValue as RoleTagRequest;
@@ -69,7 +71,7 @@ function EditTagRow({
     };
 
     const handleOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
-        const newInputValue = {...tagInputValue, name: event.target.value};
+        const newInputValue = { ...tagInputValue, name: event.target.value };
         setTagInputValue(newInputValue);
         if (newNameIsDuplicated(newInputValue.name)) {
             setShowDuplicatedTagErrorMessage(true);
@@ -79,57 +81,78 @@ function EditTagRow({
     };
 
     const newNameIsDuplicated = (newName: string): boolean => {
-        return existingTags.map<string>(tag => tag.name).includes(newName);
+        return existingTags.map<string>((tag) => tag.name).includes(newName);
     };
 
     const isColorTheSame = (): boolean => {
-        return (tagInputValue as RoleTagRequest).colorId === (initialValue as RoleTagRequest).colorId;
+        return (
+            (tagInputValue as RoleTagRequest).colorId ===
+            (initialValue as RoleTagRequest).colorId
+        );
     };
 
     const handleColorChange = (selectedOption: OptionType): void => {
-        setTagInputValue(({...tagInputValue, colorId: ((selectedOption.value as Color).id) }) as RoleTagRequest);
+        setTagInputValue({
+            ...tagInputValue,
+            colorId: (selectedOption.value as Color).id,
+        } as RoleTagRequest);
     };
 
     const isTraitNameInvalid = (): boolean => {
-        return tagInputValue.name.trim() === ''
-        || showDuplicatedTagErrorMessage
-        || (newNameIsDuplicated(tagInputValue.name) && isColorTheSame());
+        return (
+            tagInputValue.name.trim() === '' ||
+            showDuplicatedTagErrorMessage ||
+            (newNameIsDuplicated(tagInputValue.name) && isColorTheSame())
+        );
     };
 
     return (
         <>
-            <div className={`editTagRow ${tagNameClass}`}
-                data-testid={createDataTestId('editTagRow', testIdSuffix)}>
-                { colors?.length && <ColorDropdown
-                    selectedColorId={(tagInputValue as RoleTagRequest).colorId}
-                    colors={colors} 
-                    handleColorChange={handleColorChange}
-                />}
-                <input className={`editTagInput ${tagNameClass}`}
+            <div
+                className={`editTagRow ${tagNameClass}`}
+                data-testid={createDataTestId('editTagRow', testIdSuffix)}
+            >
+                {colors?.length && (
+                    <ColorDropdown
+                        selectedColorId={
+                            (tagInputValue as RoleTagRequest).colorId
+                        }
+                        colors={colors}
+                        handleColorChange={handleColorChange}
+                    />
+                )}
+                <input
+                    className={`editTagInput ${tagNameClass}`}
                     data-testid="tagNameInput"
                     type="text"
                     value={tagInputValue.name}
                     onChange={handleOnChange}
-                    onKeyPress={handleEnterSubmit}/>
+                    onKeyPress={handleEnterSubmit}
+                />
                 <div className="editTagIcons">
-                    <button onClick={onCancel}
+                    <button
+                        onClick={onCancel}
                         data-testid="cancelTagButton"
                         className="closeEditTagButton"
-                        aria-label="Close Edited Tags">
-                        <img src={CloseIcon} alt=""/>
+                        aria-label="Close Edited Tags"
+                    >
+                        <img src={CloseIcon} alt="" />
                     </button>
-                    <button disabled={isTraitNameInvalid()}
+                    <button
+                        disabled={isTraitNameInvalid()}
                         onClick={(): void => saveTag()}
                         data-testid="saveTagButton"
                         className="saveEditTagButton"
-                        aria-label="Save Edited Tags">
-                        <img src={SaveIcon} alt=""/>
+                        aria-label="Save Edited Tags"
+                    >
+                        <img src={SaveIcon} alt="" />
                     </button>
                 </div>
             </div>
             {showDuplicatedTagErrorMessage && (
                 <div className="duplicateErrorMessage">
-                    Oops! You already have this {tagType}. Please try using a different one.
+                    Oops! You already have this {tagType}. Please try using a
+                    different one.
                 </div>
             )}
         </>

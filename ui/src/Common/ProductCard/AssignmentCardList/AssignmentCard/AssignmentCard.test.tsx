@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-import {fireEvent, screen, waitFor} from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import AssignmentCard from './AssignmentCard';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import PeopleClient from 'Services/Api/PeopleClient';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {IsDraggingState} from 'State/IsDraggingState';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { IsDraggingState } from 'State/IsDraggingState';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import moment from 'moment';
 import ProductClient from 'Services/Api/ProductClient';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {RoleTag} from 'Types/Tag';
-import {Color} from 'Types/Color';
-import {Assignment} from 'Types/Assignment';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { RoleTag } from 'Types/Tag';
+import { Color } from 'Types/Color';
+import { Assignment } from 'Types/Assignment';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/AssignmentClient');
@@ -39,7 +39,7 @@ describe('Assignment Card', () => {
     let assignmentToRender: Assignment;
 
     beforeEach(() => {
-        assignmentToRender =  {
+        assignmentToRender = {
             id: 6555,
             person: {
                 newPerson: false,
@@ -60,7 +60,7 @@ describe('Assignment Card', () => {
 
     afterEach(() => {
         jest.useRealTimers();
-    })
+    });
 
     it('should render the assigned persons name', () => {
         renderAssignmentCard(assignmentToRender);
@@ -78,18 +78,40 @@ describe('Assignment Card', () => {
             placeholder: false,
         };
         renderAssignmentCard(placeholderAssignment);
-        expect(screen.getByTestId('assignmentCard__billiam_handy')).not.toHaveClass('placeholder');
+        expect(
+            screen.getByTestId('assignmentCard__billiam_handy')
+        ).not.toHaveClass('placeholder');
 
-        fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+        fireEvent.click(
+            screen.getByTestId('editPersonIconContainer__billiam_handy')
+        );
 
         (await screen.getByText('Mark as Placeholder')).click();
-        await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
-            .toHaveBeenCalledWith(assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date))
-        )
-        await waitFor(() => expect(AssignmentClient.createAssignmentForDate)
-            .toHaveBeenCalledWith(moment(new Date()).format('YYYY-MM-DD'), [{"placeholder": true, "productId": 1}], TestData.space, assignmentToRender.person)
-        )
-        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, expect.any(Date)))
+        await waitFor(() =>
+            expect(
+                AssignmentClient.getAssignmentsUsingPersonIdAndDate
+            ).toHaveBeenCalledWith(
+                assignmentToRender.spaceUuid,
+                assignmentToRender.person.id,
+                expect.any(Date)
+            )
+        );
+        await waitFor(() =>
+            expect(
+                AssignmentClient.createAssignmentForDate
+            ).toHaveBeenCalledWith(
+                moment(new Date()).format('YYYY-MM-DD'),
+                [{ placeholder: true, productId: 1 }],
+                TestData.space,
+                assignmentToRender.person
+            )
+        );
+        await waitFor(() =>
+            expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(
+                TestData.space.uuid,
+                expect.any(Date)
+            )
+        );
     });
 
     it('should unmark person as placeholder', async () => {
@@ -98,38 +120,62 @@ describe('Assignment Card', () => {
             placeholder: true,
         };
         renderAssignmentCard(placeholderAssignment);
-        expect(screen.getByTestId('assignmentCard__billiam_handy')).toHaveClass('placeholder');
+        expect(screen.getByTestId('assignmentCard__billiam_handy')).toHaveClass(
+            'placeholder'
+        );
 
-        fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+        fireEvent.click(
+            screen.getByTestId('editPersonIconContainer__billiam_handy')
+        );
         (await screen.getByText('Unmark as Placeholder')).click();
 
-        await waitFor(() => expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate).toHaveBeenCalledWith(
-            assignmentToRender.spaceUuid, assignmentToRender.person.id, expect.any(Date)
-        ))
-        const requestedDate = moment(new Date()).format('YYYY-MM-DD')
-        const products = [{"placeholder": false, "productId": 1}];
-        await waitFor(() => expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-            requestedDate, products, TestData.space, assignmentToRender.person
-        ))
-        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(TestData.space.uuid, expect.any(Date)));
+        await waitFor(() =>
+            expect(
+                AssignmentClient.getAssignmentsUsingPersonIdAndDate
+            ).toHaveBeenCalledWith(
+                assignmentToRender.spaceUuid,
+                assignmentToRender.person.id,
+                expect.any(Date)
+            )
+        );
+        const requestedDate = moment(new Date()).format('YYYY-MM-DD');
+        const products = [{ placeholder: false, productId: 1 }];
+        await waitFor(() =>
+            expect(
+                AssignmentClient.createAssignmentForDate
+            ).toHaveBeenCalledWith(
+                requestedDate,
+                products,
+                TestData.space,
+                assignmentToRender.person
+            )
+        );
+        await waitFor(() =>
+            expect(ProductClient.getProductsForDate).toHaveBeenCalledWith(
+                TestData.space.uuid,
+                expect.any(Date)
+            )
+        );
     });
 
-    describe('Read-Only Functionality', function() {
-        it('should not display edit Menu if in read only mode', function() {
+    describe('Read-Only Functionality', function () {
+        it('should not display edit Menu if in read only mode', function () {
             renderWithRecoil(
                 <AssignmentCard assignment={assignmentToRender} />,
-                ({set}) => {
+                ({ set }) => {
                     set(IsReadOnlyState, true);
-                    set(CurrentSpaceState, TestData.space)
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
-            const editPersonButton = screen.getByTestId('editPersonIconContainer__billiam_handy');
+            const editPersonButton = screen.getByTestId(
+                'editPersonIconContainer__billiam_handy'
+            );
             editPersonButton.click();
             expect(screen.queryByTestId('editMenu')).toBeNull();
             expect(editPersonButton.childElementCount).toEqual(0);
         });
 
-        it('should not allow drag and drop if in read only mode', function() {
+        it('should not allow drag and drop if in read only mode', function () {
             const startDraggingAssignment = jest.fn();
             renderWithRecoil(
                 <AssignmentCard
@@ -137,13 +183,15 @@ describe('Assignment Card', () => {
                     isUnassignedProduct={false}
                     startDraggingAssignment={startDraggingAssignment}
                 />,
-                ({set}) => {
+                ({ set }) => {
                     set(IsReadOnlyState, true);
-                    set(CurrentSpaceState, TestData.space)
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
 
-            fireEvent.mouseDown(screen.getByTestId('assignmentCard__billiam_handy'));
+            fireEvent.mouseDown(
+                screen.getByTestId('assignmentCard__billiam_handy')
+            );
             expect(startDraggingAssignment).not.toBeCalled();
         });
 
@@ -154,17 +202,18 @@ describe('Assignment Card', () => {
             };
             renderWithRecoil(
                 <AssignmentCard assignment={placeholderAssignment} />,
-                ({set}) => {
+                ({ set }) => {
                     set(IsReadOnlyState, true);
-                    set(CurrentSpaceState, TestData.space)
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
 
-            const assignmentCard = screen.getByTestId('assignmentCard__billiam_handy');
+            const assignmentCard = screen.getByTestId(
+                'assignmentCard__billiam_handy'
+            );
             expect(assignmentCard).toHaveClass('notPlaceholder');
             expect(assignmentCard).not.toHaveClass('placeholder');
         });
-
     });
 
     const expectEditMenuContents = (shown: boolean): void => {
@@ -175,19 +224,30 @@ describe('Assignment Card', () => {
             expect(screen.getByText('Cancel Assignment')).toBeInTheDocument();
         } else {
             expect(screen.queryByText('Edit Person')).not.toBeInTheDocument();
-            expect(screen.queryByText('Mark as Placeholder')).not.toBeInTheDocument();
-            expect(screen.queryByText('Archive Person')).not.toBeInTheDocument();
-            expect(screen.queryByText('Edit Assignment')).not.toBeInTheDocument();
+            expect(
+                screen.queryByText('Mark as Placeholder')
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByText('Archive Person')
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByText('Edit Assignment')
+            ).not.toBeInTheDocument();
         }
     };
 
     describe('Role color', () => {
         it('should render software engineer color correctly', () => {
             renderAssignmentCard(assignmentToRender);
-            const assignmentCardEditContainer: HTMLElement = screen.getByTestId('editPersonIconContainer__billiam_handy');
-            const person1Role: RoleTag = (TestData.people[0].spaceRole as RoleTag);
-            const person1RoleColor: Color = (person1Role.color as Color);
-            expect(assignmentCardEditContainer).toHaveStyle(`background-color: ${person1RoleColor.color}`);
+            const assignmentCardEditContainer: HTMLElement = screen.getByTestId(
+                'editPersonIconContainer__billiam_handy'
+            );
+            const person1Role: RoleTag = TestData.people[0]
+                .spaceRole as RoleTag;
+            const person1RoleColor: Color = person1Role.color as Color;
+            expect(assignmentCardEditContainer).toHaveStyle(
+                `background-color: ${person1RoleColor.color}`
+            );
         });
 
         it('should show base color if no color for role', () => {
@@ -195,29 +255,43 @@ describe('Assignment Card', () => {
                 ...assignmentToRender,
                 person: {
                     ...assignmentToRender.person,
-                    spaceRole: {id: 1, spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Software Engineer'},
+                    spaceRole: {
+                        id: 1,
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        name: 'Software Engineer',
+                    },
                 },
             };
             renderAssignmentCard(otherBilliam);
 
-            const assignmentCardEditContainer: HTMLElement = screen.getByTestId('editPersonIconContainer__billiam_handy');
-            expect(assignmentCardEditContainer).toHaveStyle('background-color: transparent');
+            const assignmentCardEditContainer: HTMLElement = screen.getByTestId(
+                'editPersonIconContainer__billiam_handy'
+            );
+            expect(assignmentCardEditContainer).toHaveStyle(
+                'background-color: transparent'
+            );
         });
 
         it('should close the EditMenu when you click the colorful div w/ triple dots if it was open when you clicked', () => {
             renderAssignmentCard(assignmentToRender);
 
-            fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(
+                screen.getByTestId('editPersonIconContainer__billiam_handy')
+            );
             expectEditMenuContents(true);
 
-            fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(
+                screen.getByTestId('editPersonIconContainer__billiam_handy')
+            );
             expectEditMenuContents(false);
         });
 
         it('should close edit menu when clicking any edit menu option', () => {
             renderAssignmentCard(assignmentToRender);
 
-            fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(
+                screen.getByTestId('editPersonIconContainer__billiam_handy')
+            );
             fireEvent.click(screen.getByText('Edit Person'));
 
             expectEditMenuContents(false);
@@ -227,9 +301,9 @@ describe('Assignment Card', () => {
     describe('Edit Menu', () => {
         it('should initialize with the Edit Menu closed', () => {
             renderWithRecoil(
-                <AssignmentCard assignment={assignmentToRender}/>,
-                ({set}) => {
-                    set(ViewingDateState, new Date(2020, 0, 1))
+                <AssignmentCard assignment={assignmentToRender} />,
+                ({ set }) => {
+                    set(ViewingDateState, new Date(2020, 0, 1));
                 }
             );
 
@@ -238,37 +312,55 @@ describe('Assignment Card', () => {
 
         it('should open the EditMenu when you click the colorful div w/ triple dots', () => {
             renderAssignmentCard(assignmentToRender);
-            fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(
+                screen.getByTestId('editPersonIconContainer__billiam_handy')
+            );
             expectEditMenuContents(true);
         });
 
         it('should show a confirmation modal when Archive Person is clicked, and be able to close it', async () => {
             renderAssignmentCard(assignmentToRender);
-            fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(
+                screen.getByTestId('editPersonIconContainer__billiam_handy')
+            );
             expectEditMenuContents(true);
             fireEvent.click(screen.getByText('Archive Person'));
-            expect(await screen.findByText('Are you sure?')).toBeInTheDocument();
+            expect(
+                await screen.findByText('Are you sure?')
+            ).toBeInTheDocument();
             fireEvent.click(screen.getByText('Cancel'));
-            expect(await screen.queryByText('Are you sure?')).not.toBeInTheDocument();
+            expect(
+                await screen.queryByText('Are you sure?')
+            ).not.toBeInTheDocument();
         });
 
         it('should use the PersonClient to update the assigned person to archived as of the viewing date when Archive Person is clicked and the modal is confirmed', async () => {
-            PeopleClient.archivePerson = jest.fn().mockResolvedValue({data: {}});
+            PeopleClient.archivePerson = jest
+                .fn()
+                .mockResolvedValue({ data: {} });
             const viewingDate = new Date(2020, 0, 1);
 
             renderWithRecoil(
                 <AssignmentCard assignment={assignmentToRender} />,
-                ({set}) => {
-                    set(ViewingDateState, viewingDate)
-                    set(CurrentSpaceState, TestData.space)
+                ({ set }) => {
+                    set(ViewingDateState, viewingDate);
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
 
-            fireEvent.click(screen.getByTestId('editPersonIconContainer__billiam_handy'));
+            fireEvent.click(
+                screen.getByTestId('editPersonIconContainer__billiam_handy')
+            );
             expectEditMenuContents(true);
             fireEvent.click(screen.getByText('Archive Person'));
             fireEvent.click(await screen.findByText('Archive'));
-            await waitFor(() =>expect(PeopleClient.archivePerson).toHaveBeenCalledWith(TestData.space, assignmentToRender.person, new Date(2020, 0, 1)));
+            await waitFor(() =>
+                expect(PeopleClient.archivePerson).toHaveBeenCalledWith(
+                    TestData.space,
+                    assignmentToRender.person,
+                    new Date(2020, 0, 1)
+                )
+            );
         });
     });
 
@@ -280,7 +372,12 @@ describe('Assignment Card', () => {
                     spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
                     id: 1,
                     name: 'Mary Pettigrew',
-                    spaceRole: {id: 3, spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Product Designer', color: {color: '1', id: 2}},
+                    spaceRole: {
+                        id: 3,
+                        spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        name: 'Product Designer',
+                        color: { color: '1', id: 2 },
+                    },
                     newPerson: true,
                     newPersonDate: new Date('2021-01-01'),
                     tags: [],
@@ -329,7 +426,7 @@ describe('Assignment Card', () => {
         });
 
         it('should not show hover box when assignment card is unassigned', async () => {
-            renderAssignmentCard(assignmentToRender,true);
+            renderAssignmentCard(assignmentToRender, true);
 
             expect(screen.queryByText('This is a note')).toBeNull();
             expect(screen.getByText('note')).toBeInTheDocument();
@@ -337,17 +434,19 @@ describe('Assignment Card', () => {
             fireEvent.mouseEnter(screen.getByText('note'));
             jest.advanceTimersByTime(500);
 
-            await waitFor(() =>expect(screen.queryByText('This is a note')).toBeNull());
+            await waitFor(() =>
+                expect(screen.queryByText('This is a note')).toBeNull()
+            );
         });
 
         it('should hide hover box for assignment when an assignment is being dragged', () => {
             renderWithRecoil(
-                <AssignmentCard assignment={{...assignmentToRender}} />,
-                ({set}) => {
+                <AssignmentCard assignment={{ ...assignmentToRender }} />,
+                ({ set }) => {
                     set(IsDraggingState, true);
-                    set(CurrentSpaceState, TestData.space)
+                    set(CurrentSpaceState, TestData.space);
                 }
-            )
+            );
 
             expect(screen.queryByText('This is a note')).toBeNull();
             expect(screen.getByText('note')).toBeInTheDocument();
@@ -367,12 +466,12 @@ describe('Assignment Card', () => {
 
         it('should not display person tag Icon if person has valid person tags, but user is readOnly', () => {
             renderWithRecoil(
-                <AssignmentCard assignment={{...assignmentToRender}} />,
-                ({set}) => {
+                <AssignmentCard assignment={{ ...assignmentToRender }} />,
+                ({ set }) => {
                     set(IsReadOnlyState, true);
-                    set(CurrentSpaceState, TestData.space)
+                    set(CurrentSpaceState, TestData.space);
                 }
-            )
+            );
             expect(screen.queryByText('local_offer')).toBeNull();
         });
 
@@ -395,15 +494,18 @@ describe('Assignment Card', () => {
         });
     });
 
-    function renderAssignmentCard(assignment: Assignment, isUnassignedProduct = false): void {
+    function renderAssignmentCard(
+        assignment: Assignment,
+        isUnassignedProduct = false
+    ): void {
         renderWithRecoil(
             <AssignmentCard
-                assignment={{...assignment}}
+                assignment={{ ...assignment }}
                 isUnassignedProduct={isUnassignedProduct}
             />,
-            ({set}) => {
-                set(CurrentSpaceState, TestData.space)
+            ({ set }) => {
+                set(CurrentSpaceState, TestData.space);
             }
-        )
+        );
     }
 });

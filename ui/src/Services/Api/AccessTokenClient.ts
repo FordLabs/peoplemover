@@ -15,16 +15,21 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {getAxiosConfig} from '../../Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { getAxiosConfig } from '../../Utils/getAxiosConfig';
 
-async function validateAccessToken(accessToken: string): Promise<AxiosResponse> {
+async function validateAccessToken(
+    accessToken: string
+): Promise<AxiosResponse> {
     const url = '/api/access_token/validate';
     const data = { accessToken: accessToken };
     return Axios.post(url, data, getAxiosConfig());
 }
 
-async function userCanAccessSpace(accessToken: string, uuid: string): Promise<AxiosResponse> {
+async function userCanAccessSpace(
+    accessToken: string,
+    uuid: string
+): Promise<AxiosResponse> {
     const url = '/api/access_token/authenticate';
     const data = {
         accessToken: accessToken,
@@ -35,7 +40,7 @@ async function userCanAccessSpace(accessToken: string, uuid: string): Promise<Ax
 
 const AccessTokenClient = {
     validateAccessToken,
-    userCanAccessSpace
-}
+    userCanAccessSpace,
+};
 
-export default AccessTokenClient
+export default AccessTokenClient;

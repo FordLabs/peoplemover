@@ -22,12 +22,18 @@ describe('Sort', () => {
         cy.visitSpace();
         cy.server();
 
-        cy.get('[data-testid=productCardContainer__my_product]').should('exist');
-        cy.get('[data-testid=productCardContainer__baguette_bakery]').should('exist');
+        cy.get('[data-testid=productCardContainer__my_product]').should(
+            'exist'
+        );
+        cy.get('[data-testid=productCardContainer__baguette_bakery]').should(
+            'exist'
+        );
 
-        cy.get('[data-testid=sortByDropdownButton]').as('sortDropdownMenuButton');
+        cy.get('[data-testid=sortByDropdownButton]').as(
+            'sortDropdownMenuButton'
+        );
 
-        defaultSortingMenuStateShouldBeAlphabetical()
+        defaultSortingMenuStateShouldBeAlphabetical();
     });
 
     it('Sort products alphabetically', () => {
@@ -96,8 +102,7 @@ describe('Sort', () => {
 
 function openSortingDropdownMenu(): void {
     cy.get('[data-testid=sortByDropdownButton]').click();
-    cy.get('@sortDropdownMenuButton')
-        .should('contain', 'keyboard_arrow_up');
+    cy.get('@sortDropdownMenuButton').should('contain', 'keyboard_arrow_up');
 }
 
 function defaultSortingMenuStateShouldBeAlphabetical() {
@@ -107,16 +112,15 @@ function defaultSortingMenuStateShouldBeAlphabetical() {
 }
 
 function getProductListGroup(): Chainable {
-    return cy.get('[data-testid=productListGroupedContainer]')
-        .find('[data-testid=productGroup]')
+    return cy
+        .get('[data-testid=productListGroupedContainer]')
+        .find('[data-testid=productGroup]');
 }
 
 function getProductListGroup1(): Chainable {
-    return getProductListGroup()
-        .should('have.length', 2)
-        .eq(0)
+    return getProductListGroup().should('have.length', 2).eq(0);
 }
 
 function getProductListGroup2(): Chainable {
-    return getProductListGroup().eq(1)
+    return getProductListGroup().eq(1);
 }

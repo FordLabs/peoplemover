@@ -15,33 +15,60 @@
  * limitations under the License.
  */
 
-import {LocationTag, RoleTag, Tag} from 'Types/Tag';
-import {Space} from 'Types/Space';
-import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {Color} from 'Types/Color';
-import {Product} from 'Types/Product';
-import {Person} from 'Types/Person';
-import {Assignment} from '../Types/Assignment';
+import { LocationTag, RoleTag, Tag } from 'Types/Tag';
+import { Space } from 'Types/Space';
+import { UserSpaceMapping } from 'Types/UserSpaceMapping';
+import { LocalStorageFilters } from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import { Color } from 'Types/Color';
+import { Product } from 'Types/Product';
+import { Person } from 'Types/Person';
+import { Assignment } from '../Types/Assignment';
 
 const originDateString = '2019-01-01';
 
-const annarbor = {id: 1, name: 'Ann Arbor', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-const detroit = {id: 2, name: 'Detroit', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-const dearborn = {id: 3, name: 'Dearborn', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-const southfield = {id: 4, name: 'Southfield', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+const annarbor = {
+    id: 1,
+    name: 'Ann Arbor',
+    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+};
+const detroit = {
+    id: 2,
+    name: 'Detroit',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
+const dearborn = {
+    id: 3,
+    name: 'Dearborn',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
+const southfield = {
+    id: 4,
+    name: 'Southfield',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
 
-const locations: LocationTag[] = [
-    annarbor,
-    dearborn,
-    detroit,
-    southfield,
-];
+const locations: LocationTag[] = [annarbor, dearborn, detroit, southfield];
 
-const productTag1: Tag = {id: 5, name: 'AV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-const productTag2: Tag = {id: 6, name: 'FordX', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
-const productTag3: Tag = {id: 7, name: 'EV', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-const productTag4: Tag = {id: 8, name: 'Mache', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
+const productTag1: Tag = {
+    id: 5,
+    name: 'AV',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
+const productTag2: Tag = {
+    id: 6,
+    name: 'FordX',
+    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+};
+const productTag3: Tag = {
+    id: 7,
+    name: 'EV',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
+const productTag4: Tag = {
+    id: 8,
+    name: 'Mache',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
 
 const productTags: Array<Tag> = [
     productTag1,
@@ -50,35 +77,46 @@ const productTags: Array<Tag> = [
     productTag4,
 ];
 
-const personTag1: Tag = {id: 5, name: 'The lil boss', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'};
-const personTag2: Tag = {id: 6, name: 'The big boss', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};
+const personTag1: Tag = {
+    id: 5,
+    name: 'The lil boss',
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+};
+const personTag2: Tag = {
+    id: 6,
+    name: 'The big boss',
+    spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+};
 
-const personTags: Array<Tag> = [
-    personTag1,
-    personTag2,
-];
+const personTags: Array<Tag> = [personTag1, personTag2];
 
-const color1: Color = {color: '#81C0FA', id: 1};
-const color2: Color = {color: '#83DDC2', id: 2};
-const color3: Color = {color: '#FCBAE9', id: 3};
-const whiteColor: Color = {color: '#FFFFFF', id: 4};
+const color1: Color = { color: '#81C0FA', id: 1 };
+const color2: Color = { color: '#83DDC2', id: 2 };
+const color3: Color = { color: '#FCBAE9', id: 3 };
+const whiteColor: Color = { color: '#FFFFFF', id: 4 };
 
-const colors: Array<Color> = [
-    color1,
-    color2,
-    color3,
-    whiteColor,
-];
+const colors: Array<Color> = [color1, color2, color3, whiteColor];
 
-const softwareEngineer = {name: 'Software Engineer', id: 1, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: color1};
-const productManager = {name: 'Product Manager', id: 2, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: color2};
-const productDesigner = {name: 'Product Designer', id: 3, spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', color: color3};
+const softwareEngineer = {
+    name: 'Software Engineer',
+    id: 1,
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    color: color1,
+};
+const productManager = {
+    name: 'Product Manager',
+    id: 2,
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    color: color2,
+};
+const productDesigner = {
+    name: 'Product Designer',
+    id: 3,
+    spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    color: color3,
+};
 
-const roles: RoleTag[] = [
-    productDesigner,
-    productManager,
-    softwareEngineer,
-];
+const roles: RoleTag[] = [productDesigner, productManager, softwareEngineer];
 
 const person1: Person = {
     spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
@@ -88,7 +126,7 @@ const person1: Person = {
     notes: 'I love the theater',
     newPerson: false,
     tags: [personTag1],
-    customField1: 'mockCdsid'
+    customField1: 'mockCdsid',
 };
 
 const hank: Person = {
@@ -165,12 +203,7 @@ const personNoRoleNoTag: Person = {
     tags: [],
 };
 
-const people: Array<Person> = [
-    person1,
-    hank,
-    archivedPerson,
-    unassignedPerson,
-];
+const people: Array<Person> = [person1, hank, archivedPerson, unassignedPerson];
 
 const assignmentForPerson1: Assignment = {
     id: 1,
@@ -397,9 +430,7 @@ const products: Array<Product> = [
     productWithoutLocation,
 ];
 
-const notEmptyProducts: Array<Product> = [
-    productWithAssignments,
-];
+const notEmptyProducts: Array<Product> = [productWithAssignments];
 
 const productsForBoard2: Array<Product> = [
     {
@@ -421,11 +452,16 @@ const space: Space = {
     name: 'testSpace',
     lastModifiedDate: originDateString,
     todayViewIsPublic: true,
-}
+};
 
 const spaceMappingsArray: UserSpaceMapping[] = [
-    {id: '1', spaceUuid: space.uuid!, userId: 'user_id', permission: 'owner'},
-    {id: '2', spaceUuid: space.uuid!, userId: 'user_id_2', permission: 'editor'},
+    { id: '1', spaceUuid: space.uuid!, userId: 'user_id', permission: 'owner' },
+    {
+        id: '2',
+        spaceUuid: space.uuid!,
+        userId: 'user_id_2',
+        permission: 'editor',
+    },
 ];
 
 const defaultLocalStorageFilters: LocalStorageFilters = {
@@ -506,6 +542,6 @@ const TestData = {
     annarbor,
 
     originDateString,
-}
+};
 
 export default TestData;

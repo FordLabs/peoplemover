@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {screen} from '@testing-library/react';
-import TestUtils, {renderWithRecoil} from '../../Utils/TestUtils';
-import {MemoryRouter} from 'react-router-dom';
-import {MutableSnapshot} from 'recoil';
+import { screen } from '@testing-library/react';
+import TestUtils, { renderWithRecoil } from '../../Utils/TestUtils';
+import { MemoryRouter } from 'react-router-dom';
+import { MutableSnapshot } from 'recoil';
 import React from 'react';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import { CurrentSpaceState } from '../../State/CurrentSpaceState';
 import TestData from '../../Utils/TestData';
-import {axe} from 'jest-axe';
+import { axe } from 'jest-axe';
 import {
     shouldRenderLogoAsDashboardLinkInHeader,
     shouldShowAllAccountDropdownOptions,
@@ -36,15 +36,17 @@ describe('Time On Product Page Header', () => {
     beforeEach(() => {
         TestUtils.enableInviteUsersToSpace();
 
-        ({container} = renderWithRecoil(
-            <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
+        ({ container } = renderWithRecoil(
+            <MemoryRouter
+                initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}
+            >
                 <TimeOnProductHeader />
             </MemoryRouter>,
-            ({set}: MutableSnapshot) => {
-                set(CurrentSpaceState,  TestData.space)
+            ({ set }: MutableSnapshot) => {
+                set(CurrentSpaceState, TestData.space);
             }
         ));
-    })
+    });
 
     it('should have no axe violations', async () => {
         const results = await axe(container);
@@ -66,7 +68,10 @@ describe('Time On Product Page Header', () => {
     it('should show "Back" to space link', async () => {
         const backToSpaceLink = screen.getByText('< Back');
         expect(backToSpaceLink).toBeDefined();
-        expect(backToSpaceLink).toHaveAttribute('href', `/${TestData.space.uuid}`);
+        expect(backToSpaceLink).toHaveAttribute(
+            'href',
+            `/${TestData.space.uuid}`
+        );
     });
 
     it('should show all account dropdown options', () => {

@@ -15,13 +15,22 @@
  * limitations under the License.
  */
 
-import React, {CSSProperties, useState} from 'react';
-import {JSX} from '@babel/types';
+import React, { CSSProperties, useState } from 'react';
+import { JSX } from '@babel/types';
 import Creatable from 'react-select/creatable';
-import {CustomIndicator, reactSelectStyles} from '../ReactSelectStyles/ReactSelectStyles';
-import {Option} from 'Types/Option';
-import {components, ControlProps, OptionProps, OptionTypeBase, StylesConfig} from 'react-select';
-import {OptionType} from '../SelectWithHTMLOptions/SelectWithHTMLOptions';
+import {
+    CustomIndicator,
+    reactSelectStyles,
+} from '../ReactSelectStyles/ReactSelectStyles';
+import { Option } from 'Types/Option';
+import {
+    components,
+    ControlProps,
+    OptionProps,
+    OptionTypeBase,
+    StylesConfig,
+} from 'react-select';
+import { OptionType } from '../SelectWithHTMLOptions/SelectWithHTMLOptions';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -113,18 +122,20 @@ export interface ReactSelectProps {
 }
 
 const CreateNewText = (text: string): JSX.Element => (
-    <span>
-        {`Create "${text}"`}
-    </span>
+    <span>{`Create "${text}"`}</span>
 );
 
-const CreateOption = (props: OptionProps<OptionTypeBase, boolean>): JSX.Element => (
+const CreateOption = (
+    props: OptionProps<OptionTypeBase, boolean>
+): JSX.Element => (
     <components.Option {...props}>
         <div className="roleOptionLabel">{props.label}</div>
     </components.Option>
 );
 
-const SelectWithCreateControl = (props: ControlProps<OptionTypeBase, boolean>): JSX.Element => {
+const SelectWithCreateControl = (
+    props: ControlProps<OptionTypeBase, boolean>
+): JSX.Element => {
     let color = 'transparent';
 
     if (props.hasValue) {
@@ -133,14 +144,18 @@ const SelectWithCreateControl = (props: ControlProps<OptionTypeBase, boolean>): 
     } else if (props.children) {
         const valueContainer = (props.children as Array<JSX.Element>)[0];
         const inputContainer = valueContainer.props.children[1];
-        color = inputContainer.props.value.color ? inputContainer.props.value.color : 'transparent';
+        color = inputContainer.props.value.color
+            ? inputContainer.props.value.color
+            : 'transparent';
     }
 
     return (
         <div className="customControlContainer">
-            <div data-testid="custom-control-role-badge"
-                style={{backgroundColor: color}}
-                className="optionRoleBadge"/>
+            <div
+                data-testid="custom-control-role-badge"
+                style={{ backgroundColor: color }}
+                className="optionRoleBadge"
+            />
             <components.Control {...props}>{props.children}</components.Control>
         </div>
     );
@@ -148,11 +163,7 @@ const SelectWithCreateControl = (props: ControlProps<OptionTypeBase, boolean>): 
 
 function SelectWithCreateOption({
     className,
-    metadata: {
-        title,
-        placeholder,
-        id,
-    },
+    metadata: { title, placeholder, id },
     value,
     values,
     options,
@@ -175,10 +186,16 @@ function SelectWithCreateOption({
 
     const menuIsOpenSingleSelect = (): boolean | undefined => {
         const notTyping = typedInValue.length === 0;
-        const typingFirstNewLocation = (notTyping && (options.length === 0));
-        const selectedOnlyAvailableLocation = notTyping && (options.length === 1) && (options[0].label === (value && value.label));
-        const noChangesInSelection = (typedInValue === (value && value.label));
-        const hideMenu = noChangesInSelection || typingFirstNewLocation || selectedOnlyAvailableLocation;
+        const typingFirstNewLocation = notTyping && options.length === 0;
+        const selectedOnlyAvailableLocation =
+            notTyping &&
+            options.length === 1 &&
+            options[0].label === (value && value.label);
+        const noChangesInSelection = typedInValue === (value && value.label);
+        const hideMenu =
+            noChangesInSelection ||
+            typingFirstNewLocation ||
+            selectedOnlyAvailableLocation;
         if (hideMenu) return false;
         return undefined;
     };
@@ -186,8 +203,11 @@ function SelectWithCreateOption({
     const menuIsOpenMultiSelect = (): boolean | undefined => {
         const notTyping = typedInValue.length === 0;
         const allOptionsSelected = options.length === values?.length;
-        const noChangesInSelection = !!values?.find(value => value.label === typedInValue);
-        const hideMenu = noChangesInSelection || (allOptionsSelected && notTyping);
+        const noChangesInSelection = !!values?.find(
+            (value) => value.label === typedInValue
+        );
+        const hideMenu =
+            noChangesInSelection || (allOptionsSelected && notTyping);
         if (hideMenu) return false;
         return undefined;
     };
@@ -200,7 +220,9 @@ function SelectWithCreateOption({
     return (
         <div className={`formItem ${className}`}>
             <div className="formItemLabelContainer">
-                <label className="formItemLabel" htmlFor={id}>{title}</label>
+                <label className="formItemLabel" htmlFor={id}>
+                    {title}
+                </label>
                 {toolTip}
             </div>
             <Creatable
@@ -212,12 +234,20 @@ function SelectWithCreateOption({
                 options={options}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                styles={useColorBadge ? reactSelectStyles : ReactSelectDropdownStyles}
+                styles={
+                    useColorBadge
+                        ? reactSelectStyles
+                        : ReactSelectDropdownStyles
+                }
                 components={components}
-                formatCreateLabel={(): JSX.Element => CreateNewText(typedInValue)}
+                formatCreateLabel={(): JSX.Element =>
+                    CreateNewText(typedInValue)
+                }
                 onInputChange={onInputChange}
                 onChange={(option: unknown): void => {
-                    isMulti ? onChange(option as Option[]) : onChange(option as Option);
+                    isMulti
+                        ? onChange(option as Option[])
+                        : onChange(option as Option);
                 }}
                 onCreateOption={onSave}
                 menuIsOpen={menuIsOpen()}

@@ -15,32 +15,41 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Filter from '../Filter';
-import {getLocalStorageFiltersByType, roleTagsFilterKey, setLocalStorageFiltersByType} from '../FilterLibraries';
+import {
+    getLocalStorageFiltersByType,
+    roleTagsFilterKey,
+    setLocalStorageFiltersByType,
+} from '../FilterLibraries';
 import MyRolesForm from './MyRolesForm/MyRolesForm';
-import {useRecoilValue} from 'recoil';
-import {RolesState} from 'State/RolesState';
-import {FilterOption} from 'Types/Option';
-import {RoleTag} from 'Types/Tag';
+import { useRecoilValue } from 'recoil';
+import { RolesState } from 'State/RolesState';
+import { FilterOption } from 'Types/Option';
+import { RoleTag } from 'Types/Tag';
 
 function RolesFilter() {
     const roles = useRecoilValue(RolesState);
 
     const getFilterOptions = useCallback((): FilterOption[] => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(roleTagsFilterKey);
-        return roles.map((tag: RoleTag): FilterOption => ({
-            label: tag.name,
-            value: tag.id + '_' + tag.name,
-            selected: selectedRolesFromLocalStorage.includes(tag.name),
-        }));
-    },[roles])
+        const selectedRolesFromLocalStorage =
+            getLocalStorageFiltersByType(roleTagsFilterKey);
+        return roles.map(
+            (tag: RoleTag): FilterOption => ({
+                label: tag.name,
+                value: tag.id + '_' + tag.name,
+                selected: selectedRolesFromLocalStorage.includes(tag.name),
+            })
+        );
+    }, [roles]);
 
-    const [roleFilterOptions, setRoleFilterOptions] = useState<FilterOption[]>([]);
+    const [roleFilterOptions, setRoleFilterOptions] = useState<FilterOption[]>(
+        []
+    );
 
     useEffect(() => {
-        setRoleFilterOptions(getFilterOptions())
-    }, [getFilterOptions, roles])
+        setRoleFilterOptions(getFilterOptions());
+    }, [getFilterOptions, roles]);
 
     function setFilterOptions(options: FilterOption[]) {
         setLocalStorageFiltersByType(roleTagsFilterKey, options);
@@ -52,9 +61,9 @@ function RolesFilter() {
             label="Role"
             defaultValues={roleFilterOptions}
             onSelect={setFilterOptions}
-            modalContents={{ title: 'My Roles', component: <MyRolesForm/> }}
+            modalContents={{ title: 'My Roles', component: <MyRolesForm /> }}
         />
-    )
+    );
 }
 
 export default RolesFilter;

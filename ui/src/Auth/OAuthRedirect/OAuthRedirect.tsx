@@ -23,31 +23,34 @@ const OAUTH_REDIRECT_DEFAULT = '/user/dashboard';
 const OAUTH_REDIRECT_SESSIONSTORAGE_KEY = 'oauth_redirect';
 
 function OAuthRedirect(): JSX.Element {
-    const searchParams = new URLSearchParams(window.location.hash.replace('#', ''));
+    const searchParams = new URLSearchParams(
+        window.location.hash.replace('#', '')
+    );
     const accessToken = searchParams.get('access_token');
     const cookies = new Cookies();
-    cookies.set('accessToken', accessToken, {path: '/'});
+    cookies.set('accessToken', accessToken, { path: '/' });
 
     const redirectUrl = getOauthRedirect();
     sessionStorage.removeItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
 
-    return <Navigate to={redirectUrl}/>;
+    return <Navigate to={redirectUrl} />;
 }
 
 function getOauthRedirect(): string {
-    const adfsSpaceRedirect = sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
-    return (adfsSpaceRedirect ? adfsSpaceRedirect : OAUTH_REDIRECT_DEFAULT);
+    const adfsSpaceRedirect = sessionStorage.getItem(
+        OAUTH_REDIRECT_SESSIONSTORAGE_KEY
+    );
+    return adfsSpaceRedirect ? adfsSpaceRedirect : OAUTH_REDIRECT_DEFAULT;
 }
 
 function setOauthRedirect(pathName: string): void {
-    const oauthRedirectUnset = !sessionStorage.getItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY);
+    const oauthRedirectUnset = !sessionStorage.getItem(
+        OAUTH_REDIRECT_SESSIONSTORAGE_KEY
+    );
     const pathnameExists = pathName?.length > 1;
-    if (
-        oauthRedirectUnset
-        && pathnameExists
-    ) {
+    if (oauthRedirectUnset && pathnameExists) {
         sessionStorage.setItem(OAUTH_REDIRECT_SESSIONSTORAGE_KEY, pathName);
     }
 }
 
-export {OAuthRedirect, setOauthRedirect};
+export { OAuthRedirect, setOauthRedirect };

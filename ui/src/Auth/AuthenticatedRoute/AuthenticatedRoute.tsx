@@ -15,12 +15,16 @@
  * limitations under the License.
  */
 
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import AccessTokenClient from 'Services/Api/AccessTokenClient';
-import {getToken} from 'Services/TokenService';
-import {setOauthRedirect} from '../OAuthRedirect/OAuthRedirect';
+import { getToken } from 'Services/TokenService';
+import { setOauthRedirect } from '../OAuthRedirect/OAuthRedirect';
 
-export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.Element {
+export function AuthenticatedRoute({
+    children,
+}: {
+    children: ReactNode;
+}): JSX.Element {
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
 
     useEffect(() => {
@@ -30,7 +34,7 @@ export function AuthenticatedRoute({ children }: { children: ReactNode }): JSX.E
             const accessToken = getToken();
             AccessTokenClient.validateAccessToken(accessToken)
                 .then(() => setRenderedElement(<>{children}</>))
-                .catch(() => setRenderedElement(<RedirectToADFS/>));
+                .catch(() => setRenderedElement(<RedirectToADFS />));
         }
     }, [children]);
 

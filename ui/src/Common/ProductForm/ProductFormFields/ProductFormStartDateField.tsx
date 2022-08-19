@@ -18,21 +18,26 @@
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import InputMask from 'react-input-mask';
-import React, {useState} from 'react';
-import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {Product} from 'Types/Product';
+import React, { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { Product } from 'Types/Product';
 
 interface Props {
     currentProduct: Product;
     updateProductField: (fieldName: string, fieldValue: string) => void;
 }
 
-function ProductFormStartDateField({ currentProduct, updateProductField }: Props): JSX.Element {
+function ProductFormStartDateField({
+    currentProduct,
+    updateProductField,
+}: Props): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
 
     const [startDate, setStartDate] = useState<Date>(
-        currentProduct.startDate ? moment(currentProduct.startDate).toDate() : moment(viewingDate).toDate()
+        currentProduct.startDate
+            ? moment(currentProduct.startDate).toDate()
+            : moment(viewingDate).toDate()
     );
 
     function onStartDateChange(date: Date): void {
@@ -41,25 +46,49 @@ function ProductFormStartDateField({ currentProduct, updateProductField }: Props
             updateProductField('startDate', moment(date).format('YYYY-MM-DD'));
         } else {
             setStartDate(moment(currentProduct.startDate).toDate());
-            updateProductField('startDate', moment(currentProduct.startDate).format('YYYY-MM-DD'));
+            updateProductField(
+                'startDate',
+                moment(currentProduct.startDate).format('YYYY-MM-DD')
+            );
         }
     }
 
-    function handleKeyDownForOnClick(event: React.KeyboardEvent, callback: Function): void {
+    function handleKeyDownForOnClick(
+        event: React.KeyboardEvent,
+        callback: Function
+    ): void {
         if (event.key === 'Enter') {
             callback();
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const CustomInput = ({ value, onClick, onChange }: React.PropsWithChildren<any>): JSX.Element => {
+    const CustomInput = ({
+        value,
+        onClick,
+        onChange,
+    }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    React.PropsWithChildren<any>): JSX.Element => {
         return (
-            <div onClick={onClick} onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}>
+            <div
+                onClick={onClick}
+                onKeyDown={(e): void => handleKeyDownForOnClick(e, onClick)}
+            >
                 <InputMask
                     className="formInput formTextInput"
                     name="start"
                     id="start"
-                    mask={[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
+                    mask={[
+                        /\d/,
+                        /\d/,
+                        '/',
+                        /\d/,
+                        /\d/,
+                        '/',
+                        /\d/,
+                        /\d/,
+                        /\d/,
+                        /\d/,
+                    ]}
                     defaultValue={value}
                     placeholder="MM/DD/YYYY"
                     onChange={onChange}
@@ -69,13 +98,15 @@ function ProductFormStartDateField({ currentProduct, updateProductField }: Props
         );
     };
 
-    const DateInput = React.forwardRef(
-        (props, ref) => <CustomInput innerRef={ref} {...props} />
-    );
+    const DateInput = React.forwardRef((props, ref) => (
+        <CustomInput innerRef={ref} {...props} />
+    ));
 
     return (
         <div className="formItem" data-testid="productFormStartDateField">
-            <label className="formItemLabel" htmlFor="start">Start Date</label>
+            <label className="formItemLabel" htmlFor="start">
+                Start Date
+            </label>
             <DatePicker
                 selected={startDate}
                 onChange={onStartDateChange}

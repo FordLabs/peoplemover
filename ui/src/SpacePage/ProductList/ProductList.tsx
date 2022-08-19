@@ -15,43 +15,60 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useState} from 'react';
-import {isActiveProduct, isProductMatchingSelectedFilters} from 'Services/ProductService';
+import React, { useCallback, useState } from 'react';
+import {
+    isActiveProduct,
+    isProductMatchingSelectedFilters,
+} from 'Services/ProductService';
 import GroupedByList from './ProductListGrouped/ProductListGrouped';
 import SortedByList from './ProductListSorted/ProductListSorted';
-import {useRecoilValue} from 'recoil';
-import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {ProductsState} from 'State/ProductsState';
+import { useRecoilValue } from 'recoil';
+import { ProductSortBy, ProductSortByState } from 'State/ProductSortByState';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { ProductsState } from 'State/ProductsState';
 import {
     getLocalStorageFiltersByType,
     locationTagsFilterKey,
     productTagsFilterKey,
 } from 'SubHeader/SortingAndFiltering/FilterLibraries';
 import useOnStorageChange from 'Hooks/useOnStorageChange/useOnStorageChange';
-import {Product} from 'Types/Product';
+import { Product } from 'Types/Product';
 
 function ProductList(): JSX.Element {
     const productSortBy = useRecoilValue(ProductSortByState);
     const viewingDate = useRecoilValue(ViewingDateState);
     const products = useRecoilValue(ProductsState);
 
-    const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<Product[]>([]);
+    const [filteredAndActiveProduct, setFilteredAndActiveProducts] = useState<
+        Product[]
+    >([]);
 
     const getFilteredAndActiveProducts = useCallback(() => {
-        const locationTagFilters: string[] = getLocalStorageFiltersByType(locationTagsFilterKey);
-        const productTagFilters: string[] = getLocalStorageFiltersByType(productTagsFilterKey);
-        const noFiltersApplied = !locationTagFilters.length && !productTagFilters.length;
+        const locationTagFilters: string[] = getLocalStorageFiltersByType(
+            locationTagsFilterKey
+        );
+        const productTagFilters: string[] =
+            getLocalStorageFiltersByType(productTagsFilterKey);
+        const noFiltersApplied =
+            !locationTagFilters.length && !productTagFilters.length;
         const filteredProducts = products
-            .filter(product => noFiltersApplied || isProductMatchingSelectedFilters(product, locationTagFilters, productTagFilters))
-            .filter(prod => isActiveProduct(prod, viewingDate));
+            .filter(
+                (product) =>
+                    noFiltersApplied ||
+                    isProductMatchingSelectedFilters(
+                        product,
+                        locationTagFilters,
+                        productTagFilters
+                    )
+            )
+            .filter((prod) => isActiveProduct(prod, viewingDate));
         setFilteredAndActiveProducts(filteredProducts);
     }, [products, viewingDate]);
 
     useOnStorageChange(getFilteredAndActiveProducts);
 
     if (productSortBy === ProductSortBy.NAME) {
-        return <SortedByList products={filteredAndActiveProduct}/>;
+        return <SortedByList products={filteredAndActiveProduct} />;
     }
 
     return <GroupedByList products={filteredAndActiveProduct} />;

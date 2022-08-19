@@ -16,28 +16,28 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {fireEvent, screen} from '@testing-library/dom';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { fireEvent, screen } from '@testing-library/dom';
 import SpaceForm from './SpaceForm';
 
 describe('Space Form', () => {
     beforeEach(() => {
-        renderWithRecoil(<SpaceForm/>);
-    })
+        renderWithRecoil(<SpaceForm />);
+    });
 
     it('should update the count for number of characters and have max input of 40', () => {
         const spaceCount = screen.getByTestId('createSpaceFieldText');
         const spaceInput = screen.getByTestId('createSpaceInputField');
         expect(spaceCount.textContent).toBe('0 (40 characters max)');
-        fireEvent.change(spaceInput, {target: {value: 'Some Name'}});
+        fireEvent.change(spaceInput, { target: { value: 'Some Name' } });
         expect(spaceCount.textContent).toBe('9 (40 characters max)');
-        expect(spaceInput).toHaveAttribute('maxLength', "40");
+        expect(spaceInput).toHaveAttribute('maxLength', '40');
     });
 
     it('should show an error message if space name is only empty space', () => {
         const spaceInput = screen.getByTestId('createSpaceInputField');
         const createSpaceButton = screen.getByTestId('createSpaceButton');
-        fireEvent.change(spaceInput, {target: {value: '   '}});
+        fireEvent.change(spaceInput, { target: { value: '   ' } });
         fireEvent.click(createSpaceButton);
         expect(screen.getByTestId('createSpaceErrorMessage')).toBeVisible();
     });

@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-import {fireEvent, screen} from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
 import TestData from 'Utils/TestData';
 import PersonCard from './PersonCard';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
 import PersonForm from 'Common/PersonForm/PersonForm';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {Person} from 'Types/Person';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { Person } from 'Types/Person';
 
 describe('Person Card', () => {
     let modalContent: ModalContents | null;
@@ -38,7 +38,7 @@ describe('Person Card', () => {
         notes: 'This is a note',
         tags: TestData.personTags,
         archiveDate: new Date(2000, 0, 1),
-    }
+    };
     const viewingDate = new Date(2020, 0, 1);
 
     beforeEach(() => {
@@ -65,10 +65,9 @@ describe('Person Card', () => {
 
         expect(modalContent).toEqual({
             title: 'Edit Person',
-            component: <PersonForm
-                isEditPersonForm
-                personEdited={personToRender}
-            />,
+            component: (
+                <PersonForm isEditPersonForm personEdited={personToRender} />
+            ),
         });
     });
 
@@ -85,15 +84,18 @@ describe('Person Card', () => {
         expect(screen.queryByText('local_offer')).toBeNull();
     });
 
-    describe('Read-Only Functionality', function() {
-        it('should not display Edit Person Modal if in read only mode', function() {
+    describe('Read-Only Functionality', function () {
+        it('should not display Edit Person Modal if in read only mode', function () {
             renderPersonCard(new Date(), true);
             const william = screen.getByText(personToRender.name);
             fireEvent.click(william);
         });
     });
 
-    function renderPersonCard(initialViewingDate: Date =  new Date(), isReadOnly = false): void {
+    function renderPersonCard(
+        initialViewingDate: Date = new Date(),
+        isReadOnly = false
+    ): void {
         renderWithRecoil(
             <>
                 <RecoilObserver
@@ -102,12 +104,12 @@ describe('Person Card', () => {
                         modalContent = value;
                     }}
                 />
-                <PersonCard person={personToRender}/>
+                <PersonCard person={personToRender} />
             </>,
-            ({set}) => {
+            ({ set }) => {
                 set(ViewingDateState, initialViewingDate);
                 set(IsReadOnlyState, isReadOnly);
             }
-        )
+        );
     }
 });

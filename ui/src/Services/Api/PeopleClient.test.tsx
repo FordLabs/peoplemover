@@ -22,7 +22,7 @@ import Cookies from 'universal-cookie';
 
 jest.mock('axios');
 
-describe('People Client', function() {
+describe('People Client', function () {
     const uuid = TestData.space.uuid || '';
     const basePeopleUrl = `/api/spaces/${uuid}/people`;
     const cookies = new Cookies();
@@ -30,7 +30,7 @@ describe('People Client', function() {
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 123456',
+            Authorization: 'Bearer 123456',
         },
     };
 
@@ -50,58 +50,81 @@ describe('People Client', function() {
         });
     });
 
-    afterEach(function() {
+    afterEach(function () {
         cookies.remove('accessToken');
     });
 
-    it('should return all people for space', function(done) {
-        PeopleClient.getAllPeopleInSpace(uuid)
-            .then((response) => {
-                expect(Axios.get).toHaveBeenCalledWith(basePeopleUrl, expectedConfig);
-                expect(response.data).toBe('Get All People');
-                done();
-            });
-
-    });
-
-    it('should create a person and return that person', function(done) {
-        const newPerson = TestData.person1;
-        PeopleClient.createPersonForSpace(TestData.space, newPerson)
-            .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(basePeopleUrl, newPerson, expectedConfig);
-                expect(response.data).toBe('Created Person');
-                done();
-            });
-    });
-
-    it('should edit a person and return that person', function(done) {
-        const updatedPerson = TestData.person1;
-        const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
-        PeopleClient.updatePerson(TestData.space, updatedPerson)
-            .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, updatedPerson, expectedConfig);
-                expect(response.data).toBe('Updated Person');
-                done();
-            });
-    });
-
-    it('should archive a person on today', function(done) {
-        const archivedPerson = TestData.person1;
-        const archiveDate = new Date(2020, 0, 2);
-        const expectedUrl = basePeopleUrl + `/${archivedPerson.id}/archive`;
-        PeopleClient.archivePerson(TestData.space, archivedPerson, archiveDate).then(() => {
-            expect(Axios.post).toHaveBeenCalledWith(expectedUrl, {archiveDate: archiveDate}, expectedConfig);
+    it('should return all people for space', function (done) {
+        PeopleClient.getAllPeopleInSpace(uuid).then((response) => {
+            expect(Axios.get).toHaveBeenCalledWith(
+                basePeopleUrl,
+                expectedConfig
+            );
+            expect(response.data).toBe('Get All People');
             done();
         });
     });
 
-    it('should delete a person', function(done) {
+    it('should create a person and return that person', function (done) {
+        const newPerson = TestData.person1;
+        PeopleClient.createPersonForSpace(TestData.space, newPerson).then(
+            (response) => {
+                expect(Axios.post).toHaveBeenCalledWith(
+                    basePeopleUrl,
+                    newPerson,
+                    expectedConfig
+                );
+                expect(response.data).toBe('Created Person');
+                done();
+            }
+        );
+    });
+
+    it('should edit a person and return that person', function (done) {
+        const updatedPerson = TestData.person1;
+        const expectedUrl = basePeopleUrl + `/${updatedPerson.id}`;
+        PeopleClient.updatePerson(TestData.space, updatedPerson).then(
+            (response) => {
+                expect(Axios.put).toHaveBeenCalledWith(
+                    expectedUrl,
+                    updatedPerson,
+                    expectedConfig
+                );
+                expect(response.data).toBe('Updated Person');
+                done();
+            }
+        );
+    });
+
+    it('should archive a person on today', function (done) {
+        const archivedPerson = TestData.person1;
+        const archiveDate = new Date(2020, 0, 2);
+        const expectedUrl = basePeopleUrl + `/${archivedPerson.id}/archive`;
+        PeopleClient.archivePerson(
+            TestData.space,
+            archivedPerson,
+            archiveDate
+        ).then(() => {
+            expect(Axios.post).toHaveBeenCalledWith(
+                expectedUrl,
+                { archiveDate: archiveDate },
+                expectedConfig
+            );
+            done();
+        });
+    });
+
+    it('should delete a person', function (done) {
         const expectedUrl = basePeopleUrl + `/${TestData.person1.id}`;
-        PeopleClient.removePerson(uuid, TestData.person1.id)
-            .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+        PeopleClient.removePerson(uuid, TestData.person1.id).then(
+            (response) => {
+                expect(Axios.delete).toHaveBeenCalledWith(
+                    expectedUrl,
+                    expectedConfig
+                );
                 expect(response.data).toBe('Deleted Person');
                 done();
-            });
+            }
+        );
     });
 });

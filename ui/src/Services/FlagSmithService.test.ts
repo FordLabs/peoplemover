@@ -21,13 +21,16 @@ import FlagSmithService from './FlagSmithService';
 describe('Flag Smith Service', () => {
     it('should initialize flagsmith and return all flags', async () => {
         const flagSmithUrl = 'flagsmith-url';
-        const flagsmithEnvironmentId = 'flagsmith-environment-id'
-        const flags = await FlagSmithService.initAndGetFlags( flagSmithUrl, flagsmithEnvironmentId);
+        const flagsmithEnvironmentId = 'flagsmith-environment-id';
+        const flags = await FlagSmithService.initAndGetFlags(
+            flagSmithUrl,
+            flagsmithEnvironmentId
+        );
         expect(Flagsmith.init).toHaveBeenCalledWith({
             environmentID: flagsmithEnvironmentId,
             api: flagSmithUrl,
         });
-        expect(flags).toEqual({ flags: true })
+        expect(flags).toEqual({ flags: true });
         expect(Flagsmith.getAllFlags).toHaveBeenCalled();
     });
 });

@@ -16,18 +16,21 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
-import {screen, waitFor} from '@testing-library/react';
-import {IsReadOnlyState} from '../../State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from '../../State/ModalContentsState';
-import {RecoilObserver} from '../../Utils/RecoilObserver';
-import {FilterOption} from '../../Types/Option';
+import { renderWithRecoil } from '../../Utils/TestUtils';
+import { screen, waitFor } from '@testing-library/react';
+import { IsReadOnlyState } from '../../State/IsReadOnlyState';
+import {
+    ModalContents,
+    ModalContentsState,
+} from '../../State/ModalContentsState';
+import { RecoilObserver } from '../../Utils/RecoilObserver';
+import { FilterOption } from '../../Types/Option';
 import Filter from './Filter';
 
 let actualModalContent: ModalContents | null;
 const expectedModalContents: ModalContents = {
     title: 'Test',
-    component: <div>hi</div>
+    component: <div>hi</div>,
 };
 let mockOnSelect = jest.fn();
 const expectedLabel = 'My Test Label';
@@ -46,18 +49,20 @@ describe('Filter Dropdown', () => {
     describe('When no filters are selected', () => {
         beforeEach(() => {
             renderFilter([
-                {label: 'foo', value: 'foo', selected: false},
-                {label: 'bar', value: 'bar', selected: false},
-                {label: 'hi', value: 'hi', selected: false},
+                { label: 'foo', value: 'foo', selected: false },
+                { label: 'bar', value: 'bar', selected: false },
+                { label: 'hi', value: 'hi', selected: false },
             ]);
-        })
+        });
 
         it('should show "All" as the filter count', () => {
             expect(getFilterCount()).toContainHTML('All');
         });
 
         it('should NOT show the x that clears the selected filters', async () => {
-            expect(screen.queryByTestId(`clearSelectedFilter__my_test_label`)).toBeNull();
+            expect(
+                screen.queryByTestId(`clearSelectedFilter__my_test_label`)
+            ).toBeNull();
         });
 
         it('should show all options, but none should be checked', () => {
@@ -74,11 +79,11 @@ describe('Filter Dropdown', () => {
     describe('When filters are selected', () => {
         beforeEach(() => {
             renderFilter([
-                {label: 'foo', value: 'foo', selected: true},
-                {label: 'bar', value: 'bar', selected: true},
-                {label: 'hi', value: 'hi', selected: false},
+                { label: 'foo', value: 'foo', selected: true },
+                { label: 'bar', value: 'bar', selected: true },
+                { label: 'hi', value: 'hi', selected: false },
             ]);
-        })
+        });
 
         it('should show "2" as the filter count', () => {
             expect(getFilterCount()).toContainHTML('2');
@@ -91,10 +96,10 @@ describe('Filter Dropdown', () => {
         it('should emit event to clear selected filters when x is clicked', async () => {
             getClearFilterButton().click();
             expect(mockOnSelect).toHaveBeenCalledWith([
-                {label: 'foo', value: 'foo', selected: false},
-                {label: 'bar', value: 'bar', selected: false},
-                {label: 'hi', value: 'hi', selected: false},
-            ])
+                { label: 'foo', value: 'foo', selected: false },
+                { label: 'bar', value: 'bar', selected: false },
+                { label: 'hi', value: 'hi', selected: false },
+            ]);
         });
 
         it('should show all options, with selected options checked', () => {
@@ -111,27 +116,27 @@ describe('Filter Dropdown', () => {
     describe('Check/Uncheck filter options', () => {
         beforeEach(() => {
             renderFilter([
-                {label: 'foo', value: 'foo', selected: true},
-                {label: 'bar', value: 'bar', selected: false},
+                { label: 'foo', value: 'foo', selected: true },
+                { label: 'bar', value: 'bar', selected: false },
             ]);
-        })
+        });
 
         it('should emit event when user unchecks a filter', () => {
             getDropdownButton().click();
             screen.getByText('foo').click();
             expect(mockOnSelect).toHaveBeenCalledWith([
-                {label: 'foo', value: 'foo', selected: false},
-                {label: 'bar', value: 'bar', selected: false},
-            ])
+                { label: 'foo', value: 'foo', selected: false },
+                { label: 'bar', value: 'bar', selected: false },
+            ]);
         });
 
         it('should emit event when user checks a filter', () => {
             getDropdownButton().click();
             screen.getByText('bar').click();
             expect(mockOnSelect).toHaveBeenCalledWith([
-                {label: 'foo', value: 'foo', selected: true},
-                {label: 'bar', value: 'bar', selected: true},
-            ])
+                { label: 'foo', value: 'foo', selected: true },
+                { label: 'bar', value: 'bar', selected: true },
+            ]);
         });
     });
 
@@ -139,15 +144,17 @@ describe('Filter Dropdown', () => {
         const addEditButtonText = `Add/Edit your ${expectedLabel}`;
 
         it('should show "Add/Edit" button in dropdown and which should open modal on click', async () => {
-            renderFilter()
+            renderFilter();
             getDropdownButton().click();
             const openModalButton = screen.getByText(addEditButtonText);
             openModalButton.click();
-            await waitFor(() => expect(actualModalContent).toEqual(expectedModalContents));
+            await waitFor(() =>
+                expect(actualModalContent).toEqual(expectedModalContents)
+            );
         });
 
         it('should not display the add/edit new filters button when in read only mode', () => {
-            renderFilter(undefined,true);
+            renderFilter(undefined, true);
             getDropdownButton().click();
             expect(screen.queryByText(addEditButtonText)).toBeNull();
         });
@@ -155,11 +162,14 @@ describe('Filter Dropdown', () => {
 });
 
 const _defaultValues: FilterOption[] = [
-    {label: 'foo', value: 'foo', selected: true},
-    {label: 'bar', value: 'bar', selected: false},
-]
+    { label: 'foo', value: 'foo', selected: true },
+    { label: 'bar', value: 'bar', selected: false },
+];
 
-function renderFilter(defaultValues: FilterOption[] = _defaultValues, isReadOnly = false) {
+function renderFilter(
+    defaultValues: FilterOption[] = _defaultValues,
+    isReadOnly = false
+) {
     renderWithRecoil(
         <>
             <RecoilObserver
@@ -172,12 +182,14 @@ function renderFilter(defaultValues: FilterOption[] = _defaultValues, isReadOnly
                 label={expectedLabel}
                 defaultValues={defaultValues}
                 onSelect={mockOnSelect}
-                modalContents={expectedModalContents}/>,
+                modalContents={expectedModalContents}
+            />
+            ,
         </>,
-        ({set}) => {
-            set(IsReadOnlyState, isReadOnly)
+        ({ set }) => {
+            set(IsReadOnlyState, isReadOnly);
         }
-    )
+    );
 }
 
 function getDropdownButton() {
@@ -189,5 +201,5 @@ function getFilterCount() {
 }
 
 function getClearFilterButton() {
-    return screen.getByTestId(`clearSelectedFilter__my_test_label`)
+    return screen.getByTestId(`clearSelectedFilter__my_test_label`);
 }

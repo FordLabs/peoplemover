@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {atom} from 'recoil';
+import { atom } from 'recoil';
 
 export interface ModalContents {
     title: string;

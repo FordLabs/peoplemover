@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {enUS} from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 interface CustomHeaderProps {
     date: Date;

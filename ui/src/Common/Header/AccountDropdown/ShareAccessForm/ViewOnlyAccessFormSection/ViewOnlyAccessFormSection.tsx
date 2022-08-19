@@ -15,11 +15,14 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
-import {useRecoilState, useRecoilValue} from 'recoil';
+import React, { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import ReactSwitch from 'react-switch';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import {
+    CurrentSpaceState,
+    UUIDForCurrentSpaceSelector,
+} from 'State/CurrentSpaceState';
 
 import './ViewOnlyAccessFormSection.scss';
 
@@ -32,7 +35,9 @@ function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
     const isExpanded = !collapsed;
-    const [enableViewOnly, setEnableViewOnly] = useState<boolean>(currentSpace.todayViewIsPublic);
+    const [enableViewOnly, setEnableViewOnly] = useState<boolean>(
+        currentSpace.todayViewIsPublic
+    );
     const [copiedLink, setCopiedLink] = useState<boolean>(false);
     const linkToSpace: string = window.location.href;
 
@@ -41,16 +46,24 @@ function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
         await navigator.clipboard.writeText(linkToSpace);
         setCopiedLink(true);
 
-        setTimeout(() => { setCopiedLink(false); }, 3000);
+        setTimeout(() => {
+            setCopiedLink(false);
+        }, 3000);
     };
 
     const toggleReadOnlyEnabled = async (checked: boolean): Promise<void> => {
         setEnableViewOnly(checked);
-        await SpaceClient.editSpaceReadOnlyFlag(uuid, {...currentSpace, todayViewIsPublic:checked})
-            .then((editedSpaceResponse) => setCurrentSpace(editedSpaceResponse.data));
+        await SpaceClient.editSpaceReadOnlyFlag(uuid, {
+            ...currentSpace,
+            todayViewIsPublic: checked,
+        }).then((editedSpaceResponse) =>
+            setCurrentSpace(editedSpaceResponse.data)
+        );
     };
 
-    const viewAccessEnabledMessage = `View only access is ${enableViewOnly ? 'enabled' : 'disabled'}`;
+    const viewAccessEnabledMessage = `View only access is ${
+        enableViewOnly ? 'enabled' : 'disabled'
+    }`;
     return (
         <div className="viewOnlyAccessForm form">
             <div className="viewOnlyToggleContainer">
@@ -72,18 +85,25 @@ function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
                             hidden={collapsed}
                             aria-label={viewAccessEnabledMessage}
                         />
-                        <i hidden={collapsed}
+                        <i
+                            hidden={collapsed}
                             data-testid="viewOnlyAccessTooltip"
                             className="material-icons tooltip sharon-wants-this-one-pixel-larger"
                             data-md-tooltip="Enabling view only allows anyone to view this space for the current day only.
-                            Visitors cannot make changes to this space. Visitors have ability to sort & filter.">
+                            Visitors cannot make changes to this space. Visitors have ability to sort & filter."
+                        >
                             info
                         </i>
                     </>
                 )}
             </div>
             {isExpanded && (
-                <div className={`spaceLinkContainer ${enableViewOnly ? '' : 'disabled'}`} hidden={collapsed}>
+                <div
+                    className={`spaceLinkContainer ${
+                        enableViewOnly ? '' : 'disabled'
+                    }`}
+                    hidden={collapsed}
+                >
                     <input
                         className="linkToSpace"
                         data-testid="linkToSpace"
@@ -99,7 +119,8 @@ function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
                         data-testid="viewOnlyAccessFormCopyLinkButton"
                         disabled={!enableViewOnly}
                         onClick={copyLink}
-                        aria-label="Copy link to clipboard">
+                        aria-label="Copy link to clipboard"
+                    >
                         {copiedLink ? 'Copied!' : 'Copy link'}
                     </button>
                 </div>
@@ -109,4 +130,3 @@ function ViewOnlyAccessFormSection({ collapsed }: Props): JSX.Element {
 }
 
 export default ViewOnlyAccessFormSection;
-

@@ -16,36 +16,41 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
-import {findByTestId, findByText, fireEvent, queryByText, screen, waitFor} from '@testing-library/react';
+import {
+    findByTestId,
+    findByText,
+    fireEvent,
+    queryByText,
+    screen,
+    waitFor,
+} from '@testing-library/react';
 import LocationClient from 'Services/Api/LocationClient';
 import ProductTagClient from 'Services/Api/ProductTagClient';
 import MyTagsForm from './MyTagsForm';
-import {FilterType, FilterTypeListings} from '../FilterLibraries';
-import {LocationsState} from 'State/LocationsState';
-import {ProductTagsState} from 'State/ProductTagsState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import { FilterType, FilterTypeListings } from '../FilterLibraries';
+import { LocationsState } from 'State/LocationsState';
+import { ProductTagsState } from 'State/ProductTagsState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 
 jest.mock('Services/Api/LocationClient');
 
 describe('My Tags Form', () => {
     const renderMyTagsForm = (filterType: FilterType): void => {
-        renderWithRecoil(
-            <MyTagsForm filterType={filterType} />,
-            ({set}) => {
-                set(LocationsState, TestData.locations)
-                set(ProductTagsState, TestData.productTags)
-                set(CurrentSpaceState, TestData.space)
-            }
-        );
+        renderWithRecoil(<MyTagsForm filterType={filterType} />, ({ set }) => {
+            set(LocationsState, TestData.locations);
+            set(ProductTagsState, TestData.productTags);
+            set(CurrentSpaceState, TestData.space);
+        });
     };
 
     describe('should contain expected contents', () => {
         it('should contain all location tags available in the space in the order they are provided', async () => {
             renderMyTagsForm(FilterTypeListings.Location);
             await screen.findByTestId('myTagsModal');
-            const locationTags: Array<HTMLSpanElement> = await screen.findAllByTestId('tagName__location');
+            const locationTags: Array<HTMLSpanElement> =
+                await screen.findAllByTestId('tagName__location');
             expect(locationTags).toHaveLength(4);
 
             expect(locationTags[0].innerHTML).toEqual(TestData.annarbor.name);
@@ -57,7 +62,8 @@ describe('My Tags Form', () => {
         it('Should contain all product tags available in the space', async () => {
             renderMyTagsForm(FilterTypeListings.ProductTag);
             const myTagsModal = await screen.findByTestId('myTagsModal');
-            const productTags: Array<HTMLSpanElement> = await screen.findAllByTestId('tagName__product_tag');
+            const productTags: Array<HTMLSpanElement> =
+                await screen.findAllByTestId('tagName__product_tag');
             expect(productTags).toHaveLength(4);
             for (const productTag of TestData.productTags) {
                 await findByText(myTagsModal, productTag.name);
@@ -72,12 +78,20 @@ describe('My Tags Form', () => {
             beforeEach(async () => {
                 LocationClient.get = jest.fn().mockResolvedValue({
                     data: [
-                        {id: 1, name: 'Saline', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'},
-                        TestData.detroit, TestData.dearborn, TestData.southfield
+                        {
+                            id: 1,
+                            name: 'Saline',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        },
+                        TestData.detroit,
+                        TestData.dearborn,
+                        TestData.southfield,
                     ],
                 });
                 renderMyTagsForm(FilterTypeListings.Location);
-                const editIcons = await screen.findAllByTestId('editIcon__location');
+                const editIcons = await screen.findAllByTestId(
+                    'editIcon__location'
+                );
                 locationTagIcon = editIcons[0];
             });
 
@@ -91,7 +105,11 @@ describe('My Tags Form', () => {
                 await screen.findByTestId('saveTagButton');
 
                 const myTagsModal = await screen.findByTestId('myTagsModal');
-                const editLocationTagText: HTMLInputElement = await findByTestId(myTagsModal, 'tagNameInput') as HTMLInputElement;
+                const editLocationTagText: HTMLInputElement =
+                    (await findByTestId(
+                        myTagsModal,
+                        'tagNameInput'
+                    )) as HTMLInputElement;
                 expect(editLocationTagText.value).toEqual('Ann Arbor');
             });
 
@@ -101,8 +119,12 @@ describe('My Tags Form', () => {
 
                 await screen.findByTestId('saveTagButton');
 
-                const editLocationTagText = await screen.findByTestId('tagNameInput');
-                fireEvent.change(editLocationTagText, {target: {value: updatedLocation}});
+                const editLocationTagText = await screen.findByTestId(
+                    'tagNameInput'
+                );
+                fireEvent.change(editLocationTagText, {
+                    target: { value: updatedLocation },
+                });
 
                 const saveButton = await screen.findByTestId('saveTagButton');
                 fireEvent.click(saveButton);
@@ -110,24 +132,34 @@ describe('My Tags Form', () => {
                 await screen.findByText(updatedLocation);
 
                 const myTagsModal = await screen.findByTestId('myTagsModal');
-                expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument();
+                expect(
+                    queryByText(myTagsModal, 'Ann Arbor')
+                ).not.toBeInTheDocument();
             });
 
             it('should display error message when location with existing name is edited', async () => {
-                LocationClient.edit = jest.fn().mockRejectedValue({ response: { status: 409 } });
+                LocationClient.edit = jest
+                    .fn()
+                    .mockRejectedValue({ response: { status: 409 } });
 
                 const updatedLocation = 'detroit';
                 fireEvent.click(locationTagIcon);
 
                 await screen.findByTestId('saveTagButton');
 
-                const editLocationTagText = await screen.findByTestId('tagNameInput');
-                fireEvent.change(editLocationTagText, {target: {value: updatedLocation}});
+                const editLocationTagText = await screen.findByTestId(
+                    'tagNameInput'
+                );
+                fireEvent.change(editLocationTagText, {
+                    target: { value: updatedLocation },
+                });
 
                 const saveButton = await screen.findByTestId('saveTagButton');
                 fireEvent.click(saveButton);
 
-                await screen.findByText('Oops! You already have this location. Please try using a different one.');
+                await screen.findByText(
+                    'Oops! You already have this location. Please try using a different one.'
+                );
             });
         });
 
@@ -138,12 +170,20 @@ describe('My Tags Form', () => {
             beforeEach(async () => {
                 ProductTagClient.get = jest.fn().mockResolvedValue({
                     data: [
-                        {id: 5, name: 'Finance', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'},
-                        TestData.productTag2, TestData.productTag3, TestData.productTag4
+                        {
+                            id: 5,
+                            name: 'Finance',
+                            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                        },
+                        TestData.productTag2,
+                        TestData.productTag3,
+                        TestData.productTag4,
                     ],
                 });
                 renderMyTagsForm(FilterTypeListings.ProductTag);
-                editIcons = await screen.findAllByTestId('editIcon__product_tag');
+                editIcons = await screen.findAllByTestId(
+                    'editIcon__product_tag'
+                );
                 productTagIcon = editIcons[0];
                 fireEvent.click(productTagIcon);
 
@@ -153,9 +193,13 @@ describe('My Tags Form', () => {
             it('should call Product Tag client to edit a tag and then display the updated product tag', async () => {
                 const updatedProductTag = 'Finance';
 
-                const editProductTagText = await screen.findByTestId('tagNameInput');
+                const editProductTagText = await screen.findByTestId(
+                    'tagNameInput'
+                );
                 expect(editProductTagText).toHaveValue('AV');
-                fireEvent.change(editProductTagText, {target: {value: updatedProductTag}});
+                fireEvent.change(editProductTagText, {
+                    target: { value: updatedProductTag },
+                });
 
                 const saveButton = await screen.findByTestId('saveTagButton');
                 fireEvent.click(saveButton);
@@ -167,12 +211,18 @@ describe('My Tags Form', () => {
             });
 
             it('should display error message only for corresponding edit product tag section', async () => {
-                const editProductTagText = await screen.findByTestId('tagNameInput');
-                fireEvent.change(editProductTagText, {target: {value: TestData.productTag2.name}});
+                const editProductTagText = await screen.findByTestId(
+                    'tagNameInput'
+                );
+                fireEvent.change(editProductTagText, {
+                    target: { value: TestData.productTag2.name },
+                });
                 const saveButton = await screen.findByTestId('saveTagButton');
                 expect(saveButton).toBeDisabled();
 
-                const errorMessage = await screen.findAllByText('Oops! You already have this product tag. Please try using a different one.');
+                const errorMessage = await screen.findAllByText(
+                    'Oops! You already have this product tag. Please try using a different one.'
+                );
                 expect(errorMessage.length).toEqual(1);
             });
         });
@@ -181,14 +231,21 @@ describe('My Tags Form', () => {
     describe('Delete a tag', () => {
         describe('delete a location tag', () => {
             let locationTagDeleteIcon: HTMLElement;
-            const expectedDeleteLocationWarning = 'Deleting this location will remove it from anything that has been given this location.';
+            const expectedDeleteLocationWarning =
+                'Deleting this location will remove it from anything that has been given this location.';
 
             beforeEach(async () => {
                 LocationClient.get = jest.fn().mockResolvedValue({
-                    data: [TestData.detroit, TestData.dearborn, TestData.southfield],
+                    data: [
+                        TestData.detroit,
+                        TestData.dearborn,
+                        TestData.southfield,
+                    ],
                 });
                 renderMyTagsForm(FilterTypeListings.Location);
-                const deleteIcons = await screen.findAllByTestId('deleteIcon__location');
+                const deleteIcons = await screen.findAllByTestId(
+                    'deleteIcon__location'
+                );
                 locationTagDeleteIcon = deleteIcons[0];
                 fireEvent.click(locationTagDeleteIcon);
 
@@ -208,20 +265,31 @@ describe('My Tags Form', () => {
                 fireEvent.click(deleteButton);
 
                 const myTagsModal = await screen.findByTestId('myTagsModal');
-                await waitFor(() => expect(queryByText(myTagsModal, 'Ann Arbor')).not.toBeInTheDocument());
+                await waitFor(() =>
+                    expect(
+                        queryByText(myTagsModal, 'Ann Arbor')
+                    ).not.toBeInTheDocument()
+                );
             });
         });
 
         describe('Delete a product tag', () => {
             let productTagDeleteIcon: HTMLElement;
-            const deleteProductTagWarning = 'Deleting this product tag will remove it from anything that has been given this product tag.';
+            const deleteProductTagWarning =
+                'Deleting this product tag will remove it from anything that has been given this product tag.';
 
             beforeEach(async () => {
                 ProductTagClient.get = jest.fn().mockResolvedValue({
-                    data: [TestData.productTag2, TestData.productTag3, TestData.productTag4],
+                    data: [
+                        TestData.productTag2,
+                        TestData.productTag3,
+                        TestData.productTag4,
+                    ],
                 });
                 renderMyTagsForm(FilterTypeListings.ProductTag);
-                const deleteIcons = await screen.findAllByTestId('deleteIcon__product_tag');
+                const deleteIcons = await screen.findAllByTestId(
+                    'deleteIcon__product_tag'
+                );
                 productTagDeleteIcon = deleteIcons[0];
 
                 fireEvent.click(productTagDeleteIcon);
@@ -243,22 +311,26 @@ describe('My Tags Form', () => {
                 const myTagsModal = await screen.findByTestId('myTagsModal');
                 await findByText(myTagsModal, 'AV');
             });
-
         });
     });
 
     describe('Adding a new tag', () => {
-
         describe('adding a location tag', () => {
             beforeEach(async () => {
                 LocationClient.get = jest.fn().mockResolvedValue({
                     data: [
                         ...TestData.locations,
-                        {id: 5, name: 'Ahmedabad', spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'}
+                        {
+                            id: 5,
+                            name: 'Ahmedabad',
+                            spaceUuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+                        },
                     ],
                 });
                 renderMyTagsForm(FilterTypeListings.Location);
-                const addNewLocationButton = await screen.findByText('Add New Location');
+                const addNewLocationButton = await screen.findByText(
+                    'Add New Location'
+                );
                 fireEvent.click(addNewLocationButton);
             });
 
@@ -272,12 +344,16 @@ describe('My Tags Form', () => {
             });
 
             it('should show duplicate error message when trying to add any existing location tag', async () => {
-                LocationClient.add = jest.fn().mockRejectedValue({ response: { status: 409 } });
+                LocationClient.add = jest
+                    .fn()
+                    .mockRejectedValue({ response: { status: 409 } });
                 const newLocation = 'Detroit';
                 await addTag(newLocation);
                 await clickSaveButton();
 
-                await screen.findByText('Oops! You already have this location. Please try using a different one.');
+                await screen.findByText(
+                    'Oops! You already have this location. Please try using a different one.'
+                );
             });
         });
 
@@ -288,7 +364,9 @@ describe('My Tags Form', () => {
             });
 
             it('should not show pen and trash can when add new tag is clicked', async () => {
-                const addNewLocationButton = await screen.findByText('Add New Location');
+                const addNewLocationButton = await screen.findByText(
+                    'Add New Location'
+                );
                 fireEvent.click(addNewLocationButton);
                 checkEditAndDeleteLocationIconCount(0);
             });
@@ -300,7 +378,9 @@ describe('My Tags Form', () => {
 
             it('should have create location button disabled when editing location tag', async () => {
                 clickFirstEditLocationIcon();
-                const addNewLocationButton = await screen.findByTestId('addNewButton__location');
+                const addNewLocationButton = await screen.findByTestId(
+                    'addNewButton__location'
+                );
                 expect(addNewLocationButton).toBeDisabled();
             });
         });
@@ -310,12 +390,18 @@ describe('My Tags Form', () => {
                 ProductTagClient.get = jest.fn().mockResolvedValue({
                     data: [
                         ...TestData.productTags,
-                        {id: 5, name: 'Fin Tech', spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}
+                        {
+                            id: 5,
+                            name: 'Fin Tech',
+                            spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                        },
                     ],
                 });
                 renderMyTagsForm(FilterTypeListings.ProductTag);
 
-                const addNewProductTagButton = await screen.findByText('Add New Product Tag');
+                const addNewProductTagButton = await screen.findByText(
+                    'Add New Product Tag'
+                );
                 fireEvent.click(addNewProductTagButton);
             });
 
@@ -329,12 +415,16 @@ describe('My Tags Form', () => {
             });
 
             it('should show duplicate error message when trying to add any existing product tag', async () => {
-                ProductTagClient.add = jest.fn( ).mockResolvedValue({ response: { status: 409 } });
+                ProductTagClient.add = jest
+                    .fn()
+                    .mockResolvedValue({ response: { status: 409 } });
                 const newProductTag = 'FordX';
                 await addTag(newProductTag);
                 await clickSaveButton();
 
-                await screen.findByText('Oops! You already have this product tag. Please try using a different one.');
+                await screen.findByText(
+                    'Oops! You already have this product tag. Please try using a different one.'
+                );
             });
         });
 
@@ -345,7 +435,9 @@ describe('My Tags Form', () => {
             });
 
             it('should not show pen and trash can when add new tag is clicked', async () => {
-                const addNewLocationButton = await screen.findByText('Add New Product Tag');
+                const addNewLocationButton = await screen.findByText(
+                    'Add New Product Tag'
+                );
                 fireEvent.click(addNewLocationButton);
                 checkEditAndDeleteProductTagIconCount(0);
             });
@@ -357,7 +449,9 @@ describe('My Tags Form', () => {
 
             it('should have create product tag button disabled when editing product tag', async () => {
                 clickFirstEditProductTagIcon();
-                const addNewProductTagButton = await screen.findByTestId('addNewButton__product_tag');
+                const addNewProductTagButton = await screen.findByTestId(
+                    'addNewButton__product_tag'
+                );
                 expect(addNewProductTagButton).toBeDisabled();
             });
         });
@@ -365,26 +459,26 @@ describe('My Tags Form', () => {
 
     it('should only display location tags when the passed-in filter type is location tags', async () => {
         renderWithRecoil(
-            <MyTagsForm filterType={FilterTypeListings.Location}/>,
-            ({set}) => {
-                set(LocationsState, TestData.locations)
-                set(ProductTagsState, TestData.productTags)
-                set(CurrentSpaceState, TestData.space)
+            <MyTagsForm filterType={FilterTypeListings.Location} />,
+            ({ set }) => {
+                set(LocationsState, TestData.locations);
+                set(ProductTagsState, TestData.productTags);
+                set(CurrentSpaceState, TestData.space);
             }
         );
 
-        await screen.findByText( TestData.annarbor.name);
-        await screen.findByText( TestData.detroit.name);
-        await screen.findByText( TestData.dearborn.name);
-        await screen.findByText( TestData.southfield.name);
+        await screen.findByText(TestData.annarbor.name);
+        await screen.findByText(TestData.detroit.name);
+        await screen.findByText(TestData.dearborn.name);
+        await screen.findByText(TestData.southfield.name);
     });
 
     it('should only display product tags when the passed-in filter type is product tags', async () => {
         renderWithRecoil(
-            <MyTagsForm filterType={FilterTypeListings.ProductTag}/>,
-            ({set}) => {
-                set(LocationsState, TestData.locations)
-                set(ProductTagsState, TestData.productTags)
+            <MyTagsForm filterType={FilterTypeListings.ProductTag} />,
+            ({ set }) => {
+                set(LocationsState, TestData.locations);
+                set(ProductTagsState, TestData.productTags);
             }
         );
 
@@ -396,29 +490,37 @@ describe('My Tags Form', () => {
 });
 
 const checkEditAndDeleteLocationIconCount = (expectedCount: number) => {
-    expect(screen.queryAllByTestId('editIcon__location')).toHaveLength(expectedCount);
-    expect(screen.queryAllByTestId('deleteIcon__location')).toHaveLength(expectedCount);
-}
+    expect(screen.queryAllByTestId('editIcon__location')).toHaveLength(
+        expectedCount
+    );
+    expect(screen.queryAllByTestId('deleteIcon__location')).toHaveLength(
+        expectedCount
+    );
+};
 
 const clickFirstEditLocationIcon = () => {
     fireEvent.click(screen.getAllByTestId('editIcon__location')[0]);
-}
+};
 
 const checkEditAndDeleteProductTagIconCount = (expectedCount: number) => {
-    expect(screen.queryAllByTestId('editIcon__product_tag')).toHaveLength(expectedCount);
-    expect(screen.queryAllByTestId('deleteIcon__product_tag')).toHaveLength(expectedCount);
-}
+    expect(screen.queryAllByTestId('editIcon__product_tag')).toHaveLength(
+        expectedCount
+    );
+    expect(screen.queryAllByTestId('deleteIcon__product_tag')).toHaveLength(
+        expectedCount
+    );
+};
 
 const clickFirstEditProductTagIcon = () => {
     fireEvent.click(screen.getAllByTestId('editIcon__product_tag')[0]);
-}
+};
 
 const clickSaveButton = async () => {
     const saveButton = await screen.findByTestId('saveTagButton');
     fireEvent.click(saveButton);
-}
+};
 
 const addTag = async (newTag: string) => {
     const tagTextInput = await screen.findByTestId('tagNameInput');
-    fireEvent.change(tagTextInput, {target: {value: newTag}});
-}
+    fireEvent.change(tagTextInput, { target: { value: newTag } });
+};

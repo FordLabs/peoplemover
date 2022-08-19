@@ -25,10 +25,10 @@ export const getToken = (): string => {
 
 export const removeToken = (): void => {
     const cookie = new Cookies();
-    cookie.remove('accessToken', {path: '/'});
+    cookie.remove('accessToken', { path: '/' });
 };
 
-export const getDecodedToken = (): { sub: string; } | null => {
+export const getDecodedToken = (): { sub: string } | null => {
     const accessToken = getToken();
     return jwtDecoder(accessToken);
 };

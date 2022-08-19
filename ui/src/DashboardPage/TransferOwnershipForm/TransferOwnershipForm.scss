@@ -15,38 +15,38 @@
  * limitations under the License.
  */
 
-@import "../../Styles/Colors";
+@import '../../Styles/Colors';
 
-.transferOwnershipFormPrompt{
+.transferOwnershipFormPrompt {
   font-weight: 700;
   font-size: 16px;
-  color: $gray-1
+  color: $gray-1;
 }
 
-.transferOwnershipForm{
+.transferOwnershipForm {
   align-self: center;
   height: 300px;
   justify-content: space-between;
 }
 
-.buttonsContainer{
+.buttonsContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
 }
 
-.primaryButton{
+.primaryButton {
   width: 173px;
 }
 
-.transferOwnershipFormRadioContainer{
-  display:flex;
+.transferOwnershipFormRadioContainer {
+  display: flex;
   flex-direction: column;
   flex: 1;
   margin-top: 15px;
 }
 
-.transferOwnershipFormRadioControl{
+.transferOwnershipFormRadioControl {
   width: 375px;
   display: flex;
   flex-direction: row;
@@ -55,8 +55,7 @@
   margin: 5px 0;
 }
 
-.personRadioUserId{
+.personRadioUserId {
   flex: 1;
   margin-left: 15px;
 }
-

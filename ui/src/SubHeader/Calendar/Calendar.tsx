@@ -19,13 +19,13 @@ import CalendarHeader from './CalendarHeader';
 import CalendarInputLabel from './CalendarInputLabel';
 import DatePicker from 'react-datepicker';
 import ReactDatePicker from 'react-datepicker';
-import React, {createRef, useEffect, useState} from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import AssignmentClient from '../../Services/Api/AssignmentClient';
 import moment from 'moment';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { UUIDForCurrentSpaceSelector } from 'State/CurrentSpaceState';
 
 import './Calendar.scss';
 
@@ -42,11 +42,14 @@ function Calendar(): JSX.Element {
 
     useEffect(() => {
         if (isCalendarOpen) {
-            AssignmentClient.getAssignmentEffectiveDates(uuid)
-                .then(response => {
-                    const dates: Array<Date> = (response.data as string[]).map(date => moment(date).toDate());
+            AssignmentClient.getAssignmentEffectiveDates(uuid).then(
+                (response) => {
+                    const dates: Array<Date> = (response.data as string[]).map(
+                        (date) => moment(date).toDate()
+                    );
                     setDaysHighlighted(dates);
-                });
+                }
+            );
         }
     }, [uuid, isCalendarOpen]);
 
@@ -71,7 +74,9 @@ function Calendar(): JSX.Element {
                 calendarClassName="viewing-calendar"
                 ref={calendarRef}
                 selected={viewingDate}
-                highlightDates={[{'react-datepicker__day--highlighted': daysHighlighted}]}
+                highlightDates={[
+                    { 'react-datepicker__day--highlighted': daysHighlighted },
+                ]}
                 onSelect={(): void => toggleCalendar(false)}
                 onChange={onChange}
                 onClickOutside={(): void => {

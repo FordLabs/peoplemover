@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
+import { JSX } from '@babel/types';
 import React from 'react';
-import {CloseModalButton, ModalTitle} from 'Modal/ModalCardBanner/ModalCardBanner';
+import {
+    CloseModalButton,
+    ModalTitle,
+} from 'Modal/ModalCardBanner/ModalCardBanner';
 
 import './MultiModalCardBanner.scss';
 
@@ -28,7 +31,12 @@ interface Props {
     collapsed?: boolean;
 }
 
-const MultiModalCardBanner = ({title, onClick, onCloseBtnClick, collapsed = false}: Props): JSX.Element => {
+const MultiModalCardBanner = ({
+    title,
+    onClick,
+    onCloseBtnClick,
+    collapsed = false,
+}: Props): JSX.Element => {
     return (
         <div className="modalCardBanner multiModal">
             <button
@@ -39,7 +47,8 @@ const MultiModalCardBanner = ({title, onClick, onCloseBtnClick, collapsed = fals
                 onClick={onClick}
             >
                 <ModalTitle title={title} />
-                <i data-testid="modalCardBannerArrowIcon"
+                <i
+                    data-testid="modalCardBannerArrowIcon"
                     className="material-icons focusedModalArrow"
                     aria-hidden
                 >

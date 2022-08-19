@@ -16,11 +16,11 @@
  */
 
 import React from 'react';
-import {screen} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import Header from './Header';
 import flagsmith from 'flagsmith';
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
-import {MemoryRouter} from 'react-router-dom';
+import TestUtils, { renderWithRecoil } from 'Utils/TestUtils';
+import { MemoryRouter } from 'react-router-dom';
 import {
     openAccountDropdown,
     shouldHideHeaderAccountDropdown,
@@ -29,22 +29,22 @@ import {
     shouldRenderStaticLogo,
     shouldShowAllAccountDropdownOptions,
 } from 'Utils/HeaderTestUtils';
-import {MutableSnapshot} from 'recoil';
-import {CurrentUserState} from 'State/CurrentUserState';
+import { MutableSnapshot } from 'recoil';
+import { CurrentUserState } from 'State/CurrentUserState';
 
 const debounceTimeToWait = 100;
 
 describe('Header', () => {
     beforeEach(() => {
-        TestUtils.enableInviteUsersToSpace()
-    })
+        TestUtils.enableInviteUsersToSpace();
+    });
 
     describe('Space Name', () => {
         it('should show name when name prop is populated', () => {
             const expectedSpaceName = 'Test Space Name';
             renderWithRecoil(<Header spaceName={expectedSpaceName} />);
             const spaceNameComponent = screen.getByTestId('headerSpaceName');
-            expect(spaceNameComponent).toHaveTextContent(expectedSpaceName)
+            expect(spaceNameComponent).toHaveTextContent(expectedSpaceName);
         });
 
         it('should not show name when name prop is not populated', async () => {
@@ -96,7 +96,7 @@ describe('Header', () => {
         });
 
         it('should not show invite users to space button when the feature flag is toggled off', async () => {
-            TestUtils.enableInviteUsersToSpace(false)
+            TestUtils.enableInviteUsersToSpace(false);
             await renderHeaderWithoutProps();
 
             openAccountDropdown();
@@ -122,8 +122,8 @@ async function renderHeaderWithoutProps() {
         <MemoryRouter>
             <Header />
         </MemoryRouter>,
-        ({set}: MutableSnapshot) => {
-            set(CurrentUserState, 'USER_ID')
+        ({ set }: MutableSnapshot) => {
+            set(CurrentUserState, 'USER_ID');
         }
     );
     await screen.findByTestId('accountDropdownToggle');

@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
-import {useRecoilValue} from 'recoil';
-import {ProductTagsState} from 'State/ProductTagsState';
-import {FilterOption} from 'Types/Option';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { ProductTagsState } from 'State/ProductTagsState';
+import { FilterOption } from 'Types/Option';
 import {
     FilterTypeListings,
     getLocalStorageFiltersByType,
@@ -27,25 +27,30 @@ import {
 } from '../FilterLibraries';
 import Filter from '../Filter';
 import MyTagsForm from 'SubHeader/SortingAndFiltering/MyTagsForm/MyTagsForm';
-import {ProductTag} from 'Types/Tag';
+import { ProductTag } from 'Types/Tag';
 
 function ProductTagsFilter() {
     const productTags = useRecoilValue(ProductTagsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(productTagsFilterKey);
-        return productTags.map((tag: ProductTag): FilterOption => ({
-            label: tag.name,
-            value: tag.id + '_' + tag.name,
-            selected: selectedRolesFromLocalStorage.includes(tag.name),
-        }));
-    },[productTags])
+        const selectedRolesFromLocalStorage =
+            getLocalStorageFiltersByType(productTagsFilterKey);
+        return productTags.map(
+            (tag: ProductTag): FilterOption => ({
+                label: tag.name,
+                value: tag.id + '_' + tag.name,
+                selected: selectedRolesFromLocalStorage.includes(tag.name),
+            })
+        );
+    }, [productTags]);
 
-    const [productTagFilterOptions, setProductTagFilterOptions] = useState<Array<FilterOption>>([]);
+    const [productTagFilterOptions, setProductTagFilterOptions] = useState<
+        Array<FilterOption>
+    >([]);
 
     useEffect(() => {
-        setProductTagFilterOptions(getFilterOptions())
-    }, [getFilterOptions, productTags])
+        setProductTagFilterOptions(getFilterOptions());
+    }, [getFilterOptions, productTags]);
 
     function setFilterOptions(options: FilterOption[]) {
         setLocalStorageFiltersByType(productTagsFilterKey, options);
@@ -60,9 +65,12 @@ function ProductTagsFilter() {
             modalContents={{
                 title: 'Product Tags',
                 // @todo refactor my tags form
-                component: <MyTagsForm filterType={FilterTypeListings.ProductTag}/>
-            }}/>
-    )
+                component: (
+                    <MyTagsForm filterType={FilterTypeListings.ProductTag} />
+                ),
+            }}
+        />
+    );
 }
 
 export default ProductTagsFilter;

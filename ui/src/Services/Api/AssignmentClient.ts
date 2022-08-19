@@ -15,14 +15,22 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
+import Axios, { AxiosResponse } from 'axios';
+import {
+    CreateAssignmentsRequest,
+    ProductPlaceholderPair,
+} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
-import {Space} from 'Types/Space';
-import {Person} from 'Types/Person';
-import {getAxiosConfig} from 'Utils/getAxiosConfig';
+import { Space } from 'Types/Space';
+import { Person } from 'Types/Person';
+import { getAxiosConfig } from 'Utils/getAxiosConfig';
 
-async function createAssignmentForDate(requestedDate: string, products: Array<ProductPlaceholderPair>, space: Space, person: Person): Promise<AxiosResponse> {
+async function createAssignmentForDate(
+    requestedDate: string,
+    products: Array<ProductPlaceholderPair>,
+    space: Space,
+    person: Person
+): Promise<AxiosResponse> {
     const url = `/api/spaces/${space.uuid}/person/${person.id}/assignment/create`;
     const assignmentRequest = {
         requestedDate,
@@ -31,31 +39,46 @@ async function createAssignmentForDate(requestedDate: string, products: Array<Pr
     return Axios.post(url, assignmentRequest, getAxiosConfig());
 }
 
-async function getAssignmentsUsingPersonIdAndDate(spaceUuid: string, personId: number, date: Date): Promise<AxiosResponse> {
+async function getAssignmentsUsingPersonIdAndDate(
+    spaceUuid: string,
+    personId: number,
+    date: Date
+): Promise<AxiosResponse> {
     const dateAsString = moment(date).format('YYYY-MM-DD');
     const url = `/api/spaces/${spaceUuid}/person/${personId}/assignments/date/${dateAsString}`;
     return Axios.get(url, getAxiosConfig());
 }
 
-async function getAssignmentEffectiveDates(spaceUuid: string): Promise<AxiosResponse> {
+async function getAssignmentEffectiveDates(
+    spaceUuid: string
+): Promise<AxiosResponse> {
     const url = `/api/spaces/${spaceUuid}/assignment/dates`;
     return Axios.get(url, getAxiosConfig());
 }
 
-async function deleteAssignmentForDate(date: Date, person: Person): Promise<AxiosResponse> {
+async function deleteAssignmentForDate(
+    date: Date,
+    person: Person
+): Promise<AxiosResponse> {
     const dateAsString = moment(date).format('YYYY-MM-DD');
     const url = `/api/spaces/${person.spaceUuid}/person/${person.id}/assignment/delete/${dateAsString}`;
     const config = getAxiosConfig();
-    return Axios.delete(url, {...config, data: person});
+    return Axios.delete(url, { ...config, data: person });
 }
 
-async function getReassignments(spaceUuid: string, requestedDate: Date): Promise<AxiosResponse> {
+async function getReassignments(
+    spaceUuid: string,
+    requestedDate: Date
+): Promise<AxiosResponse> {
     const formattedDate = moment(requestedDate).format('YYYY-MM-DD');
     const url = `/api/spaces/${spaceUuid}/reassignment/${formattedDate}`;
     return Axios.get(url, getAxiosConfig());
 }
 
-async function getAssignmentsV2ForSpaceAndPerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
+async function getAssignmentsV2ForSpaceAndPerson(
+    spaceUuid: string,
+    personId: number
+): Promise<AxiosResponse> {
     const url = `/api/v2/spaces/${spaceUuid}/person/${personId}/assignments`;
     return Axios.get(url, getAxiosConfig());
 }
@@ -66,7 +89,7 @@ const AssignmentClient = {
     getAssignmentEffectiveDates,
     deleteAssignmentForDate,
     getReassignments,
-    getAssignmentsV2ForSpaceAndPerson
-}
+    getAssignmentsV2ForSpaceAndPerson,
+};
 
 export default AssignmentClient;

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import React, {ReactElement, useState} from 'react';
-import {useRecoilValue} from 'recoil';
-import {DEFAULT_BANNER_MESSAGE, FlagsState} from '../State/FlagsState';
+import React, { ReactElement, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { DEFAULT_BANNER_MESSAGE, FlagsState } from '../State/FlagsState';
 
 import './AnnouncementBanner.scss';
 
@@ -27,25 +27,33 @@ const BANNER_CLOSED_BY_USER_KEY = 'bannerHasBeenClosedByUser';
 const AnnouncementBanner = (): ReactElement => {
     const flags = useRecoilValue(FlagsState);
 
-    const bannerIsNew = localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY) == null ||
-        flags.announcementBannerMessage !== localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY);
+    const bannerIsNew =
+        localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY) == null ||
+        flags.announcementBannerMessage !==
+            localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY);
 
-    const [closedByUser, setClosedByUser] = useState<string|null>(
+    const [closedByUser, setClosedByUser] = useState<string | null>(
         bannerIsNew ? '' : localStorage.getItem(BANNER_CLOSED_BY_USER_KEY)
     );
 
-    const flagsNotReceived = flags.announcementBannerMessage === DEFAULT_BANNER_MESSAGE;
+    const flagsNotReceived =
+        flags.announcementBannerMessage === DEFAULT_BANNER_MESSAGE;
 
     if (flagsNotReceived) return <></>;
 
     if (bannerIsNew) {
         localStorage.removeItem(BANNER_CLOSED_BY_USER_KEY);
-        localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, flags.announcementBannerMessage);
+        localStorage.setItem(
+            PREVIOUS_BANNER_MESSAGE_KEY,
+            flags.announcementBannerMessage
+        );
     }
 
-    return !closedByUser  && flags.announcementBannerEnabled ?
+    return !closedByUser && flags.announcementBannerEnabled ? (
         <aside className="announcementBanner">
-            <div className="bannerSpacing">{flags ? flags.announcementBannerMessage : ''}</div>
+            <div className="bannerSpacing">
+                {flags ? flags.announcementBannerMessage : ''}
+            </div>
             <button
                 onClick={(): void => {
                     setClosedByUser('true');
@@ -53,9 +61,13 @@ const AnnouncementBanner = (): ReactElement => {
                 }}
                 className="material-icons closeButton bannerSpacing"
                 aria-label="Close Announcement Banner"
-            >close</button>
+            >
+                close
+            </button>
         </aside>
-        : <></>;
+    ) : (
+        <></>
+    );
 };
 
 export default AnnouncementBanner;

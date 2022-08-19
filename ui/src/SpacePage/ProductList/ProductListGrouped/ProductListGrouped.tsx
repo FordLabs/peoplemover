@@ -16,19 +16,19 @@
  */
 
 import React from 'react';
-import {emptyProduct} from 'Services/ProductService';
+import { emptyProduct } from 'Services/ProductService';
 import NewProductButton from '../NewProductButton/NewProductButton';
-import {useRecoilValue} from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import {ProductCardArray} from 'Common/ProductCardArray/ProductCardArray';
-import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
-import {LocationsState} from 'State/LocationsState';
-import {ProductTagsState} from 'State/ProductTagsState';
-import {ModalContents} from 'State/ModalContentsState';
+import { ProductCardArray } from 'Common/ProductCardArray/ProductCardArray';
+import { ProductSortBy, ProductSortByState } from 'State/ProductSortByState';
+import { LocationsState } from 'State/LocationsState';
+import { ProductTagsState } from 'State/ProductTagsState';
+import { ModalContents } from 'State/ModalContentsState';
 import ProductForm from 'Common/ProductForm/ProductForm';
-import {UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
-import {Tag} from 'Types/Tag';
-import {Product} from 'Types/Product';
+import { UUIDForCurrentSpaceSelector } from 'State/CurrentSpaceState';
+import { Tag } from 'Types/Tag';
+import { Product } from 'Types/Product';
 
 import './ProductListGrouped.scss';
 
@@ -60,24 +60,24 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
 
     function sortProducts(): GroupedListDataProps {
         if (productSortBy === ProductSortBy.LOCATION) {
-            return ({
+            return {
                 traitTitle: 'Location',
                 traits: [...locations],
                 filterByTraitFunction: filterByLocation,
                 filterByNoTraitFunction: filterByNoLocation,
-            });
+            };
         } else {
-            return ({
+            return {
                 traitTitle: 'Product Tag',
                 traits: [...productTags],
                 filterByTraitFunction: filterByProductTag,
                 filterByNoTraitFunction: filterByNoProductTag,
-            });
+            };
         }
     }
 
     function filterByProductTag(product: Product, tagName: string): boolean {
-        return product.tags.map(t => t.name).includes(tagName);
+        return product.tags.map((t) => t.name).includes(tagName);
     }
 
     function filterByNoProductTag(product: Product): boolean {
@@ -85,38 +85,58 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
     }
 
     function filterByLocation(product: Product, tagName: string): boolean {
-        return (product.spaceLocation) ? product.spaceLocation.name === tagName : false;
+        return product.spaceLocation
+            ? product.spaceLocation.name === tagName
+            : false;
     }
 
     function filterByNoLocation(product: Product): boolean {
         return !product.spaceLocation;
     }
 
-    function ProductGroup({tagName, modalContents, productFilterFunction, useGrayBackground }: ProductGroupProps): JSX.Element {
-        const filteredProducts = products.filter(product => productFilterFunction(product, tagName));
+    function ProductGroup({
+        tagName,
+        modalContents,
+        productFilterFunction,
+        useGrayBackground,
+    }: ProductGroupProps): JSX.Element {
+        const filteredProducts = products.filter((product) =>
+            productFilterFunction(product, tagName)
+        );
 
-        return (
-            filteredProducts.length === 0 ? <></> :
-                (
-                    <div data-testid="productGroup" key={tagName}>
-                        <div className={`productTagName ${useGrayBackground ? 'gray-background' : ''}`}>{tagName}</div>
-                        <div className="groupedProducts">
-                            <ProductCardArray products={filteredProducts} arrayId={tagName}/>
-                            <NewProductButton modalContents={modalContents}/>
-                        </div>
-                    </div>
-                )
+        return filteredProducts.length === 0 ? (
+            <></>
+        ) : (
+            <div data-testid="productGroup" key={tagName}>
+                <div
+                    className={`productTagName ${
+                        useGrayBackground ? 'gray-background' : ''
+                    }`}
+                >
+                    {tagName}
+                </div>
+                <div className="groupedProducts">
+                    <ProductCardArray
+                        products={filteredProducts}
+                        arrayId={tagName}
+                    />
+                    <NewProductButton modalContents={modalContents} />
+                </div>
+            </div>
         );
     }
 
     return (
-        <div className="productListGroupedContainer" data-testid="productListGroupedContainer">
+        <div
+            className="productListGroupedContainer"
+            data-testid="productListGroupedContainer"
+        >
             {productGroupList.traits.map((trait: Tag) => {
                 const newProduct = emptyProduct(uuid);
                 if (productSortBy === ProductSortBy.LOCATION) {
-                    newProduct.spaceLocation = {...trait}
+                    newProduct.spaceLocation = { ...trait };
                 } else if (productSortBy === ProductSortBy.PRODUCT_TAG) {
-                    newProduct.tags = [trait]
+                    newProduct.tags = [trait];
                 }
 
                 return (
@@ -125,21 +145,31 @@ function GroupedByList({ products }: GroupedByListProps): JSX.Element {
                             tagName={trait.name}
                             modalContents={{
                                 title: 'Add New Product',
-                                component: <ProductForm
-                                    editing={false}
-                                    product={newProduct}/>
+                                component: (
+                                    <ProductForm
+                                        editing={false}
+                                        product={newProduct}
+                                    />
+                                ),
                             }}
-                            productFilterFunction={productGroupList.filterByTraitFunction}/>
+                            productFilterFunction={
+                                productGroupList.filterByTraitFunction
+                            }
+                        />
                     </span>
                 );
             })}
-            { products.length === 0 ?
-                <NewProductButton /> :
+            {products.length === 0 ? (
+                <NewProductButton />
+            ) : (
                 <ProductGroup
                     tagName={`No ${productGroupList.traitTitle}`}
                     useGrayBackground
-                    productFilterFunction={productGroupList.filterByNoTraitFunction}/>
-            }
+                    productFilterFunction={
+                        productGroupList.filterByNoTraitFunction
+                    }
+                />
+            )}
         </div>
     );
 }

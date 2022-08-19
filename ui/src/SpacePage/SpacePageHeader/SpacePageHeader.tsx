@@ -16,28 +16,36 @@
  */
 
 import React from 'react';
-import {useRecoilValue} from 'recoil';
-import {Link} from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { Link } from 'react-router-dom';
 import Header from 'Common/Header/Header';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 
 function SpacePageHeader() {
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
     return (
         <>
-            <a href="#main-content-landing-target" className="skipToProducts" data-testid="skipToContentLink">
+            <a
+                href="#main-content-landing-target"
+                className="skipToProducts"
+                data-testid="skipToContentLink"
+            >
                 Skip to main content
             </a>
             <Header spaceName={currentSpace.name}>
                 <Link
                     className="timeOnProductLink"
-                    to={`/${currentSpace.uuid}/timeonproduct`}>
-                    <span className="newBadge" data-testid="newBadge">BETA</span>Time On Product &#62;
+                    to={`/${currentSpace.uuid}/timeonproduct`}
+                >
+                    <span className="newBadge" data-testid="newBadge">
+                        BETA
+                    </span>
+                    Time On Product &#62;
                 </Link>
             </Header>
         </>
-    )
+    );
 }
 
 export default SpacePageHeader;

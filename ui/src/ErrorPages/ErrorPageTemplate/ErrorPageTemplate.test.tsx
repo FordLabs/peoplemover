@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {screen} from '@testing-library/react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
-import {MemoryRouter} from 'react-router-dom';
+import { screen } from '@testing-library/react';
+import { renderWithRecoil } from '../../Utils/TestUtils';
+import { MemoryRouter } from 'react-router-dom';
 import React from 'react';
 import ErrorPageTemplate from './ErrorPageTemplate';
 import errorImageSrc from 'Assets/403.png';
@@ -33,10 +33,13 @@ describe('Error Page Template', () => {
     beforeEach(() => {
         renderWithRecoil(
             <MemoryRouter initialEntries={['/error/404']}>
-                <ErrorPageTemplate errorGraphic={errorImageSrc} errorText={errorPageText} />
+                <ErrorPageTemplate
+                    errorGraphic={errorImageSrc}
+                    errorText={errorPageText}
+                />
             </MemoryRouter>
         );
-    })
+    });
 
     it('should show error text', () => {
         expect(screen.getByText(errorPageText)).toBeDefined();

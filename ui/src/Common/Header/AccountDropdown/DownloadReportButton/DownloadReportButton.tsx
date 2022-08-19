@@ -16,9 +16,9 @@
  */
 import React from 'react';
 import ReportClient from 'Services/Api/ReportClient';
-import {useRecoilValue} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import { useRecoilValue } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 
 function DownloadReportButton(): JSX.Element {
     const viewingDate = useRecoilValue(ViewingDateState);
@@ -26,7 +26,8 @@ function DownloadReportButton(): JSX.Element {
 
     const handleDownloadReport = async (): Promise<void> => {
         const { uuid, name } = currentSpace;
-        if (uuid) await ReportClient.getReportsWithNames(name, uuid, viewingDate);
+        if (uuid)
+            await ReportClient.getReportsWithNames(name, uuid, viewingDate);
     };
 
     return (
@@ -42,4 +43,3 @@ function DownloadReportButton(): JSX.Element {
 }
 
 export default DownloadReportButton;
-

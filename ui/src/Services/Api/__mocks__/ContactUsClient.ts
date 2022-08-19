@@ -17,6 +17,6 @@
 
 const ContactUsClient = {
     send: jest.fn().mockResolvedValue({ code: 200, message: '', body: 'ok' }),
-}
+};
 
 export default ContactUsClient;

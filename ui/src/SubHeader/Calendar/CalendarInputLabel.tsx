@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {forwardRef, Ref} from 'react';
+import React, { forwardRef, Ref } from 'react';
 
 interface CustomInputProps {
     isReadOnly: boolean;
@@ -25,7 +25,7 @@ interface CustomInputProps {
 }
 
 function CalendarInputLabel(
-    {isReadOnly, isOpen, setIsOpen, value}: CustomInputProps,
+    { isReadOnly, isOpen, setIsOpen, value }: CustomInputProps,
     _forwardedRef: Ref<HTMLDivElement>
 ): JSX.Element {
     const viewingDate: Date = !value ? new Date() : new Date(value);
@@ -42,25 +42,38 @@ function CalendarInputLabel(
     return (
         <div className="calendarSubHeader">
             <div className="calendarLabel">
-                <i className="material-icons calendarIcon" aria-hidden>calendar_today
+                <i className="material-icons calendarIcon" aria-hidden>
+                    calendar_today
                 </i>
-                <span>
-                    Viewing:
-                </span>
+                <span>Viewing:</span>
             </div>
-            <button className={`calendarCustomInput ${isReadOnly ? 'readOnly' : ''}`}
+            <button
+                className={`calendarCustomInput ${
+                    isReadOnly ? 'readOnly' : ''
+                }`}
                 onClick={calendarClicked}
                 disabled={isReadOnly}
                 data-testid="calendarToggle"
             >
                 <span className="calendarViewingDate">
                     {viewingDate.toLocaleString('en-us', dateFormatOptions)}
-                </ span>
-                {   !isReadOnly && (
-                    isOpen
-                        ? <i className="material-icons greyIcon" data-testid="calendar_up-arrow">arrow_drop_up</i>
-                        : <i className="material-icons greyIcon" data-testid="calendar_down-arrow">arrow_drop_down</i>
-                )}
+                </span>
+                {!isReadOnly &&
+                    (isOpen ? (
+                        <i
+                            className="material-icons greyIcon"
+                            data-testid="calendar_up-arrow"
+                        >
+                            arrow_drop_up
+                        </i>
+                    ) : (
+                        <i
+                            className="material-icons greyIcon"
+                            data-testid="calendar_down-arrow"
+                        >
+                            arrow_drop_down
+                        </i>
+                    ))}
             </button>
         </div>
     );

@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {Tag} from 'Types/Tag';
-import {TagRequest} from '../../Types/TagRequest';
-import {TagClient} from '../../Types/TagClient';
-import {Space} from 'Types/Space';
-import {getAxiosConfig} from '../../Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { Tag } from 'Types/Tag';
+import { TagRequest } from '../../Types/TagRequest';
+import { TagClient } from '../../Types/TagClient';
+import { Space } from 'Types/Space';
+import { getAxiosConfig } from '../../Utils/getAxiosConfig';
 
 function getBasePersonTagsUrl(spaceUuid: string): string {
     return '/api/spaces/' + spaceUuid + '/person-tags';
@@ -31,17 +31,28 @@ async function get(spaceUuid: string): Promise<AxiosResponse<Array<Tag>>> {
     return Axios.get(url, getAxiosConfig());
 }
 
-async function add(personTagAddRequest: TagRequest, space: Space): Promise<AxiosResponse> {
+async function add(
+    personTagAddRequest: TagRequest,
+    space: Space
+): Promise<AxiosResponse> {
     const url = getBasePersonTagsUrl(space.uuid!);
     return Axios.post(url, personTagAddRequest, getAxiosConfig());
 }
 
-async function edit(personTagEditRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>> {
-    const url = `${getBasePersonTagsUrl(space.uuid!)}/${personTagEditRequest.id}`;
+async function edit(
+    personTagEditRequest: TagRequest,
+    space: Space
+): Promise<AxiosResponse<Tag>> {
+    const url = `${getBasePersonTagsUrl(space.uuid!)}/${
+        personTagEditRequest.id
+    }`;
     return Axios.put(url, personTagEditRequest, getAxiosConfig());
 }
 
-async function deletePerson(personTagId: number, space: Space): Promise<AxiosResponse> {
+async function deletePerson(
+    personTagId: number,
+    space: Space
+): Promise<AxiosResponse> {
     const url = getBasePersonTagsUrl(space.uuid!) + `/${personTagId}`;
     return Axios.delete(url, getAxiosConfig());
 }
@@ -50,7 +61,7 @@ const PersonTagClient: TagClient = {
     get,
     add,
     edit,
-    delete: deletePerson
-}
+    delete: deletePerson,
+};
 
 export default PersonTagClient;

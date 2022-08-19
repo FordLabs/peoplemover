@@ -27,17 +27,30 @@ interface UnsupportedBrowserProps {
     browserName: string;
 }
 
-function UnsupportedBrowserPage({browserName}: UnsupportedBrowserProps): JSX.Element {
-
+function UnsupportedBrowserPage({
+    browserName,
+}: UnsupportedBrowserProps): JSX.Element {
     return (
         <div className="unsupported-browser-container">
             <div className="peoplemover-logo">
                 <PeopleMoverLogo />
             </div>
             <div className="unsupported-browser-text">
-                We&apos;re sorry, but PeopleMover is not currently optimized for {browserName}. <br/><br/>Please use Chrome
-                <img className="unsupported-browser-img" src={Chrome} alt="Chrome Logo"/> or Firefox
-                <img className="unsupported-browser-img" src={FireFox} alt="FireFox Logo"/>
+                We&apos;re sorry, but PeopleMover is not currently optimized for{' '}
+                {browserName}. <br />
+                <br />
+                Please use Chrome
+                <img
+                    className="unsupported-browser-img"
+                    src={Chrome}
+                    alt="Chrome Logo"
+                />{' '}
+                or Firefox
+                <img
+                    className="unsupported-browser-img"
+                    src={FireFox}
+                    alt="FireFox Logo"
+                />
             </div>
             <Branding />
         </div>

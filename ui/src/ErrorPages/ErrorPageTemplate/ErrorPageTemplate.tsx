@@ -27,20 +27,20 @@ interface Props {
     errorText: string;
 }
 
-function ErrorPageTemplate({errorGraphic, errorText}: Props): JSX.Element {
+function ErrorPageTemplate({ errorGraphic, errorText }: Props): JSX.Element {
     return (
         <>
             <Header hideAccountDropdown />
             <div className="ErrorPageContainer" data-testid="errorPageTemplate">
                 <main className="ErrorImageAndTextContainer">
                     <h1 className="oopsText">Oops!</h1>
-                    <img src={errorGraphic} alt="" className="errorGraphic"/>
+                    <img src={errorGraphic} alt="" className="errorGraphic" />
                     <div>
-                        <h2 className="heading">{ errorText }</h2>
+                        <h2 className="heading">{errorText}</h2>
                     </div>
                     <a href="/user/dashboard">
                         <FormButton className="backToDashboardButton">
-                        Back to Dashboard
+                            Back to Dashboard
                         </FormButton>
                     </a>
                 </main>

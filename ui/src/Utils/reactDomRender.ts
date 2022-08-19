@@ -15,17 +15,12 @@
  * limitations under the License.
  */
 
-
-import {FunctionComponentElement} from 'react';
+import { FunctionComponentElement } from 'react';
 import ReactDOM from 'react-dom';
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reactDomRender(component: FunctionComponentElement<any>) {
-    ReactDOM.render(
-        component,
-        document.getElementById('root'),
-    );
+    ReactDOM.render(component, document.getElementById('root'));
 }
 
 export default reactDomRender;

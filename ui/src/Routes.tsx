@@ -16,10 +16,15 @@
  */
 
 import React from 'react';
-import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
+import {
+    BrowserRouter as Router,
+    Navigate,
+    Route,
+    Routes as ReactRoutes,
+} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
-import {OAuthRedirect} from './Auth/OAuthRedirect/OAuthRedirect';
-import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
+import { OAuthRedirect } from './Auth/OAuthRedirect/OAuthRedirect';
+import { AuthenticatedRoute } from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import RedirectWrapper from './RedirectWrapper';
 import DashboardPage from './DashboardPage/DashboardPage';
 import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
@@ -33,37 +38,49 @@ import ForbiddenErrorPage from './ErrorPages/ForbiddenErrorPage';
 export const contactUsPath = '/contact-us';
 export const dashboardUrl = '/user/dashboard';
 const NOT_FOUND = '404';
-const FORBIDDEN = '403'
+const FORBIDDEN = '403';
 const notFoundUrl = `/error/${NOT_FOUND}`;
 
 function Routes(): JSX.Element {
     return (
         <Router>
-            <AnnouncementBanner/>
+            <AnnouncementBanner />
             <ReactRoutes>
-                <Route path="/" element={<LandingPage/>} />
-                <Route path="/adfs/catch" element={<OAuthRedirect/>} />
-                <Route path="/user/login" element={
-                    <AuthenticatedRoute>
-                        <RedirectWrapper redirectUrl={dashboardUrl}/>
-                    </AuthenticatedRoute>
-                } />
-                <Route path={dashboardUrl} element={
-                    <AuthenticatedRoute>
-                        <DashboardPage/>
-                    </AuthenticatedRoute>
-                } />
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/adfs/catch" element={<OAuthRedirect />} />
+                <Route
+                    path="/user/login"
+                    element={
+                        <AuthenticatedRoute>
+                            <RedirectWrapper redirectUrl={dashboardUrl} />
+                        </AuthenticatedRoute>
+                    }
+                />
+                <Route
+                    path={dashboardUrl}
+                    element={
+                        <AuthenticatedRoute>
+                            <DashboardPage />
+                        </AuthenticatedRoute>
+                    }
+                />
                 <Route path="/:teamUUID">
-                    <Route path="" element={
-                        <AuthorizedRoute>
-                            <SpacePage/>
-                        </AuthorizedRoute>
-                    } />
-                    <Route path="timeonproduct" element={
-                        <AuthorizedRoute>
-                            <TimeOnProduct/>
-                        </AuthorizedRoute>
-                    } />
+                    <Route
+                        path=""
+                        element={
+                            <AuthorizedRoute>
+                                <SpacePage />
+                            </AuthorizedRoute>
+                        }
+                    />
+                    <Route
+                        path="timeonproduct"
+                        element={
+                            <AuthorizedRoute>
+                                <TimeOnProduct />
+                            </AuthorizedRoute>
+                        }
+                    />
                 </Route>
                 <Route path={contactUsPath} element={<ContactUsPage />} />
                 <Route path="/error">

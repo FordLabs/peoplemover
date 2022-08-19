@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-import AnnouncementHeader, {PREVIOUS_BANNER_MESSAGE_KEY} from './AnnouncementBanner';
+import AnnouncementHeader, {
+    PREVIOUS_BANNER_MESSAGE_KEY,
+} from './AnnouncementBanner';
 import React from 'react';
 
-import {RenderResult, screen} from '@testing-library/react';
-import {renderWithRecoil} from '../Utils/TestUtils';
-import {FlagsState} from '../State/FlagsState';
-import {Flag} from '../Types/Flag';
+import { RenderResult, screen } from '@testing-library/react';
+import { renderWithRecoil } from '../Utils/TestUtils';
+import { FlagsState } from '../State/FlagsState';
+import { Flag } from '../Types/Flag';
 
 describe('announcement header', () => {
     beforeEach(() => {
@@ -29,11 +31,11 @@ describe('announcement header', () => {
     });
 
     it('should hide itself when you click close', () => {
-        const flagMessage = 'This is a message!'
+        const flagMessage = 'This is a message!';
         renderAnnouncementBanner({
             announcementBannerMessage: flagMessage,
             announcementBannerEnabled: true,
-        })
+        });
 
         expect(screen.getByText(flagMessage)).toBeInTheDocument();
         screen.getByText('close').click();
@@ -41,44 +43,48 @@ describe('announcement header', () => {
     });
 
     it('does not render if recoil returns default value', () => {
-        renderWithRecoil(<AnnouncementHeader/>);
+        renderWithRecoil(<AnnouncementHeader />);
         expect(screen.queryByText('close')).not.toBeInTheDocument();
     });
 
     it('does not overwrite localstorage with default recoil state', () => {
-        localStorage.setItem(PREVIOUS_BANNER_MESSAGE_KEY, 'hello i am a banner');
-        renderWithRecoil(<AnnouncementHeader/>);
+        localStorage.setItem(
+            PREVIOUS_BANNER_MESSAGE_KEY,
+            'hello i am a banner'
+        );
+        renderWithRecoil(<AnnouncementHeader />);
 
-        expect(localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY)).toEqual('hello i am a banner');
+        expect(localStorage.getItem(PREVIOUS_BANNER_MESSAGE_KEY)).toEqual(
+            'hello i am a banner'
+        );
     });
 
-    it('should not display if announcement banner enabled flag is disabled',  () => {
-        const flagMessage = 'Heeeeyyy!'
+    it('should not display if announcement banner enabled flag is disabled', () => {
+        const flagMessage = 'Heeeeyyy!';
         renderAnnouncementBanner({
             announcementBannerMessage: flagMessage,
             announcementBannerEnabled: false,
-        })
+        });
         expect(screen.queryByText(flagMessage)).not.toBeInTheDocument();
     });
 
-
     it('should not display if banner has been closed by user and the message has not changed', () => {
-        const flagMessage = 'hello i am a banner'
-        const {unmount} =  renderAnnouncementBanner({
+        const flagMessage = 'hello i am a banner';
+        const { unmount } = renderAnnouncementBanner({
             announcementBannerMessage: flagMessage,
             announcementBannerEnabled: true,
-        })
+        });
 
         expect(screen.queryByText(flagMessage)).toBeInTheDocument();
         screen.getByText('close').click();
         expect(screen.queryByText(flagMessage)).not.toBeInTheDocument();
 
-        unmount()
+        unmount();
 
         renderAnnouncementBanner({
             announcementBannerMessage: flagMessage,
             announcementBannerEnabled: true,
-        })
+        });
 
         expect(screen.queryByText(flagMessage)).not.toBeInTheDocument();
     });
@@ -87,21 +93,18 @@ describe('announcement header', () => {
         localStorage.setItem('previousBannerMessage', 'hello i am a banner');
         localStorage.setItem('bannerHasBeenClosedByUser', 'true');
 
-        const flagMessage = 'hello i am a different banner'
+        const flagMessage = 'hello i am a different banner';
         renderAnnouncementBanner({
             announcementBannerMessage: flagMessage,
             announcementBannerEnabled: true,
-        })
+        });
 
         expect(screen.queryByText(flagMessage)).toBeInTheDocument();
     });
 });
 
 function renderAnnouncementBanner(flagState: Flag): RenderResult {
-    return renderWithRecoil(
-        <AnnouncementHeader/>,
-        ({set}) => {
-            set(FlagsState, flagState)
-        }
-    )
+    return renderWithRecoil(<AnnouncementHeader />, ({ set }) => {
+        set(FlagsState, flagState);
+    });
 }

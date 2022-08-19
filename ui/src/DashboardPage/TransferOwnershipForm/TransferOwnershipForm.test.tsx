@@ -16,15 +16,15 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import TransferOwnershipForm from './TransferOwnershipForm';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {fireEvent, screen} from '@testing-library/dom';
-import {waitFor} from '@testing-library/react';
-import {CurrentUserState} from 'State/CurrentUserState';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
+import { fireEvent, screen } from '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
+import { CurrentUserState } from 'State/CurrentUserState';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
 
 jest.mock('Services/Api/SpaceClient');
 
@@ -42,10 +42,10 @@ describe('Transfer Ownership Form', () => {
                         modalContent = value;
                     }}
                 />
-                <TransferOwnershipForm spaceToTransfer={TestData.space}/>
+                <TransferOwnershipForm spaceToTransfer={TestData.space} />
             </>,
-            ({set}) => {
-                set(CurrentUserState,  'user_id')
+            ({ set }) => {
+                set(CurrentUserState, 'user_id');
                 set(ModalContentsState, {
                     title: 'A Title',
                     component: <div>Some Component</div>,
@@ -53,11 +53,18 @@ describe('Transfer Ownership Form', () => {
             }
         );
 
-        await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled());
+        await waitFor(() =>
+            expect(SpaceClient.getUsersForSpace).toHaveBeenCalled()
+        );
     });
 
     it('should prompt the choice with the space name', () => {
-        expect(screen.getByText('Please choose who you would like to be the new owner of ' + TestData.space.name)).toBeDefined();
+        expect(
+            screen.getByText(
+                'Please choose who you would like to be the new owner of ' +
+                    TestData.space.name
+            )
+        ).toBeDefined();
     });
 
     it('should show each editors name', () => {
@@ -67,7 +74,9 @@ describe('Transfer Ownership Form', () => {
 
     it('should not allow submission before an editor is chosen (the modal does not close)', () => {
         screen.getByText('Transfer ownership').click();
-        expect(screen.getByText(/Please choose who you would like/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/Please choose who you would like/)
+        ).toBeInTheDocument();
     });
 
     it('should close the modal when cancel is clicked', () => {
@@ -80,14 +89,20 @@ describe('Transfer Ownership Form', () => {
         it('should close the modal when a persons name is clicked and Transfer button, then OK is pressed on the confirmation', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             fireEvent.click(screen.getByText('Transfer ownership'));
-            await screen.findByText('Ownership has been transferred to user_id_2 and you have been removed from the space testSpace.');
+            await screen.findByText(
+                'Ownership has been transferred to user_id_2 and you have been removed from the space testSpace.'
+            );
             expect(modalContent).not.toBeNull();
             fireEvent.click(screen.getByText('Ok'));
             expect(modalContent).toBeNull();
         });
 
         it('should be able to choose a person by clicking anywhere in their row', async () => {
-            fireEvent.click(screen.getByTestId('transferOwnershipFormRadioControl-user_id_2'));
+            fireEvent.click(
+                screen.getByTestId(
+                    'transferOwnershipFormRadioControl-user_id_2'
+                )
+            );
             fireEvent.click(screen.getByText('Transfer ownership'));
             expect(modalContent).not.toBeNull();
             fireEvent.click(await screen.findByText('Ok'));
@@ -98,27 +113,45 @@ describe('Transfer Ownership Form', () => {
             fireEvent.click(screen.getByText('user_id_2'));
             fireEvent.click(screen.getByText('Transfer ownership'));
             await waitFor(() =>
-                expect(SpaceClient.changeOwner).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0], TestData.spaceMappingsArray[1])
+                expect(SpaceClient.changeOwner).toHaveBeenCalledWith(
+                    TestData.space,
+                    TestData.spaceMappingsArray[0],
+                    TestData.spaceMappingsArray[1]
+                )
             );
         });
 
         it('should use the Client to remove the current users permissions from the space', async () => {
             fireEvent.click(screen.getByText('user_id_2'));
             fireEvent.click(screen.getByText('Transfer ownership'));
-            await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalledWith(TestData.space, TestData.spaceMappingsArray[0]));
+            await waitFor(() =>
+                expect(SpaceClient.removeUser).toHaveBeenCalledWith(
+                    TestData.space,
+                    TestData.spaceMappingsArray[0]
+                )
+            );
         });
 
         it('should refresh user spaces if a new owner is assigned', async () => {
-            const user2RadioButton = screen.getByTestId('transferOwnershipFormRadioControl-user_id_2')
+            const user2RadioButton = screen.getByTestId(
+                'transferOwnershipFormRadioControl-user_id_2'
+            );
             fireEvent.click(user2RadioButton);
 
-            const transferOwnershipButton = await screen.findByText('Transfer ownership')
+            const transferOwnershipButton = await screen.findByText(
+                'Transfer ownership'
+            );
             fireEvent.click(transferOwnershipButton);
 
-            await waitFor(() => expect(SpaceClient.changeOwner).toHaveBeenCalled());
-            await waitFor(() => expect(SpaceClient.removeUser).toHaveBeenCalled());
-            await waitFor(() => expect(SpaceClient.getSpacesForUser).toHaveBeenCalled());
+            await waitFor(() =>
+                expect(SpaceClient.changeOwner).toHaveBeenCalled()
+            );
+            await waitFor(() =>
+                expect(SpaceClient.removeUser).toHaveBeenCalled()
+            );
+            await waitFor(() =>
+                expect(SpaceClient.getSpacesForUser).toHaveBeenCalled()
+            );
         });
     });
 });
-

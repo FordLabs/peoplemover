@@ -24,16 +24,23 @@ interface NewBadgeProps {
     newPersonDate?: Date;
 }
 
-function NewBadge(
-    {viewingDate,
-        newPersonDate,
-    }: NewBadgeProps
-): JSX.Element {
-
-    return <span className={'newBadge ' + calculateGradient(newPersonDate, viewingDate)} data-testid="newBadge">NEW</span>;
+function NewBadge({ viewingDate, newPersonDate }: NewBadgeProps): JSX.Element {
+    return (
+        <span
+            className={
+                'newBadge ' + calculateGradient(newPersonDate, viewingDate)
+            }
+            data-testid="newBadge"
+        >
+            NEW
+        </span>
+    );
 }
 
-export function calculateGradient(newPersonDate: Date | undefined, viewingDate: Date | undefined): string {
+export function calculateGradient(
+    newPersonDate: Date | undefined,
+    viewingDate: Date | undefined
+): string {
     let styleToReturn = '';
     if (newPersonDate !== undefined && viewingDate !== undefined) {
         const viewingMoment = moment(viewingDate);
@@ -51,4 +58,3 @@ export function calculateGradient(newPersonDate: Date | undefined, viewingDate: 
 }
 
 export default NewBadge;
-

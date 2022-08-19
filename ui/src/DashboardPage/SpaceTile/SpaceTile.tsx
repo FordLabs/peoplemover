@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
-import moment, {now} from 'moment';
-import {Space} from 'Types/Space';
+import React, { useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import moment, { now } from 'moment';
+import { Space } from 'Types/Space';
 import LeaveIcon from 'Assets/leave-icon.svg';
 import AccessibleDropdownContainer from 'Common/AccessibleDropdownContainer/AccessibleDropdownContainer';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {CurrentUserState} from 'State/CurrentUserState';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { CurrentUserState } from 'State/CurrentUserState';
+import { ModalContentsState } from 'State/ModalContentsState';
 import SpaceForm from '../SpaceForm/SpaceForm';
 import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
 import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
@@ -35,14 +35,17 @@ interface Props {
     onClick: (space: Space) => void;
 }
 
-function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
+function SpaceTile({ space, onClick: openSpace }: Props): JSX.Element {
     const currentUser = useRecoilValue(CurrentUserState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
     const spaceHtmlElementId = space.name.replace(' ', '-');
     const spaceEllipsisButtonId = `ellipsis-button-${spaceHtmlElementId}`;
 
-    const [usersData, setUsersData] = useState<{ spaceHasEditors: boolean, isUserOwner: boolean } | null>(null)
+    const [usersData, setUsersData] = useState<{
+        spaceHasEditors: boolean;
+        isUserOwner: boolean;
+    } | null>(null);
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
 
     let timestamp: string;
@@ -56,17 +59,23 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
 
     useEffect(() => {
         SpaceClient.getUsersForSpace(space.uuid!).then((result) => {
-            const isUserOwner = result.some(userSpaceMapping =>
-                (currentUser && userSpaceMapping.userId.toUpperCase() === currentUser.toUpperCase() &&
-                    userSpaceMapping.permission.toUpperCase() === 'OWNER')
-            )
-            const spaceHasEditors = result.some(userSpaceMapping => currentUser &&
-                userSpaceMapping.userId.toUpperCase() !== currentUser.toUpperCase() &&
-                userSpaceMapping.permission.toUpperCase() === 'EDITOR')
+            const isUserOwner = result.some(
+                (userSpaceMapping) =>
+                    currentUser &&
+                    userSpaceMapping.userId.toUpperCase() ===
+                        currentUser.toUpperCase() &&
+                    userSpaceMapping.permission.toUpperCase() === 'OWNER'
+            );
+            const spaceHasEditors = result.some(
+                (userSpaceMapping) =>
+                    currentUser &&
+                    userSpaceMapping.userId.toUpperCase() !==
+                        currentUser.toUpperCase() &&
+                    userSpaceMapping.permission.toUpperCase() === 'EDITOR'
+            );
 
-            setUsersData({ spaceHasEditors, isUserOwner })
+            setUsersData({ spaceHasEditors, isUserOwner });
         });
-
     }, [currentUser, space.uuid]);
 
     function handleDropdownClick(): void {
@@ -76,31 +85,39 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
     function openEditModal(): void {
         setModalContents({
             title: 'Edit Space',
-            component: <SpaceForm selectedSpace={space}/>
+            component: <SpaceForm selectedSpace={space} />,
         });
     }
 
     function openLeaveModal(): void {
-        setModalContents( {
+        setModalContents({
             title: 'Transfer Ownership of Space',
-            component: <TransferOwnershipForm spaceToTransfer={space}/>
+            component: <TransferOwnershipForm spaceToTransfer={space} />,
         });
     }
 
     function openDeleteModal(spaceHasEditors = false): void {
         setModalContents({
-            title: "Are you sure?",
-            component: <DeleteSpaceForm space={space} spaceHasEditors={spaceHasEditors}/>
+            title: 'Are you sure?',
+            component: (
+                <DeleteSpaceForm
+                    space={space}
+                    spaceHasEditors={spaceHasEditors}
+                />
+            ),
         });
     }
 
     const ActionsDropdownContent = (): JSX.Element => {
-        const showLeaveSpaceButton = usersData?.isUserOwner && usersData?.spaceHasEditors;
+        const showLeaveSpaceButton =
+            usersData?.isUserOwner && usersData?.spaceHasEditors;
         const showDeleteSpaceButton = usersData?.isUserOwner;
 
         return (
             <AccessibleDropdownContainer
-                handleClose={(): void => {setDropdownToggle(false);}}
+                handleClose={(): void => {
+                    setDropdownToggle(false);
+                }}
                 className="ellipsisDropdownContainer"
                 ariaLabelledBy={spaceEllipsisButtonId}
             >
@@ -121,7 +138,10 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                         role="menuitem"
                         onClick={openLeaveModal}
                     >
-                        <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
+                        <img
+                            src={LeaveIcon}
+                            alt={'Door ajar with arrow leading out'}
+                        />
                         Leave Space
                     </button>
                 )}
@@ -130,7 +150,9 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                         data-testid="deleteSpace"
                         className="dropdownOptions"
                         role="menuitem"
-                        onClick={() => openDeleteModal(usersData?.spaceHasEditors)}
+                        onClick={() =>
+                            openDeleteModal(usersData?.spaceHasEditors)
+                        }
                     >
                         <i className="material-icons">delete</i>
                         Delete Space
@@ -152,27 +174,34 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                     aria-label={`Open Menu for Space ${space.name}`}
                     onClick={handleDropdownClick}
                 >
-                    <i className="material-icons" aria-hidden>more_vert</i>
+                    <i className="material-icons" aria-hidden>
+                        more_vert
+                    </i>
                 </button>
-                {dropdownToggle && <ActionsDropdownContent/>}
+                {dropdownToggle && <ActionsDropdownContent />}
             </div>
         );
     };
 
     return usersData ? (
         <div>
-            <button className="spaceTile"
+            <button
+                className="spaceTile"
                 data-testid="spaceDashboardTile"
                 onClick={(): void => openSpace(space)}
             >
                 <div className="spaceMetadata">
                     <div className="spaceName">{space.name}</div>
-                    <div className="lastModifiedText">Last modified {timestamp}</div>
+                    <div className="lastModifiedText">
+                        Last modified {timestamp}
+                    </div>
                 </div>
             </button>
-            <ActionsEllipsis/>
+            <ActionsEllipsis />
         </div>
-    ) : <></>;
+    ) : (
+        <></>
+    );
 }
 
 export default SpaceTile;

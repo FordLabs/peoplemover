@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import React, {ComponentPropsWithoutRef} from 'react';
+import React, { ComponentPropsWithoutRef } from 'react';
 
 import './Textarea.scss';
 
@@ -38,15 +38,18 @@ function Textarea(props: Props) {
 
     return (
         <>
-            <label htmlFor={id} className="text-area-label">{label}</label>
+            <label htmlFor={id} className="text-area-label">
+                {label}
+            </label>
             <textarea
                 id={id}
                 name="textarea"
                 onChange={onChange}
                 className={`text-area-field ${className}`}
-                {...textareaProps} />
+                {...textareaProps}
+            />
         </>
-    )
+    );
 }
 
 export default Textarea;

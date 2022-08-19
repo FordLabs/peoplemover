@@ -15,21 +15,29 @@
  * limitations under the License.
  */
 
-import flagsmith, {IFlags} from 'flagsmith';
+import flagsmith, { IFlags } from 'flagsmith';
 
 const FlagSmithService = {
-    async initAndGetFlags(flagsmithUrl: string, flagsmithEnvironmentId: string): Promise<IFlags | null> {
+    async initAndGetFlags(
+        flagsmithUrl: string,
+        flagsmithEnvironmentId: string
+    ): Promise<IFlags | null> {
         let flags: IFlags | null = null;
 
-        await flagsmith.init({
-            environmentID: flagsmithEnvironmentId,
-            api: flagsmithUrl,
-        }).then(() => {
-            flags = flagsmith.getAllFlags()
-        }, () => console.log('Flagsmith client failed to initialize'));
+        await flagsmith
+            .init({
+                environmentID: flagsmithEnvironmentId,
+                api: flagsmithUrl,
+            })
+            .then(
+                () => {
+                    flags = flagsmith.getAllFlags();
+                },
+                () => console.log('Flagsmith client failed to initialize')
+            );
 
         return flags;
-    }
-}
+    },
+};
 
 export default FlagSmithService;

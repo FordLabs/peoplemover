@@ -15,21 +15,23 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
-import React, {useState} from 'react';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import { JSX } from '@babel/types';
+import React, { useState } from 'react';
+import ConfirmationModal, {
+    ConfirmationModalProps,
+} from 'Modal/ConfirmationModal/ConfirmationModal';
 import RoleClient from 'Services/Api/RoleClient';
-import {createDataTestId} from 'Utils/ReactUtils';
+import { createDataTestId } from 'Utils/ReactUtils';
 import ViewTagRow from 'Common/ViewTagRow/ViewTagRow';
 import EditTagRow from 'Common/EditTagRow/EditTagRow';
 import AddNewTagRow from 'Common/AddNewTagRow/AddNewTagRow';
-import {INACTIVE_EDIT_STATE_INDEX} from 'SubHeader/SortingAndFiltering/MyTagsForm/MyTagsForm';
+import { INACTIVE_EDIT_STATE_INDEX } from 'SubHeader/SortingAndFiltering/MyTagsForm/MyTagsForm';
 import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
-import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {Color} from 'Types/Color';
-import {RoleTag} from 'Types/Tag';
-import {RoleTagRequest} from 'Types/TagRequest';
+import { useRecoilValue } from 'recoil';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { Color } from 'Types/Color';
+import { RoleTag } from 'Types/Tag';
+import { RoleTagRequest } from 'Types/TagRequest';
 
 interface Props {
     colors: Array<Color>;
@@ -41,17 +43,27 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
     const { fetchRoles, roles } = useFetchRoles(currentSpace.uuid || '');
 
     const tagType = 'role';
-    const [editRoleIndex, setEditRoleIndex] = useState<number>(INACTIVE_EDIT_STATE_INDEX);
-    const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
+    const [editRoleIndex, setEditRoleIndex] = useState<number>(
+        INACTIVE_EDIT_STATE_INDEX
+    );
+    const [confirmDeleteModal, setConfirmDeleteModal] =
+        useState<JSX.Element | null>(null);
     const [isAddingNewTag, setIsAddingNewTag] = useState<boolean>(false);
 
     const showDeleteConfirmationModal = (roleToDelete: RoleTag): void => {
         const propsForDeleteConfirmationModal: ConfirmationModalProps = {
             submit: () => deleteRole(roleToDelete),
             close: () => setConfirmDeleteModal(null),
-            content: <div>Deleting this role will remove it from any person that has been given this role.</div>,
+            content: (
+                <div>
+                    Deleting this role will remove it from any person that has
+                    been given this role.
+                </div>
+            ),
         };
-        const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
+        const deleteConfirmationModal: JSX.Element = ConfirmationModal(
+            propsForDeleteConfirmationModal
+        );
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
@@ -60,11 +72,10 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
     };
 
     const editRole = async (role: RoleTagRequest): Promise<unknown> => {
-        return await RoleClient.edit(role, currentSpace)
-            .then(() => {
-                fetchRoles();
-                returnToViewState();
-            });
+        return await RoleClient.edit(role, currentSpace).then(() => {
+            fetchRoles();
+            returnToViewState();
+        });
     };
 
     const addRole = async (role: RoleTagRequest): Promise<unknown> => {
@@ -72,11 +83,10 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
             name: role.name,
             colorId: role.colorId,
         };
-        return await RoleClient.add(newRole, currentSpace)
-            .then(() => {
-                fetchRoles();
-                returnToViewState();
-            });
+        return await RoleClient.add(newRole, currentSpace).then(() => {
+            fetchRoles();
+            returnToViewState();
+        });
     };
 
     const deleteRole = async (roleToDelete: RoleTag): Promise<void> => {
@@ -91,49 +101,66 @@ const RoleTags = ({ colors }: Props): JSX.Element => {
         }
     };
 
-    const showEditButtons = (): boolean => editRoleIndex === INACTIVE_EDIT_STATE_INDEX && !isAddingNewTag;
+    const showEditButtons = (): boolean =>
+        editRoleIndex === INACTIVE_EDIT_STATE_INDEX && !isAddingNewTag;
 
     const showViewState = (index: number): boolean => editRoleIndex !== index;
 
     const showEditState = (index: number): boolean => editRoleIndex === index;
 
     const transformTagIntoRoleEditRequest = (role: RoleTag): RoleTagRequest => {
-        return {id: role.id, name: role.name, colorId: role.color?.id};
+        return { id: role.id, name: role.name, colorId: role.color?.id };
     };
 
     return (
-        <div data-testid={createDataTestId('tagsModalContainer', tagType)}
-            className="myTraitsModalContainer">
+        <div
+            data-testid={createDataTestId('tagsModalContainer', tagType)}
+            className="myTraitsModalContainer"
+        >
             {roles.map((role: RoleTag, index: number) => {
                 const colorToUse = role.color ? role.color.color : '#FFFFFF';
 
                 return (
                     <React.Fragment key={index}>
-                        {showViewState(index) &&
+                        {showViewState(index) && (
                             <ViewTagRow
                                 tag={role}
                                 showEditButtons={showEditButtons()}
-                                setConfirmDeleteModal={(): void => showDeleteConfirmationModal(role)}
+                                setConfirmDeleteModal={(): void =>
+                                    showDeleteConfirmationModal(role)
+                                }
                                 tagType={tagType}
-                                editTagCallback={(): void => setEditRoleIndex(index)}>
+                                editTagCallback={(): void =>
+                                    setEditRoleIndex(index)
+                                }
+                            >
                                 <div className="viewTagRowColorCircle">
-                                    <span data-testid={`myRolesCircle__${role.name}`}
-                                        style={{'backgroundColor': colorToUse}}
-                                        className={`myTraitsCircle ${colorToUse === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+                                    <span
+                                        data-testid={`myRolesCircle__${role.name}`}
+                                        style={{ backgroundColor: colorToUse }}
+                                        className={`myTraitsCircle ${
+                                            colorToUse === '#FFFFFF'
+                                                ? 'whiteCircleBorder'
+                                                : ''
+                                        }`}
                                     />
                                 </div>
                             </ViewTagRow>
-                        }
-                        {showEditState(index) &&
+                        )}
+                        {showEditState(index) && (
                             <EditTagRow
-                                initialValue={transformTagIntoRoleEditRequest(role)}
+                                initialValue={transformTagIntoRoleEditRequest(
+                                    role
+                                )}
                                 onSave={editRole}
                                 onCancel={returnToViewState}
                                 tagType={tagType}
-                                existingTags={roles.map(transformTagIntoRoleEditRequest)}
+                                existingTags={roles.map(
+                                    transformTagIntoRoleEditRequest
+                                )}
                                 colors={colors}
                             />
-                        }
+                        )}
                     </React.Fragment>
                 );
             })}

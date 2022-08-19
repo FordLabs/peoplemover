@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import {screen} from '@testing-library/react';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import { screen } from '@testing-library/react';
+import { renderWithRecoil } from '../Utils/TestUtils';
 import SubHeader from './SubHeader';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import { IsReadOnlyState } from '../State/IsReadOnlyState';
 
 jest.mock('./Calendar/Calendar', () => {
     return jest.fn(() => <div>Calendar</div>);
@@ -35,8 +35,8 @@ jest.mock('./ProductSortBySelector/ProductSortBySelector', () => {
 
 describe('SubHeader', () => {
     it('should show "View Only" when in read only mode', () => {
-        renderWithRecoil(<SubHeader />, ({set}) => {
-            set(IsReadOnlyState, true)
+        renderWithRecoil(<SubHeader />, ({ set }) => {
+            set(IsReadOnlyState, true);
         });
         expect(screen.getByText('View only')).toBeDefined();
     });
@@ -52,7 +52,7 @@ describe('SubHeader', () => {
     });
 
     it('should render message if passed in', () => {
-        const expectedMessage = 'Have a great day!'
+        const expectedMessage = 'Have a great day!';
         renderWithRecoil(<SubHeader message={<>{expectedMessage}</>} />);
         expect(screen.getByText(expectedMessage)).toBeDefined();
     });

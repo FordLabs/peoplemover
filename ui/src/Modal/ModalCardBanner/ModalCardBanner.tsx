@@ -15,17 +15,24 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
+import { JSX } from '@babel/types';
 import React from 'react';
 
-export const ModalTitle = ({ title }: { title: string }): JSX.Element =>
-    <h1 className="modalTitle">{title}</h1>;
+export const ModalTitle = ({ title }: { title: string }): JSX.Element => (
+    <h1 className="modalTitle">{title}</h1>
+);
 
-export const CloseModalButton = ({ onClick }: { onClick: () => void }): JSX.Element => (
-    <button className="material-icons closeButton"
+export const CloseModalButton = ({
+    onClick,
+}: {
+    onClick: () => void;
+}): JSX.Element => (
+    <button
+        className="material-icons closeButton"
         onClick={onClick}
         aria-label="Close Modal"
-        data-testid="modalCloseButton">
+        data-testid="modalCloseButton"
+    >
         close
     </button>
 );
@@ -35,7 +42,7 @@ interface Props {
     onCloseBtnClick: () => void;
 }
 
-const ModalCardBanner = ({title, onCloseBtnClick}: Props): JSX.Element => {
+const ModalCardBanner = ({ title, onCloseBtnClick }: Props): JSX.Element => {
     return (
         <div className="modalCardBanner">
             <ModalTitle title={title} />

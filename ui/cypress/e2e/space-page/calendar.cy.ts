@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import * as moment from "moment"
+import * as moment from 'moment';
 
 describe('Calendar', () => {
     beforeEach(() => {
@@ -27,8 +27,7 @@ describe('Calendar', () => {
     it('Calendar should show current month and day', () => {
         const expectedCurrentDate = moment().format('MMM D, YYYY');
         cy.get('.calendarLabel').should('contain', 'Viewing:');
-        cy.get('@calendarToggle')
-            .should('contain', expectedCurrentDate);
+        cy.get('@calendarToggle').should('contain', expectedCurrentDate);
 
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
@@ -37,19 +36,28 @@ describe('Calendar', () => {
         cy.get('.monthText').should('have.text', expectedCurrentMonth);
 
         const expectedCurrentDay = moment().format('D');
-        cy.get('.react-datepicker__day--today').should('have.text', expectedCurrentDay);
+        cy.get('.react-datepicker__day--today').should(
+            'have.text',
+            expectedCurrentDay
+        );
 
         cy.log('Close calendar');
         cy.get('@calendarToggle').click();
     });
 
     it('Calendar should show highlighted days when changes are made on that day', () => {
-        cy.get('[data-testid=reassignmentDrawer]').should('contain', 'Bob Barker');
+        cy.get('[data-testid=reassignmentDrawer]').should(
+            'contain',
+            'Bob Barker'
+        );
 
         cy.log('Open calendar');
         cy.get('@calendarToggle').click();
 
         const expectedCurrentDay = moment().format('D');
-        cy.get('.react-datepicker__day--highlighted').should('have.text', expectedCurrentDay);
+        cy.get('.react-datepicker__day--highlighted').should(
+            'have.text',
+            expectedCurrentDay
+        );
     });
 });

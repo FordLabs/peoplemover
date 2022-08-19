@@ -28,40 +28,43 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
-Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
-    cy.server();
-    cy.spyOnGetProductsByDate(date);
-    cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
-    const locationRoute = {
-        method: 'GET',
-        url: Cypress.env('API_LOCATION_PATH'),
-    };
-    if (locationData) locationRoute.response = locationData;
-    cy.route(locationRoute).as('getLocations');
+Cypress.Commands.add(
+    'visitSpace',
+    ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
+        cy.server();
+        cy.spyOnGetProductsByDate(date);
+        cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
+        const locationRoute = {
+            method: 'GET',
+            url: Cypress.env('API_LOCATION_PATH'),
+        };
+        if (locationData) locationRoute.response = locationData;
+        cy.route(locationRoute).as('getLocations');
 
-    const productTagsRoute = {
-        method: 'GET',
-        url: Cypress.env('API_PRODUCT_TAG_PATH'),
-    };
-    if (productTagsData) productTagsRoute.response = productTagsData;
-    cy.route(productTagsRoute).as('getProductTags');
+        const productTagsRoute = {
+            method: 'GET',
+            url: Cypress.env('API_PRODUCT_TAG_PATH'),
+        };
+        if (productTagsData) productTagsRoute.response = productTagsData;
+        cy.route(productTagsRoute).as('getProductTags');
 
-    cy.visit(`/${spaceUuid}${hash}`);
+        cy.visit(`/${spaceUuid}${hash}`);
 
-    const waitForEndpointsToComplete = [
-        '@getProductsByDate',
-        '@getRoles',
-        '@getLocations',
-        '@getProductTags',
-    ];
-    cy.wait(waitForEndpointsToComplete)
-        .then(() => {
-            cy.get('[data-testid*=productCardContainer__]')
-                .should(($productCards) => {
+        const waitForEndpointsToComplete = [
+            '@getProductsByDate',
+            '@getRoles',
+            '@getLocations',
+            '@getProductTags',
+        ];
+        cy.wait(waitForEndpointsToComplete).then(() => {
+            cy.get('[data-testid*=productCardContainer__]').should(
+                ($productCards) => {
                     expect($productCards).to.have.length.greaterThan(1);
-                });
+                }
+            );
         });
-});
+    }
+);
 
 Cypress.Commands.add('getModal', () => {
     return cy.get('[data-testid=modalContent]');
@@ -72,18 +75,21 @@ Cypress.Commands.add('closeModal', () => {
     cy.getModal().should('not.be.visible');
 });
 
-Cypress.Commands.add('selectOptionFromReactSelect', (parentSelector, checkboxTextToSelect) => {
-    cy.get(parentSelector)
-        .find('[class*="-control"]')
-        .click(0, 0, { force: true })
-        .get('[class*="-menu"]')
-        .find('[class*="-option"]')
-        .contains(checkboxTextToSelect)
-        .click(0, 0, { force: true });
-});
+Cypress.Commands.add(
+    'selectOptionFromReactSelect',
+    (parentSelector, checkboxTextToSelect) => {
+        cy.get(parentSelector)
+            .find('[class*="-control"]')
+            .click(0, 0, { force: true })
+            .get('[class*="-menu"]')
+            .find('[class*="-option"]')
+            .contains(checkboxTextToSelect)
+            .click(0, 0, { force: true });
+    }
+);
 
 Cypress.Commands.add('getCalendarDate', (dateToSelect) => {
-    const dateLabel = moment(dateToSelect).format( 'dddd, MMMM Do, yyyy');
+    const dateLabel = moment(dateToSelect).format('dddd, MMMM Do, yyyy');
     return cy.get(`[aria-label="Choose ${dateLabel}"]`);
 });
 
@@ -95,5 +101,8 @@ Cypress.Commands.add('resetSpace', () => {
 
 Cypress.Commands.add('spyOnGetProductsByDate', (expectedDate) => {
     const activeDate = moment(expectedDate).format('yyyy-MM-DD');
-    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
-})
+    cy.route(
+        'GET',
+        `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`
+    ).as('getProductsByDate');
+});

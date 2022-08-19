@@ -18,18 +18,26 @@
 import Cookies from 'universal-cookie';
 import DashboardPage from './DashboardPage';
 import React from 'react';
-import TestUtils, {renderWithRecoil} from '../Utils/TestUtils';
-import {fireEvent, RenderResult, screen, waitFor} from '@testing-library/react';
+import TestUtils, { renderWithRecoil } from '../Utils/TestUtils';
+import {
+    fireEvent,
+    RenderResult,
+    screen,
+    waitFor,
+} from '@testing-library/react';
 import SpaceClient from '../Services/Api/SpaceClient';
 import moment from 'moment';
-import {createEmptySpace, Space} from 'Types/Space';
-import {MemoryRouter} from 'react-router-dom';
-import {RecoilObserver} from '../Utils/RecoilObserver';
-import {ViewingDateState} from '../State/ViewingDateState';
-import {CurrentSpaceState} from '../State/CurrentSpaceState';
+import { createEmptySpace, Space } from 'Types/Space';
+import { MemoryRouter } from 'react-router-dom';
+import { RecoilObserver } from '../Utils/RecoilObserver';
+import { ViewingDateState } from '../State/ViewingDateState';
+import { CurrentSpaceState } from '../State/CurrentSpaceState';
 import TestData from '../Utils/TestData';
-import {axe} from 'jest-axe';
-import {shouldOnlyShowSignoutButtonInAccountDropdown, shouldRenderStaticLogo} from '../Utils/HeaderTestUtils';
+import { axe } from 'jest-axe';
+import {
+    shouldOnlyShowSignoutButtonInAccountDropdown,
+    shouldRenderStaticLogo,
+} from '../Utils/HeaderTestUtils';
 
 class MockDate extends Date {
     constructor() {
@@ -69,12 +77,16 @@ describe('Dashboard Page', () => {
                             actualViewingDate = value;
                         }}
                     />
-                    <DashboardPage/>
-                </MemoryRouter>,
+                    <DashboardPage />
+                </MemoryRouter>
             );
 
             await waitFor(() =>
-                expect(actualViewingDate).toEqual(new Date('Date is overwritten so anything returns the same date'))
+                expect(actualViewingDate).toEqual(
+                    new Date(
+                        'Date is overwritten so anything returns the same date'
+                    )
+                )
             );
         });
     });
@@ -89,10 +101,10 @@ describe('Dashboard Page', () => {
                         currentSpace = value;
                     }}
                 />
-                <DashboardPage/>
+                <DashboardPage />
             </MemoryRouter>,
-            ({set}) => {
-                set(CurrentSpaceState, TestData.space)
+            ({ set }) => {
+                set(CurrentSpaceState, TestData.space);
             }
         );
 
@@ -116,15 +128,25 @@ describe('Dashboard Page', () => {
         });
 
         it('should display space last modified date and time on a space', async () => {
-            const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
-            expect(screen.getByText(`Last modified ${localTime}`)).not.toBeNull();
+            const localTime = moment
+                .utc('2020-04-14T18:06:11.791+0000')
+                .local()
+                .format('dddd, MMMM D, Y [at] h:mm a');
+            expect(
+                screen.getByText(`Last modified ${localTime}`)
+            ).not.toBeNull();
         });
 
         it('should display today and last modified time on a space', async () => {
             Date.now = jest.fn(() => 1586887571000);
             await renderDashboard();
-            const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('h:mm a');
-            expect(await screen.findByText(`Last modified today at ${localTime}`)).not.toBeNull();
+            const localTime = moment
+                .utc('2020-04-14T18:06:11.791+0000')
+                .local()
+                .format('h:mm a');
+            expect(
+                await screen.findByText(`Last modified today at ${localTime}`)
+            ).not.toBeNull();
         });
 
         it('should NOT show welcome message if no spaces are present', async () => {
@@ -160,10 +182,14 @@ describe('Dashboard Page', () => {
         beforeEach(async () => {
             TestUtils.enableInviteUsersToSpace();
 
-            ({ renderResult: { container }} = await renderDashboard());
+            ({
+                renderResult: { container },
+            } = await renderDashboard());
 
-            await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled())
-        })
+            await waitFor(() =>
+                expect(SpaceClient.getUsersForSpace).toHaveBeenCalled()
+            );
+        });
 
         it('should have no axe violations', async () => {
             const results = await axe(container);
@@ -187,26 +213,36 @@ describe('Dashboard Page', () => {
         });
     });
 
-    const renderDashboard = async (hasSpaces = true): Promise<{ cookies: Cookies; renderResult: RenderResult }> => {
+    const renderDashboard = async (
+        hasSpaces = true
+    ): Promise<{ cookies: Cookies; renderResult: RenderResult }> => {
         const fakeAccessToken = 'FAKE_TOKEN123';
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
-        const responseData = hasSpaces ? [{
-            name: 'Space1',
-            uuid: 'SpaceUUID',
-            lastModifiedDate: '2020-04-14T18:06:11.791+0000',
-        }] : [];
-        SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue(responseData);
+        const responseData = hasSpaces
+            ? [
+                  {
+                      name: 'Space1',
+                      uuid: 'SpaceUUID',
+                      lastModifiedDate: '2020-04-14T18:06:11.791+0000',
+                  },
+              ]
+            : [];
+        SpaceClient.getSpacesForUser = jest
+            .fn()
+            .mockResolvedValue(responseData);
         SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([]);
 
         const renderResult = renderWithRecoil(
             <MemoryRouter initialEntries={['/user/dashboard']}>
-                <DashboardPage/>
+                <DashboardPage />
             </MemoryRouter>
         );
 
-        await waitFor(() => expect(SpaceClient.getSpacesForUser).toHaveBeenCalled())
+        await waitFor(() =>
+            expect(SpaceClient.getSpacesForUser).toHaveBeenCalled()
+        );
 
-        return {cookies, renderResult};
+        return { cookies, renderResult };
     };
 });

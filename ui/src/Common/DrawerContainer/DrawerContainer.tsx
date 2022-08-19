@@ -47,23 +47,44 @@ function DrawerContainer({
     }
 
     return (
-        <div className={ `drawerContainer ${isDrawerOpen ? 'drawerBottomBorder' : ''}`} data-testid={testId}>
-            <button className={`drawerHeader ${isDrawerOpen ? '' : 'drawerBottomBorder'}`}
+        <div
+            className={`drawerContainer ${
+                isDrawerOpen ? 'drawerBottomBorder' : ''
+            }`}
+            data-testid={testId}
+        >
+            <button
+                className={`drawerHeader ${
+                    isDrawerOpen ? '' : 'drawerBottomBorder'
+                }`}
                 onClick={(): void => setIsDrawerOpen(!isDrawerOpen)}
-                data-testid={testId + 'Caret'}>
-
-                {canRenderCountBadge() && <div className="countBadge" data-testid={testId + 'CountBadge'}>{numberForCountBadge}</div>}
+                data-testid={testId + 'Caret'}
+            >
+                {canRenderCountBadge() && (
+                    <div
+                        className="countBadge"
+                        data-testid={testId + 'CountBadge'}
+                    >
+                        {numberForCountBadge}
+                    </div>
+                )}
 
                 <div className="drawerContainerTitleAndIcon">
-                    <i className="material-icons" aria-hidden>{drawerIcon}</i>
+                    <i className="material-icons" aria-hidden>
+                        {drawerIcon}
+                    </i>
                     <span className="accordionText">{containerTitle}</span>
                 </div>
-                <i className="material-icons greyIcon drawerArrow"
-                    data-testid={`calendar_${isDrawerOpen ? 'up-arrow' : 'down-arrow'}`}>
+                <i
+                    className="material-icons greyIcon drawerArrow"
+                    data-testid={`calendar_${
+                        isDrawerOpen ? 'up-arrow' : 'down-arrow'
+                    }`}
+                >
                     {isDrawerOpen ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
             </button>
-            {isDrawerOpen && (<>{containee}</>)}
+            {isDrawerOpen && <>{containee}</>}
         </div>
     );
 }

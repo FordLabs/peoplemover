@@ -17,9 +17,9 @@
 
 import React from 'react';
 import ArchivedProduct from '../ArchiveProductsDrawer/ArchivedProduct/ArchivedProduct';
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils, { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
-import {fireEvent, screen} from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 jest.mock('Services/Api/SpaceClient');
 jest.mock('Services/Api/ProductClient');
@@ -38,24 +38,30 @@ describe('Archive Products', () => {
         it('has the archived products drawer closed by default', async () => {
             expect(screen.queryByText('I am archived')).not.toBeInTheDocument();
         });
-    
+
         it('shows the archived product drawer when the handle is clicked', async () => {
-            const productArchivedDrawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
+            const productArchivedDrawerCaret = await screen.findByTestId(
+                'archivedProductsDrawerCaret'
+            );
             fireEvent.click(productArchivedDrawerCaret);
             await screen.findByText('I am archived');
         });
-    
+
         it('hides the archived product drawer when the handle is clicked again', async () => {
-            const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
+            const drawerCaret = await screen.findByTestId(
+                'archivedProductsDrawerCaret'
+            );
             fireEvent.click(drawerCaret);
             await screen.findByText('I am archived');
 
             fireEvent.click(drawerCaret);
             expect(screen.queryByText('I am archived')).toBeNull();
         });
-    
+
         it('should open the edit product modal if you click an archived product', async () => {
-            const drawerCaret = await screen.findByTestId('archivedProductsDrawerCaret');
+            const drawerCaret = await screen.findByTestId(
+                'archivedProductsDrawerCaret'
+            );
             fireEvent.click(drawerCaret);
             fireEvent.click(screen.getByTestId('archivedProduct_4'));
 
@@ -64,23 +70,32 @@ describe('Archive Products', () => {
         });
 
         it('displays a badge with the number of archived products', async () => {
-            expect((await screen.findByTestId('archivedProductsDrawerCountBadge')).innerHTML).toEqual('1');
+            expect(
+                (await screen.findByTestId('archivedProductsDrawerCountBadge'))
+                    .innerHTML
+            ).toEqual('1');
         });
     });
-    
+
     describe('component that summarizes a product in the graveyard', () => {
         it('should render the number of people on the product', () => {
-            renderWithRecoil(<ArchivedProduct product={TestData.productWithAssignments}/>);
+            renderWithRecoil(
+                <ArchivedProduct product={TestData.productWithAssignments} />
+            );
             expect(screen.getByText('1')).toBeInTheDocument();
         });
-    
+
         it('should render the product name', () => {
-            renderWithRecoil(<ArchivedProduct product={TestData.productWithAssignments}/>);
+            renderWithRecoil(
+                <ArchivedProduct product={TestData.productWithAssignments} />
+            );
             expect(screen.getByText('Product 1')).toBeInTheDocument();
         });
-    
+
         it('should render the product type', () => {
-            renderWithRecoil(<ArchivedProduct product={TestData.productWithAssignments}/>);
+            renderWithRecoil(
+                <ArchivedProduct product={TestData.productWithAssignments} />
+            );
             expect(screen.getByText('Southfield')).toBeInTheDocument();
         });
     });

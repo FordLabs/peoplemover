@@ -15,31 +15,33 @@
  * limitations under the License.
  */
 
-import {fireEvent, screen, waitFor} from '@testing-library/react';
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
+import TestUtils, { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import React from 'react';
 import Cookies from 'universal-cookie';
 import AccountDropdown from './AccountDropdown';
 import ReportClient from 'Services/Api/ReportClient';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
 import ShareAccessForm from './ShareAccessForm/ShareAccessForm';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {MemoryRouter} from 'react-router-dom';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('Account Dropdown', () => {
     beforeEach(() => {
-        TestUtils.enableInviteUsersToSpace()
+        TestUtils.enableInviteUsersToSpace();
     });
 
-    it('should show current user\'s name', () => {
-        renderWithRecoil(<AccountDropdown showAllDropDownOptions={true}/>);
+    it("should show current user's name", () => {
+        renderWithRecoil(<AccountDropdown showAllDropDownOptions={true} />);
 
-        const expectedCurrentUser = 'USER_ID'
-        expect(screen.getByTestId('currentUserMessage')).toHaveTextContent(`Welcome, ${expectedCurrentUser}`)
+        const expectedCurrentUser = 'USER_ID';
+        expect(screen.getByTestId('currentUserMessage')).toHaveTextContent(
+            `Welcome, ${expectedCurrentUser}`
+        );
     });
 
     describe('Dropdown Options', () => {
@@ -58,13 +60,13 @@ describe('Account Dropdown', () => {
                             modalContent = value;
                         }}
                     />
-                    <AccountDropdown showAllDropDownOptions={true}/>
+                    <AccountDropdown showAllDropDownOptions={true} />
                 </MemoryRouter>,
-                ({set}) => {
-                    set(ViewingDateState, expectedViewingDate)
-                    set(CurrentSpaceState, TestData.space)
+                ({ set }) => {
+                    set(ViewingDateState, expectedViewingDate);
+                    set(CurrentSpaceState, TestData.space);
                 }
-            )
+            );
             const userIconButton = await screen.findByTestId('userIcon');
             fireEvent.click(userIconButton);
         });
@@ -72,13 +74,15 @@ describe('Account Dropdown', () => {
         describe('Share Access', () => {
             it('should trigger edit contributors modal on "Share Access" click', async () => {
                 fireEvent.click(await screen.findByText('Share Access'));
-                await waitFor(() => expect(modalContent).toEqual({
-                    title: 'Share Access',
-                    component: <ShareAccessForm />,
-                    hideTitle: true,
-                    hideCloseBtn: true,
-                    hideBackground: true
-                }));
+                await waitFor(() =>
+                    expect(modalContent).toEqual({
+                        title: 'Share Access',
+                        component: <ShareAccessForm />,
+                        hideTitle: true,
+                        hideCloseBtn: true,
+                        hideBackground: true,
+                    })
+                );
             });
         });
 
@@ -107,24 +111,28 @@ describe('Account Dropdown', () => {
         });
 
         it('should focus the first dropdown option when opened', async () => {
-            await waitFor(() => expect(screen.getByTestId('shareAccess')).toHaveFocus());
+            await waitFor(() =>
+                expect(screen.getByTestId('shareAccess')).toHaveFocus()
+            );
         });
     });
 
-    describe('Read Only', function() {
+    describe('Read Only', function () {
         beforeEach(async () => {
             renderWithRecoil(
                 <MemoryRouter>
-                    <AccountDropdown showAllDropDownOptions={true}/>
+                    <AccountDropdown showAllDropDownOptions={true} />
                 </MemoryRouter>,
-                ({set}) => {
-                    set(IsReadOnlyState, true)
-                    set(CurrentSpaceState, TestData.space)
+                ({ set }) => {
+                    set(IsReadOnlyState, true);
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
         });
         it('should not display Download Report and Share Access when it is in Read Only mode', async () => {
-            const userIconButton = await screen.findByTestId('accountDropdownToggle');
+            const userIconButton = await screen.findByTestId(
+                'accountDropdownToggle'
+            );
             fireEvent.click(userIconButton);
 
             expect(await screen.queryByTestId('shareAccess')).toBeNull();
@@ -132,9 +140,13 @@ describe('Account Dropdown', () => {
         });
 
         it('should focus the first dropdown option when opened', async () => {
-            const spaceTileDropdownButton = await screen.findByTestId('accountDropdownToggle');
+            const spaceTileDropdownButton = await screen.findByTestId(
+                'accountDropdownToggle'
+            );
             spaceTileDropdownButton.click();
-            await waitFor(() => expect(screen.getByTestId('sign-out')).toHaveFocus());
+            await waitFor(() =>
+                expect(screen.getByTestId('sign-out')).toHaveFocus()
+            );
         });
     });
 });

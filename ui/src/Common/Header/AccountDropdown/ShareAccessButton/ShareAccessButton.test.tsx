@@ -16,9 +16,9 @@
  */
 
 import React from 'react';
-import {screen, waitFor} from '@testing-library/react';
-import TestUtils, {RecoilObserver, renderWithRecoil} from 'Utils/TestUtils';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import { screen, waitFor } from '@testing-library/react';
+import TestUtils, { RecoilObserver, renderWithRecoil } from 'Utils/TestUtils';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
 import ShareAccessForm from '../ShareAccessForm/ShareAccessForm';
 import ShareAccessButton from './ShareAccessButton';
 
@@ -39,18 +39,20 @@ describe('Share Access Button', () => {
                 />
                 <ShareAccessButton />
             </>
-        )
+        );
 
         expect(modalContents).toBeNull();
         screen.getByText(buttonText).click();
 
-        await waitFor(() => expect(modalContents).toEqual({
-            title: 'Share Access',
-            component: <ShareAccessForm />,
-            hideTitle: true,
-            hideCloseBtn: true,
-            hideBackground: true
-        }));
+        await waitFor(() =>
+            expect(modalContents).toEqual({
+                title: 'Share Access',
+                component: <ShareAccessForm />,
+                hideTitle: true,
+                hideCloseBtn: true,
+                hideBackground: true,
+            })
+        );
     });
 
     it('should show button if runConfig.invite_users_to_space_enabled is set to true', () => {

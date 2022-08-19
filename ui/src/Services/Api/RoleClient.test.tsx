@@ -20,14 +20,14 @@ import RoleClient from './RoleClient';
 import TestData from '../../Utils/TestData';
 import Cookies from 'universal-cookie';
 
-describe('Role Client', function() {
+describe('Role Client', function () {
     const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
     const cookies = new Cookies();
     const baseRolesUrl = `/api/spaces/${spaceUuid}/roles`;
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 123456',
+            Authorization: 'Bearer 123456',
         },
     };
 
@@ -44,50 +44,61 @@ describe('Role Client', function() {
         cookies.remove('accessToken');
     });
 
-    it('should return all roles for space', function(done) {
-        RoleClient.get(spaceUuid)
-            .then((response) => {
-                expect(Axios.get).toHaveBeenCalledWith(baseRolesUrl, expectedConfig);
-                expect(response.data).toBe('Get Roles');
-                done();
-            });
-
+    it('should return all roles for space', function (done) {
+        RoleClient.get(spaceUuid).then((response) => {
+            expect(Axios.get).toHaveBeenCalledWith(
+                baseRolesUrl,
+                expectedConfig
+            );
+            expect(response.data).toBe('Get Roles');
+            done();
+        });
     });
 
-    it('should create a role and send matomo event and return that role', function(done) {
+    it('should create a role and send matomo event and return that role', function (done) {
         const expectedRoleAddRequest = { name: TestData.softwareEngineer.name };
-        RoleClient.add(expectedRoleAddRequest, TestData.space)
-            .then((response) => {
+        RoleClient.add(expectedRoleAddRequest, TestData.space).then(
+            (response) => {
                 expect(Axios.post).toHaveBeenCalledWith(
-                    baseRolesUrl, expectedRoleAddRequest, expectedConfig
+                    baseRolesUrl,
+                    expectedRoleAddRequest,
+                    expectedConfig
                 );
                 expect(response.data).toBe('Created Role');
                 done();
-            });
+            }
+        );
     });
 
-    it('should edit a role and event and return that role', function(done) {
+    it('should edit a role and event and return that role', function (done) {
         const expectedRoleEditRequest = {
             id: TestData.softwareEngineer.id,
             name: TestData.softwareEngineer.name,
         };
-        RoleClient.edit(expectedRoleEditRequest, TestData.space)
-            .then((response) => {
+        RoleClient.edit(expectedRoleEditRequest, TestData.space).then(
+            (response) => {
                 expect(Axios.put).toHaveBeenCalledWith(
-                    `${baseRolesUrl}/${TestData.softwareEngineer.id}`, expectedRoleEditRequest, expectedConfig
+                    `${baseRolesUrl}/${TestData.softwareEngineer.id}`,
+                    expectedRoleEditRequest,
+                    expectedConfig
                 );
                 expect(response.data).toBe('Updated Role');
                 done();
-            });
+            }
+        );
     });
 
-    it('should delete a role', function(done) {
+    it('should delete a role', function (done) {
         const expectedUrl = `${baseRolesUrl}/${TestData.softwareEngineer.id}`;
-        RoleClient.delete(TestData.softwareEngineer.id, TestData.space)
-            .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+        RoleClient.delete(TestData.softwareEngineer.id, TestData.space).then(
+            (response) => {
+                expect(Axios.delete).toHaveBeenCalledWith(
+                    expectedUrl,
+                    expectedConfig
+                );
                 expect(response.data).toBe('Deleted Role');
                 done();
-            });
+            }
+        );
     });
 });

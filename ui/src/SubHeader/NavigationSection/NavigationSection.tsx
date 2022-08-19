@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, { ReactNode } from 'react';
 
 interface Props {
     label: string;
@@ -6,10 +6,12 @@ interface Props {
     children?: ReactNode;
 }
 
-function NavigationSection({label, icon, children}: Props): JSX.Element {
+function NavigationSection({ label, icon, children }: Props): JSX.Element {
     return (
         <div className="dropdownContainer">
-            <i className="material-icons indicator-icon" aria-hidden>{icon}</i>
+            <i className="material-icons indicator-icon" aria-hidden>
+                {icon}
+            </i>
             <span className="dropdown-label">{label}:</span>
             {children}
         </div>

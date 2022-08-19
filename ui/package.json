@@ -24,6 +24,8 @@
     "build": "react-scripts build",
     "lint": "eslint src/**/*.ts src/**/*.tsx",
     "lint:fix": "eslint --fix src/**/*.ts src/**/*.tsx",
+    "prettier:fix": "prettier --write '**/*.{scss,tsx,ts,js}'",
+    "prettier": "prettier --check '**/*.{scss,tsx,ts,js}'",
     "analyze": "node analyze.js",
     "tests:pre-commit": "CI=true react-scripts test --findRelatedTests",
     "prepare": "cd .. && husky install"
@@ -33,7 +35,8 @@
       "npm run tests:pre-commit"
     ],
     "**/*.+(js|ts|tsx|spec.tsx|test.tsx)": [
-      "npm run lint:fix"
+      "npm run lint:fix",
+      "npm run prettier:fix"
     ]
   },
   "dependencies": {
@@ -83,6 +86,7 @@
     "cypress": "^10.4.0",
     "cypress-axe": "^1.0.0",
     "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-babel": "^5.3.0",

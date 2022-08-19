@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
-import {Space} from 'Types/Space';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
+import React, { useState } from 'react';
+import { Space } from 'Types/Space';
+import ConfirmationModal, {
+    ConfirmationModalProps,
+} from 'Modal/ConfirmationModal/ConfirmationModal';
 import SpaceClient from 'Services/Api/SpaceClient';
 import FormButton from 'Common/FormButton/FormButton';
-import NotificationModal, {NotificationModalProps} from 'Modal/NotificationModal/NotificationModal';
+import NotificationModal, {
+    NotificationModalProps,
+} from 'Modal/NotificationModal/NotificationModal';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
 import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { useSetRecoilState } from 'recoil';
+import { ModalContentsState } from 'State/ModalContentsState';
 
 import './DeleteSpaceForm.scss';
 
@@ -43,8 +47,9 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     const closeModal = () => setModalContents(null);
 
     const notificationModalProps = {
-        content: <span>{space.name + ' has been deleted from PeopleMover.'
-        }</span>,
+        content: (
+            <span>{space.name + ' has been deleted from PeopleMover.'}</span>
+        ),
         title: 'Confirmed',
         close: closeModal,
     } as NotificationModalProps;
@@ -52,13 +57,20 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     const propsWithEditors = {
         title: 'Are you sure?',
         containerClassname: 'leaveSpaceModal',
-        content: <>
-            <div>As owner of this space, deleting it will permanently remove it from all users&apos; dashboards. This
-                action cannot be undone.
-            </div>
-            <br/>
-            <div>If you&apos;d like to leave without deleting the space, please transfer ownership to a new owner.</div>
-        </>,
+        content: (
+            <>
+                <div>
+                    As owner of this space, deleting it will permanently remove
+                    it from all users&apos; dashboards. This action cannot be
+                    undone.
+                </div>
+                <br />
+                <div>
+                    If you&apos;d like to leave without deleting the space,
+                    please transfer ownership to a new owner.
+                </div>
+            </>
+        ),
         submitButtonLabel: 'Transfer Ownership',
         secondaryButton: (
             <FormButton
@@ -70,13 +82,15 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
                         fetchUserSpaces().catch().finally(closeModal);
                         setSubmitted(true);
                     });
-                }}>
+                }}
+            >
                 Delete space
-            </FormButton>),
+            </FormButton>
+        ),
         submit(): void | Promise<void> {
             setModalContents({
                 title: 'Transfer Ownership of Space',
-                component: <TransferOwnershipForm spaceToTransfer={space}/>
+                component: <TransferOwnershipForm spaceToTransfer={space} />,
             });
         },
         close() {
@@ -87,11 +101,16 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     const propsWithoutEditors = {
         title: 'Are you sure?',
         containerClassname: 'leaveSpaceModal',
-        content: <>
-            <div>Deleting this space will permanently remove it from PeopleMover.</div>
-            <br/>
-            <div>Are you sure you want to delete it?</div>
-        </>,
+        content: (
+            <>
+                <div>
+                    Deleting this space will permanently remove it from
+                    PeopleMover.
+                </div>
+                <br />
+                <div>Are you sure you want to delete it?</div>
+            </>
+        ),
         submitButtonLabel: 'Delete Space',
         primaryButtonStyle: 'redalert',
         submit(): void | Promise<void> {
@@ -106,13 +125,12 @@ function DeleteSpaceForm({ space, spaceHasEditors }: Props): JSX.Element {
     } as ConfirmationModalProps;
 
     if (submitted) {
-        return (<NotificationModal {...notificationModalProps}/>);
+        return <NotificationModal {...notificationModalProps} />;
     } else if (spaceHasEditors === undefined || spaceHasEditors) {
-        return (<ConfirmationModal {...propsWithEditors}/>);
+        return <ConfirmationModal {...propsWithEditors} />;
     } else {
-        return (<ConfirmationModal {...propsWithoutEditors}/>);
+        return <ConfirmationModal {...propsWithoutEditors} />;
     }
-
 }
 
 export default DeleteSpaceForm;

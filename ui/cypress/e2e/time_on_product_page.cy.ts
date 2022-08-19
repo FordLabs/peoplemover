@@ -19,27 +19,36 @@ describe('Time On Product Page', () => {
     beforeEach(() => {
         const spaceUuid = Cypress.env('SPACE_UUID');
         cy.visit(`${spaceUuid}/timeonproduct`);
-    })
+    });
 
-    it('Open person modal when clicking on people\'s names', () => {
+    it("Open person modal when clicking on people's names", () => {
         const janeSmith = 'Jane Smith';
         cy.contains(janeSmith).click();
         cy.contains('Edit Person');
-        cy.get('[data-testid="personFormNameField"]').should('have.value', janeSmith);
+        cy.get('[data-testid="personFormNameField"]').should(
+            'have.value',
+            janeSmith
+        );
 
         closeModal();
 
         const adamSandler = 'Adam Sandler';
         cy.contains(adamSandler).click();
         cy.contains('Edit Person');
-        cy.get('[data-testid="personFormNameField"]').should('have.value', adamSandler);
+        cy.get('[data-testid="personFormNameField"]').should(
+            'have.value',
+            adamSandler
+        );
 
         closeModal();
 
         const bobBarker = 'Bob Barker';
         cy.contains(bobBarker).click();
         cy.contains('Edit Person');
-        cy.get('[data-testid="personFormNameField"]').should('have.value', bobBarker);
+        cy.get('[data-testid="personFormNameField"]').should(
+            'have.value',
+            bobBarker
+        );
     });
 });
 

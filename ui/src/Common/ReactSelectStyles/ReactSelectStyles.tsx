@@ -15,13 +15,21 @@
  * limitations under the License.
  */
 
-import {components, IndicatorProps, OptionTypeBase, Props} from 'react-select';
-import React, {CSSProperties} from 'react';
+import {
+    components,
+    IndicatorProps,
+    OptionTypeBase,
+    Props,
+} from 'react-select';
+import React, { CSSProperties } from 'react';
 
 import './ReactSelectStyles.scss';
 
 export const reactSelectStyles = {
-    control: (provided: CSSProperties, {isFocused}: Props): CSSProperties => ({
+    control: (
+        provided: CSSProperties,
+        { isFocused }: Props
+    ): CSSProperties => ({
         ...provided,
         minHeight: '32px',
         borderRadius: '2px',
@@ -136,16 +144,26 @@ export const reactSelectStyles = {
     }),
 };
 
-export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>): JSX.Element => (
+export const CustomIndicator = (
+    props: IndicatorProps<OptionTypeBase, boolean>
+): JSX.Element => (
     <components.DropdownIndicator {...props}>
-        {
-            props.options.length === 0
-                ? <i style={{display: 'none'}}/>
-                : (
-                    props.selectProps.menuIsOpen
-                        ? <i className="material-icons greyIcon" data-testid={`upArrow_${props.selectProps.name}`}>arrow_drop_up</i>
-                        : <i className="material-icons greyIcon" data-testid={`downArrow_${props.selectProps.name}`}>arrow_drop_down</i>
-                )
-        }
+        {props.options.length === 0 ? (
+            <i style={{ display: 'none' }} />
+        ) : props.selectProps.menuIsOpen ? (
+            <i
+                className="material-icons greyIcon"
+                data-testid={`upArrow_${props.selectProps.name}`}
+            >
+                arrow_drop_up
+            </i>
+        ) : (
+            <i
+                className="material-icons greyIcon"
+                data-testid={`downArrow_${props.selectProps.name}`}
+            >
+                arrow_drop_down
+            </i>
+        )}
     </components.DropdownIndicator>
 );

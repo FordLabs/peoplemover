@@ -64,7 +64,7 @@ beforeEach(() => {
 
     cy.intercept('GET', '**/some_urlflags', {
         statusCode: 200,
-        body: {}
+        body: {},
     }).as('flagsmith');
 });
 

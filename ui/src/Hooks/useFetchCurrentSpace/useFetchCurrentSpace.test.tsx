@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React from 'react';
-import {act, renderHook} from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import SpaceClient from '../../Services/Api/SpaceClient';
 import useFetchCurrentSpace from './useFetchCurrentSpace';
@@ -30,15 +28,23 @@ const spaceUUID = 'space-uuid';
 
 describe('useFetchCurrentSpace Hook', () => {
     it('should fetch the current space and store them in recoil', async () => {
-        SpaceClient.getSpaceFromUuid = jest.fn().mockResolvedValue({ data: TestData.space })
+        SpaceClient.getSpaceFromUuid = jest
+            .fn()
+            .mockResolvedValue({ data: TestData.space });
 
-        const { result } = renderHook(() => useFetchCurrentSpace(spaceUUID), { wrapper });
+        const { result } = renderHook(() => useFetchCurrentSpace(spaceUUID), {
+            wrapper,
+        });
 
-        expect(SpaceClient.getSpaceFromUuid).not.toHaveBeenCalled()
-        expect(result.current.currentSpace).toEqual({"lastModifiedDate": "", "name": "", "todayViewIsPublic": false});
+        expect(SpaceClient.getSpaceFromUuid).not.toHaveBeenCalled();
+        expect(result.current.currentSpace).toEqual({
+            lastModifiedDate: '',
+            name: '',
+            todayViewIsPublic: false,
+        });
 
         await act(async () => {
-            result.current.fetchCurrentSpace()
+            result.current.fetchCurrentSpace();
         });
         expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.currentSpace).toEqual(TestData.space);

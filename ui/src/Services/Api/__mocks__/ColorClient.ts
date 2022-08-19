@@ -19,6 +19,6 @@ import TestData from '../../../Utils/TestData';
 
 const ColorClient = {
     getAllColors: jest.fn().mockResolvedValue({ data: TestData.colors }),
-}
+};
 
 export default ColorClient;

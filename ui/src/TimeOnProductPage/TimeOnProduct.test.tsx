@@ -23,23 +23,23 @@ import TimeOnProduct, {
     sortTimeOnProductItems,
     TimeOnProductItem,
 } from './TimeOnProduct';
-import {MemoryRouter, Route, Routes} from 'react-router-dom';
-import {UNASSIGNED_PRODUCT_NAME} from 'Services/ProductService';
-import {cleanup, screen, waitFor} from '@testing-library/react';
-import {fireEvent} from '@testing-library/dom';
-import {MutableSnapshot} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {ProductsState} from 'State/ProductsState';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { UNASSIGNED_PRODUCT_NAME } from 'Services/ProductService';
+import { cleanup, screen, waitFor } from '@testing-library/react';
+import { fireEvent } from '@testing-library/dom';
+import { MutableSnapshot } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { ProductsState } from 'State/ProductsState';
 import ProductClient from 'Services/Api/ProductClient';
-import {RecoilObserver} from 'Utils/RecoilObserver';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
 import PersonForm from 'Common/PersonForm/PersonForm';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {Space} from 'Types/Space';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {Product} from 'Types/Product';
+import { Space } from 'Types/Space';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { Product } from 'Types/Product';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -59,15 +59,17 @@ describe('TimeOnProduct', () => {
 
     describe('calculation', () => {
         beforeEach(async () => {
-            await renderTimeOnProduct( ({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1))
-                set(IsReadOnlyState, false)
-                set(ProductsState, [TestData.productForHank])
-            })
+            await renderTimeOnProduct(({ set }) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+                set(IsReadOnlyState, false);
+                set(ProductsState, [TestData.productForHank]);
+            });
         });
 
         it('should show 1 day spend on the project when viewingDate equal start date', async () => {
-            const list = await screen.getByTestId(TestData.productForHank.assignments[0].id.toString());
+            const list = await screen.getByTestId(
+                TestData.productForHank.assignments[0].id.toString()
+            );
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('1 day');
         });
@@ -77,18 +79,22 @@ describe('TimeOnProduct', () => {
             renderWithRecoil(
                 <MemoryRouter initialEntries={['/team-uuid']}>
                     <Routes>
-                        <Route path="/:teamUUID" element={<TimeOnProduct/>} />
+                        <Route path="/:teamUUID" element={<TimeOnProduct />} />
                     </Routes>
                 </MemoryRouter>,
-                ({set}) => {
-                    set(ViewingDateState, new Date(2020, 0, 10))
-                    set(ProductsState, [TestData.productForHank])
-                    set(CurrentSpaceState,TestData.space)
+                ({ set }) => {
+                    set(ViewingDateState, new Date(2020, 0, 10));
+                    set(ProductsState, [TestData.productForHank]);
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
-            await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
+            await waitFor(() =>
+                expect(ProductClient.getProductsForDate).toHaveBeenCalled()
+            );
 
-            const list = await screen.getByTestId(TestData.productForHank.assignments[0].id.toString());
+            const list = await screen.getByTestId(
+                TestData.productForHank.assignments[0].id.toString()
+            );
             expect(list).toContainHTML('Hank');
             expect(list).toContainHTML('10 days');
         });
@@ -98,36 +104,47 @@ describe('TimeOnProduct', () => {
             expect(hank).toBeEnabled();
             expect(modalContent).toBeNull();
             fireEvent.click(hank);
-            await waitFor(() => expect(modalContent).toEqual({
-                title: 'Edit Person',
-                component: <PersonForm
-                    isEditPersonForm
-                    personEdited={TestData.hank}
-                />,
-            }));
+            await waitFor(() =>
+                expect(modalContent).toEqual({
+                    title: 'Edit Person',
+                    component: (
+                        <PersonForm
+                            isEditPersonForm
+                            personEdited={TestData.hank}
+                        />
+                    ),
+                })
+            );
         });
     });
 
     it('should fetch current space if not already gotten', async () => {
         let actualCurrentSpace: Space | null = null;
         renderWithRecoil(
-            <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
+            <MemoryRouter
+                initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}
+            >
                 <Routes>
-                    <Route path="/:teamUUID/timeonproduct" element={
-                        <>
-                            <RecoilObserver
-                                recoilState={CurrentSpaceState}
-                                onChange={(value: Space) => {
-                                    actualCurrentSpace = value;
-                                }}
-                            />
-                            <TimeOnProduct/>
-                        </>
-                    } />
+                    <Route
+                        path="/:teamUUID/timeonproduct"
+                        element={
+                            <>
+                                <RecoilObserver
+                                    recoilState={CurrentSpaceState}
+                                    onChange={(value: Space) => {
+                                        actualCurrentSpace = value;
+                                    }}
+                                />
+                                <TimeOnProduct />
+                            </>
+                        }
+                    />
                 </Routes>
             </MemoryRouter>
         );
-        await waitFor(() => expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalled())
+        await waitFor(() =>
+            expect(SpaceClient.getSpaceFromUuid).toHaveBeenCalled()
+        );
         expect(actualCurrentSpace).toEqual(TestData.space);
     });
 
@@ -137,7 +154,10 @@ describe('TimeOnProduct', () => {
                 id: 999,
                 name: UNASSIGNED_PRODUCT_NAME,
                 spaceUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-                assignments: [TestData.assignmentForUnassigned, TestData.assignmentForUnassignedNoRole],
+                assignments: [
+                    TestData.assignmentForUnassigned,
+                    TestData.assignmentForUnassignedNoRole,
+                ],
                 startDate: '',
                 endDate: '',
                 archived: false,
@@ -145,11 +165,35 @@ describe('TimeOnProduct', () => {
             };
             const products = [TestData.productForHank, unassignedProduct];
             const viewingDate = new Date(2020, 0, 10);
-            const timeOnProductItems = generateTimeOnProductItems(products, viewingDate);
+            const timeOnProductItems = generateTimeOnProductItems(
+                products,
+                viewingDate
+            );
 
-            const expectedProduct1 = {personName: 'Hank', productName: 'Hanky Product', personRole: 'Product Manager', timeOnProduct: 10, assignmentId: 3, personId: 200};
-            const expectedProduct2 = {personName: 'Unassigned Person 7', productName: 'Unassigned', personRole: 'Software Engineer', timeOnProduct: 9, assignmentId: 11, personId: 101};
-            const expectedProduct3 = {personName: 'Unassigned Person No Role', productName: 'Unassigned', personRole: 'No Role Assigned', timeOnProduct: 9, assignmentId: 14, personId: 106};
+            const expectedProduct1 = {
+                personName: 'Hank',
+                productName: 'Hanky Product',
+                personRole: 'Product Manager',
+                timeOnProduct: 10,
+                assignmentId: 3,
+                personId: 200,
+            };
+            const expectedProduct2 = {
+                personName: 'Unassigned Person 7',
+                productName: 'Unassigned',
+                personRole: 'Software Engineer',
+                timeOnProduct: 9,
+                assignmentId: 11,
+                personId: 101,
+            };
+            const expectedProduct3 = {
+                personName: 'Unassigned Person No Role',
+                productName: 'Unassigned',
+                personRole: 'No Role Assigned',
+                timeOnProduct: 9,
+                assignmentId: 14,
+                personId: 106,
+            };
 
             expect(timeOnProductItems.length).toEqual(3);
             expect(timeOnProductItems).toContainEqual(expectedProduct1);
@@ -161,73 +205,265 @@ describe('TimeOnProduct', () => {
     describe('sort', () => {
         it('should first sort by person nme', () => {
             const timeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person2', personId: 2},
-                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
-                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
+                {
+                    assignmentId: 0,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: 'person2',
+                    personId: 2,
+                },
+                {
+                    assignmentId: 1,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: 'person1',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: 'person1',
+                    personId: 1,
+                },
             ];
             const expectedTimeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
-                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person1', personId: 1},
-                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 0, personName: 'person2', personId: 2},
+                {
+                    assignmentId: 1,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: 'person1',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: 'person1',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 0,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: 'person2',
+                    personId: 2,
+                },
             ];
-            const actualTimeOnProductItems = [...timeOnProductItems].sort(sortTimeOnProductItems);
+            const actualTimeOnProductItems = [...timeOnProductItems].sort(
+                sortTimeOnProductItems
+            );
             for (let i = 0; i < actualTimeOnProductItems.length; i++) {
-                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
-                expect(actualTimeOnProductItems[i].personName).toEqual(expectedTimeOnProductItems[i].personName);
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(
+                    expectedTimeOnProductItems[i].assignmentId
+                );
+                expect(actualTimeOnProductItems[i].personName).toEqual(
+                    expectedTimeOnProductItems[i].personName
+                );
             }
         });
 
         it('should first sort by person name, then by product name', () => {
             const timeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 0,  productName: 'product2', personRole: '', timeOnProduct: 0, personName: '', personId: 2},
-                {assignmentId: 1,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
-                {assignmentId: 2,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
+                {
+                    assignmentId: 0,
+                    productName: 'product2',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 2,
+                },
+                {
+                    assignmentId: 1,
+                    productName: 'product1',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: 'product1',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
             ];
             const expectedTimeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 1,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
-                {assignmentId: 2,  productName: 'product1', personRole: '', timeOnProduct: 0, personName: '', personId: 1},
-                {assignmentId: 0,  productName: 'product2', personRole: '', timeOnProduct: 0, personName: '', personId: 2},
+                {
+                    assignmentId: 1,
+                    productName: 'product1',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: 'product1',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 0,
+                    productName: 'product2',
+                    personRole: '',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 2,
+                },
             ];
-            const actualTimeOnProductItems = [...timeOnProductItems].sort(sortTimeOnProductItems);
+            const actualTimeOnProductItems = [...timeOnProductItems].sort(
+                sortTimeOnProductItems
+            );
             for (let i = 0; i < actualTimeOnProductItems.length; i++) {
-                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
-                expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(
+                    expectedTimeOnProductItems[i].assignmentId
+                );
+                expect(actualTimeOnProductItems[i].productName).toEqual(
+                    expectedTimeOnProductItems[i].productName
+                );
             }
         });
 
         it('should first sort by person name, then by product name, then by role', () => {
             const timeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 0,  productName: '', personRole: 'role2', timeOnProduct: 0, personName: '', personId: 2},
-                {assignmentId: 1,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
-                {assignmentId: 2,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
+                {
+                    assignmentId: 0,
+                    productName: '',
+                    personRole: 'role2',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 2,
+                },
+                {
+                    assignmentId: 1,
+                    productName: '',
+                    personRole: 'role1',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: '',
+                    personRole: 'role1',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
             ];
             const expectedTimeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 1,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
-                {assignmentId: 2,  productName: '', personRole: 'role1', timeOnProduct: 0, personName: '', personId: 1},
-                {assignmentId: 0,  productName: '', personRole: 'role2', timeOnProduct: 0, personName: '', personId: 2},
+                {
+                    assignmentId: 1,
+                    productName: '',
+                    personRole: 'role1',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: '',
+                    personRole: 'role1',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 0,
+                    productName: '',
+                    personRole: 'role2',
+                    timeOnProduct: 0,
+                    personName: '',
+                    personId: 2,
+                },
             ];
-            const actualTimeOnProductItems = [...timeOnProductItems].sort(sortTimeOnProductItems);
+            const actualTimeOnProductItems = [...timeOnProductItems].sort(
+                sortTimeOnProductItems
+            );
             for (let i = 0; i < actualTimeOnProductItems.length; i++) {
-                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
-                expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(
+                    expectedTimeOnProductItems[i].assignmentId
+                );
+                expect(actualTimeOnProductItems[i].productName).toEqual(
+                    expectedTimeOnProductItems[i].productName
+                );
             }
         });
 
         it('should first sort by person name, then by product name, then by role, then by time on product (descending)', () => {
             const timeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
-                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
-                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 2, personName: '', personId: 2},
+                {
+                    assignmentId: 0,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 1,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 1,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 1,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 2,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 2,
+                    personName: '',
+                    personId: 2,
+                },
             ];
             const expectedTimeOnProductItems: TimeOnProductItem[] = [
-                {assignmentId: 2,  productName: '', personRole: '', timeOnProduct: 2, personName: '', personId: 2},
-                {assignmentId: 0,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
-                {assignmentId: 1,  productName: '', personRole: '', timeOnProduct: 1, personName: '', personId: 1},
+                {
+                    assignmentId: 2,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 2,
+                    personName: '',
+                    personId: 2,
+                },
+                {
+                    assignmentId: 0,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 1,
+                    personName: '',
+                    personId: 1,
+                },
+                {
+                    assignmentId: 1,
+                    productName: '',
+                    personRole: '',
+                    timeOnProduct: 1,
+                    personName: '',
+                    personId: 1,
+                },
             ];
-            const actualTimeOnProductItems = [...timeOnProductItems].sort(sortTimeOnProductItems);
+            const actualTimeOnProductItems = [...timeOnProductItems].sort(
+                sortTimeOnProductItems
+            );
             for (let i = 0; i < actualTimeOnProductItems.length; i++) {
-                expect(actualTimeOnProductItems[i].assignmentId).toEqual(expectedTimeOnProductItems[i].assignmentId);
-                expect(actualTimeOnProductItems[i].productName).toEqual(expectedTimeOnProductItems[i].productName);
+                expect(actualTimeOnProductItems[i].assignmentId).toEqual(
+                    expectedTimeOnProductItems[i].assignmentId
+                );
+                expect(actualTimeOnProductItems[i].productName).toEqual(
+                    expectedTimeOnProductItems[i].productName
+                );
             }
         });
     });
@@ -236,10 +472,10 @@ describe('TimeOnProduct', () => {
         it('should show loading state', async () => {
             renderWithRecoil(
                 <MemoryRouter>
-                    <TimeOnProduct/>
+                    <TimeOnProduct />
                 </MemoryRouter>,
-                ({set}) => {
-                    set(CurrentSpaceState, TestData.space)
+                ({ set }) => {
+                    set(CurrentSpaceState, TestData.space);
                 }
             );
             await screen.findByText(LOADING);
@@ -248,35 +484,50 @@ describe('TimeOnProduct', () => {
 
     describe('View Only', () => {
         it('person name button should be disabled', async () => {
-            ProductClient.getProductsForDate = jest.fn().mockResolvedValue({ data: [TestData.productForHank] })
-            await renderTimeOnProduct(({set}) => {
-                set(ViewingDateState, new Date(2020, 0, 1))
-                set(IsReadOnlyState, true)
-                set(CurrentSpaceState, TestData.space )
-            })
-            await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
+            ProductClient.getProductsForDate = jest
+                .fn()
+                .mockResolvedValue({ data: [TestData.productForHank] });
+            await renderTimeOnProduct(({ set }) => {
+                set(ViewingDateState, new Date(2020, 0, 1));
+                set(IsReadOnlyState, true);
+                set(CurrentSpaceState, TestData.space);
+            });
+            await waitFor(() =>
+                expect(ProductClient.getProductsForDate).toHaveBeenCalled()
+            );
             const hank = screen.getByText(TestData.hank.name);
             expect(hank).toBeDisabled();
         });
     });
 
-    async function renderTimeOnProduct(initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
+    async function renderTimeOnProduct(
+        initializeState?: (mutableSnapshot: MutableSnapshot) => void
+    ) {
         renderWithRecoil(
-            <MemoryRouter initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}>
+            <MemoryRouter
+                initialEntries={[`/${TestData.space.uuid}/timeonproduct`]}
+            >
                 <Routes>
-                    <Route path="/:teamUUID/timeonproduct" element={<>
-                        <RecoilObserver
-                            recoilState={ModalContentsState}
-                            onChange={(value: ModalContents) => {
-                                modalContent = value;
-                            }}
-                        />
-                        <TimeOnProduct/>
-                    </>} />
+                    <Route
+                        path="/:teamUUID/timeonproduct"
+                        element={
+                            <>
+                                <RecoilObserver
+                                    recoilState={ModalContentsState}
+                                    onChange={(value: ModalContents) => {
+                                        modalContent = value;
+                                    }}
+                                />
+                                <TimeOnProduct />
+                            </>
+                        }
+                    />
                 </Routes>
             </MemoryRouter>,
             initializeState
         );
-        await waitFor(() => expect(ProductClient.getProductsForDate).toHaveBeenCalled())
+        await waitFor(() =>
+            expect(ProductClient.getProductsForDate).toHaveBeenCalled()
+        );
     }
 });

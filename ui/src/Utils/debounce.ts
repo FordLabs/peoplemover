@@ -1,6 +1,6 @@
 const debounce = (fn: Function, delay: number): Function => {
     let timeOutId: ReturnType<typeof setTimeout>;
-    return function(...args: unknown[]): void {
+    return function (...args: unknown[]): void {
         if (timeOutId) {
             clearTimeout(timeOutId);
         }

@@ -16,13 +16,17 @@
  */
 
 import axios from 'axios';
-import {getAxiosConfig} from '../../Utils/getAxiosConfig';
-import {ContactUsRequest} from '../../Types/ContactUsRequest';
+import { getAxiosConfig } from '../../Utils/getAxiosConfig';
+import { ContactUsRequest } from '../../Types/ContactUsRequest';
 
 const ContactUsClient = {
     send(contactUsRequest: ContactUsRequest) {
-        return axios.post('/api/contact-us', contactUsRequest, getAxiosConfig())
-    }
-}
+        return axios.post(
+            '/api/contact-us',
+            contactUsRequest,
+            getAxiosConfig()
+        );
+    },
+};
 
 export default ContactUsClient;

@@ -17,7 +17,7 @@
 
 import React from 'react';
 import EditTagRow from './EditTagRow';
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 describe('EditTagRow', () => {
     describe('validation', () => {
@@ -31,11 +31,23 @@ describe('EditTagRow', () => {
                 />
             );
             expect(await screen.findByTestId('saveTagButton')).toBeDisabled();
-            await act(async () => {fireEvent.change(await screen.findByTestId('tagNameInput'), {target: {value: ''}});});
+            await act(async () => {
+                fireEvent.change(await screen.findByTestId('tagNameInput'), {
+                    target: { value: '' },
+                });
+            });
             expect(await screen.findByTestId('saveTagButton')).toBeDisabled();
-            await act(async () => {fireEvent.change(await screen.findByTestId('tagNameInput'), {target: {value: '  '}});});
+            await act(async () => {
+                fireEvent.change(await screen.findByTestId('tagNameInput'), {
+                    target: { value: '  ' },
+                });
+            });
             expect(await screen.findByTestId('saveTagButton')).toBeDisabled();
-            await act(async () => {fireEvent.change(await screen.findByTestId('tagNameInput'), {target: {value: '  one  '}});});
+            await act(async () => {
+                fireEvent.change(await screen.findByTestId('tagNameInput'), {
+                    target: { value: '  one  ' },
+                });
+            });
             expect(await screen.findByTestId('saveTagButton')).toBeEnabled();
         });
     });

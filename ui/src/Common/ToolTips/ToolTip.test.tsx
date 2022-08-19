@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {fireEvent, render, RenderResult} from '@testing-library/react';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import ToolTip from './ToolTip';
 
 describe('ToolTip', () => {
@@ -25,11 +25,17 @@ describe('ToolTip', () => {
 
     beforeEach(() => {
         testMethod = jest.fn();
-        app = render(<ToolTip toolTipLabel="What's this?" contentElement={<p>something </p>} onHover={testMethod}/>);
+        app = render(
+            <ToolTip
+                toolTipLabel="What's this?"
+                contentElement={<p>something </p>}
+                onHover={testMethod}
+            />
+        );
     });
-    
-    it('should show the tip on mouse hover',  async () => {
-        const button = await app.findByText('What\'s this?');
+
+    it('should show the tip on mouse hover', async () => {
+        const button = await app.findByText("What's this?");
         const tip = await app.findByTestId('toolTipText');
 
         app.findByText('something ');
@@ -45,8 +51,8 @@ describe('ToolTip', () => {
         expect(testMethod).toHaveBeenCalledTimes(1);
     });
 
-    it('should show the tip on focus',  async () => {
-        const button = await app.findByText('What\'s this?');
+    it('should show the tip on focus', async () => {
+        const button = await app.findByText("What's this?");
         const tip = await app.findByTestId('toolTipText');
 
         app.findByText('something ');

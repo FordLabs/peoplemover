@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
-import {useCallback} from 'react';
+import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
 import sortTagsAlphabetically from 'Utils/sortTagsAlphabetically';
-import {RoleTag, Tag} from 'Types/Tag';
-import {PersonTagsState} from 'State/PersonTagsState';
+import { RoleTag, Tag } from 'Types/Tag';
+import { PersonTagsState } from 'State/PersonTagsState';
 import PersonTagClient from 'Services/Api/PersonTagClient';
 
 interface UseFetchPersonTags {
     personTags: Tag[];
-    fetchPersonTags(): void
+    fetchPersonTags(): void;
 }
 
 function useFetchPersonTags(spaceUUID: string): UseFetchPersonTags {
@@ -32,17 +32,17 @@ function useFetchPersonTags(spaceUUID: string): UseFetchPersonTags {
 
     const fetchPersonTags = useCallback(() => {
         PersonTagClient.get(spaceUUID)
-            .then(result => {
+            .then((result) => {
                 const tags: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(tags);
-                setPersonTags(tags)
+                setPersonTags(tags);
             })
             .catch(console.error);
-    }, [setPersonTags, spaceUUID])
+    }, [setPersonTags, spaceUUID]);
 
     return {
         personTags: personTags || [],
-        fetchPersonTags
+        fetchPersonTags,
     };
 }
 

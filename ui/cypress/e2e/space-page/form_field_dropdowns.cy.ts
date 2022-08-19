@@ -17,26 +17,28 @@
 
 /// <reference types="Cypress" />
 
-const expectedCreateOptionText = (expectedCreationString) => `Create "${expectedCreationString}"`;
+const expectedCreateOptionText = (expectedCreationString) =>
+    `Create "${expectedCreationString}"`;
 
 describe('Form Dropdown Fields', () => {
-
     beforeEach(() => {
-        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postNewLocation');
-        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postNewProductTag');
+        cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as(
+            'postNewLocation'
+        );
+        cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as(
+            'postNewProductTag'
+        );
 
-        cy.visitSpace({locationData: [], productTagsData: []});
+        cy.visitSpace({ locationData: [], productTagsData: [] });
         cy.get('[data-testid=newProductButton]').click();
 
-        cy.getModal()
-            .should('contain', 'Add New Product');
+        cy.getModal().should('contain', 'Add New Product');
         cy.get('[data-testid=productForm]').as('productForm');
     });
 
     it('Add Location Workflow', () => {
         const focusOnLocationDropdownInput = () => {
-            cy.get('@productLocationInput')
-                .click({force: true});
+            cy.get('@productLocationInput').click({ force: true });
         };
         const locationDropdownMenuIsClosed = () => {
             cy.get('@productForm')
@@ -44,16 +46,13 @@ describe('Form Dropdown Fields', () => {
                 .should('not.exist');
         };
         const typeIntoLocationInput = (text) => {
-            cy.get('@productLocationInput')
-                .type(text, { force: true });
+            cy.get('@productLocationInput').type(text, { force: true });
         };
 
         const newLocation1 = 'Chilton';
         const newLocation2 = 'Stars Hollow';
 
-        cy.get('@productForm')
-            .find('[id=location]')
-            .as('productLocationInput');
+        cy.get('@productForm').find('[id=location]').as('productLocationInput');
 
         focusOnLocationDropdownInput();
 
@@ -72,8 +71,7 @@ describe('Form Dropdown Fields', () => {
 
         locationDropdownMenuIsClosed();
 
-        cy.get('@productForm')
-            .should('contain', newLocation1);
+        cy.get('@productForm').should('contain', newLocation1);
 
         focusOnLocationDropdownInput();
 
@@ -99,8 +97,7 @@ describe('Form Dropdown Fields', () => {
             .should('have.length', 1)
             .should('contain', newLocation1);
 
-        cy.get('@productLocationInput')
-            .clear();
+        cy.get('@productLocationInput').clear();
 
         typeIntoLocationInput(newLocation2);
 
@@ -116,8 +113,7 @@ describe('Form Dropdown Fields', () => {
         };
 
         const focusOnProductTagsDropdownInput = () => {
-            cy.get('@productTagsInput')
-                .click({force: true});
+            cy.get('@productTagsInput').click({ force: true });
         };
         const productTagsDropdownMenuIsClosed = () => {
             cy.get('@productForm')
@@ -125,16 +121,13 @@ describe('Form Dropdown Fields', () => {
                 .should('not.exist');
         };
         const typeIntoProductTagsInput = (text) => {
-            cy.get('@productTagsInput')
-                .type(text, { force: true });
+            cy.get('@productTagsInput').type(text, { force: true });
         };
 
         const newProductTag1 = 'Chilton';
         const newProductTag2 = 'Stars Hollow';
 
-        cy.get('@productForm')
-            .find('[id=productTags]')
-            .as('productTagsInput');
+        cy.get('@productForm').find('[id=productTags]').as('productTagsInput');
 
         focusOnProductTagsDropdownInput();
 
@@ -153,8 +146,7 @@ describe('Form Dropdown Fields', () => {
 
         productTagsDropdownMenuIsClosed();
 
-        cy.get('@productForm')
-            .should('contain', newProductTag1);
+        cy.get('@productForm').should('contain', newProductTag1);
 
         focusOnProductTagsDropdownInput();
 

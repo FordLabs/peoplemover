@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
-import {useCallback} from 'react';
-import {PeopleState} from 'State/PeopleState';
+import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
+import { PeopleState } from 'State/PeopleState';
 import PeopleClient from 'Services/Api/PeopleClient';
-import {Person} from 'Types/Person';
+import { Person } from 'Types/Person';
 
 interface UseFetchPeople {
     people: Person[];
-    fetchPeople(): void
+    fetchPeople(): void;
 }
 
 function useFetchPeople(spaceUUID: string): UseFetchPeople {
@@ -31,12 +31,13 @@ function useFetchPeople(spaceUUID: string): UseFetchPeople {
 
     const fetchPeople = useCallback(() => {
         PeopleClient.getAllPeopleInSpace(spaceUUID)
-            .then(result => setPeople(result.data || [])).catch(console.error);
-    }, [setPeople, spaceUUID])
+            .then((result) => setPeople(result.data || []))
+            .catch(console.error);
+    }, [setPeople, spaceUUID]);
 
     return {
         people: people || [],
-        fetchPeople
+        fetchPeople,
     };
 }
 

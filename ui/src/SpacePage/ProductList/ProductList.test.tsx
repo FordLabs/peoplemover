@@ -16,17 +16,17 @@
  */
 
 import React from 'react';
-import {screen} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import TestData from 'Utils/TestData';
 import ProductList from './ProductList';
-import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {MutableSnapshot} from 'recoil';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {ProductsState} from 'State/ProductsState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {ProductTagsState} from 'State/ProductTagsState';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {Product} from 'Types/Product';
+import { LocalStorageFilters } from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import { MutableSnapshot } from 'recoil';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { ProductsState } from 'State/ProductsState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { ProductTagsState } from 'State/ProductTagsState';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { Product } from 'Types/Product';
 
 describe('Product List', () => {
     beforeEach(() => {
@@ -47,15 +47,23 @@ describe('Product List', () => {
                 tags: [TestData.productTag2],
                 notes: '',
             };
-            localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
+            localStorage.setItem(
+                'filters',
+                JSON.stringify(TestData.defaultLocalStorageFilters)
+            );
 
-            renderProductList(({set}) => {
-                set(ProductsState, [...TestData.products, productWithAnnArborLocation])
+            renderProductList(({ set }) => {
+                set(ProductsState, [
+                    ...TestData.products,
+                    productWithAnnArborLocation,
+                ]);
             });
 
             await screen.findByText(TestData.productForHank.name);
             await screen.findByText(productWithAnnArborLocation.name);
-            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(3);
+            expect(
+                screen.getByTestId('productListSortedContainer').children.length
+            ).toEqual(3);
         });
 
         it('should return two aa products with location filter but not a product add button with readonly', async () => {
@@ -71,20 +79,30 @@ describe('Product List', () => {
                 tags: [TestData.productTag2],
                 notes: '',
             };
-            const products: Array<Product> = Object.assign([], TestData.products);
+            const products: Array<Product> = Object.assign(
+                [],
+                TestData.products
+            );
             products.push(productWithAnnArborLocation);
 
-            localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
+            localStorage.setItem(
+                'filters',
+                JSON.stringify(TestData.defaultLocalStorageFilters)
+            );
 
-            renderProductList(({set}) => {
-                set(IsReadOnlyState, true)
-                set(ProductsState, products)
+            renderProductList(({ set }) => {
+                set(IsReadOnlyState, true);
+                set(ProductsState, products);
             });
 
             await screen.findByText(TestData.productForHank.name);
             await screen.findByText(productWithAnnArborLocation.name);
-            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
-            expect(screen.queryByTestId('newProductButton')).not.toBeInTheDocument();
+            expect(
+                screen.getByTestId('productListSortedContainer').children.length
+            ).toEqual(2);
+            expect(
+                screen.queryByTestId('newProductButton')
+            ).not.toBeInTheDocument();
         });
 
         it('should return all products with the selected product tag filter', async () => {
@@ -92,18 +110,23 @@ describe('Product List', () => {
                 locationTagFilters: [],
                 productTagFilters: ['FordX'],
                 personTagFilters: [],
-                roleTagFilters: []
-            }
-            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
+                roleTagFilters: [],
+            };
+            localStorage.setItem(
+                'filters',
+                JSON.stringify(localStorageFilters)
+            );
 
-            renderProductList(({set}) => {
-                set(ProductsState, TestData.products)
-                set(ProductTagsState, TestData.productTags)
-                set(CurrentSpaceState, TestData.space)
+            renderProductList(({ set }) => {
+                set(ProductsState, TestData.products);
+                set(ProductTagsState, TestData.productTags);
+                set(CurrentSpaceState, TestData.space);
             });
 
             await screen.findByText(TestData.productWithAssignments.name);
-            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
+            expect(
+                screen.getByTestId('productListSortedContainer').children.length
+            ).toEqual(2);
         });
 
         it('should return one FordX products with product tag filter but not a product add button with readonly', async () => {
@@ -111,18 +134,25 @@ describe('Product List', () => {
                 locationTagFilters: [],
                 productTagFilters: ['FordX'],
                 personTagFilters: [],
-                roleTagFilters: []
-            }
-            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
-            renderProductList(({set}) => {
-                set(IsReadOnlyState, true)
-                set(ProductsState, TestData.products)
-                set(CurrentSpaceState, TestData.space)
+                roleTagFilters: [],
+            };
+            localStorage.setItem(
+                'filters',
+                JSON.stringify(localStorageFilters)
+            );
+            renderProductList(({ set }) => {
+                set(IsReadOnlyState, true);
+                set(ProductsState, TestData.products);
+                set(CurrentSpaceState, TestData.space);
             });
 
             await screen.findByText(TestData.productWithAssignments.name);
-            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(1);
-            expect(screen.queryByTestId('newProductButton')).not.toBeInTheDocument();
+            expect(
+                screen.getByTestId('productListSortedContainer').children.length
+            ).toEqual(1);
+            expect(
+                screen.queryByTestId('newProductButton')
+            ).not.toBeInTheDocument();
         });
 
         it('should return all products with the selected product tag filter', async () => {
@@ -130,21 +160,28 @@ describe('Product List', () => {
                 locationTagFilters: ['Dearborn'],
                 productTagFilters: ['AV'],
                 personTagFilters: [],
-                roleTagFilters: []
-            }
-            localStorage.setItem('filters', JSON.stringify(localStorageFilters));
-            renderProductList(({set}) => {
-                set(ProductsState, TestData.products)
-                set(ProductTagsState, TestData.productTags)
-                set(CurrentSpaceState, TestData.space)
+                roleTagFilters: [],
+            };
+            localStorage.setItem(
+                'filters',
+                JSON.stringify(localStorageFilters)
+            );
+            renderProductList(({ set }) => {
+                set(ProductsState, TestData.products);
+                set(ProductTagsState, TestData.productTags);
+                set(CurrentSpaceState, TestData.space);
             });
 
             await screen.findByText(TestData.productWithoutAssignments.name);
-            expect(screen.getByTestId('productListSortedContainer').children.length).toEqual(2);
+            expect(
+                screen.getByTestId('productListSortedContainer').children.length
+            ).toEqual(2);
         });
     });
 });
 
-function renderProductList(initializeState?: (mutableSnapshot: MutableSnapshot) => void) {
-    renderWithRecoil(<ProductList/>, initializeState);
+function renderProductList(
+    initializeState?: (mutableSnapshot: MutableSnapshot) => void
+) {
+    renderWithRecoil(<ProductList />, initializeState);
 }

@@ -16,13 +16,13 @@
  */
 import React from 'react';
 import ContactUsPage from './ContactUsPage';
-import {screen, waitFor} from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {MemoryRouter} from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import ContactUsClient from '../Services/Api/ContactUsClient';
-import {ContactUsRequest, UserType} from '../Types/ContactUsRequest';
-import {axe} from 'jest-axe';
-import {renderWithRecoil} from '../Utils/TestUtils';
+import { ContactUsRequest, UserType } from '../Types/ContactUsRequest';
+import { axe } from 'jest-axe';
+import { renderWithRecoil } from '../Utils/TestUtils';
 import {
     shouldNotShowSpaceNameInHeader,
     shouldOnlyShowSignoutButtonInAccountDropdown,
@@ -33,31 +33,47 @@ jest.mock('Services/Api/ContactUsClient');
 
 describe('Contact Us Page', () => {
     it('should populate and submit contact us form', async () => {
-        const confirmationMessage = 'Thanks! A member of our team will reach out to help you.';
+        const confirmationMessage =
+            'Thanks! A member of our team will reach out to help you.';
         const expectedFormValues: ContactUsRequest = {
             name: 'Layla',
             email: 'layla@abc.com',
             userType: UserType.NEW_USER,
-            message: 'Something isn\'t working right.'
-        }
+            message: "Something isn't working right.",
+        };
 
         renderContactUsPage();
 
-        await userEvent.type(screen.getByLabelText('Name:'), expectedFormValues.name);
-        await userEvent.type(screen.getByLabelText('Email:'), expectedFormValues.email);
-        const radioButtonToClick = screen.getByLabelText(expectedFormValues.userType);
+        await userEvent.type(
+            screen.getByLabelText('Name:'),
+            expectedFormValues.name
+        );
+        await userEvent.type(
+            screen.getByLabelText('Email:'),
+            expectedFormValues.email
+        );
+        const radioButtonToClick = screen.getByLabelText(
+            expectedFormValues.userType
+        );
         expect(radioButtonToClick).not.toBeChecked();
         await userEvent.click(radioButtonToClick);
         expect(radioButtonToClick).toBeChecked();
         expect(screen.getByLabelText('Existing User')).not.toBeChecked();
         expect(screen.getByLabelText('Other')).not.toBeChecked();
-        await userEvent.type(screen.getByLabelText('How can we help?'), expectedFormValues.message);
+        await userEvent.type(
+            screen.getByLabelText('How can we help?'),
+            expectedFormValues.message
+        );
 
         expect(screen.queryByText(confirmationMessage)).toBeNull();
 
         await userEvent.click(screen.getByText('Send'));
 
-        await waitFor(() => expect(ContactUsClient.send).toHaveBeenCalledWith(expectedFormValues));
+        await waitFor(() =>
+            expect(ContactUsClient.send).toHaveBeenCalledWith(
+                expectedFormValues
+            )
+        );
 
         expect(screen.queryByText('Send')).toBeNull();
         expect(screen.getByText(confirmationMessage)).toBeDefined();
@@ -67,8 +83,8 @@ describe('Contact Us Page', () => {
         let container: string | Element;
 
         beforeEach(() => {
-            ({container} = renderContactUsPage());
-        })
+            ({ container } = renderContactUsPage());
+        });
 
         it('should have no axe violations', async () => {
             const results = await axe(container);

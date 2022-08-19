@@ -19,8 +19,8 @@ import React from 'react';
 import Calendar from './Calendar/Calendar';
 import ProductSortBySelector from './ProductSortBySelector/ProductSortBySelector';
 import NavigationSection from './NavigationSection/NavigationSection';
-import {useRecoilValue} from 'recoil';
-import {IsReadOnlyState} from '../State/IsReadOnlyState';
+import { useRecoilValue } from 'recoil';
+import { IsReadOnlyState } from '../State/IsReadOnlyState';
 import ProductLocationFilter from './SortingAndFiltering/ProductLocationFilter/ProductLocationFilter';
 import ProductTagsFilter from './SortingAndFiltering/ProductTagsFilter/ProductTagsFilter';
 import PersonTagsFilter from './SortingAndFiltering/PersonTagsFilter/PersonTagsFilter';
@@ -35,18 +35,25 @@ interface Props {
     message?: JSX.Element;
 }
 
-function SubHeader({ showFilters = true, showSortBy = true, message = undefined}: Props): JSX.Element {
+function SubHeader({
+    showFilters = true,
+    showSortBy = true,
+    message = undefined,
+}: Props): JSX.Element {
     const isReadOnly = useRecoilValue(IsReadOnlyState);
 
     return (
         <div className="sub-header">
-            <section className="newSpaceSelectionContainer" aria-label="Filters">
+            <section
+                className="newSpaceSelectionContainer"
+                aria-label="Filters"
+            >
                 <div className="leftContent">
-                    <Calendar/>
+                    <Calendar />
                     {isReadOnly && (
                         <span className="viewState">
                             <i className="material-icons">visibility</i>
-                        View only
+                            View only
                         </span>
                     )}
                     {message && <>{message}</>}
@@ -60,7 +67,7 @@ function SubHeader({ showFilters = true, showSortBy = true, message = undefined}
                             <RolesFilter />
                         </NavigationSection>
                     )}
-                    {showSortBy && <ProductSortBySelector/>}
+                    {showSortBy && <ProductSortBySelector />}
                 </div>
             </section>
         </div>

@@ -15,5 +15,5 @@
  * limitations under the License.
  */
 module.exports = {
-    extends: ['plugin:cypress/recommended']
+    extends: ['plugin:cypress/recommended'],
 };

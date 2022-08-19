@@ -16,9 +16,9 @@
  */
 
 import React from 'react';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
 import ProductForm from 'Common/ProductForm/ProductForm';
 
 import './NewProductButton.scss';
@@ -27,21 +27,29 @@ interface Props {
     modalContents?: ModalContents;
 }
 
-function NewProductButton({ modalContents}: Props): JSX.Element {
+function NewProductButton({ modalContents }: Props): JSX.Element {
     const isReadOnly = useRecoilValue(IsReadOnlyState);
     const setModalContents = useSetRecoilState(ModalContentsState);
 
     const openModal = (): void => {
-        const createNewProductForm = {title: 'Add New Product', component: <ProductForm editing={false}/>};
+        const createNewProductForm = {
+            title: 'Add New Product',
+            component: <ProductForm editing={false} />,
+        };
         setModalContents(modalContents || createNewProductForm);
-    }
+    };
 
-    return isReadOnly ? <></> : (
+    return isReadOnly ? (
+        <></>
+    ) : (
         <button
             className={`newProduct`}
             onClick={openModal}
-            data-testid="newProductButton">
-            <i className="material-icons greyIcon addProductIcon" aria-hidden>add</i>
+            data-testid="newProductButton"
+        >
+            <i className="material-icons greyIcon addProductIcon" aria-hidden>
+                add
+            </i>
             Add Product
         </button>
     );

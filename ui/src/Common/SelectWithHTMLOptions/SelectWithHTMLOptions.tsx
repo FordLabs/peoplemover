@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import React, {ReactNode, useEffect, useRef, useState} from 'react';
-import {debounce} from 'Utils';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import { debounce } from 'Utils';
 
 import './SelectWithHTMLOptions.scss';
 
@@ -35,9 +35,15 @@ interface Props {
     onChange: (selectedOption: OptionType) => void;
 }
 
-const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }: Props): JSX.Element => {
+const SelectWithHTMLOptions = ({
+    ariaLabel,
+    options,
+    selectedOption,
+    onChange,
+}: Props): JSX.Element => {
     const [dropdownToggle, setDropdownToggle] = useState<boolean>(false);
-    const [currentOption, setCurrentOption] = useState<OptionType>(selectedOption);
+    const [currentOption, setCurrentOption] =
+        useState<OptionType>(selectedOption);
     const dropdownToggleElement = useRef<HTMLButtonElement>(null);
     const dropdownElement = useRef<HTMLUListElement>(null);
     const [currentIndex, setCurrentIndex] = useState<number>(
@@ -46,7 +52,8 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
     const [upKey, downKey, enterKey] = [38, 40, 13];
 
     useEffect(() => {
-        const currentOptionIndex = options.map(option => JSON.stringify(option.value))
+        const currentOptionIndex = options
+            .map((option) => JSON.stringify(option.value))
             .indexOf(JSON.stringify(currentOption.value));
         setCurrentIndex(currentOptionIndex);
     }, [options, currentOption]);
@@ -91,14 +98,19 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
         }
     };
 
-    const updateSelectedOption = (option: OptionType, currentIndex: number): void => {
+    const updateSelectedOption = (
+        option: OptionType,
+        currentIndex: number
+    ): void => {
         setCurrentOption(option);
         setCurrentIndex(currentIndex);
         onChange(option);
         hideDropdown();
     };
 
-    const handleKeyDownList = (event: React.KeyboardEvent<HTMLUListElement>): void => {
+    const handleKeyDownList = (
+        event: React.KeyboardEvent<HTMLUListElement>
+    ): void => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -108,7 +120,10 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
                     setSelectedItem(currentIndex - 1);
                 break;
             case downKey:
-                if (currentIndex !== undefined && currentIndex < options.length - 1)
+                if (
+                    currentIndex !== undefined &&
+                    currentIndex < options.length - 1
+                )
                     setSelectedItem(currentIndex + 1);
                 break;
             case enterKey:
@@ -120,8 +135,15 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
         }
     };
 
-    const handleKeyDownButton = (event: React.KeyboardEvent<HTMLButtonElement>): void => {
-        if (!dropdownToggle && (event.keyCode === upKey || event.keyCode === downKey || event.keyCode === enterKey)) {
+    const handleKeyDownButton = (
+        event: React.KeyboardEvent<HTMLButtonElement>
+    ): void => {
+        if (
+            !dropdownToggle &&
+            (event.keyCode === upKey ||
+                event.keyCode === downKey ||
+                event.keyCode === enterKey)
+        ) {
             event.preventDefault();
             event.stopPropagation();
             showDropdown();
@@ -141,21 +163,27 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
                 tabIndex={0}
                 ref={dropdownElement}
             >
-                {options && options.map((option, index) => {
-                    const isSelectedItem = currentIndex === index;
-                    return (
-                        <Option
-                            data-testid={`selectOption__${index}`}
-                            aria-selected={isSelectedItem}
-                            aria-label={option.ariaLabel}
-                            role="option"
-                            className={`selectOption ${isSelectedItem ? 'focused' : '' }`}
-                            key={`select-option-${index}`}
-                            onClick={(): void => updateSelectedOption(option, index)}>
-                            {option.displayValue}
-                        </Option>
-                    );
-                })}
+                {options &&
+                    options.map((option, index) => {
+                        const isSelectedItem = currentIndex === index;
+                        return (
+                            <Option
+                                data-testid={`selectOption__${index}`}
+                                aria-selected={isSelectedItem}
+                                aria-label={option.ariaLabel}
+                                role="option"
+                                className={`selectOption ${
+                                    isSelectedItem ? 'focused' : ''
+                                }`}
+                                key={`select-option-${index}`}
+                                onClick={(): void =>
+                                    updateSelectedOption(option, index)
+                                }
+                            >
+                                {option.displayValue}
+                            </Option>
+                        );
+                    })}
             </ul>
         );
     };
@@ -169,7 +197,8 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
                 aria-haspopup="listbox"
                 onClick={toggleDropdown}
                 onKeyDown={handleKeyDownButton}
-                data-testid="selectDropdownToggle">
+                data-testid="selectDropdownToggle"
+            >
                 <i className="material-icons selectDropdownArrow">
                     {dropdownToggle ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </i>
@@ -181,4 +210,3 @@ const SelectWithHTMLOptions = ({ ariaLabel, options, selectedOption, onChange }:
 };
 
 export default SelectWithHTMLOptions;
-

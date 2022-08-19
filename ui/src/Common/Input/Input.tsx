@@ -16,7 +16,7 @@
  */
 
 import * as React from 'react';
-import {ComponentPropsWithoutRef} from 'react';
+import { ComponentPropsWithoutRef } from 'react';
 
 import './Input.scss';
 
@@ -42,11 +42,16 @@ function Input(props: Props): JSX.Element {
     const isRadioButton = type === 'radio';
 
     const Label = () => (
-        <label className="input-label" htmlFor={id}>{label}</label>
-    )
+        <label className="input-label" htmlFor={id}>
+            {label}
+        </label>
+    );
 
     return (
-        <div className={`input-group ${ invalid ? 'invalid' : '' } ${type}`} data-testid="input">
+        <div
+            className={`input-group ${invalid ? 'invalid' : ''} ${type}`}
+            data-testid="input"
+        >
             {label && !isRadioButton && <Label />}
             <input
                 id={id}

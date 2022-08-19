@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import React, {createRef, useCallback, useEffect, useState} from 'react';
+import React, { createRef, useCallback, useEffect, useState } from 'react';
 import Dropdown from 'Common/Dropdown/Dropdown';
 import NavigationSection from '../NavigationSection/NavigationSection';
-import {useRecoilState} from 'recoil';
-import {ProductSortBy, ProductSortByState} from 'State/ProductSortByState';
+import { useRecoilState } from 'recoil';
+import { ProductSortBy, ProductSortByState } from 'State/ProductSortByState';
 
 import '../SortingAndFiltering/FilterOrSortBy.scss';
 
@@ -29,37 +29,46 @@ interface SortByOption {
 }
 
 const sortByOptions: SortByOption[] = [
-    {label:'Alphabetical', value: ProductSortBy.NAME},
-    {label:'Location', value: ProductSortBy.LOCATION},
-    {label:'Product Tag', value: ProductSortBy.PRODUCT_TAG},
+    { label: 'Alphabetical', value: ProductSortBy.NAME },
+    { label: 'Location', value: ProductSortBy.LOCATION },
+    { label: 'Product Tag', value: ProductSortBy.PRODUCT_TAG },
 ];
 
 function ProductSortBySelector(): JSX.Element {
-    const [productSortBy, setProductSortBy] = useRecoilState(ProductSortByState);
+    const [productSortBy, setProductSortBy] =
+        useRecoilState(ProductSortByState);
 
-    const [selectedSortOption, setSelectedSortOption] = useState<SortByOption>();
+    const [selectedSortOption, setSelectedSortOption] =
+        useState<SortByOption>();
 
     const stringToOption = useCallback((value: string): SortByOption => {
-        return sortByOptions.filter(option => option.value === value)[0];
+        return sortByOptions.filter((option) => option.value === value)[0];
     }, []);
 
-    useEffect( () => {
+    useEffect(() => {
         setSelectedSortOption(stringToOption(productSortBy));
     }, [productSortBy, stringToOption]);
 
     const dropdownContent = (
-        <>{sortByOptions.map((option) => (
-            <button
-                key={option.value}
-                id={`sortDropdownOption_${option.value}`}
-                className="sortDropdownOption"
-                data-testid={`sortDropdownOption_${option.value}`}
-                ref={createRef<HTMLButtonElement>()}
-                onClick={(): void => setProductSortBy(option.value)}>
-                {option.label}
-                {option.value === selectedSortOption?.value && <i className="material-icons sortby-option-check">check</i>}
-            </button>
-        ))}</>
+        <>
+            {sortByOptions.map((option) => (
+                <button
+                    key={option.value}
+                    id={`sortDropdownOption_${option.value}`}
+                    className="sortDropdownOption"
+                    data-testid={`sortDropdownOption_${option.value}`}
+                    ref={createRef<HTMLButtonElement>()}
+                    onClick={(): void => setProductSortBy(option.value)}
+                >
+                    {option.label}
+                    {option.value === selectedSortOption?.value && (
+                        <i className="material-icons sortby-option-check">
+                            check
+                        </i>
+                    )}
+                </button>
+            ))}
+        </>
     );
 
     return (

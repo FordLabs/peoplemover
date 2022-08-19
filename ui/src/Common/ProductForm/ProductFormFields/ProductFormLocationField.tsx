@@ -15,44 +15,50 @@
  * limitations under the License.
  */
 
-import {JSX} from '@babel/types';
-import {Option} from 'Types/Option';
+import { JSX } from '@babel/types';
+import { Option } from 'Types/Option';
 import LocationClient from 'Services/Api/LocationClient';
-import {AxiosResponse} from 'axios';
-import React, {useEffect, useState} from 'react';
-import {TagRequest} from 'Types/TagRequest';
-import SelectWithCreateOption, {MetadataReactSelectProps} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
-import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
-import {LocationTag} from 'Types/Tag';
-import {Product} from 'Types/Product';
+import { AxiosResponse } from 'axios';
+import React, { useEffect, useState } from 'react';
+import { TagRequest } from 'Types/TagRequest';
+import SelectWithCreateOption, {
+    MetadataReactSelectProps,
+} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
+import { useRecoilValue } from 'recoil';
+import {
+    CurrentSpaceState,
+    UUIDForCurrentSpaceSelector,
+} from 'State/CurrentSpaceState';
+import { LocationTag } from 'Types/Tag';
+import { Product } from 'Types/Product';
 
 interface Props {
-    loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
-    currentProductState: { currentProduct: Product; setCurrentProduct: (updatedProduct: Product) => void };
+    loadingState: {
+        isLoading: boolean;
+        setIsLoading: (isLoading: boolean) => void;
+    };
+    currentProductState: {
+        currentProduct: Product;
+        setCurrentProduct: (updatedProduct: Product) => void;
+    };
 }
 
 function ProductFormLocationField({
-    loadingState: {
-        isLoading,
-        setIsLoading,
-    },
-    currentProductState: {
-        currentProduct,
-        setCurrentProduct,
-    },
+    loadingState: { isLoading, setIsLoading },
+    currentProductState: { currentProduct, setCurrentProduct },
 }: Props): JSX.Element {
     const currentSpace = useRecoilValue(CurrentSpaceState);
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
 
     const { LOCATION_TAGS } = MetadataReactSelectProps;
-    const [availableLocations, setAvailableLocations] = useState<LocationTag[]>([]);
+    const [availableLocations, setAvailableLocations] = useState<LocationTag[]>(
+        []
+    );
 
     useEffect(() => {
-        LocationClient.get(uuid)
-            .then(result => {
-                setAvailableLocations(result.data);
-            });
+        LocationClient.get(uuid).then((result) => {
+            setAvailableLocations(result.data);
+        });
     }, [uuid]);
 
     function optionToSpaceLocation(option: Option): LocationTag {
@@ -88,15 +94,17 @@ function ProductFormLocationField({
         const location: TagRequest = {
             name: inputValue,
         };
-        LocationClient.add(location, currentSpace).then((result: AxiosResponse) => {
-            const newLocation: LocationTag = result.data;
-            setAvailableLocations([...availableLocations, newLocation]);
-            setCurrentProduct({
-                ...currentProduct,
-                spaceLocation: newLocation,
-            });
-            setIsLoading(false);
-        });
+        LocationClient.add(location, currentSpace).then(
+            (result: AxiosResponse) => {
+                const newLocation: LocationTag = result.data;
+                setAvailableLocations([...availableLocations, newLocation]);
+                setCurrentProduct({
+                    ...currentProduct,
+                    spaceLocation: newLocation,
+                });
+                setIsLoading(false);
+            }
+        );
     }
 
     function updateSpaceLocations(option: Option): void {
@@ -120,4 +128,3 @@ function ProductFormLocationField({
 }
 
 export default ProductFormLocationField;
-

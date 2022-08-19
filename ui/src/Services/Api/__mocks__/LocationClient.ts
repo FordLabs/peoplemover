@@ -21,7 +21,7 @@ const LocationClient = {
     get: jest.fn().mockResolvedValue({ data: TestData.locations }),
     add: jest.fn().mockResolvedValue({ data: { id: 11, name: 'Ahmedabad' } }),
     edit: jest.fn().mockResolvedValue({ data: { id: 1, name: 'Saline' } }),
-    delete: jest.fn().mockResolvedValue({ data: {} })
-}
+    delete: jest.fn().mockResolvedValue({ data: {} }),
+};
 
 export default LocationClient;

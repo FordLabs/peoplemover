@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
-import {createEmptySpace, Space} from 'Types/Space';
+import React, { useCallback, useEffect, useState } from 'react';
+import { createEmptySpace, Space } from 'Types/Space';
 import SpaceTile from './SpaceTile/SpaceTile';
 
 import Branding from 'Common/Branding/Branding';
-import {useNavigate} from 'react-router-dom';
-import {useRecoilState, useSetRecoilState} from 'recoil';
-import {ViewingDateState} from 'State/ViewingDateState';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { ViewingDateState } from 'State/ViewingDateState';
 import useFetchUserSpaces from 'Hooks/useFetchUserSpaces/useFetchUserSpaces';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { ModalContentsState } from 'State/ModalContentsState';
 import SpaceForm from './SpaceForm/SpaceForm';
 import Modal from '../Modal/Modal';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 import Header from 'Common/Header/Header';
 
 import './DashboardPage.scss';
@@ -44,24 +44,30 @@ function DashboardPage(): JSX.Element {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     function onCreateNewSpaceButtonClicked(): void {
-        setModalContents({title: 'Create New Space', component: <SpaceForm/>});
+        setModalContents({
+            title: 'Create New Space',
+            component: <SpaceForm />,
+        });
     }
 
-    const onSpaceClicked = useCallback((space: Space): void => {
-        navigate(`/${space.uuid}`)
-    }, [navigate])
+    const onSpaceClicked = useCallback(
+        (space: Space): void => {
+            navigate(`/${space.uuid}`);
+        },
+        [navigate]
+    );
 
     useEffect(() => {
         window.history.pushState([], 'User Dashboard', '/user/dashboard');
         setCurrentSpace(createEmptySpace());
 
         fetchUserSpaces().then(() => {
-            setIsLoading(false)
-        })
+            setIsLoading(false);
+        });
     }, [fetchUserSpaces, setCurrentSpace]);
 
     useEffect(() => {
-        setViewingDate(new Date())
+        setViewingDate(new Date());
 
         if (currentSpace?.uuid) onSpaceClicked(currentSpace);
     }, [currentSpace, onSpaceClicked, setViewingDate]);
@@ -70,12 +76,14 @@ function DashboardPage(): JSX.Element {
         return (
             <div className="welcomeMessageContainer">
                 <h1 className="welcomeMessageTitle">Welcome to PeopleMover!</h1>
-                <h2 className="welcomeMessageSubtitle">Get started by creating your own space.</h2>
+                <h2 className="welcomeMessageSubtitle">
+                    Get started by creating your own space.
+                </h2>
                 <p className="welcomeMessageParagraph">
-                    If you’re already a part of a space but you’re not seeing it here,
-                    you’ll have to ask the owner to share it with you.
+                    If you’re already a part of a space but you’re not seeing it
+                    here, you’ll have to ask the owner to share it with you.
                 </p>
-                <NewSpaceButton/>
+                <NewSpaceButton />
             </div>
         );
     }
@@ -85,11 +93,12 @@ function DashboardPage(): JSX.Element {
             <div className="userSpaceItemContainer">
                 {userSpaces.map((space, index) => (
                     <SpaceTile
-                        key={index} space={space}
+                        key={index}
+                        space={space}
                         onClick={onSpaceClicked}
                     />
                 ))}
-                <NewSpaceButton/>
+                <NewSpaceButton />
             </div>
         );
     }
@@ -97,8 +106,14 @@ function DashboardPage(): JSX.Element {
     function NewSpaceButton(): JSX.Element {
         return (
             <div>
-                <button className="createNewSpaceButton" onClick={onCreateNewSpaceButtonClicked}>
-                    <i className="material-icons createNewSpaceIcon" aria-hidden>
+                <button
+                    className="createNewSpaceButton"
+                    onClick={onCreateNewSpaceButtonClicked}
+                >
+                    <i
+                        className="material-icons createNewSpaceIcon"
+                        aria-hidden
+                    >
                         add_circle_outline
                     </i>
                     Create New Space
@@ -111,7 +126,12 @@ function DashboardPage(): JSX.Element {
         <>
             <Header onlyShowSignOutButton showStaticPeopleMoverLogo />
             <div className="spaceDashboard">
-                {!isLoading && (!userSpaces.length ? <WelcomeMessage/> : <SpaceTileGrid/>)}
+                {!isLoading &&
+                    (!userSpaces.length ? (
+                        <WelcomeMessage />
+                    ) : (
+                        <SpaceTileGrid />
+                    ))}
                 <Branding />
                 <Modal />
             </div>

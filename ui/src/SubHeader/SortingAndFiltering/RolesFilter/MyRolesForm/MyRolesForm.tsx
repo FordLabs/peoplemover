@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {JSX} from '@babel/types';
+import React, { useEffect, useState } from 'react';
+import { JSX } from '@babel/types';
 import ColorClient from 'Services/Api/ColorClient';
 import RoleTags from 'SubHeader/SortingAndFiltering/RolesFilter/MyRolesForm/RoleTags';
-import {Color} from 'Types/Color';
+import { Color } from 'Types/Color';
 
 import 'Styles/TagRowsContainer.scss';
 
@@ -27,7 +27,7 @@ function MyRolesForm(): JSX.Element {
     const [colors, setColors] = useState<Array<Color>>([]);
 
     useEffect(() => {
-        ColorClient.getAllColors().then(response => {
+        ColorClient.getAllColors().then((response) => {
             setColors(response.data);
         });
     }, []);
@@ -37,7 +37,10 @@ function MyRolesForm(): JSX.Element {
             {colors.length && <RoleTags colors={colors} />}
             <div className="traitWarning">
                 <i className="material-icons warningIcon">error</i>
-                <p className="warningText">Editing or deleting a role will affect any person currently assigned to it.</p>
+                <p className="warningText">
+                    Editing or deleting a role will affect any person currently
+                    assigned to it.
+                </p>
             </div>
         </div>
     );

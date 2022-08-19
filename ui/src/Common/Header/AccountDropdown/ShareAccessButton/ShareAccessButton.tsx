@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { useSetRecoilState } from 'recoil';
+import { ModalContentsState } from 'State/ModalContentsState';
 import ShareAccessForm from '../ShareAccessForm/ShareAccessForm';
 
 interface Props {
@@ -28,13 +28,14 @@ function ShareAccessButton({ focusOnRender = false }: Props): JSX.Element {
     const setModalContents = useSetRecoilState(ModalContentsState);
     const showButton = window.runConfig.invite_users_to_space_enabled;
 
-    const openEditContributorsModal = (): void => setModalContents({
-        title: 'Share Access',
-        component: <ShareAccessForm />,
-        hideTitle: true,
-        hideCloseBtn: true,
-        hideBackground: true
-    });
+    const openEditContributorsModal = (): void =>
+        setModalContents({
+            title: 'Share Access',
+            component: <ShareAccessForm />,
+            hideTitle: true,
+            hideCloseBtn: true,
+            hideBackground: true,
+        });
 
     return showButton ? (
         <button
@@ -46,7 +47,9 @@ function ShareAccessButton({ focusOnRender = false }: Props): JSX.Element {
         >
             Share Access
         </button>
-    ) : <></>;
+    ) : (
+        <></>
+    );
 }
 
 export default ShareAccessButton;

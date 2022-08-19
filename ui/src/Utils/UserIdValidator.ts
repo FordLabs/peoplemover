@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Option} from '../Types/Option';
+import { Option } from '../Types/Option';
 
 export interface ValidateUserResult {
     options: Option[];
@@ -28,21 +28,22 @@ export const emptyValidateUserResult = Object.freeze({
 });
 
 export function makeOption(name: string): Option {
-    return {value: name, label: name};
+    return { value: name, label: name };
 }
 
 export const nameSplitPattern = new RegExp(/,|;|\s/);
 export const userIdPattern = new RegExp(/^[a-zA-Z][a-zA-Z0-9]{1,8}$/);
 
 export function validate(input: string): ValidateUserResult {
-
-    if (input.length > 0 ) {
+    if (input.length > 0) {
         const names = input.split(nameSplitPattern);
-        const validUserIds = names.filter(name => name.length > 0)
-            .filter(name => name.match(userIdPattern))
+        const validUserIds = names
+            .filter((name) => name.length > 0)
+            .filter((name) => name.match(userIdPattern))
             .map(makeOption);
-        const invalidStr = names.filter(name => name.length > 0)
-            .filter(name => !name.match(userIdPattern))
+        const invalidStr = names
+            .filter((name) => name.length > 0)
+            .filter((name) => !name.match(userIdPattern))
             .join(' ');
         return {
             options: validUserIds,

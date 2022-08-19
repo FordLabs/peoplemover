@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {Space} from 'Types/Space';
-import {Person} from '../../Types/Person';
-import {getAxiosConfig} from '../../Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { Space } from 'Types/Space';
+import { Person } from '../../Types/Person';
+import { getAxiosConfig } from '../../Utils/getAxiosConfig';
 
 function getBasePeopleUrl(spaceUuid: string): string {
     return '/api/spaces/' + spaceUuid + '/people';
@@ -29,22 +29,35 @@ async function getAllPeopleInSpace(spaceUuid: string): Promise<AxiosResponse> {
     return Axios.get(url, getAxiosConfig());
 }
 
-async function createPersonForSpace(space: Space, person: Person): Promise<AxiosResponse> {
+async function createPersonForSpace(
+    space: Space,
+    person: Person
+): Promise<AxiosResponse> {
     const url = getBasePeopleUrl(space.uuid || '');
     return Axios.post(url, person, getAxiosConfig());
 }
 
-async function archivePerson(space: Space, person: Person, archiveDate: Date): Promise<AxiosResponse> {
+async function archivePerson(
+    space: Space,
+    person: Person,
+    archiveDate: Date
+): Promise<AxiosResponse> {
     const url = getBasePeopleUrl(space.uuid!) + '/' + person.id + '/archive';
-    return Axios.post(url, {archiveDate: archiveDate}, getAxiosConfig());
+    return Axios.post(url, { archiveDate: archiveDate }, getAxiosConfig());
 }
 
-async function updatePerson(space: Space, person: Person): Promise<AxiosResponse> {
+async function updatePerson(
+    space: Space,
+    person: Person
+): Promise<AxiosResponse> {
     const url = getBasePeopleUrl(space.uuid!) + `/${person.id}`;
-    return Axios.put(url, person, getAxiosConfig())
+    return Axios.put(url, person, getAxiosConfig());
 }
 
-async function removePerson(spaceUuid: string, personId: number): Promise<AxiosResponse> {
+async function removePerson(
+    spaceUuid: string,
+    personId: number
+): Promise<AxiosResponse> {
     const url = getBasePeopleUrl(spaceUuid) + `/${personId}`;
     return Axios.delete(url, getAxiosConfig());
 }
@@ -54,8 +67,7 @@ const PeopleClient = {
     createPersonForSpace,
     archivePerson,
     updatePerson,
-    removePerson
-}
-
+    removePerson,
+};
 
 export default PeopleClient;

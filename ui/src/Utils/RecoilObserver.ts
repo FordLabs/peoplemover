@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import {useEffect} from 'react';
-import {RecoilValue, useRecoilValue} from 'recoil';
+import { useEffect } from 'react';
+import { RecoilValue, useRecoilValue } from 'recoil';
 
 export const RecoilObserver = ({
     recoilState,

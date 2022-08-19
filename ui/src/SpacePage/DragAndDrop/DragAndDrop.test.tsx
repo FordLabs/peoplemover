@@ -14,18 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-import React, {ReactChildren} from 'react';
-import {DropResult} from 'react-beautiful-dnd';
-import {screen, waitFor} from '@testing-library/react';
-import {ProductsState} from '../../State/ProductsState';
+import React, { ReactChildren } from 'react';
+import { DropResult } from 'react-beautiful-dnd';
+import { screen, waitFor } from '@testing-library/react';
+import { ProductsState } from '../../State/ProductsState';
 import TestData from '../../Utils/TestData';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
-import {RecoilObserver, renderWithRecoil} from '../../Utils/TestUtils';
-import {ViewingDateState} from '../../State/ViewingDateState';
+import { CurrentSpaceState } from '../../State/CurrentSpaceState';
+import { RecoilObserver, renderWithRecoil } from '../../Utils/TestUtils';
+import { ViewingDateState } from '../../State/ViewingDateState';
 import AssignmentClient from '../../Services/Api/AssignmentClient';
 import ProductClient from 'Services/Api/ProductClient';
-import {Product} from '../../Types/Product';
-import {Assignment} from '../../Types/Assignment';
+import { Product } from '../../Types/Product';
+import { Assignment } from '../../Types/Assignment';
 
 jest.mock('Services/Api/AssignmentClient');
 jest.mock('Services/Api/ProductClient');
@@ -54,7 +54,9 @@ jest.mock('react-beautiful-dnd', () => ({
 
         return (
             <>
-                <button onClick={() => onDragEnd(dropResult)}>trigger-onDragEnd</button>
+                <button onClick={() => onDragEnd(dropResult)}>
+                    trigger-onDragEnd
+                </button>
                 {children}
             </>
         );
@@ -64,9 +66,9 @@ jest.mock('react-beautiful-dnd', () => ({
 const mockFetchProducts = jest.fn();
 jest.mock('Hooks/useFetchProducts/useFetchProducts', () => {
     return jest.fn(() => ({
-        fetchProducts: mockFetchProducts
-    }))
-})
+        fetchProducts: mockFetchProducts,
+    }));
+});
 
 describe('Drag and Drop', () => {
     const assignmentToMove: Assignment = TestData.assignmentForUnassigned;
@@ -78,8 +80,8 @@ describe('Drag and Drop', () => {
         let productState: Product[] | null;
         const originalProducts = [
             productAssignmentWasOriginallyIn,
-            productToMoveAssignmentTo
-        ]
+            productToMoveAssignmentTo,
+        ];
 
         beforeEach(() => {
             productState = null;
@@ -105,16 +107,23 @@ describe('Drag and Drop', () => {
             const updatedProducts = [
                 {
                     ...productAssignmentWasOriginallyIn,
-                    assignments: [TestData.assignmentForArchived]
+                    assignments: [TestData.assignmentForArchived],
                 },
                 {
                     ...productToMoveAssignmentTo,
-                    assignments: [...productToMoveAssignmentTo.assignments, assignmentToMove]
-                }
-            ]
-            ProductClient.getProductsForDate = jest.fn().mockResolvedValue(updatedProducts);
+                    assignments: [
+                        ...productToMoveAssignmentTo.assignments,
+                        assignmentToMove,
+                    ],
+                },
+            ];
+            ProductClient.getProductsForDate = jest
+                .fn()
+                .mockResolvedValue(updatedProducts);
 
-            expect(assignmentToMove.productId).toBe(productAssignmentWasOriginallyIn.id);
+            expect(assignmentToMove.productId).toBe(
+                productAssignmentWasOriginallyIn.id
+            );
 
             screen.getByText('trigger-onDragEnd').click();
 
@@ -124,7 +133,9 @@ describe('Drag and Drop', () => {
         });
 
         it('should move assigment back to original spot in global state if database update failed', async () => {
-            AssignmentClient.createAssignmentForDate = jest.fn().mockRejectedValue('');
+            AssignmentClient.createAssignmentForDate = jest
+                .fn()
+                .mockRejectedValue('');
 
             screen.getByText('trigger-onDragEnd').click();
 
@@ -136,14 +147,24 @@ describe('Drag and Drop', () => {
 
     async function waitForAssignmentToBeMoved() {
         await waitFor(() =>
-            expect(AssignmentClient.getAssignmentsUsingPersonIdAndDate)
-                .toHaveBeenCalledWith(TestData.space.uuid, assignmentToMove.person.id, viewingDate)
-        )
+            expect(
+                AssignmentClient.getAssignmentsUsingPersonIdAndDate
+            ).toHaveBeenCalledWith(
+                TestData.space.uuid,
+                assignmentToMove.person.id,
+                viewingDate
+            )
+        );
 
         await waitFor(() =>
-            expect(AssignmentClient.createAssignmentForDate).toHaveBeenCalledWith(
-                "2020-05-14",
-                [{"placeholder": false, "productId": 1}, {"placeholder": false, "productId": 1}],
+            expect(
+                AssignmentClient.createAssignmentForDate
+            ).toHaveBeenCalledWith(
+                '2020-05-14',
+                [
+                    { placeholder: false, productId: 1 },
+                    { placeholder: false, productId: 1 },
+                ],
                 TestData.space,
                 assignmentToMove.person
             )

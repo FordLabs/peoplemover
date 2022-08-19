@@ -33,69 +33,94 @@ interface DropdownProps {
     closeOnSelect?: boolean;
 }
 
-export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy, className, children, testId, dropdownOptionIds, closeOnSelect}: DropdownProps): JSX.Element {
-
+export default function AccessibleDropdownContainer({
+    handleClose,
+    ariaLabelledBy,
+    className,
+    children,
+    testId,
+    dropdownOptionIds,
+    closeOnSelect,
+}: DropdownProps): JSX.Element {
     const dropdownContainer = createRef<HTMLDivElement>();
 
-    const leaveFocusListener = useCallback((e: {target: EventTarget | null; key?: string}) => {
-        const setFocusOnExpectedElementWhenUsingUpOrDownKey = (e: { target: EventTarget | null; key?: string }): void => {
-            if (isArrowKeyFunctionalitySetup()) {
-                const movementDirection = getMovementDirection(e.key);
-                setFocusState(e, movementDirection);
-            }
-        };
+    const leaveFocusListener = useCallback(
+        (e: { target: EventTarget | null; key?: string }) => {
+            const setFocusOnExpectedElementWhenUsingUpOrDownKey = (e: {
+                target: EventTarget | null;
+                key?: string;
+            }): void => {
+                if (isArrowKeyFunctionalitySetup()) {
+                    const movementDirection = getMovementDirection(e.key);
+                    setFocusState(e, movementDirection);
+                }
+            };
 
-        const isArrowKeyFunctionalitySetup = (): boolean => {
-            const childrenWithUndefinedId = React.Children.toArray(children).filter(child => (child as ReactElement).props.id === undefined);
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            const childrenWithNullRef = React.Children.toArray(children).filter(child => (child as ReactElement).ref === null);
+            const isArrowKeyFunctionalitySetup = (): boolean => {
+                const childrenWithUndefinedId = React.Children.toArray(
+                    children
+                ).filter(
+                    (child) => (child as ReactElement).props.id === undefined
+                );
+                const childrenWithNullRef = React.Children.toArray(
+                    children
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                ).filter((child) => (child as ReactElement).ref === null);
 
-            return childrenWithUndefinedId.length === 0 && childrenWithNullRef.length === 0;
-        };
+                return (
+                    childrenWithUndefinedId.length === 0 &&
+                    childrenWithNullRef.length === 0
+                );
+            };
 
-        const getMovementDirection = (key?: string ): number => {
-            if (key === 'ArrowDown') {
-                return 1;
-            } else {
+            const getMovementDirection = (key?: string): number => {
+                if (key === 'ArrowDown') return 1;
                 return -1;
+            };
+
+            const setFocusState = (
+                e: { target: EventTarget | null; key?: string },
+                movementDirection: number
+            ): void => {
+                const target = e.target as HTMLElement;
+
+                const totalNumberOfChildren = React.Children.count(children);
+                const childIndex = React.Children.toArray(children).findIndex(
+                    (child) => (child as ReactElement).props.id === target.id
+                );
+
+                const nextIndex = childIndex + movementDirection;
+                if (nextIndex >= totalNumberOfChildren) {
+                    focusChild(0);
+                } else if (nextIndex < 0) {
+                    focusChild(totalNumberOfChildren - 1);
+                } else {
+                    focusChild(nextIndex);
+                }
+            };
+
+            const focusChild = (index: number): void => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                React.Children.toArray(children)[index].ref.current.focus();
+            };
+
+            if (
+                !dropdownContainer.current?.contains(e.target as HTMLElement) &&
+                !dropdownOptionIds?.includes((e.target as HTMLElement).id)
+            ) {
+                handleClose();
             }
-        };
 
-        const setFocusState = (e: { target: EventTarget | null; key?: string }, movementDirection: number): void => {
-            const target = e.target as HTMLElement;
+            if (e.key === 'Escape') handleClose();
 
-            const totalNumberOfChildren = React.Children.count(children);
-            const childIndex = React.Children.toArray(children).findIndex(child => (child as ReactElement).props.id === target.id);
-
-            const nextIndex = childIndex + movementDirection;
-            if (nextIndex >= totalNumberOfChildren) {
-                focusChild(0);
-            } else if (nextIndex < 0) {
-                focusChild(totalNumberOfChildren - 1);
-            } else {
-                focusChild(nextIndex);
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
             }
-        };
-
-        const focusChild = (index: number): void => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            React.Children.toArray(children)[index].ref.current.focus();
-        };
-
-        if (!dropdownContainer.current?.contains(e.target as HTMLElement) && !dropdownOptionIds?.includes((e.target as HTMLElement).id)) {
-            handleClose();
-        }
-
-        if (e.key === 'Escape') {
-            handleClose();
-        }
-
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            setFocusOnExpectedElementWhenUsingUpOrDownKey(e);
-        }
-    }, [dropdownContainer, handleClose, children, dropdownOptionIds]);
+        },
+        [dropdownContainer, handleClose, children, dropdownOptionIds]
+    );
 
     useEffect(() => {
         document.addEventListener('mouseup', leaveFocusListener);
@@ -116,9 +141,7 @@ export default function AccessibleDropdownContainer({handleClose, ariaLabelledBy
             aria-labelledby={ariaLabelledBy}
             data-testid={testId}
             onClick={(): void => {
-                if (closeOnSelect) {
-                    handleClose();
-                }
+                if (closeOnSelect) handleClose();
             }}
         >
             {children}

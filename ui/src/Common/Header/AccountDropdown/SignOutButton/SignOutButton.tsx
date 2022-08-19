@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-import {removeToken} from 'Services/TokenService';
+import { removeToken } from 'Services/TokenService';
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
-import {useSetRecoilState} from 'recoil';
-import {CurrentUserState} from 'State/CurrentUserState';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { CurrentUserState } from 'State/CurrentUserState';
 
 interface Props {
     focusOnRender?: boolean;
@@ -32,7 +32,7 @@ function SignOutButton({ focusOnRender = false }: Props): JSX.Element {
     const clearAccessTokenCookie = (): void => {
         removeToken();
         setCurrentUser('');
-        navigate('/', {replace: true})
+        navigate('/', { replace: true });
     };
 
     return (

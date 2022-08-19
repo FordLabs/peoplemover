@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
-import EditMenu, {EditMenuOption} from './EditMenu';
+import EditMenu, { EditMenuOption } from './EditMenu';
 
 describe('The edit menu', () => {
     describe('for a person card', () => {
@@ -34,7 +34,6 @@ describe('The edit menu', () => {
                 callback: markAsPlaceholderCallback,
                 text: 'Mark as Placeholder',
                 icon: 'create',
-
             },
             {
                 callback: cancelAssignmentCallback,
@@ -44,23 +43,39 @@ describe('The edit menu', () => {
         ];
 
         it('should render the right static content', async () => {
-            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={jest.fn()}/>);
+            const underTest = render(
+                <EditMenu
+                    menuOptionList={menuOptionList}
+                    onClosed={jest.fn()}
+                />
+            );
 
             await underTest.findByText('Edit Person');
-            const firstIcon = await underTest.findByTestId('editMenuOption__edit_person');
+            const firstIcon = await underTest.findByTestId(
+                'editMenuOption__edit_person'
+            );
             expect(firstIcon.innerHTML).toContain(menuOptionList[0].icon);
 
             await underTest.findByText('Mark as Placeholder');
-            const secondIcon = await underTest.findByTestId('editMenuOption__mark_as_placeholder');
+            const secondIcon = await underTest.findByTestId(
+                'editMenuOption__mark_as_placeholder'
+            );
             expect(secondIcon.innerHTML).toContain(menuOptionList[1].icon);
 
             await underTest.findByText('Cancel Assignment');
-            const thirdIcon = await underTest.findByTestId('editMenuOption__cancel_assignment');
+            const thirdIcon = await underTest.findByTestId(
+                'editMenuOption__cancel_assignment'
+            );
             expect(thirdIcon.innerHTML).toContain(menuOptionList[2].icon);
         });
 
         it('should call the right callback when menu option is clicked', () => {
-            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={jest.fn()}/>);
+            const underTest = render(
+                <EditMenu
+                    menuOptionList={menuOptionList}
+                    onClosed={jest.fn()}
+                />
+            );
             expect(menuOptionList[0].callback).not.toHaveBeenCalled();
             fireEvent.click(underTest.getByText('Edit Person'));
             expect(menuOptionList[0].callback).toHaveBeenCalled();
@@ -81,13 +96,22 @@ describe('The edit menu', () => {
                     icon: 'inbox',
                 },
             ];
-            const underTest = render(<EditMenu menuOptionList={menuOptionList} onClosed={jest.fn()}/>);
+            const underTest = render(
+                <EditMenu
+                    menuOptionList={menuOptionList}
+                    onClosed={jest.fn()}
+                />
+            );
             await underTest.findByText('Edit product');
-            const firstIcon = await underTest.findByTestId('editMenuOption__edit_product');
+            const firstIcon = await underTest.findByTestId(
+                'editMenuOption__edit_product'
+            );
             expect(firstIcon.innerHTML).toContain(menuOptionList[0].icon);
 
             await underTest.findByText('Archive product');
-            const secondIcon = await underTest.findByTestId('editMenuOption__archive_product');
+            const secondIcon = await underTest.findByTestId(
+                'editMenuOption__archive_product'
+            );
             expect(secondIcon.innerHTML).toContain(menuOptionList[1].icon);
         });
     });

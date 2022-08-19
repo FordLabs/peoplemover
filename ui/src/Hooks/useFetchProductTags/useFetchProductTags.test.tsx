@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import {act, renderHook} from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import ProductTagClient from '../../Services/Api/ProductTagClient';
 import useFetchProductTags from './useFetchProductTags';
@@ -39,15 +38,19 @@ const productTagsAlphabetical = [
 
 describe('useFetchProductTags Hook', () => {
     it('should fetch all product tags for space and store them in recoil alphabetically', async () => {
-        ProductTagClient.get = jest.fn().mockResolvedValue({ data: productTagsNotAlphabetical })
+        ProductTagClient.get = jest
+            .fn()
+            .mockResolvedValue({ data: productTagsNotAlphabetical });
 
-        const { result } = renderHook(() => useFetchProductTags(spaceUUID), { wrapper });
+        const { result } = renderHook(() => useFetchProductTags(spaceUUID), {
+            wrapper,
+        });
 
-        expect(ProductTagClient.get).not.toHaveBeenCalled()
+        expect(ProductTagClient.get).not.toHaveBeenCalled();
         expect(result.current.productTags).toEqual([]);
 
         await act(async () => {
-            result.current.fetchProductTags()
+            result.current.fetchProductTags();
         });
         expect(ProductTagClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.productTags).toEqual(productTagsAlphabetical);

@@ -16,8 +16,8 @@
  */
 
 import moment from 'moment';
-import {isArchived} from 'Services/PersonService';
-import {Product} from 'Types/Product';
+import { isArchived } from 'Services/PersonService';
+import { Product } from 'Types/Product';
 
 export const UNASSIGNED_PRODUCT_NAME = 'unassigned';
 
@@ -44,36 +44,57 @@ export function isUnassignedProduct(product: Product): boolean {
 }
 
 export function isArchivedOnDate(product: Product, viewingDate: Date): boolean {
-    return product.archived
-    || !endsOnOrAfterDate(product, viewingDate);
+    return product.archived || !endsOnOrAfterDate(product, viewingDate);
 }
 
 export function isActiveProduct(product: Product, viewingDate: Date): boolean {
-    return product.name.toLowerCase() !== unassignedProductName
-        && !product.archived
-        && endsOnOrAfterDate(product, viewingDate);
+    return (
+        product.name.toLowerCase() !== unassignedProductName &&
+        !product.archived &&
+        endsOnOrAfterDate(product, viewingDate)
+    );
 }
 
 export function endsOnOrAfterDate(product: Product, date: Date): boolean {
-    return product.endDate == null || product.endDate >= moment(date).format('YYYY-MM-DD');
+    return (
+        product.endDate == null ||
+        product.endDate >= moment(date).format('YYYY-MM-DD')
+    );
 }
 
-export function stripAssignmentsForArchivedPeople(product: Product, viewingDate: Date): Product {
-    return {...product, assignments: product?.assignments?.filter(assignment => !isArchived(assignment.person, viewingDate))};
+export function stripAssignmentsForArchivedPeople(
+    product: Product,
+    viewingDate: Date
+): Product {
+    return {
+        ...product,
+        assignments: product?.assignments?.filter(
+            (assignment) => !isArchived(assignment.person, viewingDate)
+        ),
+    };
 }
 
-export  function isProductMatchingSelectedFilters(product: Product, locationTagFilters: Array<string>, productTagFilters: Array<string>): boolean {
+export function isProductMatchingSelectedFilters(
+    product: Product,
+    locationTagFilters: Array<string>,
+    productTagFilters: Array<string>
+): boolean {
     let isMatchingLocationFilter = false;
     let isMatchingProductTagFilter = false;
 
-    if ((product.spaceLocation && locationTagFilters.includes(product.spaceLocation.name))
-        || locationTagFilters.length === 0) {
+    if (
+        (product.spaceLocation &&
+            locationTagFilters.includes(product.spaceLocation.name)) ||
+        locationTagFilters.length === 0
+    ) {
         isMatchingLocationFilter = true;
     }
 
     if (product.tags) {
-        const productTagNames: Array<string> = product.tags.map(tag => tag.name);
-        productTagFilters.forEach(productTagFilter => {
+        const productTagNames: Array<string> = product.tags.map(
+            (tag) => tag.name
+        );
+        productTagFilters.forEach((productTagFilter) => {
             if (productTagNames.includes(productTagFilter)) {
                 isMatchingProductTagFilter = true;
             }

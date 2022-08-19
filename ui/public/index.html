@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"/>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1, shrink-to-fit=no"
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <meta name="theme-color" content="#000000"/>
+    <meta name="theme-color" content="#000000" />
 
-    <meta property="og:title" content="PeopleMover"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:image" content="https://peoplemover.ford.com/preview_image.png"/>
+    <meta property="og:title" content="PeopleMover" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:image"
+      content="https://peoplemover.ford.com/preview_image.png"
+    />
     <meta property="og:image:alt" content="An example PeopleMover space" />
-    <meta property="og:url" content="%PUBLIC_URL%"/>
-    <meta property="og:description" content="A tool that helps organizations visualize their products and people in one space."/>
+    <meta property="og:url" content="%PUBLIC_URL%" />
+    <meta
+      property="og:description"
+      content="A tool that helps organizations visualize their products and people in one space."
+    />
 
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -31,39 +37,41 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>PeopleMover</title>
-</head>
-<body>
+  </head>
+  <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script type="application/javascript">
-
-        /**
-         * @return {string}
-         */
-        function IEdetection() {
-            var ua = window.navigator.userAgent;
-            var msie = ua.indexOf('MSIE ');
-            if (msie > 0) {
-                // IE 10 or older, return version number
-                return ('IE ' + parseInt(ua.substring(
-                    msie + 5, ua.indexOf('.', msie)), 10));
-            }
-            var trident = ua.indexOf('Trident/');
-            if (trident > 0) {
-                // IE 11, return version number
-                var rv = ua.indexOf('rv:');
-                return ('IE ' + parseInt(ua.substring(
-                    rv + 3, ua.indexOf('.', rv)), 10));
-            }
-            // User uses other browser
-            return ('Not IE');
+      /**
+       * @return {string}
+       */
+      function IEdetection() {
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf('MSIE ');
+        if (msie > 0) {
+          // IE 10 or older, return version number
+          return (
+            'IE ' + parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10)
+          );
         }
-
-        if (IEdetection() !== 'Not IE') {
-            document.body.innerHTML = "" +
-                "<div style='text-align: center;'>" +
-                "   <h1>For the best PeopleMover experience, <br/> please use Chrome</h1>" +
-                "</div>";
+        var trident = ua.indexOf('Trident/');
+        if (trident > 0) {
+          // IE 11, return version number
+          var rv = ua.indexOf('rv:');
+          return (
+            'IE ' + parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10)
+          );
         }
+        // User uses other browser
+        return 'Not IE';
+      }
+
+      if (IEdetection() !== 'Not IE') {
+        document.body.innerHTML =
+          '' +
+          "<div style='text-align: center;'>" +
+          '   <h1>For the best PeopleMover experience, <br/> please use Chrome</h1>' +
+          '</div>';
+      }
     </script>
 
     <div id="root"></div>
@@ -77,5 +85,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    </body>
+  </body>
 </html>

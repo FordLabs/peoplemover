@@ -19,18 +19,18 @@ import './Styles/Colors.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {RedirectToADFS} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
+import { RedirectToADFS } from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import Axios from 'axios';
 import UnsupportedBrowserPage from './UnsupportedBrowserPage/UnsupportedBrowserPage';
-import CacheBuster, {CacheBusterProps} from './CacheBuster';
-import {removeToken} from './Services/TokenService';
+import CacheBuster, { CacheBusterProps } from './CacheBuster';
+import { removeToken } from './Services/TokenService';
 import Routes from './Routes';
-import {IFlags} from 'flagsmith';
+import { IFlags } from 'flagsmith';
 
 import axe from '@axe-core/react';
-import {RecoilRoot} from 'recoil';
-import {FlagsState, simplifyFlags} from './State/FlagsState';
-import {getBrowserInfo} from './Utils/getBrowserInfo';
+import { RecoilRoot } from 'recoil';
+import { FlagsState, simplifyFlags } from './State/FlagsState';
+import { getBrowserInfo } from './Utils/getBrowserInfo';
 import FlagSmithService from './Services/FlagSmithService';
 import reactDomRender from './Utils/reactDomRender';
 import EnvironmentConfigService from './Services/Api/EnvironmentConfigService';
@@ -41,44 +41,49 @@ if (process.env.NODE_ENV !== 'production') {
 
 const UNAUTHORIZED = 401;
 Axios.interceptors.response.use(
-    response => response,
-    error => {
-        const {status} = error.response;
+    (response) => response,
+    (error) => {
+        const { status } = error.response;
 
         if (status === UNAUTHORIZED) {
             removeToken();
             RedirectToADFS();
         }
         return Promise.reject(error);
-    },
+    }
 );
-const { isNotSupported, browserName } = getBrowserInfo()
+const { isNotSupported, browserName } = getBrowserInfo();
 
 if (isNotSupported) {
-    reactDomRender(<UnsupportedBrowserPage browserName={browserName}/>);
+    reactDomRender(<UnsupportedBrowserPage browserName={browserName} />);
 } else {
-    EnvironmentConfigService.get()
-        .then(async (runConfig) => {
-            const flags: IFlags | null = await FlagSmithService.initAndGetFlags(
-                runConfig.flagsmith_url,
-                runConfig.flagsmith_environment_id
-            );
+    EnvironmentConfigService.get().then(async (runConfig) => {
+        const flags: IFlags | null = await FlagSmithService.initAndGetFlags(
+            runConfig.flagsmith_url,
+            runConfig.flagsmith_environment_id
+        );
 
-            reactDomRender(
-                <CacheBuster>
-                    {({loading, isLatestVersion, refreshCacheAndReload}: CacheBusterProps): JSX.Element | null => {
-                        if (loading) return null;
-                        if (!loading && !isLatestVersion) refreshCacheAndReload();
+        reactDomRender(
+            <CacheBuster>
+                {({
+                    loading,
+                    isLatestVersion,
+                    refreshCacheAndReload,
+                }: CacheBusterProps): JSX.Element | null => {
+                    if (loading) return null;
+                    if (!loading && !isLatestVersion) refreshCacheAndReload();
 
-                        return (
-                            <RecoilRoot initializeState={({set}) => {
-                                set(FlagsState, simplifyFlags(flags))
-                            }}>
-                                <Routes />
-                            </RecoilRoot>
-                        );
-                    }}
-                </CacheBuster>
-            );
-        });
+                    return (
+                        <RecoilRoot
+                            initializeState={({ set }) => {
+                                set(FlagsState, simplifyFlags(flags));
+                            }}
+                        >
+                            <Routes />
+                        </RecoilRoot>
+                    );
+                }}
+            </CacheBuster>
+        );
+    });
 }

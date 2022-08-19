@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
-import {useRecoilValue} from 'recoil';
-import {LocationsState} from 'State/LocationsState';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { LocationsState } from 'State/LocationsState';
 import MyTagsForm from '../MyTagsForm/MyTagsForm';
 import {
     FilterTypeListings,
@@ -25,27 +25,33 @@ import {
     locationTagsFilterKey,
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
-import {FilterOption} from '../../../Types/Option';
+import { FilterOption } from '../../../Types/Option';
 import Filter from '../Filter';
-import {LocationTag} from '../../../Types/Tag';
+import { LocationTag } from '../../../Types/Tag';
 
 function ProductLocationFilter() {
     const productLocations = useRecoilValue(LocationsState);
 
     const getFilterOptions = useCallback((): Array<FilterOption> => {
-        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(locationTagsFilterKey);
-        return productLocations.map((tag: LocationTag): FilterOption => ({
-            label: tag.name,
-            value: tag.id + '_' + tag.name,
-            selected: selectedRolesFromLocalStorage.includes(tag.name),
-        }));
-    },[productLocations])
+        const selectedRolesFromLocalStorage = getLocalStorageFiltersByType(
+            locationTagsFilterKey
+        );
+        return productLocations.map(
+            (tag: LocationTag): FilterOption => ({
+                label: tag.name,
+                value: tag.id + '_' + tag.name,
+                selected: selectedRolesFromLocalStorage.includes(tag.name),
+            })
+        );
+    }, [productLocations]);
 
-    const [locationFilterOptions, setLocationFilterOptions] = useState<Array<FilterOption>>([]);
+    const [locationFilterOptions, setLocationFilterOptions] = useState<
+        Array<FilterOption>
+    >([]);
 
     useEffect(() => {
-        setLocationFilterOptions(getFilterOptions())
-    }, [getFilterOptions, productLocations])
+        setLocationFilterOptions(getFilterOptions());
+    }, [getFilterOptions, productLocations]);
 
     function setFilterOptions(options: FilterOption[]) {
         setLocalStorageFiltersByType(locationTagsFilterKey, options);
@@ -59,9 +65,12 @@ function ProductLocationFilter() {
             onSelect={setFilterOptions}
             modalContents={{
                 title: 'Product Location',
-                component: <MyTagsForm filterType={FilterTypeListings.Location}/>}
-            }/>
-    )
+                component: (
+                    <MyTagsForm filterType={FilterTypeListings.Location} />
+                ),
+            }}
+        />
+    );
 }
 
 export default ProductLocationFilter;

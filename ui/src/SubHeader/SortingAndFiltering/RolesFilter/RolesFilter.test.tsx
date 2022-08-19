@@ -16,16 +16,16 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import RolesFilter from './RolesFilter';
-import {screen, waitFor} from '@testing-library/react';
-import {RolesState} from 'State/RolesState';
+import { screen, waitFor } from '@testing-library/react';
+import { RolesState } from 'State/RolesState';
 import TestData from 'Utils/TestData';
-import {LocalStorageFilters} from '../FilterLibraries';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
+import { LocalStorageFilters } from '../FilterLibraries';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
 import MyRolesForm from './MyRolesForm/MyRolesForm';
-import {localStorageEventListenerKey} from 'Hooks/useOnStorageChange/useOnStorageChange';
+import { localStorageEventListenerKey } from 'Hooks/useOnStorageChange/useOnStorageChange';
 
 describe('Role Filter', () => {
     let modalContent: ModalContents | null;
@@ -50,10 +50,11 @@ describe('Role Filter', () => {
                 />
                 <RolesFilter />
             </>,
-            ({set}) => {
-                set(RolesState, TestData.roles)
-            })
-    })
+            ({ set }) => {
+                set(RolesState, TestData.roles);
+            }
+        );
+    });
 
     it('should show "Role:" label', () => {
         expect(getRoleDropdownButton()).toHaveTextContent('Role:');
@@ -61,7 +62,9 @@ describe('Role Filter', () => {
 
     it('should show only roles saved in local storage as selected', () => {
         getRoleDropdownButton().click();
-        const SECheckbox = screen.getByLabelText(TestData.softwareEngineer.name);
+        const SECheckbox = screen.getByLabelText(
+            TestData.softwareEngineer.name
+        );
         expect(SECheckbox).toBeChecked();
         const PMCheckbox = screen.getByLabelText(TestData.productManager.name);
         expect(PMCheckbox).not.toBeChecked();
@@ -70,7 +73,8 @@ describe('Role Filter', () => {
     });
 
     it('should update local storage and trigger storage event when role option is checked or unchecked', () => {
-        const getPMCheckbox = () => screen.getByLabelText(TestData.productManager.name);
+        const getPMCheckbox = () =>
+            screen.getByLabelText(TestData.productManager.name);
         const dispatchEvent = jest.spyOn(window, 'dispatchEvent');
 
         getRoleDropdownButton().click();
@@ -78,20 +82,31 @@ describe('Role Filter', () => {
 
         expect(getPMCheckbox()).toBeChecked();
         expect(dispatchEvent).toHaveBeenCalledTimes(1);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify({
-            locationTagFilters: [],
-            productTagFilters: [],
-            roleTagFilters: [TestData.productManager.name, TestData.softwareEngineer.name],
-            personTagFilters: [],
-        }))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify({
+                locationTagFilters: [],
+                productTagFilters: [],
+                roleTagFilters: [
+                    TestData.productManager.name,
+                    TestData.softwareEngineer.name,
+                ],
+                personTagFilters: [],
+            })
+        );
 
         getPMCheckbox().click();
 
         expect(dispatchEvent).toHaveBeenCalledTimes(2);
-        expect(dispatchEvent).toHaveBeenCalledWith(new Event(localStorageEventListenerKey))
+        expect(dispatchEvent).toHaveBeenCalledWith(
+            new Event(localStorageEventListenerKey)
+        );
         expect(getPMCheckbox()).not.toBeChecked();
-        expect(localStorage.getItem('filters')).toEqual(JSON.stringify(initialFilters))
+        expect(localStorage.getItem('filters')).toEqual(
+            JSON.stringify(initialFilters)
+        );
     });
 
     it('should open roles modal when user selects "Add/Edit your Role" from the dropdown', async () => {
@@ -99,10 +114,12 @@ describe('Role Filter', () => {
         const openModalButton = screen.getByText('Add/Edit your Role');
         openModalButton.click();
         await waitFor(() => expect(modalContent?.title).toBe('My Roles'));
-        await waitFor(() => expect(modalContent?.component.type).toBe(MyRolesForm));
+        await waitFor(() =>
+            expect(modalContent?.component.type).toBe(MyRolesForm)
+        );
     });
 });
 
 function getRoleDropdownButton() {
-    return screen.getByTestId('dropdownButton__role')
+    return screen.getByTestId('dropdownButton__role');
 }

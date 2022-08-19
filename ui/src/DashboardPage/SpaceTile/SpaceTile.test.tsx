@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-import {fireEvent, waitFor} from '@testing-library/dom';
-import {screen} from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/dom';
+import { screen } from '@testing-library/react';
 import TestData from 'Utils/TestData';
 import React from 'react';
 import SpaceTile from './SpaceTile';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {UserSpaceMapping} from 'Types/UserSpaceMapping';
-import {CurrentUserState} from 'State/CurrentUserState';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
+import { UserSpaceMapping } from 'Types/UserSpaceMapping';
+import { CurrentUserState } from 'State/CurrentUserState';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
 import SpaceForm from '../SpaceForm/SpaceForm';
 import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
 import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 
 let modalContent: ModalContents | null;
 
@@ -39,12 +39,20 @@ describe('Space Tile', () => {
         modalContent = null;
 
         jest.clearAllMocks();
-        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
-            [
-                {id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping,
-                {id: '2', userId: 'USER_IDDQD', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping
-            ]
-        );
+        SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([
+            {
+                id: '1',
+                userId: 'USER_ID',
+                permission: 'owner',
+                spaceUuid: TestData.space.uuid!,
+            } as UserSpaceMapping,
+            {
+                id: '2',
+                userId: 'USER_IDDQD',
+                permission: 'editor',
+                spaceUuid: TestData.space.uuid!,
+            } as UserSpaceMapping,
+        ]);
         onClick = jest.fn();
     });
 
@@ -62,53 +70,79 @@ describe('Space Tile', () => {
 
         const editSpaceTile = await screen.findByText('Edit');
         fireEvent.click(editSpaceTile);
-        
+
         expect(modalContent).toEqual({
             title: 'Edit Space',
-            component: <SpaceForm selectedSpace={TestData.space}/>
+            component: <SpaceForm selectedSpace={TestData.space} />,
         });
     });
 
     describe('deleting a space', () => {
         it('should not show Delete Space menu item if user is not owner of the space', async () => {
-            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
-                [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
-            );
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([
+                {
+                    id: '1',
+                    userId: 'USER_ID',
+                    permission: 'editor',
+                    spaceUuid: TestData.space.uuid!,
+                } as UserSpaceMapping,
+            ]);
             await renderSpaceDashboardList(onClick);
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
-            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(TestData.space.uuid);
+            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(
+                TestData.space.uuid
+            );
             expect(screen.queryByText('Delete Space')).not.toBeInTheDocument();
         });
 
         describe('should show the delete space modal on click', () => {
             it('with space having editor', async () => {
                 await renderSpaceDashboardList(onClick);
-                const spaceEllipsis = await screen.findByTestId('ellipsisButton');
+                const spaceEllipsis = await screen.findByTestId(
+                    'ellipsisButton'
+                );
                 fireEvent.click(spaceEllipsis);
                 const leaveSpaceTile = await screen.findByText('Delete Space');
                 fireEvent.click(leaveSpaceTile);
 
                 expect(modalContent).toEqual({
-                    title: "Are you sure?",
-                    component: <DeleteSpaceForm space={TestData.space} spaceHasEditors={true}/>
+                    title: 'Are you sure?',
+                    component: (
+                        <DeleteSpaceForm
+                            space={TestData.space}
+                            spaceHasEditors={true}
+                        />
+                    ),
                 });
             });
 
             it('with space NOT having editor', async () => {
-                SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
-                    [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
-                );
+                SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([
+                    {
+                        id: '1',
+                        userId: 'USER_ID',
+                        permission: 'owner',
+                        spaceUuid: TestData.space.uuid!,
+                    } as UserSpaceMapping,
+                ]);
                 await renderSpaceDashboardList(onClick);
-                const spaceEllipsis = await screen.findByTestId('ellipsisButton');
+                const spaceEllipsis = await screen.findByTestId(
+                    'ellipsisButton'
+                );
                 fireEvent.click(spaceEllipsis);
                 const leaveSpaceTile = await screen.findByText('Delete Space');
                 fireEvent.click(leaveSpaceTile);
 
                 expect(modalContent).toEqual({
-                    title: "Are you sure?",
-                    component: <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>
+                    title: 'Are you sure?',
+                    component: (
+                        <DeleteSpaceForm
+                            space={TestData.space}
+                            spaceHasEditors={false}
+                        />
+                    ),
                 });
             });
         });
@@ -116,26 +150,40 @@ describe('Space Tile', () => {
 
     describe('Leaving a space', () => {
         it('should not show Leave Space menu item if user is not owner of the space', async () => {
-            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
-                [{id: '1', userId: 'USER_ID', permission: 'editor', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
-            );
-            await renderSpaceDashboardList(onClick)
-
-            const spaceEllipsis = await screen.findByTestId('ellipsisButton');
-            fireEvent.click(spaceEllipsis);
-            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(TestData.space.uuid);
-            expect(screen.queryByText('Leave Space')).not.toBeInTheDocument();
-        });
-
-        it('should not show Leave Space menu item if space has no editors', async () => {
-            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue(
-                [{id: '1', userId: 'USER_ID', permission: 'owner', spaceUuid: TestData.space.uuid!} as UserSpaceMapping]
-            );
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([
+                {
+                    id: '1',
+                    userId: 'USER_ID',
+                    permission: 'editor',
+                    spaceUuid: TestData.space.uuid!,
+                } as UserSpaceMapping,
+            ]);
             await renderSpaceDashboardList(onClick);
 
             const spaceEllipsis = await screen.findByTestId('ellipsisButton');
             fireEvent.click(spaceEllipsis);
-            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(TestData.space.uuid);
+            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(
+                TestData.space.uuid
+            );
+            expect(screen.queryByText('Leave Space')).not.toBeInTheDocument();
+        });
+
+        it('should not show Leave Space menu item if space has no editors', async () => {
+            SpaceClient.getUsersForSpace = jest.fn().mockResolvedValue([
+                {
+                    id: '1',
+                    userId: 'USER_ID',
+                    permission: 'owner',
+                    spaceUuid: TestData.space.uuid!,
+                } as UserSpaceMapping,
+            ]);
+            await renderSpaceDashboardList(onClick);
+
+            const spaceEllipsis = await screen.findByTestId('ellipsisButton');
+            fireEvent.click(spaceEllipsis);
+            expect(SpaceClient.getUsersForSpace).toHaveBeenCalledWith(
+                TestData.space.uuid
+            );
             expect(screen.queryByText('Leave Space')).not.toBeInTheDocument();
         });
 
@@ -148,16 +196,22 @@ describe('Space Tile', () => {
 
             expect(modalContent).toEqual({
                 title: 'Transfer Ownership of Space',
-                component: <TransferOwnershipForm spaceToTransfer={TestData.space}/>
+                component: (
+                    <TransferOwnershipForm spaceToTransfer={TestData.space} />
+                ),
             });
         });
     });
 
     it('should focus the first dropdown option when opened', async () => {
         await renderSpaceDashboardList(onClick);
-        const spaceTileDropdownButton = await screen.findByTestId('ellipsisButton');
+        const spaceTileDropdownButton = await screen.findByTestId(
+            'ellipsisButton'
+        );
         spaceTileDropdownButton.click();
-        await waitFor(() => expect(screen.getByTestId('editSpace')).toHaveFocus());
+        await waitFor(() =>
+            expect(screen.getByTestId('editSpace')).toHaveFocus()
+        );
     });
 });
 
@@ -170,13 +224,15 @@ async function renderSpaceDashboardList(onClick: () => void) {
                     modalContent = value;
                 }}
             />
-            <SpaceTile space={TestData.space} onClick={onClick}/>
+            <SpaceTile space={TestData.space} onClick={onClick} />
         </>,
-        ({set}) => {
-            set(CurrentUserState, 'USER_ID')
+        ({ set }) => {
+            set(CurrentUserState, 'USER_ID');
         }
     );
 
-    await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled())
+    await waitFor(() =>
+        expect(SpaceClient.getUsersForSpace).toHaveBeenCalled()
+    );
     return result;
 }

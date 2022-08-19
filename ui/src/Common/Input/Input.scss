@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import "../../Styles/Colors.scss";
+@import '../../Styles/Colors.scss';
 
 .input-group {
   display: flex;
@@ -52,7 +52,7 @@
     border: 1px solid $gray-1;
     border-radius: 5px;
 
-    &[type="radio"] {
+    &[type='radio'] {
       height: 1rem;
       width: auto;
       display: inline-block;

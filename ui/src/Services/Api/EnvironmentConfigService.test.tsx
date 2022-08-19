@@ -17,7 +17,7 @@
 
 import axios from 'axios';
 import EnvironmentConfigService from './EnvironmentConfigService';
-import {RunConfig} from '../../Types/RunConfig';
+import { RunConfig } from '../../Types/RunConfig';
 
 describe('Environment Config Service', () => {
     it('should get and return run config and set runConfig in window', async () => {
@@ -30,7 +30,7 @@ describe('Environment Config Service', () => {
             adfs_resource: 'adfs_resource',
             flagsmith_environment_id: 'flagsmith_environment_id',
             flagsmith_url: 'flagsmith_url',
-        }
+        };
         axios.get = jest.fn().mockResolvedValue({ data: expectedRunConfig });
         expect(window.runConfig).toBeUndefined();
 
@@ -38,6 +38,8 @@ describe('Environment Config Service', () => {
 
         expect(actualRunConfig).toEqual(expectedRunConfig);
         expect(window.runConfig).toEqual(expectedRunConfig);
-        expect(axios.get).toHaveBeenCalledWith('/api/config', {headers: {'Content-Type': 'application/json'}})
+        expect(axios.get).toHaveBeenCalledWith('/api/config', {
+            headers: { 'Content-Type': 'application/json' },
+        });
     });
 });

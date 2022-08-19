@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import FormButton from 'Common/FormButton/FormButton';
-import {useSetRecoilState} from 'recoil';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { useSetRecoilState } from 'recoil';
+import { ModalContentsState } from 'State/ModalContentsState';
 
 import './GrantEditAccessConfirmationForm.scss';
 
@@ -33,7 +33,9 @@ const GrantEditAccessConfirmationForm = (): JSX.Element => {
         await navigator.clipboard.writeText(linkToSpace);
         setCopiedLink(true);
 
-        setTimeout(() => {setCopiedLink(false);}, 3000);
+        setTimeout(() => {
+            setCopiedLink(false);
+        }, 3000);
     };
 
     return (
@@ -42,20 +44,25 @@ const GrantEditAccessConfirmationForm = (): JSX.Element => {
                 Share this link with your collaborators.
             </div>
             <div className="copyLinkContainer">
-                <div className="linkToSpace"
-                    data-testid="grantEditAccessConfirmationFormLinkToSpace">
+                <div
+                    className="linkToSpace"
+                    data-testid="grantEditAccessConfirmationFormLinkToSpace"
+                >
                     {linkToSpace}
                 </div>
-                <button className="copyButton"
+                <button
+                    className="copyButton"
                     data-testid="grantEditAccessConfirmationFormCopyButton"
-                    onClick={copyLink}>
+                    onClick={copyLink}
+                >
                     {copiedLink ? 'Copied!' : 'Copy link'}
                 </button>
             </div>
             <FormButton
                 buttonStyle="primary"
                 onClick={() => setModalContents(null)}
-                testId="grantEditAccessConfirmationFormDoneButton">
+                testId="grantEditAccessConfirmationFormDoneButton"
+            >
                 Done
             </FormButton>
         </form>

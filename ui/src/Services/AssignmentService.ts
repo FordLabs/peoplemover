@@ -16,30 +16,46 @@
  */
 
 import moment from 'moment';
-import {Assignment} from '../Types/Assignment';
+import { Assignment } from '../Types/Assignment';
 
-export function calculateDuration(assignment: Assignment, viewingDate: Date): number {
+export function calculateDuration(
+    assignment: Assignment,
+    viewingDate: Date
+): number {
     if (assignment.startDate) {
         const startMoment = moment(assignment.startDate).startOf('day');
         let endMoment = moment(viewingDate).startOf('day');
         if (assignment.endDate !== undefined && assignment.endDate !== null) {
             endMoment = moment(assignment.endDate).startOf('day');
         }
-        return Math.floor(moment.duration(endMoment.diff(startMoment)).asDays()) + 1;
+        return (
+            Math.floor(moment.duration(endMoment.diff(startMoment)).asDays()) +
+            1
+        );
     } else {
         return 0;
     }
 }
 
-export const getDurationWithRespectToToday = (assignment: Assignment): number => {
-    const isFutureEnd: boolean = assignment.endDate !== null && moment(assignment.endDate).isAfter(moment.now());
+export const getDurationWithRespectToToday = (
+    assignment: Assignment
+): number => {
+    const isFutureEnd: boolean =
+        assignment.endDate !== null &&
+        moment(assignment.endDate).isAfter(moment.now());
     if (isFutureEnd) {
-        return calculateDuration({...assignment, endDate: undefined}, new Date());
+        return calculateDuration(
+            { ...assignment, endDate: undefined },
+            new Date()
+        );
     } else {
         return calculateDuration(assignment, new Date());
     }
 };
 
 export const didAssignmentEndInThePast = (assignment: Assignment): boolean => {
-    return (assignment.endDate !== null && moment(assignment.endDate).isBefore(moment()));
+    return (
+        assignment.endDate !== null &&
+        moment(assignment.endDate).isBefore(moment())
+    );
 };

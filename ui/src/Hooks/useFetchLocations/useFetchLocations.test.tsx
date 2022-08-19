@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import {act, renderHook} from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import LocationClient from 'Services/Api/LocationClient';
 import useFetchLocations from './useFetchLocations';
@@ -33,20 +32,24 @@ const locationsNotAlphabetical = [
     TestData.dearborn,
     TestData.annarbor,
     TestData.detroit,
-]
+];
 const locationsAlphabetical = TestData.locations;
 
 describe('useFetchLocations Hook', () => {
     it('should fetch all location tags and store them in recoil alphabetically', async () => {
-        LocationClient.get = jest.fn().mockResolvedValue({ data: locationsNotAlphabetical })
+        LocationClient.get = jest
+            .fn()
+            .mockResolvedValue({ data: locationsNotAlphabetical });
 
-        const { result } = renderHook(() => useFetchLocations(spaceUUID), { wrapper });
+        const { result } = renderHook(() => useFetchLocations(spaceUUID), {
+            wrapper,
+        });
 
-        expect(LocationClient.get).not.toHaveBeenCalled()
+        expect(LocationClient.get).not.toHaveBeenCalled();
         expect(result.current.locations).toEqual([]);
 
         await act(async () => {
-            result.current.fetchLocations()
+            result.current.fetchLocations();
         });
         expect(LocationClient.get).toHaveBeenCalledWith(spaceUUID);
         expect(result.current.locations).toEqual(locationsAlphabetical);

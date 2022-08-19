@@ -15,18 +15,18 @@
  *  limitations under the License.
  */
 
-import React, {PropsWithChildren, useCallback} from 'react';
-import {DragDropContext, OnDragEndResponder} from 'react-beautiful-dnd';
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {ProductsState} from '../../State/ProductsState';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import React, { PropsWithChildren, useCallback } from 'react';
+import { DragDropContext, OnDragEndResponder } from 'react-beautiful-dnd';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { ProductsState } from '../../State/ProductsState';
+import { CurrentSpaceState } from '../../State/CurrentSpaceState';
 import AssignmentClient from '../../Services/Api/AssignmentClient';
-import {ViewingDateState} from '../../State/ViewingDateState';
+import { ViewingDateState } from '../../State/ViewingDateState';
 import moment from 'moment';
-import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
+import { ProductPlaceholderPair } from 'Types/CreateAssignmentRequest';
 import useFetchProducts from '../../Hooks/useFetchProducts/useFetchProducts';
-import {Product} from '../../Types/Product';
-import {Assignment} from '../../Types/Assignment';
+import { Product } from '../../Types/Product';
+import { Assignment } from '../../Types/Assignment';
 
 type Props = {};
 
@@ -35,26 +35,35 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
     const currentSpace = useRecoilValue(CurrentSpaceState);
     const viewingDate = useRecoilValue(ViewingDateState);
 
-    const { fetchProducts } = useFetchProducts(currentSpace.uuid!)
+    const { fetchProducts } = useFetchProducts(currentSpace.uuid!);
 
-    const getNumberFromId = (id: string) => parseInt(id.replace(/[^0-9.]/g, ''), 10);
+    const getNumberFromId = (id: string) =>
+        parseInt(id.replace(/[^0-9.]/g, ''), 10);
 
     const onDragEnd: OnDragEndResponder = useCallback(
         async (result) => {
             if (!result.destination) return;
 
             const assignmentId: number = getNumberFromId(result.draggableId);
-            const oldProductId: number = getNumberFromId(result.source.droppableId);
-            const newProductId: number =  getNumberFromId(result.destination?.droppableId);
+            const oldProductId: number = getNumberFromId(
+                result.source.droppableId
+            );
+            const newProductId: number = getNumberFromId(
+                result.destination?.droppableId
+            );
             const isSameProduct = oldProductId === newProductId;
 
             if (isSameProduct) return;
 
-            const assignmentToMove: Assignment | undefined = products.find((p) => p.id === oldProductId)
-                ?.assignments
-                .find((a) => a.id === assignmentId);
-            const newProduct: Product | undefined = products.find((p) => p.id === newProductId);
-            const oldProduct: Product | undefined = products.find((p) => p.id === oldProductId);
+            const assignmentToMove: Assignment | undefined = products
+                .find((p) => p.id === oldProductId)
+                ?.assignments.find((a) => a.id === assignmentId);
+            const newProduct: Product | undefined = products.find(
+                (p) => p.id === newProductId
+            );
+            const oldProduct: Product | undefined = products.find(
+                (p) => p.id === oldProductId
+            );
 
             if (!assignmentToMove || !newProduct || !oldProduct) return;
 
@@ -64,21 +73,38 @@ function DragAndDrop({ children }: PropsWithChildren<Props>): JSX.Element {
                 return currentState.map((product) => {
                     let assignments = [...product.assignments];
                     if (product.id === oldProductId) {
-                        assignments = oldProduct.assignments.filter((a) => a.id !== assignmentToMove.id)
+                        assignments = oldProduct.assignments.filter(
+                            (a) => a.id !== assignmentToMove.id
+                        );
                     }
-                    if (product.id === newProductId) assignments = [...assignments, assignmentToMove];
-                    return {...product, assignments};
+                    if (product.id === newProductId)
+                        assignments = [...assignments, assignmentToMove];
+                    return { ...product, assignments };
                 });
             });
 
-            const existingAssignments: Array<Assignment> = (await AssignmentClient.getAssignmentsUsingPersonIdAndDate(currentSpace.uuid!, assignmentToMove.person.id, viewingDate)).data;
-            const productPlaceholderPairs: Array<ProductPlaceholderPair> = existingAssignments
-                .map(existingAssignment => ({
-                    productId: existingAssignment.productId,
-                    placeholder: existingAssignment.placeholder,
-                }))
-                .filter(existingAssignment => existingAssignment.productId !== assignmentToMove.productId)
-                .concat({ productId: newProductId, placeholder: assignmentToMove.placeholder });
+            const existingAssignments: Array<Assignment> = (
+                await AssignmentClient.getAssignmentsUsingPersonIdAndDate(
+                    currentSpace.uuid!,
+                    assignmentToMove.person.id,
+                    viewingDate
+                )
+            ).data;
+            const productPlaceholderPairs: Array<ProductPlaceholderPair> =
+                existingAssignments
+                    .map((existingAssignment) => ({
+                        productId: existingAssignment.productId,
+                        placeholder: existingAssignment.placeholder,
+                    }))
+                    .filter(
+                        (existingAssignment) =>
+                            existingAssignment.productId !==
+                            assignmentToMove.productId
+                    )
+                    .concat({
+                        productId: newProductId,
+                        placeholder: assignmentToMove.placeholder,
+                    });
 
             await AssignmentClient.createAssignmentForDate(
                 moment(viewingDate).format('YYYY-MM-DD'),

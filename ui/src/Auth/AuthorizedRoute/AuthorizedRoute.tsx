@@ -15,21 +15,21 @@
  * limitations under the License.
  */
 
-import {RouteProps} from 'react-router';
-import React, {useEffect, useState} from 'react';
+import { RouteProps } from 'react-router';
+import React, { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
 import AccessTokenClient from 'Services/Api/AccessTokenClient';
-import {AxiosError} from 'axios';
-import {useNavigate, useParams} from 'react-router-dom';
-import {useSetRecoilState} from 'recoil';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import { AxiosError } from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_NOT_FOUND = 404;
 const HTTP_FORBIDDEN = 403;
 
-function AuthorizedRoute({children}: RouteProps): JSX.Element {
-    const { teamUUID = '' } = useParams<{ teamUUID: string }>()
+function AuthorizedRoute({ children }: RouteProps): JSX.Element {
+    const { teamUUID = '' } = useParams<{ teamUUID: string }>();
     const [renderedElement, setRenderedElement] = useState<JSX.Element>(<></>);
     const navigate = useNavigate();
 
@@ -55,12 +55,12 @@ function AuthorizedRoute({children}: RouteProps): JSX.Element {
                             break;
                         }
                         case HTTP_NOT_FOUND: {
-                            navigate("/error/404");
+                            navigate('/error/404');
                             break;
                         }
                         case HTTP_UNAUTHORIZED:
                         default: {
-                            navigate("/user/login");
+                            navigate('/user/login');
                         }
                     }
                 });

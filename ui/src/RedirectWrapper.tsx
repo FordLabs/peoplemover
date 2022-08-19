@@ -21,9 +21,9 @@ interface RedirectWrapperProps {
     redirectUrl: string;
 }
 
-function RedirectWrapper({redirectUrl}: RedirectWrapperProps): JSX.Element {
+function RedirectWrapper({ redirectUrl }: RedirectWrapperProps): JSX.Element {
     window.location.href = redirectUrl;
-    return (<></>);
+    return <></>;
 }
 
 export default RedirectWrapper;

@@ -24,9 +24,13 @@ describe('Filter', () => {
     it('Filter people by role', () => {
         const peopleCardsSelector = '[data-testid=draggableAssignmentCard]';
 
-        cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
+        cy.contains('My Product')
+            .parentsUntil('[data-testid=productCardContainer]')
             .then(($container: never) => {
-                cy.get($container).find(peopleCardsSelector).children().as('peopleCards');
+                cy.get($container)
+                    .find(peopleCardsSelector)
+                    .children()
+                    .as('peopleCards');
                 cy.get('@peopleCards').should('have.length', 2);
                 cy.get('@peopleCards').eq(0).should('contain', 'Jane Smith');
                 cy.get('@peopleCards').eq(1).should('contain', 'Bob Barker');
@@ -35,14 +39,17 @@ describe('Filter', () => {
                 cy.contains('THE SECOND BEST (UNDERSTUDY)').click();
             });
 
-        cy.contains('My Product').parentsUntil('[data-testid=productCardContainer]')
+        cy.contains('My Product')
+            .parentsUntil('[data-testid=productCardContainer]')
             .then(($container: never) => {
-                cy.get($container).find(peopleCardsSelector).children().as('peopleCards');
+                cy.get($container)
+                    .find(peopleCardsSelector)
+                    .children()
+                    .as('peopleCards');
                 cy.get('@peopleCards');
                 cy.get('@peopleCards').should('have.length', 1);
                 cy.get('@peopleCards').eq(0).should('contain', 'Bob Barker');
             });
-
     });
 
     it('Filter products by location tag', () => {
@@ -52,7 +59,9 @@ describe('Filter', () => {
         cy.get('[data-testid=dropdownButton__product_location]').click();
         cy.contains('location1').click();
 
-        cy.get('[data-testid=productCardContainer__my_product]').should('not.exist');
+        cy.get('[data-testid=productCardContainer__my_product]').should(
+            'not.exist'
+        );
         cy.get('[data-testid=productCardContainer__baguette_bakery]');
     });
 
@@ -64,6 +73,8 @@ describe('Filter', () => {
         cy.contains('productTag1').click();
 
         cy.get('[data-testid=productCardContainer__my_product]');
-        cy.get('[data-testid=productCardContainer__baguette_bakery]').should('not.exist');
+        cy.get('[data-testid=productCardContainer__baguette_bakery]').should(
+            'not.exist'
+        );
     });
 });

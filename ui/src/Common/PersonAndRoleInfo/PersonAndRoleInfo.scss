@@ -27,7 +27,7 @@
     word-break: break-word;
   }
 
-  .personName > i{
+  .personName > i {
     position: relative;
     color: $purple;
     margin-left: 4px;
@@ -35,7 +35,7 @@
     vertical-align: text-bottom;
   }
 
-  .timeOnProductButton{
+  .timeOnProductButton {
     background-color: white;
     color: $prime-1;
   }
@@ -79,7 +79,6 @@
     margin: auto;
     max-width: 98%;
     left: 0;
-
   }
 
   .hoverBoxNotes {
@@ -88,28 +87,28 @@
     white-space: pre-wrap;
   }
 
-  .flex-row{
-    display:flex;
+  .flex-row {
+    display: flex;
     flex-direction: row;
-    align-items:center;
-    margin-top:5px;
-    margin-bottom:5px;
-    padding-right:40px;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-right: 40px;
   }
 
-  .flex-col{
-    display:flex;
-    flex-direction:column;
+  .flex-col {
+    display: flex;
+    flex-direction: column;
   }
 
-  .tooltip-icon{
+  .tooltip-icon {
     justify-self: center;
     margin: 12px;
     color: $purple;
     font-size: 16px;
   }
 
-  .hoverBoxTitle{
+  .hoverBoxTitle {
     line-height: 18px;
     font-weight: bold;
   }

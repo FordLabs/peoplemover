@@ -15,7 +15,7 @@
  *   limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './ToolTip.scss';
 
 interface ToolTipProps {
@@ -35,17 +35,26 @@ const ToolTip = (props: ToolTipProps): JSX.Element => {
     };
 
     return (
-        <button onMouseEnter={(): void => setHovering(true)}
+        <button
+            onMouseEnter={(): void => setHovering(true)}
             onMouseLeave={(): void => setHovering(false)}
             onFocus={(): void => setHovering(true)}
             onBlur={(): void => setHovering(false)}
-            onClick={ (event): void => event.preventDefault()}
-            className="toolTipContainer">
+            onClick={(event): void => event.preventDefault()}
+            className="toolTipContainer"
+        >
             <span className="toolTipLabel">{props.toolTipLabel}</span>
-            <div data-testid="toolTipText" className={ isHovering ? 'toolTipHover toolTipHoverShow' : 'toolTipHover toolTipHoverNotShow'}>
+            <div
+                data-testid="toolTipText"
+                className={
+                    isHovering
+                        ? 'toolTipHover toolTipHoverShow'
+                        : 'toolTipHover toolTipHoverNotShow'
+                }
+            >
                 {props.contentElement}
-                <b className="toolTipHoverNotchBorder-notch toolTipHoverNotch"/>
-                <b className="toolTipHoverNotch"/>
+                <b className="toolTipHoverNotchBorder-notch toolTipHoverNotch" />
+                <b className="toolTipHoverNotch" />
             </div>
         </button>
     );

@@ -44,7 +44,7 @@
 
 .selectDropdownToggle,
 .selectDropdownOptions {
-  background: #FFFFFF;
+  background: #ffffff;
   border: $gray-4 1px solid;
   box-sizing: border-box;
   border-radius: 4px;
@@ -74,11 +74,11 @@
     padding-bottom: 0.5rem;
     cursor: pointer;
 
-   &.focused {
-     .colorCircle {
-       box-shadow: 0 0 0 1px white, 0 0 0 3px $gray-2;
-     }
-   }
+    &.focused {
+      .colorCircle {
+        box-shadow: 0 0 0 1px white, 0 0 0 3px $gray-2;
+      }
+    }
   }
 
   .selectOption:last-child {

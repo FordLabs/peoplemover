@@ -34,28 +34,31 @@ function NotificationModal({
     content,
     containerClassname = '',
 }: NotificationModalProps): JSX.Element {
-
     const CancelButton = (): JSX.Element => (
         <FormButton
             buttonStyle="primary"
             testId="confirmationModalCancel"
-            onClick={close}>
+            onClick={close}
+        >
             {closeButtonLabel}
         </FormButton>
     );
 
     return (
         <div className="modalBackground" data-testid="notificationModal">
-            <div className={containerClassname ? 'modalContents ' + containerClassname : 'modalContents'}>
+            <div
+                className={
+                    containerClassname
+                        ? 'modalContents ' + containerClassname
+                        : 'modalContents'
+                }
+            >
                 <div className="modalCard">
-                    <ModalCardBanner
-                        title={title}
-                        onCloseBtnClick={close}
-                    />
-                    <div className="confirmationModalContent">
-                        {content}
-                    </div>
-                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls`}>
+                    <ModalCardBanner title={title} onCloseBtnClick={close} />
+                    <div className="confirmationModalContent">{content}</div>
+                    <div
+                        className={`yesNoButtons confirmationControlButtons confirmationModalControls`}
+                    >
                         <CancelButton />
                     </div>
                 </div>

@@ -17,7 +17,7 @@
 
 import React from 'react';
 import ModalCardBanner from '../ModalCardBanner/ModalCardBanner';
-import FormButton, {ButtonStyle} from 'Common/FormButton/FormButton';
+import FormButton, { ButtonStyle } from 'Common/FormButton/FormButton';
 
 import './ConfirmationModal.scss';
 
@@ -49,7 +49,8 @@ function ConfirmationModal({
             className="confirmationModalDelete"
             onClick={submit}
             buttonStyle={primaryButtonStyle as ButtonStyle}
-            testId="confirmDeleteButton">
+            testId="confirmDeleteButton"
+        >
             {submitButtonLabel}
         </FormButton>
     );
@@ -58,24 +59,36 @@ function ConfirmationModal({
         <FormButton
             buttonStyle="secondary"
             testId="confirmationModalCancel"
-            onClick={close}>
+            onClick={close}
+        >
             {closeButtonLabel}
         </FormButton>
     );
 
     return (
         <div className="modalBackground">
-            <div className={containerClassname ? 'modalContents ' + containerClassname : 'modalContents'}>
+            <div
+                className={
+                    containerClassname
+                        ? 'modalContents ' + containerClassname
+                        : 'modalContents'
+                }
+            >
                 <div className="modalCard">
-                    <ModalCardBanner
-                        title={title}
-                        onCloseBtnClick={close}
-                    />
-                    <div className="confirmationModalContent">
-                        {content}
-                    </div>
-                    <div className={`yesNoButtons confirmationControlButtons confirmationModalControls ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
-                        <div className={`cancelAndArchiveContainer ${secondaryButton ? 'secondaryButtonContainer' : ''}`}>
+                    <ModalCardBanner title={title} onCloseBtnClick={close} />
+                    <div className="confirmationModalContent">{content}</div>
+                    <div
+                        className={`yesNoButtons confirmationControlButtons confirmationModalControls ${
+                            secondaryButton ? 'secondaryButtonContainer' : ''
+                        }`}
+                    >
+                        <div
+                            className={`cancelAndArchiveContainer ${
+                                secondaryButton
+                                    ? 'secondaryButtonContainer'
+                                    : ''
+                            }`}
+                        >
                             <CancelButton />
                             {secondaryButton}
                         </div>

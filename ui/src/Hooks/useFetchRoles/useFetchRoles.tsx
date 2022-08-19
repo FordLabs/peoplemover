@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
-import {useCallback} from 'react';
+import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
 import RoleClient from 'Services/Api/RoleClient';
-import {RolesState} from 'State/RolesState';
+import { RolesState } from 'State/RolesState';
 import sortTagsAlphabetically from 'Utils/sortTagsAlphabetically';
-import {RoleTag} from 'Types/Tag';
+import { RoleTag } from 'Types/Tag';
 
 interface UseFetchRoles {
     roles: RoleTag[];
-    fetchRoles(): void
+    fetchRoles(): void;
 }
 
 function useFetchRoles(spaceUUID: string): UseFetchRoles {
@@ -32,17 +32,17 @@ function useFetchRoles(spaceUUID: string): UseFetchRoles {
 
     const fetchRoles = useCallback((): Promise<void> => {
         return RoleClient.get(spaceUUID)
-            .then(result => {
+            .then((result) => {
                 const roles: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(roles);
-                setRoles(roles)
+                setRoles(roles);
             })
             .catch(console.error);
-    }, [setRoles, spaceUUID])
+    }, [setRoles, spaceUUID]);
 
     return {
         roles: roles || [],
-        fetchRoles
+        fetchRoles,
     };
 }
 

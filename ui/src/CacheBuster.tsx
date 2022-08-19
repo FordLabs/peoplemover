@@ -23,7 +23,7 @@ export default class CacheBuster extends React.Component {
             isLatestVersion: false,
             refreshCacheAndReload: () => {
                 if (caches) {
-                    caches.keys().then(function(names) {
+                    caches.keys().then(function (names) {
                         for (const name of names) caches.delete(name);
                     });
                 }
@@ -36,17 +36,28 @@ export default class CacheBuster extends React.Component {
             .then((response) => response.json())
             .then((meta) => {
                 const latestVersion = meta.version;
-                const shouldForceRefresh = semverGreaterThan(latestVersion, currentAppVersion);
+                const shouldForceRefresh = semverGreaterThan(
+                    latestVersion,
+                    currentAppVersion
+                );
 
-                let newState = {loading: false, isLatestVersion: true};
-                if (shouldForceRefresh) newState = {loading: false, isLatestVersion: false}
-                this.setState(newState)
+                let newState = { loading: false, isLatestVersion: true };
+                if (shouldForceRefresh)
+                    newState = { loading: false, isLatestVersion: false };
+                this.setState(newState);
             });
     }
 
     render() {
-        const {loading, isLatestVersion, refreshCacheAndReload} = this.state as CacheBusterProps;
-        return typeof this.props.children === 'function'
-            && this.props.children({loading, isLatestVersion, refreshCacheAndReload});
+        const { loading, isLatestVersion, refreshCacheAndReload } = this
+            .state as CacheBusterProps;
+        return (
+            typeof this.props.children === 'function' &&
+            this.props.children({
+                loading,
+                isLatestVersion,
+                refreshCacheAndReload,
+            })
+        );
     }
 }

@@ -16,9 +16,9 @@
  */
 
 import moment from 'moment';
-import {Product} from 'Types/Product';
-import {Person} from 'Types/Person';
-import {Assignment} from '../Types/Assignment';
+import { Product } from 'Types/Product';
+import { Person } from 'Types/Person';
+import { Assignment } from '../Types/Assignment';
 
 export function emptyPerson(): Person {
     return {
@@ -31,14 +31,21 @@ export function emptyPerson(): Person {
     };
 }
 
-export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilters: Array<string>, selectedPersonTagFilters: Array<string>): boolean {
+export function isPersonMatchingSelectedFilters(
+    person: Person,
+    selectedRoleFilters: Array<string>,
+    selectedPersonTagFilters: Array<string>
+): boolean {
     let isMatchingRole = false;
     let isMatchingPersonTag = false;
 
     if (selectedRoleFilters.length === 0) {
         isMatchingRole = true;
     } else {
-        if (person.spaceRole && selectedRoleFilters.includes(person.spaceRole.name)) {
+        if (
+            person.spaceRole &&
+            selectedRoleFilters.includes(person.spaceRole.name)
+        ) {
             isMatchingRole = true;
         }
     }
@@ -46,7 +53,7 @@ export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilt
     if (selectedPersonTagFilters.length === 0) {
         isMatchingPersonTag = true;
     } else {
-        person.tags.forEach(personTag => {
+        person.tags.forEach((personTag) => {
             if (selectedPersonTagFilters.includes(personTag.name)) {
                 isMatchingPersonTag = true;
             }
@@ -57,14 +64,24 @@ export function isPersonMatchingSelectedFilters(person: Person, selectedRoleFilt
 }
 
 export function isArchived(person: Person, date: Date): boolean {
-    return person.archiveDate != null && moment(person.archiveDate).isBefore(moment(date));
+    return (
+        person.archiveDate != null &&
+        moment(person.archiveDate).isBefore(moment(date))
+    );
 }
 
-export const getAssignments = (person: Person, products: Product[]): Assignment[] => {
+export const getAssignments = (
+    person: Person,
+    products: Product[]
+): Assignment[] => {
     const assignments: Assignment[] = [];
-    products.forEach(product => {
-        const assignment = product.assignments.find(assignment => assignment.person.id === person.id);
-        if (assignment !== undefined) { assignments.push(assignment);}
+    products.forEach((product) => {
+        const assignment = product.assignments.find(
+            (assignment) => assignment.person.id === person.id
+        );
+        if (assignment !== undefined) {
+            assignments.push(assignment);
+        }
     });
     return assignments;
 };

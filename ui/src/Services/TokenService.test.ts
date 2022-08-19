@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {getUserNameFromAccessToken} from './TokenService';
+import { getUserNameFromAccessToken } from './TokenService';
 
 jest.mock('jwt-decode');
 
-describe('Token Service', function() {
-    it('should get username from access token', function() {
+describe('Token Service', function () {
+    it('should get username from access token', function () {
         expect(getUserNameFromAccessToken()).toBe('USER_ID');
     });
 });

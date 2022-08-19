@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {renderHook} from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 import useOnStorageChange from './useOnStorageChange';
 
 describe('UseOnStorageChange Hook', () => {
@@ -25,7 +25,7 @@ describe('UseOnStorageChange Hook', () => {
 
         expect(callback).toHaveBeenCalledTimes(1);
 
-        window.dispatchEvent(new Event("storage"));
+        window.dispatchEvent(new Event('storage'));
         expect(callback).toHaveBeenCalledTimes(2);
     });
 });

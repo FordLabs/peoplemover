@@ -18,15 +18,15 @@
 @import 'Colors';
 
 .unassignedPeopleContainer {
-    max-height: 450px;
-    min-height: 106px;
-    overflow-y: auto;
+  max-height: 450px;
+  min-height: 106px;
+  overflow-y: auto;
 
-    .no-assignments-message {
-        margin-left: 1rem;
-    }
+  .no-assignments-message {
+    margin-left: 1rem;
+  }
 }
 
 .unassignedPeopleContainer:hover {
-    scrollbar-color: $scrollbar-color;
+  scrollbar-color: $scrollbar-color;
 }

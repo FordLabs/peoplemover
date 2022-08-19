@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React from 'react';
-import {act, renderHook} from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import SpaceClient from 'Services/Api/SpaceClient';
 import useFetchUserSpaces from './useFetchUserSpaces';
@@ -30,11 +28,11 @@ describe('useFetchUserSpaces Hook', () => {
     it('should fetch all spaces and store them in recoil', async () => {
         const { result } = renderHook(() => useFetchUserSpaces(), { wrapper });
 
-        expect(SpaceClient.getSpacesForUser).not.toHaveBeenCalled()
+        expect(SpaceClient.getSpacesForUser).not.toHaveBeenCalled();
         expect(result.current.userSpaces).toEqual([]);
 
         await act(async () => {
-            await result.current.fetchUserSpaces()
+            await result.current.fetchUserSpaces();
         });
         expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith();
         expect(result.current.userSpaces).toEqual([TestData.space]);

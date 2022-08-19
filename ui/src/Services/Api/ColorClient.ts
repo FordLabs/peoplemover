@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import Axios, {AxiosResponse} from 'axios';
-import {getAxiosConfig} from 'Utils/getAxiosConfig';
+import Axios, { AxiosResponse } from 'axios';
+import { getAxiosConfig } from 'Utils/getAxiosConfig';
 
 const ColorClient = {
     async getAllColors(): Promise<AxiosResponse> {
         return Axios.get(`/api/color`, getAxiosConfig());
-    }
-}
+    },
+};
 
 export default ColorClient;

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import {AxiosResponse} from 'axios';
-import {TagRequest} from './TagRequest';
-import {Space} from 'Types/Space';
-import {Tag} from 'Types/Tag';
+import { AxiosResponse } from 'axios';
+import { TagRequest } from './TagRequest';
+import { Space } from 'Types/Space';
+import { Tag } from 'Types/Tag';
 
 export interface TagClient {
-     get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
-     add(addRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
-     edit(editRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
-     delete(id: number, space: Space): Promise<AxiosResponse>;
+    get(spaceUuid: string): Promise<AxiosResponse<Tag[]>>;
+    add(addRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
+    edit(editRequest: TagRequest, space: Space): Promise<AxiosResponse<Tag>>;
+    delete(id: number, space: Space): Promise<AxiosResponse>;
 }

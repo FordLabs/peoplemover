@@ -23,7 +23,7 @@
 
   .indicator-icon {
     align-self: center;
-    padding-right: .625rem;
+    padding-right: 0.625rem;
   }
 
   .dropdown-label {
@@ -37,7 +37,8 @@
     font-weight: 400;
   }
 
-  .dropdown_filter_count_style_default, .dropdown_filter_count_style_badge {
+  .dropdown_filter_count_style_default,
+  .dropdown_filter_count_style_badge {
     font-weight: bold;
     margin-right: 30px;
     min-width: 22px;
@@ -71,14 +72,14 @@
       width: fit-content;
       flex-wrap: unset;
       background-color: white;
-      margin: .6875rem .3125rem;
+      margin: 0.6875rem 0.3125rem;
       height: 2.25rem;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 14px;
-      padding: 0 .75rem;
+      padding: 0 0.75rem;
 
       &:hover {
         cursor: pointer;
@@ -107,7 +108,7 @@
         border: 1px solid $gray-5;
         left: 4px;
         top: -4px;
-        box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
         padding: 0 0 0 0;
         box-sizing: border-box;
         font-family: Helvetica, sans-serif;
@@ -149,45 +150,45 @@
   }
 }
 
-  .add-edit-tags-dropdown-button {
-    padding: 10px 10px;
-    display: flex;
-    justify-content: center;
-    font-style: normal;
-    font-weight: normal;
-    font-size: inherit;
-    color: #5463B0;
-    background: transparent;
-    line-height: 20px;
+.add-edit-tags-dropdown-button {
+  padding: 10px 10px;
+  display: flex;
+  justify-content: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: inherit;
+  color: #5463b0;
+  background: transparent;
+  line-height: 20px;
+}
+
+.sortDropdownOption {
+  list-style-type: none;
+  text-align: left;
+  padding: 4px 6px;
+  color: $gray-1;
+  background-color: transparent;
+  font-family: inherit;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  font-size: 0.75rem;
+  height: 1.5rem;
+
+  &:hover {
+    background-color: $gray-6;
+    color: $purple;
+    border-radius: 2px;
+    cursor: pointer;
   }
 
-  .sortDropdownOption {
-    list-style-type: none;
-    text-align: left;
-    padding: 4px 6px;
-    color: $gray-1;
-    background-color: transparent;
-    font-family: inherit;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    font-size: .75rem;
-    height: 1.5rem;
-
-    &:hover {
-      background-color: $gray-6;
-      color: $purple;
-      border-radius: 2px;
-      cursor: pointer;
-    }
-
-    .sortby-option-check {
-      padding-left: 1rem;
-      font-size: 1.125rem;
-      margin-left: auto;
-    }
+  .sortby-option-check {
+    padding-left: 1rem;
+    font-size: 1.125rem;
+    margin-left: auto;
   }
+}
 
 .filter-option {
   margin-top: 6px;

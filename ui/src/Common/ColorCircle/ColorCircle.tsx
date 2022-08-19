@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Color} from 'Types/Color';
+import { Color } from 'Types/Color';
 
 import './ColorCircle.scss';
 
@@ -26,12 +26,14 @@ interface Props {
 
 const ColorCircle = ({ color }: Props): JSX.Element => {
     return (
-        <span data-testid="selectRoleCircle"
-            style={{'backgroundColor': color.color}}
-            className={`colorCircle ${color.color === '#FFFFFF' ? 'whiteCircleBorder' : ''}`}
+        <span
+            data-testid="selectRoleCircle"
+            style={{ backgroundColor: color.color }}
+            className={`colorCircle ${
+                color.color === '#FFFFFF' ? 'whiteCircleBorder' : ''
+            }`}
         />
     );
 };
 
 export default ColorCircle;
-

@@ -16,7 +16,12 @@
  */
 import * as React from 'react';
 import SelectWithHTMLOptions from './SelectWithHTMLOptions';
-import {render, RenderResult, fireEvent, waitFor} from '@testing-library/react';
+import {
+    render,
+    RenderResult,
+    fireEvent,
+    waitFor,
+} from '@testing-library/react';
 
 jest.useFakeTimers();
 
@@ -43,7 +48,7 @@ describe('SelectWithHTMLOptions', () => {
             ariaLabel: 'ariaLabel2',
         },
     ];
-    
+
     beforeEach(() => {
         onChange = jest.fn();
         component = render(
@@ -51,7 +56,8 @@ describe('SelectWithHTMLOptions', () => {
                 ariaLabel="selectAriaLabel"
                 selectedOption={options[0]}
                 options={options}
-                onChange={onChange}/>
+                onChange={onChange}
+            />
         );
     });
 
@@ -82,37 +88,56 @@ describe('SelectWithHTMLOptions', () => {
         });
     });
 
-
     describe('onKeyDown', () => {
         beforeEach(async () => {
             const selectDropdownButton = component.getByText('Zero');
             await waitFor(() => {
-                fireEvent.keyDown(selectDropdownButton, {keyCode: enterKey});
+                fireEvent.keyDown(selectDropdownButton, { keyCode: enterKey });
                 jest.advanceTimersByTime(setTimeoutTime);
             });
 
             const selectedOptionZero = component.getByTestId('selectOption__0');
             expect(selectedOptionZero.className).toContain('focused');
             await waitFor(() => {
-                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+                fireEvent.keyDown(
+                    component.getByTestId('selectDropdownOptions'),
+                    {
+                        keyCode: downKey,
+                    }
+                );
             });
 
             await waitFor(() => {
-                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: downKey});
+                fireEvent.keyDown(
+                    component.getByTestId('selectDropdownOptions'),
+                    {
+                        keyCode: downKey,
+                    }
+                );
             });
 
             const selectedOptionTwo = component.getByTestId('selectOption__2');
             expect(selectedOptionTwo.className).toContain('focused');
 
             await waitFor(() => {
-                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: upKey});
+                fireEvent.keyDown(
+                    component.getByTestId('selectDropdownOptions'),
+                    {
+                        keyCode: upKey,
+                    }
+                );
             });
 
             const selectedOptionOne = component.getByTestId('selectOption__1');
             expect(selectedOptionOne.className).toContain('focused');
 
             await waitFor(() => {
-                fireEvent.keyDown(component.getByTestId('selectDropdownOptions'), {keyCode: enterKey});
+                fireEvent.keyDown(
+                    component.getByTestId('selectDropdownOptions'),
+                    {
+                        keyCode: enterKey,
+                    }
+                );
                 jest.advanceTimersByTime(setTimeoutTime);
             });
         });
@@ -139,7 +164,9 @@ describe('SelectWithHTMLOptions', () => {
         });
 
         it('should have aria labels on the dropdown toggle button', () => {
-            component.getByLabelText('selectAriaLabel Selector: ariaLabel0 is selected');
+            component.getByLabelText(
+                'selectAriaLabel Selector: ariaLabel0 is selected'
+            );
         });
 
         it('should have aria labels on the dropdown options list', () => {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-@import "../../../../../Styles/Colors";
+@import '../../../../../Styles/Colors';
 
 .viewOnlyAccessForm {
   width: 415px;
@@ -80,7 +80,7 @@
         border-top: 2px solid $prime-1;
         border-left: 2px solid $prime-1;
         position: absolute;
-        content: "";
+        content: '';
         top: 15%;
         left: 0.5rem;
         transform: translateX(-50%) scale(0) rotate(-45deg);
@@ -121,7 +121,7 @@
 
       overflow-x: auto;
       background: $gray-6;
-      color: #403D3D;
+      color: #403d3d;
       border: 1px solid transparent;
       border-radius: 6px;
       padding: 8px;
@@ -153,11 +153,11 @@
 }
 
 .react-switch-bg {
-  background: linear-gradient(90deg, #984AA1 0%, #4F5FAB 76.03%) !important;
+  background: linear-gradient(90deg, #984aa1 0%, #4f5fab 76.03%) !important;
 }
 
 .disabled {
   .react-switch-bg {
-    background: #E1B7E5 !important;
+    background: #e1b7e5 !important;
   }
 }

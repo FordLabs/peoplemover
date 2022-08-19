@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-import React, {ReactChild} from 'react';
+import React, { ReactChild } from 'react';
 import PeopleMoverLogo from 'Common/PeopleMoverLogo/PeopleMoverLogo';
 import AccountDropdown from './AccountDropdown/AccountDropdown';
-import {dashboardUrl} from '../../Routes';
+import { dashboardUrl } from '../../Routes';
 
 import './Headers.scss';
 
@@ -26,7 +26,7 @@ interface HeaderProps {
     spaceName?: string;
     showStaticPeopleMoverLogo?: boolean;
     hideAccountDropdown?: boolean;
-    onlyShowSignOutButton?: boolean
+    onlyShowSignOutButton?: boolean;
     children?: ReactChild;
 }
 
@@ -35,14 +35,14 @@ function Header({
     showStaticPeopleMoverLogo,
     hideAccountDropdown,
     onlyShowSignOutButton,
-    children
+    children,
 }: HeaderProps): JSX.Element {
     const logoLink = showStaticPeopleMoverLogo ? '' : dashboardUrl;
 
-    return  (
+    return (
         <header className="peopleMoverHeader" data-testid="peopleMoverHeader">
             <div className="headerLeftContainer">
-                <PeopleMoverLogo href={logoLink}/>
+                <PeopleMoverLogo href={logoLink} />
                 {spaceName && (
                     <h1 className="spaceName" data-testid="headerSpaceName">
                         {spaceName}
@@ -52,7 +52,9 @@ function Header({
             </div>
             {!hideAccountDropdown && (
                 <div className="headerRightContainer">
-                    <AccountDropdown showAllDropDownOptions={!onlyShowSignOutButton}/>
+                    <AccountDropdown
+                        showAllDropDownOptions={!onlyShowSignOutButton}
+                    />
                 </div>
             )}
         </header>

@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import {fireEvent, screen} from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
-import TestUtils, {renderWithRecoil} from 'Utils/TestUtils';
+import TestUtils, { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import ArchivedPersonDrawer from './ArchivedPersonDrawer';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {PeopleState} from 'State/PeopleState';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { PeopleState } from 'State/PeopleState';
 
 jest.mock('Services/Api/ProductClient');
 jest.mock('Services/Api/SpaceClient');
@@ -38,11 +38,14 @@ describe('Archived People', () => {
 
     describe('Showing archived people', () => {
         beforeEach(async () => {
-            ({unmount} = renderWithRecoil(
-                <ArchivedPersonDrawer/>,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen2020)
-                    set(PeopleState, [...TestData.people, TestData.unassignedBigBossSE])
+            ({ unmount } = renderWithRecoil(
+                <ArchivedPersonDrawer />,
+                ({ set }) => {
+                    set(ViewingDateState, mayFourteen2020);
+                    set(PeopleState, [
+                        ...TestData.people,
+                        TestData.unassignedBigBossSE,
+                    ]);
                 }
             ));
         });
@@ -52,51 +55,84 @@ describe('Archived People', () => {
         });
 
         it('shows the names of two archived people but not one unarchived person', async () => {
-            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId(
+                'archivedPersonDrawerCaret'
+            );
             fireEvent.click(drawerCaret);
-            expect(await screen.findByText(TestData.archivedPerson.name)).toBeInTheDocument();
-            expect(await screen.findByText(TestData.unassignedBigBossSE.name)).toBeInTheDocument();
-            expect(screen.queryByText(TestData.person1.name)).not.toBeInTheDocument();
-            expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(2);
-            expect((await screen.findByTestId('archivedPersonDrawerCountBadge')).innerHTML).toEqual('2');
+            expect(
+                await screen.findByText(TestData.archivedPerson.name)
+            ).toBeInTheDocument();
+            expect(
+                await screen.findByText(TestData.unassignedBigBossSE.name)
+            ).toBeInTheDocument();
+            expect(
+                screen.queryByText(TestData.person1.name)
+            ).not.toBeInTheDocument();
+            expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(
+                2
+            );
+            expect(
+                (await screen.findByTestId('archivedPersonDrawerCountBadge'))
+                    .innerHTML
+            ).toEqual('2');
         });
 
         it('should not show people who have not passed their archived date', async () => {
-            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId(
+                'archivedPersonDrawerCaret'
+            );
             fireEvent.click(drawerCaret);
-            expect(screen.queryByText(TestData.hank.name)).not.toBeInTheDocument();
+            expect(
+                screen.queryByText(TestData.hank.name)
+            ).not.toBeInTheDocument();
         });
 
         it('can be closed and opened again', async () => {
-            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId(
+                'archivedPersonDrawerCaret'
+            );
             fireEvent.click(drawerCaret);
-            expect(await screen.findByText(TestData.archivedPerson.name)).toBeInTheDocument();
+            expect(
+                await screen.findByText(TestData.archivedPerson.name)
+            ).toBeInTheDocument();
             fireEvent.click(drawerCaret);
-            expect(await screen.queryByText(TestData.archivedPerson.name)).not.toBeInTheDocument();
+            expect(
+                await screen.queryByText(TestData.archivedPerson.name)
+            ).not.toBeInTheDocument();
         });
 
         it('should not show an archived person if the viewing date is before their archive date', async () => {
             unmount();
 
-            renderWithRecoil(
-                <ArchivedPersonDrawer/>,
-                ({set}) => {
-                    set(ViewingDateState, mayFourteen1999)
-                    set(PeopleState, [...TestData.people, TestData.unassignedBigBossSE])
-                }
-            );
+            renderWithRecoil(<ArchivedPersonDrawer />, ({ set }) => {
+                set(ViewingDateState, mayFourteen1999);
+                set(PeopleState, [
+                    ...TestData.people,
+                    TestData.unassignedBigBossSE,
+                ]);
+            });
 
-            const drawerCaret = await screen.findByTestId('archivedPersonDrawerCaret');
+            const drawerCaret = await screen.findByTestId(
+                'archivedPersonDrawerCaret'
+            );
             fireEvent.click(drawerCaret);
-            expect(await screen.queryByText(TestData.archivedPerson.name)).not.toBeInTheDocument();
-            expect(await screen.findByText(TestData.unassignedBigBossSE.name)).toBeInTheDocument();
-            expect(screen.queryByText(TestData.person1.name)).not.toBeInTheDocument();
-            expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(1);
+            expect(
+                await screen.queryByText(TestData.archivedPerson.name)
+            ).not.toBeInTheDocument();
+            expect(
+                await screen.findByText(TestData.unassignedBigBossSE.name)
+            ).toBeInTheDocument();
+            expect(
+                screen.queryByText(TestData.person1.name)
+            ).not.toBeInTheDocument();
+            expect(screen.getAllByTestId(/archivedPersonCard__*/)).toHaveLength(
+                1
+            );
         });
     });
 
     describe('Showing the drawer in the app', () => {
-        beforeEach(  async () => {
+        beforeEach(async () => {
             await TestUtils.renderPeopleMoverComponent();
         });
 

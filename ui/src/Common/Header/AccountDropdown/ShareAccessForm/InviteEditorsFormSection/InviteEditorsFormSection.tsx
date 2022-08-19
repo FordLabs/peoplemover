@@ -15,30 +15,39 @@
  * limitations under the License.
  */
 
-import React, {CSSProperties, FormEvent, useEffect, useState} from 'react';
+import React, { CSSProperties, FormEvent, useEffect, useState } from 'react';
 import SpaceClient from 'Services/Api/SpaceClient';
 import FormButton from 'Common/FormButton/FormButton';
-import {Space} from 'Types/Space';
-import {UserSpaceMapping} from 'Types/UserSpaceMapping';
+import { Space } from 'Types/Space';
+import { UserSpaceMapping } from 'Types/UserSpaceMapping';
 
-import UserAccessList
-    from 'Common/Header/AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
+import UserAccessList from 'Common/Header/AccountDropdown/ShareAccessForm/InviteEditorsFormSection/UserAccessList/UserAccessList';
 import Creatable from 'react-select/creatable';
-import {reactSelectStyles} from 'Common/ReactSelectStyles/ReactSelectStyles';
-import {InputActionMeta, Props} from 'react-select';
-import {Option} from 'Types/Option';
-import {nameSplitPattern, userIdPattern, validate} from 'Utils/UserIdValidator';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {CurrentUserState} from 'State/CurrentUserState';
-import {ModalContentsState} from 'State/ModalContentsState';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from 'State/CurrentSpaceState';
+import { reactSelectStyles } from 'Common/ReactSelectStyles/ReactSelectStyles';
+import { InputActionMeta, Props } from 'react-select';
+import { Option } from 'Types/Option';
+import {
+    nameSplitPattern,
+    userIdPattern,
+    validate,
+} from 'Utils/UserIdValidator';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { CurrentUserState } from 'State/CurrentUserState';
+import { ModalContentsState } from 'State/ModalContentsState';
+import {
+    CurrentSpaceState,
+    UUIDForCurrentSpaceSelector,
+} from 'State/CurrentSpaceState';
 import GrantEditAccessConfirmationForm from '../GrantAccessConfirmationForm/GrantEditAccessConfirmationForm';
 
 import './InviteEditorsFormSection.scss';
 
 const inviteEditorsStyle = {
     ...reactSelectStyles,
-    control: (provided: CSSProperties, {isFocused}: Props): CSSProperties => ({
+    control: (
+        provided: CSSProperties,
+        { isFocused }: Props
+    ): CSSProperties => ({
         ...provided,
         minHeight: '32px',
         borderRadius: '2px',
@@ -61,13 +70,20 @@ interface InviteEditorsFormSectionProps {
     collapsed?: boolean;
 }
 
-const getUsers = (currentSpace: Space, setUsersList: (usersList: UserSpaceMapping[]) => void): void => {
+const getUsers = (
+    currentSpace: Space,
+    setUsersList: (usersList: UserSpaceMapping[]) => void
+): void => {
     if (currentSpace.uuid) {
-        SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) => setUsersList(users));
+        SpaceClient.getUsersForSpace(currentSpace.uuid).then((users) =>
+            setUsersList(users)
+        );
     }
 };
 
-function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): JSX.Element {
+function InviteEditorsFormSection({
+    collapsed,
+}: InviteEditorsFormSectionProps): JSX.Element {
     const currentSpace = useRecoilValue(CurrentSpaceState);
     const uuid = useRecoilValue(UUIDForCurrentSpaceSelector);
     const currentUser = useRecoilValue(CurrentUserState);
@@ -76,7 +92,8 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
     const isExpanded = !collapsed;
     const [invitedUserIds, setInvitedUserIds] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
-    const [enableInviteButton, setEnableInviteButton] = useState<boolean>(false);
+    const [enableInviteButton, setEnableInviteButton] =
+        useState<boolean>(false);
     const [usersList, setUsersList] = useState<UserSpaceMapping[]>([]);
     const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
     const components = {
@@ -85,14 +102,16 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
 
     useEffect(() => {
         if (uuid) {
-            SpaceClient.getUsersForSpace(uuid)
-                .then(setUsersList);
+            SpaceClient.getUsersForSpace(uuid).then(setUsersList);
         }
     }, [uuid, setUsersList]);
 
     const inviteUsers = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
-        await SpaceClient.inviteUsersToSpace(currentSpace, invitedUserIds.map(userId => userId.value))
+        await SpaceClient.inviteUsersToSpace(
+            currentSpace,
+            invitedUserIds.map((userId) => userId.value)
+        )
             .catch(console.error)
             .finally(() => {
                 setModalContents({
@@ -103,9 +122,11 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
     };
 
     useEffect(() => {
-        const enable = (invitedUserIds.length > 0 && inputValue.trim().length === 0)
-                || (!!inputValue.trim().match(userIdPattern));
-        const errMsg = inputValue.length > 1 && !inputValue.match(userIdPattern);
+        const enable =
+            (invitedUserIds.length > 0 && inputValue.trim().length === 0) ||
+            !!inputValue.trim().match(userIdPattern);
+        const errMsg =
+            inputValue.length > 1 && !inputValue.match(userIdPattern);
         setEnableInviteButton(enable);
         setShowErrorMessage(errMsg);
     }, [invitedUserIds, inputValue]);
@@ -116,10 +137,13 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
         setInputValue(inputUsers.notValid);
     };
 
-    const onInputChange = (user: string, inputActionMeta: InputActionMeta): void => {
+    const onInputChange = (
+        user: string,
+        inputActionMeta: InputActionMeta
+    ): void => {
         if (nameSplitPattern.test(user)) {
             addUser(user);
-        } else if (inputActionMeta?.action === 'input-change')  {
+        } else if (inputActionMeta?.action === 'input-change') {
             setInputValue(user);
         }
     };
@@ -139,23 +163,48 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
         }
     }
 
-    function UserPermission({user}: { user: UserSpaceMapping }): JSX.Element {
+    function UserPermission({ user }: { user: UserSpaceMapping }): JSX.Element {
         if (user.permission !== 'owner') {
-            const spaceOwner = usersList.filter(user => user.permission === 'owner')[0];
-            const isUserOwner = spaceOwner.userId.toUpperCase() === currentUser.toUpperCase();
-            return <UserAccessList currentSpace={currentSpace} user={user} currentUser={currentUser} onChange={(): void => {getUsers(currentSpace, setUsersList);}} owner={spaceOwner} isUserOwner={isUserOwner}/>;
+            const spaceOwner = usersList.filter(
+                (user) => user.permission === 'owner'
+            )[0];
+            const isUserOwner =
+                spaceOwner.userId.toUpperCase() === currentUser.toUpperCase();
+            return (
+                <UserAccessList
+                    currentSpace={currentSpace}
+                    user={user}
+                    currentUser={currentUser}
+                    onChange={(): void => {
+                        getUsers(currentSpace, setUsersList);
+                    }}
+                    owner={spaceOwner}
+                    isUserOwner={isUserOwner}
+                />
+            );
         } else {
-            return <span className="userPermission" data-testid="userIdPermission">{user.permission}</span>;
+            return (
+                <span className="userPermission" data-testid="userIdPermission">
+                    {user.permission}
+                </span>
+            );
         }
     }
 
     return (
         <form className="inviteEditorsForm form" onSubmit={inviteUsers}>
-            {!isExpanded && <span className="inviteEditorsLabel">People with this permission can edit</span>}
+            {!isExpanded && (
+                <span className="inviteEditorsLabel">
+                    People with this permission can edit
+                </span>
+            )}
             {isExpanded && (
                 <>
-                    <label htmlFor="employeeIdTextArea" className="inviteEditorsLabel">
-                    People with this permission can edit
+                    <label
+                        htmlFor="employeeIdTextArea"
+                        className="inviteEditorsLabel"
+                    >
+                        People with this permission can edit
                         <Creatable
                             className="employeeIdTextArea"
                             inputId="employeeIdTextArea"
@@ -175,25 +224,48 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
                             onInputChange={onInputChange}
                             inputValue={inputValue}
                             onKeyDown={handleKeyDownEvent}
-                            onBlur={(): void => {addUser(inputValue);}}
+                            onBlur={(): void => {
+                                addUser(inputValue);
+                            }}
                         />
                         <div className="userIdErrorMessage">
-                            { showErrorMessage &&
+                            {showErrorMessage && (
                                 <>
-                                    <i className="material-icons userIdErrorMessageIcon" aria-hidden>report_problem</i>
-                                    <span data-testid="inviteEditorsFormErrorMessage">Please enter a valid CDSID</span>
+                                    <i
+                                        className="material-icons userIdErrorMessageIcon"
+                                        aria-hidden
+                                    >
+                                        report_problem
+                                    </i>
+                                    <span data-testid="inviteEditorsFormErrorMessage">
+                                        Please enter a valid CDSID
+                                    </span>
                                 </>
-                            }
+                            )}
                         </div>
                     </label>
                     <div>
                         <ul className="userList">
                             {usersList.map((user, index) => {
                                 return (
-                                    <li className="userListItem" key={index} data-testid={`userListItem__${user.userId}`}>
-                                        <i className="material-icons editorIcon" aria-hidden>account_circle</i>
-                                        <span className="userName" data-testid="userIdName">{user.userId}</span>
-                                        <UserPermission user={user}/>
+                                    <li
+                                        className="userListItem"
+                                        key={index}
+                                        data-testid={`userListItem__${user.userId}`}
+                                    >
+                                        <i
+                                            className="material-icons editorIcon"
+                                            aria-hidden
+                                        >
+                                            account_circle
+                                        </i>
+                                        <span
+                                            className="userName"
+                                            data-testid="userIdName"
+                                        >
+                                            {user.userId}
+                                        </span>
+                                        <UserPermission user={user} />
                                     </li>
                                 );
                             })}
@@ -203,7 +275,8 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
                         <FormButton
                             buttonStyle="secondary"
                             className="cancelButton"
-                            onClick={() => setModalContents(null)}>
+                            onClick={() => setModalContents(null)}
+                        >
                             Cancel
                         </FormButton>
                         <FormButton
@@ -222,4 +295,3 @@ function InviteEditorsFormSection({collapsed}: InviteEditorsFormSectionProps): J
 }
 
 export default InviteEditorsFormSection;
-

@@ -16,13 +16,13 @@
  */
 
 import React from 'react';
-import {createDataTestId} from 'Utils/ReactUtils';
+import { createDataTestId } from 'Utils/ReactUtils';
 import PersonAndRoleInfo from 'Common/PersonAndRoleInfo/PersonAndRoleInfo';
-import {useRecoilValue, useSetRecoilState} from 'recoil';
-import {IsReadOnlyState} from 'State/IsReadOnlyState';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { IsReadOnlyState } from 'State/IsReadOnlyState';
 import PersonForm from 'Common/PersonForm/PersonForm';
-import {ModalContentsState} from 'State/ModalContentsState';
-import {Person} from 'Types/Person';
+import { ModalContentsState } from 'State/ModalContentsState';
+import { Person } from 'Types/Person';
 
 import 'Styles/Main.scss';
 import './PersonCard.scss';
@@ -39,10 +39,9 @@ function PersonCard({ person }: Props): JSX.Element {
         if (!isReadOnly) {
             setModalContents({
                 title: 'Edit Person',
-                component: <PersonForm
-                    isEditPersonForm
-                    personEdited={person}
-                />,
+                component: (
+                    <PersonForm isEditPersonForm personEdited={person} />
+                ),
             });
         }
     }
@@ -58,7 +57,15 @@ function PersonCard({ person }: Props): JSX.Element {
             className={'archivedPersonCard'}
             data-testid={createDataTestId('archivedPersonCard', person.name)}
         >
-            <div onClick={toggleModal} className={'archivedPersonContainer'} onKeyPress={handleKeyPress} data-testid={createDataTestId('archivedPersonContainer', person.name)}>
+            <div
+                onClick={toggleModal}
+                className={'archivedPersonContainer'}
+                onKeyPress={handleKeyPress}
+                data-testid={createDataTestId(
+                    'archivedPersonContainer',
+                    person.name
+                )}
+            >
                 <PersonAndRoleInfo
                     person={person}
                     duration={NaN}
@@ -68,11 +75,14 @@ function PersonCard({ person }: Props): JSX.Element {
                     className="archivedPersonRoleColor"
                     aria-label="Person Menu"
                     disabled={isReadOnly}
-                    style={{backgroundColor: 'transparent'}}
+                    style={{ backgroundColor: 'transparent' }}
                     onClick={toggleModal}
                 >
                     {!isReadOnly && (
-                        <i className="material-icons archivedPersonEditIcon greyIcon" aria-hidden>
+                        <i
+                            className="material-icons archivedPersonEditIcon greyIcon"
+                            aria-hidden
+                        >
                             more_vert
                         </i>
                     )}

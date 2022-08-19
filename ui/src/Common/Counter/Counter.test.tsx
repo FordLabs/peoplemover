@@ -16,19 +16,21 @@
  */
 
 import React from 'react';
-import {renderWithRecoil} from '../../Utils/TestUtils';
+import { renderWithRecoil } from '../../Utils/TestUtils';
 import TestData from '../../Utils/TestData';
 import Counter from './Counter';
-import {screen} from '@testing-library/react';
-import {ViewingDateState} from '../../State/ViewingDateState';
-import {ProductsState} from '../../State/ProductsState';
-import {LocalStorageFilters} from '../../SubHeader/SortingAndFiltering/FilterLibraries';
-import {Product} from '../../Types/Product';
+import { screen } from '@testing-library/react';
+import { ViewingDateState } from '../../State/ViewingDateState';
+import { ProductsState } from '../../State/ProductsState';
+import { LocalStorageFilters } from '../../SubHeader/SortingAndFiltering/FilterLibraries';
+import { Product } from '../../Types/Product';
 
 describe('Counter', () => {
     it('should display the number of products and people when no filter are applied and ignore archived products', async () => {
         renderCounter();
-        expect(getCounter()).toHaveTextContent( 'Results - Products: 4, People: 3 (Unassigned: 1)');
+        expect(getCounter()).toHaveTextContent(
+            'Results - Products: 4, People: 3 (Unassigned: 1)'
+        );
     });
 
     it('should not count product that are ended before today', () => {
@@ -44,7 +46,9 @@ describe('Counter', () => {
         };
         const products = [finishedProduct, TestData.unassignedProduct];
         renderCounter(products);
-        expect(getCounter()).toHaveTextContent('Results - Products: 0, People: 1 (Unassigned: 1)');
+        expect(getCounter()).toHaveTextContent(
+            'Results - Products: 0, People: 1 (Unassigned: 1)'
+        );
     });
 
     it('should display the number of products and people when role filters are applied', () => {
@@ -53,28 +57,37 @@ describe('Counter', () => {
             productTagFilters: [],
             roleTagFilters: ['Software Engineer'],
             personTagFilters: [],
-        }
+        };
         localStorage.setItem('filters', JSON.stringify(filters));
         renderCounter();
-        expect(getCounter()).toHaveTextContent('Results - Products: 4, People: 2 (Unassigned: 1)');
+        expect(getCounter()).toHaveTextContent(
+            'Results - Products: 4, People: 2 (Unassigned: 1)'
+        );
     });
 
     it('should display the number of products and people when location filters are applied', () => {
-        localStorage.setItem('filters', JSON.stringify(TestData.defaultLocalStorageFilters));
+        localStorage.setItem(
+            'filters',
+            JSON.stringify(TestData.defaultLocalStorageFilters)
+        );
         renderCounter();
-        expect(getCounter()).toHaveTextContent('Results - Products: 1, People: 2 (Unassigned: 1)');
+        expect(getCounter()).toHaveTextContent(
+            'Results - Products: 1, People: 2 (Unassigned: 1)'
+        );
     });
 
     it('should display the number of products and people when all filters are applied', () => {
         const filters: LocalStorageFilters = {
-            locationTagFilters:['Southfield'],
+            locationTagFilters: ['Southfield'],
             productTagFilters: ['FordX'],
             roleTagFilters: ['Software Engineer'],
             personTagFilters: ['The lil boss'],
-        }
+        };
         localStorage.setItem('filters', JSON.stringify(filters));
         renderCounter();
-        expect(getCounter()).toHaveTextContent( 'Results - Products: 1, People: 1 (Unassigned: 0)');
+        expect(getCounter()).toHaveTextContent(
+            'Results - Products: 1, People: 1 (Unassigned: 0)'
+        );
     });
 
     it('should display the number of products and people when one person tag filter is applied', () => {
@@ -83,11 +96,16 @@ describe('Counter', () => {
             productTagFilters: [],
             roleTagFilters: [],
             personTagFilters: ['The big boss'],
-        }
+        };
         localStorage.setItem('filters', JSON.stringify(filters));
-        const products = [TestData.unassignedProductForBigBossSE, TestData.productWithTags];
+        const products = [
+            TestData.unassignedProductForBigBossSE,
+            TestData.productWithTags,
+        ];
         renderCounter(products);
-        expect(getCounter()).toHaveTextContent('Results - Products: 1, People: 1 (Unassigned: 0)');
+        expect(getCounter()).toHaveTextContent(
+            'Results - Products: 1, People: 1 (Unassigned: 0)'
+        );
     });
 
     it('should display the number of products and people when people are in multiple products', () => {
@@ -96,7 +114,7 @@ describe('Counter', () => {
             productTagFilters: [],
             roleTagFilters: [],
             personTagFilters: ['The lil boss', 'The big boss'],
-        }
+        };
         localStorage.setItem('filters', JSON.stringify(filters));
         const productWithPersonAlreadyAssignedInProduct1: Product = {
             id: 2,
@@ -110,22 +128,25 @@ describe('Counter', () => {
             tags: [TestData.productTag2],
             notes: 'note',
         };
-        const products = [TestData.unassignedProductForBigBossSE, TestData.productWithTags, productWithPersonAlreadyAssignedInProduct1]
-        renderCounter(products)
-        expect(getCounter()).toContainHTML('Results - Products: 2, People: 3 (Unassigned: 0)');
+        const products = [
+            TestData.unassignedProductForBigBossSE,
+            TestData.productWithTags,
+            productWithPersonAlreadyAssignedInProduct1,
+        ];
+        renderCounter(products);
+        expect(getCounter()).toContainHTML(
+            'Results - Products: 2, People: 3 (Unassigned: 0)'
+        );
     });
 });
 
 function renderCounter(products = TestData.products) {
-    renderWithRecoil(
-        <Counter />,
-        ({set}) => {
-            set(ProductsState, products)
-            set(ViewingDateState, new Date(2021, 4, 13))
-        }
-    );
+    renderWithRecoil(<Counter />, ({ set }) => {
+        set(ProductsState, products);
+        set(ViewingDateState, new Date(2021, 4, 13));
+    });
 }
 
 function getCounter() {
-    return screen.getByTestId('counter')
+    return screen.getByTestId('counter');
 }

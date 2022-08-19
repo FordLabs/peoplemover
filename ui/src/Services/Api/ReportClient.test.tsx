@@ -5,32 +5,34 @@ import fileDownload from 'js-file-download';
 
 jest.mock('js-file-download');
 
-describe('Report Client', function() {
+describe('Report Client', function () {
     const baseReportsUrl = `/api/reports`;
     const cookies = new Cookies();
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 123456',
+            Authorization: 'Bearer 123456',
         },
     };
 
-    beforeEach(function() {
+    beforeEach(function () {
         cookies.set('accessToken', '123456');
-        const response = [{
-            productName: 'product',
-            productLocation: 'location',
-            productTags: 'ProductTag1,ProductTag2',
-            personName: 'person',
-            customField1: 'cdsid',
-            personRole: 'role',
-            personNote: 'note',
-            personTags: 'Tag 1,Tag 2',
-        }];
-        Axios.get = jest.fn().mockResolvedValue({data: response});
+        const response = [
+            {
+                productName: 'product',
+                productLocation: 'location',
+                productTags: 'ProductTag1,ProductTag2',
+                personName: 'person',
+                customField1: 'cdsid',
+                personRole: 'role',
+                personNote: 'note',
+                personTags: 'Tag 1,Tag 2',
+            },
+        ];
+        Axios.get = jest.fn().mockResolvedValue({ data: response });
     });
 
-    afterEach(function() {
+    afterEach(function () {
         cookies.remove('accessToken');
     });
 
@@ -39,11 +41,15 @@ describe('Report Client', function() {
         const spaceUuid = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
         const today = new Date(2020, 8, 21);
         const expectedFilename = `bob_2020-09-21.csv`;
-        const expectedJson = '"Product Name","Product Location","Product Tags","Person Name","CDSID","Person Role","Person Note","Person Tags"\n"product","location","ProductTag1,ProductTag2","person","cdsid","role","note","Tag 1,Tag 2"';
+        const expectedJson =
+            '"Product Name","Product Location","Product Tags","Person Name","CDSID","Person Role","Person Note","Person Tags"\n"product","location","ProductTag1,ProductTag2","person","cdsid","role","note","Tag 1,Tag 2"';
 
         const expectedUrl = `${baseReportsUrl}/people?spaceUuid=${spaceUuid}&requestedDate=2020-09-21`;
         await ReportClient.getReportsWithNames(spaceName, spaceUuid, today);
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-        expect(fileDownload).toHaveBeenCalledWith(expectedJson, expectedFilename);
+        expect(fileDownload).toHaveBeenCalledWith(
+            expectedJson,
+            expectedFilename
+        );
     });
 });

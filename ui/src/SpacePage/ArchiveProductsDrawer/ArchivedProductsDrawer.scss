@@ -21,44 +21,44 @@
 .graveyardDrawer,
 .graveyardDrawerHandle,
 .expandedGraveyardDrawerHandle {
-    position: fixed;
-    top: 225px;
-    padding: 15px;
-    background-color: $gray-4;
+  position: fixed;
+  top: 225px;
+  padding: 15px;
+  background-color: $gray-4;
 }
 
 .graveyardDrawer,
 .graveyardDrawerHandle {
-    right: 0;
+  right: 0;
 }
 
 .graveyardDrawerHandle {
-    width: 30px;
-    box-shadow: 3px 0 10px rgba(black, 0.3);
+  width: 30px;
+  box-shadow: 3px 0 10px rgba(black, 0.3);
 }
 
 .expandedGraveyardDrawerHandle {
-    right: 280px;
-    width: 30px;
+  right: 280px;
+  width: 30px;
 }
 
 .graveyardDrawer {
-    width: 250px;
-    min-height: 125px;
-    text-align: center;
+  width: 250px;
+  min-height: 125px;
+  text-align: center;
 }
 
 .graveyardDrawer h2 {
-    margin: 0;
+  margin: 0;
 }
 
 .archivedProductListContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 10px;
 
-    @include phone {
-        margin-right: 10px;
-    }
+  @include phone {
+    margin-right: 10px;
+  }
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import {Color} from './Color';
+import { Color } from './Color';
 
 export interface Tag {
     id: number;

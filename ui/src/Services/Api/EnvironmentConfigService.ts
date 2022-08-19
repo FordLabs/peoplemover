@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 import axios from 'axios';
-import {RunConfig} from '../../Types/RunConfig';
+import { RunConfig } from '../../Types/RunConfig';
 
 const EnvironmentConfigService = {
     async get(): Promise<RunConfig> {
-        const response = await axios.get( '/api/config', {headers: {'Content-Type': 'application/json'}})
+        const response = await axios.get('/api/config', {
+            headers: { 'Content-Type': 'application/json' },
+        });
         const runConfig = response.data;
         window.runConfig = Object.freeze(runConfig);
-        return runConfig
-    }
-}
+        return runConfig;
+    },
+};
 
 export default EnvironmentConfigService;

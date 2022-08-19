@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 import React from 'react';
-import {MemoryRouter} from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import Branding from './Branding';
-import {render, screen} from '@testing-library/react';
-import {RunConfig} from 'Types/RunConfig';
+import { render, screen } from '@testing-library/react';
+import { RunConfig } from 'Types/RunConfig';
 
 describe('Branding', () => {
     const expectedUrl = 'url-dot-com';
 
     beforeEach(() => {
-        window.runConfig = {ford_labs_url: expectedUrl} as RunConfig;
+        window.runConfig = { ford_labs_url: expectedUrl } as RunConfig;
 
         render(
             <MemoryRouter>
@@ -32,7 +32,7 @@ describe('Branding', () => {
             </MemoryRouter>
         );
     });
-    
+
     it('should get url from config', () => {
         const fordLabsLink = screen.getByText('FordLabs');
         expect(fordLabsLink).toHaveAttribute('href', expectedUrl);

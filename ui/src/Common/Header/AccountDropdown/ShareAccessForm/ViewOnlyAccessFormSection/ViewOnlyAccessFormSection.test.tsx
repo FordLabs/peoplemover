@@ -15,15 +15,15 @@
  *  limitations under the License.
  */
 
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import TestData from 'Utils/TestData';
 import React from 'react';
-import {fireEvent, screen, waitFor} from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {Space} from 'Types/Space';
+import { Space } from 'Types/Space';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {RecoilObserver} from 'Utils/RecoilObserver';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { RecoilObserver } from 'Utils/RecoilObserver';
 
 Object.assign(navigator, {
     clipboard: {
@@ -37,8 +37,8 @@ let actualCurrentSpace: Space | null;
 
 describe('View Only Access Form Section', () => {
     const testSpace = TestData.space;
-    const testSpaceWithViewOnlyOn = {...testSpace, todayViewIsPublic: true};
-    const testSpaceWithViewOnlyOff = {...testSpace, todayViewIsPublic: false};
+    const testSpaceWithViewOnlyOn = { ...testSpace, todayViewIsPublic: true };
+    const testSpaceWithViewOnlyOff = { ...testSpace, todayViewIsPublic: false };
     const expectedUrl = 'https://some-url';
 
     let location: (string | Location) & Location;
@@ -78,7 +78,9 @@ describe('View Only Access Form Section', () => {
 
         fireEvent.click(screen.getByText('Copy link'));
 
-        await waitFor(() => expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl));
+        await waitFor(() =>
+            expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl)
+        );
     });
 
     it('should should change text on copy', async () => {
@@ -89,42 +91,57 @@ describe('View Only Access Form Section', () => {
         expect(screen.queryByText('Copied!')).not.toBeNull();
     });
 
-    it('should populate Enable View Only toggle with information from current space', function() {
+    it('should populate Enable View Only toggle with information from current space', function () {
         setupComponent(testSpaceWithViewOnlyOn);
-        const enableViewOnlyCheckbox = screen.getByTestId('viewOnlyAccessToggle');
+        const enableViewOnlyCheckbox = screen.getByTestId(
+            'viewOnlyAccessToggle'
+        );
         expect(enableViewOnlyCheckbox).toBeChecked();
     });
 
-    it('should update the current space when the toggle is clicked', async function() {
+    it('should update the current space when the toggle is clicked', async function () {
         setupComponent(testSpaceWithViewOnlyOn);
 
-        const expectedUpdatedSpaceData = {...testSpace, todayViewIsPublic: false};
+        const expectedUpdatedSpaceData = {
+            ...testSpace,
+            todayViewIsPublic: false,
+        };
         SpaceClient.editSpaceReadOnlyFlag = jest.fn().mockResolvedValue({
             data: expectedUpdatedSpaceData,
         });
 
-        const enableViewOnlyCheckbox = screen.getByTestId('viewOnlyAccessToggle');
+        const enableViewOnlyCheckbox = screen.getByTestId(
+            'viewOnlyAccessToggle'
+        );
         expect(enableViewOnlyCheckbox).toBeChecked();
         fireEvent.click(enableViewOnlyCheckbox);
 
-        await waitFor(() => expect(SpaceClient.editSpaceReadOnlyFlag).toHaveBeenCalledWith(
-            testSpace.uuid,
-            expectedUpdatedSpaceData
-        ));
+        await waitFor(() =>
+            expect(SpaceClient.editSpaceReadOnlyFlag).toHaveBeenCalledWith(
+                testSpace.uuid,
+                expectedUpdatedSpaceData
+            )
+        );
 
         expect(actualCurrentSpace).toEqual(expectedUpdatedSpaceData);
     });
 
-    it('should have copy link button disabled when view only view is turned off', async function() {
+    it('should have copy link button disabled when view only view is turned off', async function () {
         setupComponent(testSpaceWithViewOnlyOff);
-        const viewOnlyAccessFormCopyLinkButton = screen.getByTestId('viewOnlyAccessFormCopyLinkButton');
+        const viewOnlyAccessFormCopyLinkButton = screen.getByTestId(
+            'viewOnlyAccessFormCopyLinkButton'
+        );
         expect(viewOnlyAccessFormCopyLinkButton).toBeDisabled();
     });
 
     it('should show toggle and tooltips when form is expanded', () => {
         setupComponent(testSpaceWithViewOnlyOn, false);
-        expect(screen.queryByTestId('viewOnlyAccessToggle')).toBeInTheDocument();
-        expect(screen.queryByTestId('viewOnlyAccessTooltip')).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('viewOnlyAccessToggle')
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('viewOnlyAccessTooltip')
+        ).toBeInTheDocument();
     });
 
     it('should hide toggle and tooltips when form is collapsed', () => {
@@ -145,8 +162,8 @@ const setupComponent = (currentSpace: Space, collapsed = false) => {
             />
             <ViewOnlyAccessFormSection collapsed={collapsed} />
         </>,
-        ({set}) => {
-            set(CurrentSpaceState, currentSpace)
+        ({ set }) => {
+            set(CurrentSpaceState, currentSpace);
         }
     );
 };

@@ -16,14 +16,14 @@
  */
 
 import SpaceClient from 'Services/Api/SpaceClient';
-import {Space} from 'Types/Space';
-import {useRecoilState} from 'recoil';
-import {UserSpacesState} from 'State/UserSpacesState';
-import {useCallback} from 'react';
+import { Space } from 'Types/Space';
+import { useRecoilState } from 'recoil';
+import { UserSpacesState } from 'State/UserSpacesState';
+import { useCallback } from 'react';
 
 interface UseFetchUserSpaces {
     userSpaces: Space[];
-    fetchUserSpaces(): Promise<void>
+    fetchUserSpaces(): Promise<void>;
 }
 
 function useFetchUserSpaces(): UseFetchUserSpaces {
@@ -31,11 +31,11 @@ function useFetchUserSpaces(): UseFetchUserSpaces {
 
     const fetchUserSpaces = useCallback(() => {
         return SpaceClient.getSpacesForUser().then(setUserSpaces).catch();
-    }, [setUserSpaces])
+    }, [setUserSpaces]);
 
     return {
         userSpaces: userSpaces || [],
-        fetchUserSpaces
+        fetchUserSpaces,
     };
 }
 

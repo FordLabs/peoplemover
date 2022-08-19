@@ -17,7 +17,12 @@
 
 declare namespace Cypress {
     interface Chainable {
-        visitSpace(mockData?: { locationData: any[]; productTagsData: any[] }, hash?: string, date?: Date): Chainable<void>;
+        visitSpace(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            mockData?: { locationData: any[]; productTagsData: any[] },
+            hash?: string,
+            date?: Date
+        ): Chainable<void>;
 
         getModal(): Chainable<Element>;
 
@@ -29,7 +34,9 @@ declare namespace Cypress {
 
         resetSpace(uuid: string): Chainable;
 
-        selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: string): Chainable;
+        selectOptionFromReactSelect(
+            parentSelector: string,
+            checkboxTextToSelect: string
+        ): Chainable;
     }
 }
-

@@ -16,20 +16,24 @@
  */
 
 import Axios from 'axios';
-import {Report} from '../../Types/Report';
+import { Report } from '../../Types/Report';
 import fileDownload from 'js-file-download';
-import {Parser} from 'json2csv';
+import { Parser } from 'json2csv';
 import moment from 'moment';
-import {getAxiosConfig} from '../../Utils/getAxiosConfig';
+import { getAxiosConfig } from '../../Utils/getAxiosConfig';
 
-async function getReportsWithNames(spaceName: string, spaceUuid: string, date: Date): Promise<void> {
+async function getReportsWithNames(
+    spaceName: string,
+    spaceUuid: string,
+    date: Date
+): Promise<void> {
     const dateAsString = moment(date).format('YYYY-MM-DD');
     const url = `/api/reports/people?spaceUuid=${spaceUuid}&requestedDate=${dateAsString}`;
-    return Axios.get(url, getAxiosConfig()).then( response => {
+    return Axios.get(url, getAxiosConfig()).then((response) => {
         const jsonAsCsv = ReportClient.convertToCSV(response.data);
         const fileName = `${spaceName}_${date.toISOString().split('T')[0]}.csv`;
         fileDownload(jsonAsCsv, fileName);
-    })
+    });
 }
 
 function convertToCSV(jsonData: Report[]): string {
@@ -72,10 +76,9 @@ function convertToCSV(jsonData: Report[]): string {
     return json2csvParser.parse(jsonData);
 }
 
-
 const ReportClient = {
     getReportsWithNames,
-    convertToCSV
-}
+    convertToCSV,
+};
 
 export default ReportClient;

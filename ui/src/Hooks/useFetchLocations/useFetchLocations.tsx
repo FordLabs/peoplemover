@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
-import {useCallback} from 'react';
+import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
 import sortTagsAlphabetically from 'Utils/sortTagsAlphabetically';
 import LocationClient from 'Services/Api/LocationClient';
-import {LocationsState} from 'State/LocationsState';
-import {LocationTag} from 'Types/Tag';
+import { LocationsState } from 'State/LocationsState';
+import { LocationTag } from 'Types/Tag';
 
 interface UseFetchLocations {
     locations: LocationTag[];
-    fetchLocations(): void
+    fetchLocations(): void;
 }
 
 function useFetchLocations(spaceUUID: string): UseFetchLocations {
@@ -32,17 +32,17 @@ function useFetchLocations(spaceUUID: string): UseFetchLocations {
 
     const fetchLocations = useCallback(() => {
         LocationClient.get(spaceUUID)
-            .then(result => {
+            .then((result) => {
                 const locationsForSpace: Array<LocationTag> = [...result.data];
                 sortTagsAlphabetically(locationsForSpace);
-                setLocations(locationsForSpace)
+                setLocations(locationsForSpace);
             })
             .catch(console.error);
-    }, [setLocations, spaceUUID])
+    }, [setLocations, spaceUUID]);
 
     return {
         locations: locations || [],
-        fetchLocations
+        fetchLocations,
     };
 }
 

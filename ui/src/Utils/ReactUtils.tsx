@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 export function createDataTestId(prefix: string, name: string): string {
     return prefix + '__' + name.toLowerCase().replace(/ /g, '_');
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@import "../../Styles/Colors";
+@import '../../Styles/Colors';
 @import '../../Styles/Breakpoints';
 
 .spaceTile {
@@ -35,7 +35,7 @@
     border: 2px solid white;
   }
 
-  @include desktop  {
+  @include desktop {
     margin: 0;
   }
 }
@@ -53,7 +53,7 @@
     font-size: 22px;
     font-weight: bold;
     line-height: 25px;
-    margin-bottom: .25rem;
+    margin-bottom: 0.25rem;
     margin-right: 2rem;
   }
 
@@ -67,7 +67,7 @@
 
 .ellipsisButtonContainer {
   position: absolute;
-  top: calc(50% - .75rem);
+  top: calc(50% - 0.75rem);
   right: 0;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -108,7 +108,6 @@
   }
 }
 
-
 .ellipsisDropdownContainer {
   z-index: 1;
   position: absolute;
@@ -116,23 +115,24 @@
   background-color: white;
   width: 150px;
   border-radius: 6px;
-  border: 1px solid #EDEBEB;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+  border: 1px solid #edebeb;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
 
   padding: 11px 15px;
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
   font-size: 12px;
 
-  i,img {
+  i,
+  img {
     margin-right: 0.5rem;
   }
-  img{
+  img {
     width: 18px;
     height: 18px;
   }
 
-  @include phone  {
+  @include phone {
     right: 0;
   }
 }

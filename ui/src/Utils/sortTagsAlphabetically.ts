@@ -1,4 +1,4 @@
-import {Tag} from 'Types/Tag';
+import { Tag } from 'Types/Tag';
 
 const sortTagsAlphabetically = (tagsList: Array<Tag>): void => {
     tagsList.sort((tag1: Tag, tag2: Tag) => {

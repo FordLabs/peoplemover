@@ -22,12 +22,12 @@ import Axios from 'axios';
 
 jest.mock('axios');
 
-describe('Product Client', function() {
+describe('Product Client', function () {
     const baseProductsUrl = `/api/spaces/${TestData.space.uuid}/products`;
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 123456',
+            Authorization: 'Bearer 123456',
         },
     };
     const cookies = new Cookies();
@@ -52,45 +52,66 @@ describe('Product Client', function() {
         cookies.remove('accessToken');
     });
 
-    it('should create a product and return that product', function(done) {
+    it('should create a product and return that product', function (done) {
         const expectedUrl = baseProductsUrl;
-        ProductClient.createProduct(TestData.space, TestData.productWithAssignments)
-            .then((response) => {
-                expect(Axios.post).toHaveBeenCalledWith(expectedUrl, TestData.productWithAssignments, expectedConfig);
-                expect(response.data).toBe('Created Product');
-                done();
-            });
+        ProductClient.createProduct(
+            TestData.space,
+            TestData.productWithAssignments
+        ).then((response) => {
+            expect(Axios.post).toHaveBeenCalledWith(
+                expectedUrl,
+                TestData.productWithAssignments,
+                expectedConfig
+            );
+            expect(response.data).toBe('Created Product');
+            done();
+        });
     });
 
-    it('should update a product and return that product', function(done) {
+    it('should update a product and return that product', function (done) {
         const expectedUrl = `${baseProductsUrl}/${TestData.productWithAssignments.id}`;
-        ProductClient.editProduct(TestData.space, TestData.productWithAssignments)
-            .then((response) => {
-                expect(Axios.put).toHaveBeenCalledWith(expectedUrl, TestData.productWithAssignments, expectedConfig);
-                expect(response.data).toBe('Updated Product');
-                done();
-            });
+        ProductClient.editProduct(
+            TestData.space,
+            TestData.productWithAssignments
+        ).then((response) => {
+            expect(Axios.put).toHaveBeenCalledWith(
+                expectedUrl,
+                TestData.productWithAssignments,
+                expectedConfig
+            );
+            expect(response.data).toBe('Updated Product');
+            done();
+        });
     });
 
-    it('should delete a product', function(done) {
+    it('should delete a product', function (done) {
         const expectedUrl = `${baseProductsUrl}/${TestData.productWithAssignments.id}`;
-        ProductClient.deleteProduct(TestData.space, TestData.productWithAssignments)
-            .then((response) => {
-                expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
-                expect(response.data).toBe('Deleted Product');
-                done();
-            });
+        ProductClient.deleteProduct(
+            TestData.space,
+            TestData.productWithAssignments
+        ).then((response) => {
+            expect(Axios.delete).toHaveBeenCalledWith(
+                expectedUrl,
+                expectedConfig
+            );
+            expect(response.data).toBe('Deleted Product');
+            done();
+        });
     });
 
-    it('should return the products given a date', function(done) {
+    it('should return the products given a date', function (done) {
         const date = '2019-01-10';
         const expectedUrl = baseProductsUrl + `?requestedDate=${date}`;
         const spaceUuid = TestData?.space?.uuid || '';
-        ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10))
-            .then((response) => {
-                expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
+        ProductClient.getProductsForDate(spaceUuid, new Date(2019, 0, 10)).then(
+            (response) => {
+                expect(Axios.get).toHaveBeenCalledWith(
+                    expectedUrl,
+                    expectedConfig
+                );
                 expect(response.data).toBe('Get Products');
                 done();
-            });
+            }
+        );
     });
 });

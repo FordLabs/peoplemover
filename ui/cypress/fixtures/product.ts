@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 import * as moment from 'moment';
-import {Moment} from 'moment';
+import { Moment } from 'moment';
 
 export interface Product {
     name: string;

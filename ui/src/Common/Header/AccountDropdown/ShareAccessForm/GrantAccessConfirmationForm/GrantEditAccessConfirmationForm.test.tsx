@@ -17,16 +17,18 @@
 
 import GrantEditAccessConfirmationForm from './GrantEditAccessConfirmationForm';
 import React from 'react';
-import {fireEvent, screen, waitFor} from '@testing-library/react';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { renderWithRecoil } from 'Utils/TestUtils';
 
 Object.assign(navigator, {
     clipboard: {
-        writeText: (): void => {return;},
+        writeText: (): void => {
+            return;
+        },
     },
 });
 
-describe('Grant Edit Access Confirmation Form', function() {
+describe('Grant Edit Access Confirmation Form', function () {
     const expectedUrl = 'https://some-url';
     let location: (string | Location) & Location;
 
@@ -40,20 +42,22 @@ describe('Grant Edit Access Confirmation Form', function() {
         });
         jest.spyOn(navigator.clipboard, 'writeText');
 
-        renderWithRecoil(<GrantEditAccessConfirmationForm/>);
+        renderWithRecoil(<GrantEditAccessConfirmationForm />);
     });
 
     afterEach(() => {
         window.location = location;
     });
 
-    it('should show correct space URL', function() {
+    it('should show correct space URL', function () {
         expect(screen.queryByText(expectedUrl)).not.toBeNull();
     });
 
     it('should copy the url to clipboard', async () => {
         fireEvent.click(screen.getByText('Copy link'));
-        await waitFor(() =>  expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl));
+        await waitFor(() =>
+            expect(navigator.clipboard.writeText).toBeCalledWith(expectedUrl)
+        );
     });
 
     it('should should change text on copy', async () => {

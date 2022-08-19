@@ -29,27 +29,30 @@ function PeopleMoverLogo({ href }: Props): JSX.Element {
 
     const Logo = (): JSX.Element => (
         <>
-            <img src={PersonIcon} className="peopleMoverImage" alt="" aria-hidden />
+            <img
+                src={PersonIcon}
+                className="peopleMoverImage"
+                alt=""
+                aria-hidden
+            />
             <span className="peopleMoverTitle">PEOPLEMOVER</span>
         </>
     );
 
-    return isLink
-        ? (
-            <a
-                href={href}
-                aria-label="People Mover Dashboard"
-                data-testid="peopleMoverLogoLink"
-                className="peopleMoverLogo">
-                <Logo />
-            </a>
-        ) : (
-            <div
-                data-testid="peopleMoverStaticLogo"
-                className="peopleMoverLogo">
-                <Logo />
-            </div>
-        );
+    return isLink ? (
+        <a
+            href={href}
+            aria-label="People Mover Dashboard"
+            data-testid="peopleMoverLogoLink"
+            className="peopleMoverLogo"
+        >
+            <Logo />
+        </a>
+    ) : (
+        <div data-testid="peopleMoverStaticLogo" className="peopleMoverLogo">
+            <Logo />
+        </div>
+    );
 }
 
 export default PeopleMoverLogo;

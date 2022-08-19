@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-import Select, {OptionProps, OptionTypeBase, Props} from 'react-select';
-import {CustomIndicator, reactSelectStyles} from 'Common/ReactSelectStyles/ReactSelectStyles';
-import React, {CSSProperties, useState} from 'react';
-import {Space} from 'Types/Space';
-import {UserSpaceMapping} from 'Types/UserSpaceMapping';
+import Select, { OptionProps, OptionTypeBase, Props } from 'react-select';
+import {
+    CustomIndicator,
+    reactSelectStyles,
+} from 'Common/ReactSelectStyles/ReactSelectStyles';
+import React, { CSSProperties, useState } from 'react';
+import { Space } from 'Types/Space';
+import { UserSpaceMapping } from 'Types/UserSpaceMapping';
 import SpaceClient from 'Services/Api/SpaceClient';
 import ConfirmationModal from 'Modal/ConfirmationModal/ConfirmationModal';
-import {dashboardUrl} from 'Routes';
+import { dashboardUrl } from 'Routes';
 
 import './UserAccessList.scss';
 
@@ -32,9 +35,9 @@ interface PermissionType {
 }
 
 const permissionOption: Array<PermissionType> = [
-    {label:'Editor', value:'editor'},
-    {label:'Owner', value:'owner'},
-    {label:'Remove', value:'remove'},
+    { label: 'Editor', value: 'editor' },
+    { label: 'Owner', value: 'owner' },
+    { label: 'Remove', value: 'remove' },
 ];
 
 const getPermissionOption = (isUserOwner: boolean): Array<PermissionType> => {
@@ -54,17 +57,30 @@ interface UserAccessListProps {
     isUserOwner: boolean;
 }
 
-const UserAccessListOption = ({label, innerProps, isSelected, isFocused}: OptionProps<OptionTypeBase, boolean>): JSX.Element =>
-    (
-        <div className="userAccess-option" {...innerProps} style={
-            isFocused ?
-                { backgroundColor: '#F2F2F2', boxShadow: '0 0 0 2px #4C8EF5'} :
-                { backgroundColor: 'transparent', boxShadow: 'none'}
-        }>
-            <span className="userAccess-label-name" data-testid="userAccessOptionLabel">{label}</span>
-            {isSelected && <i className="material-icons">check</i>}
-        </div>
-    );
+const UserAccessListOption = ({
+    label,
+    innerProps,
+    isSelected,
+    isFocused,
+}: OptionProps<OptionTypeBase, boolean>): JSX.Element => (
+    <div
+        className="userAccess-option"
+        {...innerProps}
+        style={
+            isFocused
+                ? { backgroundColor: '#F2F2F2', boxShadow: '0 0 0 2px #4C8EF5' }
+                : { backgroundColor: 'transparent', boxShadow: 'none' }
+        }
+    >
+        <span
+            className="userAccess-label-name"
+            data-testid="userAccessOptionLabel"
+        >
+            {label}
+        </span>
+        {isSelected && <i className="material-icons">check</i>}
+    </div>
+);
 
 function UserAccessList({
     currentSpace,
@@ -74,9 +90,18 @@ function UserAccessList({
     owner,
     isUserOwner,
 }: UserAccessListProps): JSX.Element {
-    const [displayOwnerChangeConfirmationModal, setDisplayOwnerChangeConfirmationModal] = useState(false);
-    const [displayRevokeSelfEditorStatusConfirmationModal, setDisplayRevokeSelfEditorStatusConfirmationModal] = useState(false);
-    const [displayRemokeEditorStatusToAnotherUserConfirmationModal, setDisplayRevokeEditorStatusToAnotherUserConfirmationModal] = useState(false);
+    const [
+        displayOwnerChangeConfirmationModal,
+        setDisplayOwnerChangeConfirmationModal,
+    ] = useState(false);
+    const [
+        displayRevokeSelfEditorStatusConfirmationModal,
+        setDisplayRevokeSelfEditorStatusConfirmationModal,
+    ] = useState(false);
+    const [
+        displayRemokeEditorStatusToAnotherUserConfirmationModal,
+        setDisplayRevokeEditorStatusToAnotherUserConfirmationModal,
+    ] = useState(false);
 
     const onChangeEvent = (value: unknown): void => {
         switch ((value as PermissionType).value) {
@@ -84,7 +109,9 @@ function UserAccessList({
                 if (currentUser.toUpperCase() === user.userId.toUpperCase()) {
                     setDisplayRevokeSelfEditorStatusConfirmationModal(true);
                 } else {
-                    setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(true);
+                    setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(
+                        true
+                    );
                 }
                 break;
             case 'owner':
@@ -103,48 +130,72 @@ function UserAccessList({
 
     return (
         <>
-            {displayOwnerChangeConfirmationModal &&
+            {displayOwnerChangeConfirmationModal && (
                 <ConfirmationModal
                     submit={onSubmitOwnerChange}
-                    close={(): void => setDisplayOwnerChangeConfirmationModal(false)}
+                    close={(): void =>
+                        setDisplayOwnerChangeConfirmationModal(false)
+                    }
                     submitButtonLabel="Yes"
                     closeButtonLabel="No"
                     title="Make this person the owner?"
-                    content={<div>By making this person the owner, you will only have editor privileges for this space and will lose the ability to delete the space.</div>} />
-            }
-            {displayRevokeSelfEditorStatusConfirmationModal &&
-                <ConfirmationModal
-                    submit={
-                        (): void => {
-                            SpaceClient.removeUser(currentSpace, user).then(() => {
-                                setDisplayRevokeSelfEditorStatusConfirmationModal(false);
-                                window.location.pathname = dashboardUrl;
-                            });
-                        }
+                    content={
+                        <div>
+                            By making this person the owner, you will only have
+                            editor privileges for this space and will lose the
+                            ability to delete the space.
+                        </div>
                     }
-                    close={(): void => setDisplayRevokeSelfEditorStatusConfirmationModal(false)}
+                />
+            )}
+            {displayRevokeSelfEditorStatusConfirmationModal && (
+                <ConfirmationModal
+                    submit={(): void => {
+                        SpaceClient.removeUser(currentSpace, user).then(() => {
+                            setDisplayRevokeSelfEditorStatusConfirmationModal(
+                                false
+                            );
+                            window.location.pathname = dashboardUrl;
+                        });
+                    }}
+                    close={(): void =>
+                        setDisplayRevokeSelfEditorStatusConfirmationModal(false)
+                    }
                     submitButtonLabel="Yes"
                     closeButtonLabel="No"
                     content={
-                        <div>Removing yourself as editor will immediately revoke your access to this space.<br/>
-                            <br/>
+                        <div>
+                            Removing yourself as editor will immediately revoke
+                            your access to this space.
+                            <br />
+                            <br />
                             Do you still want to remove yourself as editor?
                         </div>
-                    } />
-            }
-            {
-                displayRemokeEditorStatusToAnotherUserConfirmationModal && 
-                    <ConfirmationModal
-                        submit={revokeEditorStatus}
-                        close={(): void => setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(false)}
-                        submitButtonLabel="Yes"
-                        closeButtonLabel="No"              
-                        content={
-                            <div>Removing {user.userId.toLowerCase()} as editor will immediately revoke their access to this space.<br/>
-                                <br/>
-                                Do you still want to remove {user.userId.toLowerCase()} as an editor?
-                            </div>}/>
-            }
+                    }
+                />
+            )}
+            {displayRemokeEditorStatusToAnotherUserConfirmationModal && (
+                <ConfirmationModal
+                    submit={revokeEditorStatus}
+                    close={(): void =>
+                        setDisplayRevokeEditorStatusToAnotherUserConfirmationModal(
+                            false
+                        )
+                    }
+                    submitButtonLabel="Yes"
+                    closeButtonLabel="No"
+                    content={
+                        <div>
+                            Removing {user.userId.toLowerCase()} as editor will
+                            immediately revoke their access to this space.
+                            <br />
+                            <br />
+                            Do you still want to remove{' '}
+                            {user.userId.toLowerCase()} as an editor?
+                        </div>
+                    }
+                />
+            )}
             <Select
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
@@ -158,7 +209,11 @@ function UserAccessList({
                 value={permissionOption[0]}
                 onChange={onChangeEvent}
                 isSearchable={false}
-                components={{Option: UserAccessListOption, DropdownIndicator: CustomIndicator}}/>
+                components={{
+                    Option: UserAccessListOption,
+                    DropdownIndicator: CustomIndicator,
+                }}
+            />
         </>
     );
 }

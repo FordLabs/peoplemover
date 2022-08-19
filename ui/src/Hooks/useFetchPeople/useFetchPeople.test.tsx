@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React from 'react';
-import {act, renderHook} from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import useFetchPeople from './useFetchPeople';
 import PeopleClient from 'Services/Api/PeopleClient';
@@ -30,15 +28,19 @@ const spaceUUID = 'space-uuid';
 
 describe('useFetchPeople Hook', () => {
     it('should fetch all people and store them in recoil', async () => {
-        const { result } = renderHook(() => useFetchPeople(spaceUUID), { wrapper });
+        const { result } = renderHook(() => useFetchPeople(spaceUUID), {
+            wrapper,
+        });
 
-        expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled()
+        expect(PeopleClient.getAllPeopleInSpace).not.toHaveBeenCalled();
         expect(result.current.people).toEqual([]);
 
         await act(async () => {
-            result.current.fetchPeople()
+            result.current.fetchPeople();
         });
-        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(spaceUUID);
+        expect(PeopleClient.getAllPeopleInSpace).toHaveBeenCalledWith(
+            spaceUUID
+        );
         expect(result.current.people).toEqual(TestData.people);
     });
 });

@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 import React from 'react';
-import {screen} from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import TestData from 'Utils/TestData';
 import AssignmentCardList from './AssignmentCardList';
 import moment from 'moment';
-import {LocalStorageFilters} from 'SubHeader/SortingAndFiltering/FilterLibraries';
-import {ViewingDateState} from 'State/ViewingDateState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {renderWithRecoil} from 'Utils/TestUtils';
-import {Product} from 'Types/Product';
+import { LocalStorageFilters } from 'SubHeader/SortingAndFiltering/FilterLibraries';
+import { ViewingDateState } from 'State/ViewingDateState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
+import { renderWithRecoil } from 'Utils/TestUtils';
+import { Product } from 'Types/Product';
 
 const product: Product = {
     id: 1,
@@ -41,47 +41,68 @@ const product: Product = {
 jest.mock('Services/Api/AssignmentClient');
 
 describe('Assignment card list', () => {
-    describe('Filtering person by role and person tag',  () => {
+    describe('Filtering person by role and person tag', () => {
         it('should not filter people if no role or tag are selected', async () => {
             setupAssignmentCardList();
 
-            expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
+            expect(
+                screen.getByTestId('assignmentCard__person_1')
+            ).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_pm')).toBeDefined();
-            expect(screen.getByTestId('assignmentCard__bob_norole_notag')).toBeDefined();
-
+            expect(
+                screen.getByTestId('assignmentCard__bob_norole_notag')
+            ).toBeDefined();
         });
 
         it('should filter people that do not have selected role', async () => {
             setupAssignmentCardList({ roleFilters: ['Software Engineer'] });
 
-            expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
+            expect(
+                screen.getByTestId('assignmentCard__person_1')
+            ).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
             expect(screen.queryByTestId('assignmentCard__bob_pm')).toBeNull();
-            expect(screen.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
+            expect(
+                screen.queryByTestId('assignmentCard__bob_norole_notag')
+            ).toBeNull();
         });
 
         it('should filter people that do not have the person tag selected', async () => {
             setupAssignmentCardList({ personFilters: ['The lil boss'] });
 
-            expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
+            expect(
+                screen.getByTestId('assignmentCard__person_1')
+            ).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_pm')).toBeDefined();
-            expect(screen.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
+            expect(
+                screen.queryByTestId('assignmentCard__bob_norole_notag')
+            ).toBeNull();
         });
 
         it('should filter people that do not have the role and person tag selected', async () => {
-            setupAssignmentCardList({ roleFilters: ['Software Engineer'], personFilters: ['The lil boss'] });
+            setupAssignmentCardList({
+                roleFilters: ['Software Engineer'],
+                personFilters: ['The lil boss'],
+            });
 
-            expect(screen.getByTestId('assignmentCard__person_1')).toBeDefined();
+            expect(
+                screen.getByTestId('assignmentCard__person_1')
+            ).toBeDefined();
             expect(screen.getByTestId('assignmentCard__bob_se')).toBeDefined();
             expect(screen.queryByTestId('assignmentCard__bob_pm')).toBeNull();
-            expect(screen.queryByTestId('assignmentCard__bob_norole_notag')).toBeNull();
+            expect(
+                screen.queryByTestId('assignmentCard__bob_norole_notag')
+            ).toBeNull();
         });
     });
 });
 
-const setupAssignmentCardList = ({ roleFilters = [], personFilters = [] }: { roleFilters?: string[]; personFilters?: string[]; } = {}) => {
+const setupAssignmentCardList = ({
+    roleFilters = [],
+    personFilters = [],
+}: { roleFilters?: string[]; personFilters?: string[] } = {}) => {
     const selectedFilters: LocalStorageFilters = {
         locationTagFilters: [],
         productTagFilters: [],
@@ -89,12 +110,8 @@ const setupAssignmentCardList = ({ roleFilters = [], personFilters = [] }: { rol
         personTagFilters: personFilters,
     };
     localStorage.setItem('filters', JSON.stringify(selectedFilters));
-    renderWithRecoil(
-        <AssignmentCardList product={product}/>,
-        ({set}) => {
-            set(ViewingDateState, moment().toDate())
-            set(CurrentSpaceState, TestData.space)
-        }
-    );
-}
-
+    renderWithRecoil(<AssignmentCardList product={product} />, ({ set }) => {
+        set(ViewingDateState, moment().toDate());
+        set(CurrentSpaceState, TestData.space);
+    });
+};

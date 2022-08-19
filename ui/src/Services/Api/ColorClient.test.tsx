@@ -22,7 +22,7 @@ describe('Color Client', () => {
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 123456',
+            Authorization: 'Bearer 123456',
         },
     };
     const cookies = new Cookies();

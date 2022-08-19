@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-import {useRecoilState} from 'recoil';
-import {useCallback} from 'react';
+import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
 import sortTagsAlphabetically from 'Utils/sortTagsAlphabetically';
-import {RoleTag, Tag} from 'Types/Tag';
-import {ProductTagsState} from 'State/ProductTagsState';
+import { RoleTag, Tag } from 'Types/Tag';
+import { ProductTagsState } from 'State/ProductTagsState';
 import ProductTagClient from 'Services/Api/ProductTagClient';
 
 interface UseFetchProductTags {
     productTags: Tag[];
-    fetchProductTags(): void
+    fetchProductTags(): void;
 }
 
 function useFetchProductTags(spaceUUID: string): UseFetchProductTags {
@@ -32,17 +32,17 @@ function useFetchProductTags(spaceUUID: string): UseFetchProductTags {
 
     const fetchProductTags = useCallback(() => {
         ProductTagClient.get(spaceUUID)
-            .then(result => {
+            .then((result) => {
                 const tags: Array<RoleTag> = [...result.data];
                 sortTagsAlphabetically(tags);
-                setProductTags(tags)
+                setProductTags(tags);
             })
             .catch(console.error);
-    }, [setProductTags, spaceUUID])
+    }, [setProductTags, spaceUUID]);
 
     return {
         productTags: productTags || [],
-        fetchProductTags
+        fetchProductTags,
     };
 }
 

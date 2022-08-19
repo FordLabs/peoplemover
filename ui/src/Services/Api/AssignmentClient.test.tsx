@@ -17,7 +17,10 @@
 
 import Axios from 'axios';
 import AssignmentClient from './AssignmentClient';
-import {CreateAssignmentsRequest, ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
+import {
+    CreateAssignmentsRequest,
+    ProductPlaceholderPair,
+} from 'Types/CreateAssignmentRequest';
 import TestData from '../../Utils/TestData';
 import moment from 'moment';
 import Cookies from 'universal-cookie';
@@ -29,7 +32,7 @@ describe('Assignment client', () => {
     const expectedConfig = {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer 123456',
+            Authorization: 'Bearer 123456',
         },
     };
 
@@ -41,7 +44,7 @@ describe('Assignment client', () => {
         Axios.delete = jest.fn().mockResolvedValue({});
     });
 
-    afterEach(function() {
+    afterEach(() => {
         cookies.remove('accessToken');
     });
 
@@ -51,7 +54,11 @@ describe('Assignment client', () => {
         const date = new Date(2019, 1, 10);
 
         const expectedUrl = `/api/spaces/${testUuid}/person/${personId}/assignments/date/2019-02-10`;
-        await AssignmentClient.getAssignmentsUsingPersonIdAndDate(testUuid, personId, date);
+        await AssignmentClient.getAssignmentsUsingPersonIdAndDate(
+            testUuid,
+            personId,
+            date
+        );
 
         expect(Axios.get).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
@@ -66,7 +73,6 @@ describe('Assignment client', () => {
         const expectedCreateAssignmentRequest: CreateAssignmentsRequest = {
             requestedDate: moment(date).format('YYYY-MM-DD'),
             products: [productPlaceholderPair],
-
         };
 
         const expectedUrl = `/api/spaces/${TestData.space.uuid}/person/${TestData.person1.id}/assignment/create`;
@@ -78,7 +84,11 @@ describe('Assignment client', () => {
             TestData.person1
         );
 
-        expect(Axios.post).toHaveBeenCalledWith(expectedUrl, expectedCreateAssignmentRequest, expectedConfig);
+        expect(Axios.post).toHaveBeenCalledWith(
+            expectedUrl,
+            expectedCreateAssignmentRequest,
+            expectedConfig
+        );
     });
 
     it('should get all effective dates given space', async () => {
@@ -95,11 +105,14 @@ describe('Assignment client', () => {
         const expectedConfig = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer 123456',
+                Authorization: 'Bearer 123456',
             },
             data: TestData.person1,
         };
-        await AssignmentClient.deleteAssignmentForDate(new Date(2019, 0, 1), TestData.person1);
+        await AssignmentClient.deleteAssignmentForDate(
+            new Date(2019, 0, 1),
+            TestData.person1
+        );
 
         expect(Axios.delete).toHaveBeenCalledWith(expectedUrl, expectedConfig);
     });
@@ -108,11 +121,21 @@ describe('Assignment client', () => {
         const expectedConfig = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer 123456',
+                Authorization: 'Bearer 123456',
             },
         };
-        await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestData.hank.spaceUuid, TestData.hank.id);
-        expect(Axios.get).toHaveBeenCalledWith('/api/v2/spaces/' + TestData.hank.spaceUuid + '/person/' + TestData.hank.id + '/assignments', expectedConfig);
+        await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(
+            TestData.hank.spaceUuid,
+            TestData.hank.id
+        );
+        expect(Axios.get).toHaveBeenCalledWith(
+            '/api/v2/spaces/' +
+                TestData.hank.spaceUuid +
+                '/person/' +
+                TestData.hank.id +
+                '/assignments',
+            expectedConfig
+        );
     });
 
     it('should return what it gets from the assignment history summary API', async () => {
@@ -121,7 +144,10 @@ describe('Assignment client', () => {
             data: [assignment],
         });
 
-        const actual = await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(TestData.hank.spaceUuid, TestData.hank.id);
+        const actual = await AssignmentClient.getAssignmentsV2ForSpaceAndPerson(
+            TestData.hank.spaceUuid,
+            TestData.hank.id
+        );
         expect(actual.data).toEqual([TestData.assignmentForHank]);
     });
 

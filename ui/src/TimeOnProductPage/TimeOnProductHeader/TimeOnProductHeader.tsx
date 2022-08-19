@@ -17,22 +17,20 @@
 
 import React from 'react';
 import Header from 'Common/Header/Header';
-import {Link} from 'react-router-dom';
-import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState} from '../../State/CurrentSpaceState';
+import { Link } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { CurrentSpaceState } from '../../State/CurrentSpaceState';
 
 function TimeOnProductHeader() {
     const currentSpace = useRecoilValue(CurrentSpaceState);
 
     return (
         <Header spaceName={currentSpace.name}>
-            <Link
-                className="timeOnProductLink"
-                to={`/${currentSpace.uuid}`}>
+            <Link className="timeOnProductLink" to={`/${currentSpace.uuid}`}>
                 &#60; Back
             </Link>
         </Header>
-    )
+    );
 }
 
 export default TimeOnProductHeader;

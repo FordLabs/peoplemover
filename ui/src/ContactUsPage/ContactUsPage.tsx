@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PurpleGradientBackgroundImage from 'Assets/background-left-purple-gradient.svg';
 import Branding from 'Common/Branding/Branding';
 import PeopleMoverLogo from 'Common/PeopleMoverLogo/PeopleMoverLogo';
 import Input from 'Common/Input/Input';
 import Textarea from 'Common/Textarea/Textarea';
-import {UserType} from '../Types/ContactUsRequest';
+import { UserType } from '../Types/ContactUsRequest';
 import ContactUsClient from '../Services/Api/ContactUsClient';
 import Header from 'Common/Header/Header';
 
@@ -32,12 +32,12 @@ type TargetType = {
     name: { value: string };
     userType: { value: string };
     message: { value: string };
-}
+};
 
 function ContactUsPage() {
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-    const getValue = (element: { value: string; }) => element.value;
+    const getValue = (element: { value: string }) => element.value;
 
     function onSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -62,52 +62,98 @@ function ContactUsPage() {
                 <main className="main-content">
                     <h1 className="contact-us-page-title">Contact Us</h1>
                     <div className="right-content">
-                        <PeopleMoverLogo/>
+                        <PeopleMoverLogo />
                         <h2>The People’s Feedback</h2>
-                        <p>Getting started? Have questions? Let us know how we can help you with your PeopleMover space!</p>
-                        <div className="required-text">All fields required.</div>
-                        <form className="contact-us-page-form" onSubmit={onSubmit}>
-                            <Input label="Name:" name="name" id="name" required />
-                            <Input label="Email:" name="email" id="email" type="email" required />
+                        <p>
+                            Getting started? Have questions? Let us know how we
+                            can help you with your PeopleMover space!
+                        </p>
+                        <div className="required-text">
+                            All fields required.
+                        </div>
+                        <form
+                            className="contact-us-page-form"
+                            onSubmit={onSubmit}
+                        >
+                            <Input
+                                label="Name:"
+                                name="name"
+                                id="name"
+                                required
+                            />
+                            <Input
+                                label="Email:"
+                                name="email"
+                                id="email"
+                                type="email"
+                                required
+                            />
                             <fieldset className="fieldset">
                                 <legend>I am:</legend>
                                 <Input
-                                    label={UserType.NEW_USER} value={UserType.NEW_USER}
-                                    id="new-user" type="radio" name="userType"
+                                    label={UserType.NEW_USER}
+                                    value={UserType.NEW_USER}
+                                    id="new-user"
+                                    type="radio"
+                                    name="userType"
                                     required
                                 />
                                 <Input
-                                    label={UserType.EXISTING_USER} value={UserType.EXISTING_USER}
-                                    id="existing-user" type="radio" name="userType"
+                                    label={UserType.EXISTING_USER}
+                                    value={UserType.EXISTING_USER}
+                                    id="existing-user"
+                                    type="radio"
+                                    name="userType"
                                     required
                                 />
                                 <Input
-                                    label={UserType.OTHER} value={UserType.OTHER}
-                                    id="other-user" type="radio" name="userType"
+                                    label={UserType.OTHER}
+                                    value={UserType.OTHER}
+                                    id="other-user"
+                                    type="radio"
+                                    name="userType"
                                     required
                                 />
                             </fieldset>
-                            <Textarea label="How can we help?" id="textarea" name="message" required />
+                            <Textarea
+                                label="How can we help?"
+                                id="textarea"
+                                name="message"
+                                required
+                            />
                             {isSubmitted ? (
                                 <div className="success-message">
-                                    <p>Thanks! A member of our team will reach out to help you.</p>
-                                    <a href="/user/dashboard">Back to Dashboard</a>
+                                    <p>
+                                        Thanks! A member of our team will reach
+                                        out to help you.
+                                    </p>
+                                    <a href="/user/dashboard">
+                                        Back to Dashboard
+                                    </a>
                                 </div>
                             ) : (
-                                <button className="contact-us-page-submit-button" type="submit">
-                                Send
+                                <button
+                                    className="contact-us-page-submit-button"
+                                    type="submit"
+                                >
+                                    Send
                                 </button>
                             )}
                         </form>
                     </div>
                 </main>
                 <footer className="footer">
-                    <Branding/>
+                    <Branding />
                 </footer>
-                <img className="contact-us-background-image" src={PurpleGradientBackgroundImage} alt="" role="presentation"/>
+                <img
+                    className="contact-us-background-image"
+                    src={PurpleGradientBackgroundImage}
+                    alt=""
+                    role="presentation"
+                />
             </div>
         </>
-    )
+    );
 }
 
 export default ContactUsPage;

@@ -18,7 +18,7 @@
 export enum UserType {
     NEW_USER = 'New User',
     EXISTING_USER = 'Existing User',
-    OTHER = 'Other'
+    OTHER = 'Other',
 }
 
 export interface ContactUsRequest {

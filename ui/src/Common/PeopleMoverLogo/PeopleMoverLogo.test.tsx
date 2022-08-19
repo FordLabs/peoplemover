@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import {render, RenderResult} from '@testing-library/react';
+import { render, RenderResult } from '@testing-library/react';
 import PeopleMoverLogo from './PeopleMoverLogo';
 
-import {axe} from 'jest-axe';
+import { axe } from 'jest-axe';
 
 describe('People Mover Logo', () => {
     let app: RenderResult;
@@ -45,7 +45,9 @@ describe('People Mover Logo', () => {
         });
 
         it('should be a div when an href is NOT present', async () => {
-            expect(app.getByTestId('peopleMoverStaticLogo').nodeName).toBe('DIV');
+            expect(app.getByTestId('peopleMoverStaticLogo').nodeName).toBe(
+                'DIV'
+            );
         });
 
         it('should have no axe violations', async () => {

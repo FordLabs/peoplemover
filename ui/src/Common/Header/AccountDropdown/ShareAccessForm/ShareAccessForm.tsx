@@ -16,42 +16,55 @@
  */
 
 import InviteEditorsFormSection from './InviteEditorsFormSection/InviteEditorsFormSection';
-import React, {useState} from 'react';
-import {useSetRecoilState} from 'recoil';
+import React, { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 import MultiModalCardBanner from './MultiModalCardBanner/MultiModalCardBanner';
 import ViewOnlyAccessFormSection from './ViewOnlyAccessFormSection/ViewOnlyAccessFormSection';
-import {ModalContentsState} from 'State/ModalContentsState';
+import { ModalContentsState } from 'State/ModalContentsState';
 
 import './ShareAccessForm.scss';
 
 function ShareAccessForm() {
-    const [isFirstSectionCollapsed, setIsFirstSectionCollapsed] = useState<boolean>(false);
+    const [isFirstSectionCollapsed, setIsFirstSectionCollapsed] =
+        useState<boolean>(false);
     const setModalContents = useSetRecoilState(ModalContentsState);
     const closeModal = () => setModalContents(null);
 
     return (
         <div className="share-access-form">
-            <div className="form-container" data-testid="modalCard" aria-expanded={!isFirstSectionCollapsed}>
+            <div
+                className="form-container"
+                data-testid="modalCard"
+                aria-expanded={!isFirstSectionCollapsed}
+            >
                 <MultiModalCardBanner
                     title="Invite others to view"
                     collapsed={isFirstSectionCollapsed}
                     onCloseBtnClick={closeModal}
                     onClick={() => setIsFirstSectionCollapsed(false)}
                 />
-                <ViewOnlyAccessFormSection collapsed={isFirstSectionCollapsed}/>
+                <ViewOnlyAccessFormSection
+                    collapsed={isFirstSectionCollapsed}
+                />
             </div>
-            <div className="form-container" data-testid="modalCard" aria-expanded={isFirstSectionCollapsed}>
+            <div
+                className="form-container"
+                data-testid="modalCard"
+                aria-expanded={isFirstSectionCollapsed}
+            >
                 <MultiModalCardBanner
                     title="Invite others to edit"
                     collapsed={!isFirstSectionCollapsed}
                     onCloseBtnClick={closeModal}
                     onClick={() => setIsFirstSectionCollapsed(true)}
                 />
-                <InviteEditorsFormSection collapsed={!isFirstSectionCollapsed} />
+                <InviteEditorsFormSection
+                    collapsed={!isFirstSectionCollapsed}
+                />
             </div>
         </div>
-    )
+    );
 }
 
 export default ShareAccessForm;

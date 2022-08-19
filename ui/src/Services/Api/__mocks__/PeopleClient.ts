@@ -16,13 +16,15 @@
  */
 
 import TestData from '../../../Utils/TestData';
-import {AxiosResponse} from 'axios';
+import { AxiosResponse } from 'axios';
 
 const PeopleClient = {
-    createPersonForSpace: jest.fn((space, person) => Promise.resolve({ data: person } as AxiosResponse)),
+    createPersonForSpace: jest.fn((space, person) =>
+        Promise.resolve({ data: person } as AxiosResponse)
+    ),
     getAllPeopleInSpace: jest.fn().mockResolvedValue({ data: TestData.people }),
-    updatePerson: jest.fn().mockResolvedValue({data: {}}),
-    removePerson: jest.fn().mockResolvedValue({data: {}})
-}
+    updatePerson: jest.fn().mockResolvedValue({ data: {} }),
+    removePerson: jest.fn().mockResolvedValue({ data: {} }),
+};
 
 export default PeopleClient;

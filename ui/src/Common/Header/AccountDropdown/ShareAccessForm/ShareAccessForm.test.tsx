@@ -16,14 +16,14 @@
  */
 
 import ShareAccessForm from './ShareAccessForm';
-import {renderWithRecoil} from 'Utils/TestUtils';
+import { renderWithRecoil } from 'Utils/TestUtils';
 import React from 'react';
 import TestData from 'Utils/TestData';
 import SpaceClient from 'Services/Api/SpaceClient';
-import {screen, waitFor} from '@testing-library/react';
-import {RecoilObserver} from 'Utils/RecoilObserver';
-import {ModalContents, ModalContentsState} from 'State/ModalContentsState';
-import {CurrentSpaceState} from 'State/CurrentSpaceState';
+import { screen, waitFor } from '@testing-library/react';
+import { RecoilObserver } from 'Utils/RecoilObserver';
+import { ModalContents, ModalContentsState } from 'State/ModalContentsState';
+import { CurrentSpaceState } from 'State/CurrentSpaceState';
 
 jest.mock('Services/Api/SpaceClient');
 
@@ -43,22 +43,28 @@ describe('Share Access Form', () => {
                 />
                 <ShareAccessForm />
             </>,
-            ({set}) => {
-                set(CurrentSpaceState, TestData.space)
+            ({ set }) => {
+                set(CurrentSpaceState, TestData.space);
                 set(ModalContentsState, {
                     title: 'A Title',
                     component: <div>Some Component</div>,
                 });
             }
         );
-        await waitFor(() => expect(SpaceClient.getUsersForSpace).toHaveBeenCalled())
-    })
+        await waitFor(() =>
+            expect(SpaceClient.getUsersForSpace).toHaveBeenCalled()
+        );
+    });
 
     it('should toggle between the "Invite others to view" and "Invite others to edit" sections', () => {
         const inviteOthersToViewBtn = getInviteOthersToViewButton();
-        expect(inviteOthersToViewBtn).toHaveTextContent('Invite others to view');
+        expect(inviteOthersToViewBtn).toHaveTextContent(
+            'Invite others to view'
+        );
         const inviteOthersToEditBtn = getInviteOthersToEditButton();
-        expect(inviteOthersToEditBtn).toHaveTextContent('Invite others to edit');
+        expect(inviteOthersToEditBtn).toHaveTextContent(
+            'Invite others to edit'
+        );
 
         expect(inviteOthersToViewBtn).toBeDisabled();
         inviteOthersToViewIsExpanded();
@@ -97,7 +103,7 @@ describe('Share Access Form', () => {
 
             screen.getByTestId('modalCloseButton').click();
 
-            await waitFor(() => expect(modalContent).toBeNull())
+            await waitFor(() => expect(modalContent).toBeNull());
         });
     });
 });
@@ -125,9 +131,9 @@ function inviteOthersToEditCollapsed() {
 }
 
 function getInviteOthersToViewButton() {
-    return screen.getAllByTestId('multiModalExpandCollapseButton')[0]
+    return screen.getAllByTestId('multiModalExpandCollapseButton')[0];
 }
 
 function getInviteOthersToEditButton() {
-    return screen.getAllByTestId('multiModalExpandCollapseButton')[1]
+    return screen.getAllByTestId('multiModalExpandCollapseButton')[1];
 }

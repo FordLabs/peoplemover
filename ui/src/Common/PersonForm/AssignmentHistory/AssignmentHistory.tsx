@@ -16,13 +16,16 @@
  */
 
 import moment from 'moment';
-import {didAssignmentEndInThePast, getDurationWithRespectToToday} from 'Services/AssignmentService';
-import React, {useEffect, useState} from 'react';
+import {
+    didAssignmentEndInThePast,
+    getDurationWithRespectToToday,
+} from 'Services/AssignmentService';
+import React, { useEffect, useState } from 'react';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import ProductClient from 'Services/Api/ProductClient';
-import {Product} from 'Types/Product';
-import {Person} from 'Types/Person';
-import {Assignment} from 'Types/Assignment';
+import { Product } from 'Types/Product';
+import { Person } from 'Types/Person';
+import { Assignment } from 'Types/Assignment';
 
 import './AssignmentHistory.scss';
 
@@ -30,21 +33,35 @@ interface AssignmentHistoryProps {
     person: Person;
 }
 
-export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element {
+export function AssignmentHistory({
+    person,
+}: AssignmentHistoryProps): JSX.Element {
     const [products, setProducts] = useState<Product[]>([]);
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [isShowing, setIsShowing] = useState<boolean>(false);
 
     useEffect(() => {
-        ProductClient.getProductsForDate(person.spaceUuid, new Date()).then((result) => {
-            setProducts(result.data);
-        });
-        AssignmentClient.getAssignmentsV2ForSpaceAndPerson(person.spaceUuid, person.id).then((result) => {
+        ProductClient.getProductsForDate(person.spaceUuid, new Date()).then(
+            (result) => {
+                setProducts(result.data);
+            }
+        );
+        AssignmentClient.getAssignmentsV2ForSpaceAndPerson(
+            person.spaceUuid,
+            person.id
+        ).then((result) => {
             const data = result.data.filter((item: Assignment) => {
-                return item !== null && isValidDate(new Date(item.startDate!)) && moment(item.startDate).isBefore(moment());
+                return (
+                    item !== null &&
+                    isValidDate(new Date(item.startDate!)) &&
+                    moment(item.startDate).isBefore(moment())
+                );
             });
             data.sort((a: Assignment, b: Assignment) => {
-                return new Date(b.startDate!).valueOf() - new Date(a.startDate!).valueOf();
+                return (
+                    new Date(b.startDate!).valueOf() -
+                    new Date(a.startDate!).valueOf()
+                );
             });
             setAssignments(data);
         });
@@ -70,7 +87,9 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
 
     const getProductName = (assignment: Assignment): string => {
         let productName = 'Unknown Product';
-        const product = products.find((product) => product.id === assignment.productId);
+        const product = products.find(
+            (product) => product.id === assignment.productId
+        );
         if (product) {
             productName = product.name;
         }
@@ -81,23 +100,34 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
     };
 
     const getStartDate = (assignment: Assignment): string => {
-        return (assignment.startDate ? moment(assignment.startDate).format('MM/DD/YYYY') : 'undefined date');
+        return assignment.startDate
+            ? moment(assignment.startDate).format('MM/DD/YYYY')
+            : 'undefined date';
     };
 
     const getEndDate = (assignment: Assignment): string => {
-        return (didAssignmentEndInThePast(assignment) ? moment(assignment.endDate).subtract(1, 'days').format('MM/DD/YYYY') : 'Current');
+        if (didAssignmentEndInThePast(assignment)) {
+            return moment(assignment.endDate)
+                .subtract(1, 'days')
+                .format('MM/DD/YYYY');
+        }
+        return 'Current';
     };
 
     const getDurationUnit = (duration: number): string => {
-        return (duration === 1 ? 'day' : 'days');
+        return duration === 1 ? 'day' : 'days';
     };
 
     const getCurrentAssignments = (): Array<Assignment> => {
-        return assignments.filter(assignment => { return !didAssignmentEndInThePast(assignment);});
+        return assignments.filter((assignment) => {
+            return !didAssignmentEndInThePast(assignment);
+        });
     };
 
     const getPastAssignments = (): Array<Assignment> => {
-        return assignments.filter(assignment => { return didAssignmentEndInThePast(assignment);});
+        return assignments.filter((assignment) => {
+            return didAssignmentEndInThePast(assignment);
+        });
     };
 
     const generateTableRow = (assignment: Assignment): JSX.Element => {
@@ -107,33 +137,43 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
             const endDate = getEndDate(assignment);
             const duration = getDurationWithRespectToToday(assignment) - 1;
             const durationUnit = getDurationUnit(duration);
-            return (<div key={'' + person.id + assignment.productId + assignment.startDate} className="assignmentHistoryRow">
-                <div className="assignmentHistoryCell">{productName}</div>
-                <div className="assignmentHistoryCell">{startDate} - {endDate} ({duration} {durationUnit})</div>
-            </div>);
+            return (
+                <div
+                    key={
+                        '' +
+                        person.id +
+                        assignment.productId +
+                        assignment.startDate
+                    }
+                    className="assignmentHistoryRow"
+                >
+                    <div className="assignmentHistoryCell">{productName}</div>
+                    <div className="assignmentHistoryCell">
+                        {startDate} - {endDate} ({duration} {durationUnit})
+                    </div>
+                </div>
+            );
         } else {
-            return (<></>);
+            return <></>;
         }
     };
 
-    const generateTableRows = (inputAssignments: Array<Assignment>): Array<JSX.Element> => {
+    const generateTableRows = (
+        inputAssignments: Array<Assignment>
+    ): Array<JSX.Element> => {
         const assignmentHistoryRows: Array<JSX.Element> = [];
-        inputAssignments.forEach(
-            (assignment) => {
-                if (assignment && moment(assignment.startDate).isBefore(moment())) {
-                    assignmentHistoryRows.push(
-                        generateTableRow(assignment),
-                    );
-                }
-            },
-        );
+        inputAssignments.forEach((assignment) => {
+            if (assignment && moment(assignment.startDate).isBefore(moment())) {
+                assignmentHistoryRows.push(generateTableRow(assignment));
+            }
+        });
         return assignmentHistoryRows;
     };
 
     const generateAssignmentHistoryContent = (): JSX.Element => {
         let returnValue = <></>;
         if (isShowing) {
-            returnValue =
+            returnValue = (
                 <>
                     <div className="assignmentHistoryTable">
                         {generateTableRows(getCurrentAssignments())}
@@ -142,16 +182,26 @@ export function AssignmentHistory({person}: AssignmentHistoryProps): JSX.Element
                     <div className="assignmentHistoryTable assignmentHistoryTableBorder assignmentHistoryTablePast">
                         {generateTableRows(getPastAssignments())}
                     </div>
-                </>;
+                </>
+            );
         }
         return returnValue;
     };
 
     return (
         <>
-            <div className={'flexRow'} onClick={toggleShowing} onKeyPress={handleKeyDownForToggleShowing}>
-                <span className="formItemLabel purple">View Assignment History</span>
-                <span className="material-icons assignmentHistoryArrow purple" data-testid="assignmentHistoryArrow">
+            <div
+                className={'flexRow'}
+                onClick={toggleShowing}
+                onKeyPress={handleKeyDownForToggleShowing}
+            >
+                <span className="formItemLabel purple">
+                    View Assignment History
+                </span>
+                <span
+                    className="material-icons assignmentHistoryArrow purple"
+                    data-testid="assignmentHistoryArrow"
+                >
                     {isShowing ? 'arrow_drop_up' : 'arrow_drop_down'}
                 </span>
             </div>

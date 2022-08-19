@@ -15,19 +15,27 @@
  * limitations under the License.
  */
 
-import {Option} from 'Types/Option';
-import {Tag} from 'Types/Tag';
-import {JSX} from '@babel/types';
-import React, {useEffect, useState} from 'react';
-import {AxiosResponse} from 'axios';
-import {TagRequest} from 'Types/TagRequest';
-import SelectWithCreateOption, {Metadata} from '../SelectWithCreateOption/SelectWithCreateOption';
-import {TagClient} from 'Types/TagClient';
-import {useRecoilValue} from 'recoil';
-import {CurrentSpaceState, UUIDForCurrentSpaceSelector} from '../../State/CurrentSpaceState';
+import { Option } from 'Types/Option';
+import { Tag } from 'Types/Tag';
+import { JSX } from '@babel/types';
+import React, { useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
+import { TagRequest } from 'Types/TagRequest';
+import SelectWithCreateOption, {
+    Metadata,
+} from '../SelectWithCreateOption/SelectWithCreateOption';
+import { TagClient } from 'Types/TagClient';
+import { useRecoilValue } from 'recoil';
+import {
+    CurrentSpaceState,
+    UUIDForCurrentSpaceSelector,
+} from '../../State/CurrentSpaceState';
 
 interface Props {
-    loadingState: { isLoading: boolean; setIsLoading: (isLoading: boolean) => void };
+    loadingState: {
+        isLoading: boolean;
+        setIsLoading: (isLoading: boolean) => void;
+    };
     currentTagsState: { currentTags: Array<Tag> };
     selectedTagsState: {
         selectedTags: Array<Tag>;
@@ -39,17 +47,9 @@ interface Props {
 }
 
 function FormTagsField({
-    loadingState: {
-        isLoading,
-        setIsLoading,
-    },
-    currentTagsState: {
-        currentTags,
-    },
-    selectedTagsState: {
-        selectedTags,
-        setSelectedTags,
-    },
+    loadingState: { isLoading, setIsLoading },
+    currentTagsState: { currentTags },
+    selectedTagsState: { selectedTags, setSelectedTags },
     tagClient,
     tagsMetadata,
     toolTip,
@@ -59,7 +59,7 @@ function FormTagsField({
     const [availableTags, setAvailableTags] = useState<Array<Tag>>([]);
 
     useEffect(() => {
-        tagClient.get(uuid).then(result => setAvailableTags(result.data));
+        tagClient.get(uuid).then((result) => setAvailableTags(result.data));
 
         setSelectedTags(currentTags);
     }, [currentTags, setSelectedTags, tagClient, uuid]);
@@ -74,7 +74,7 @@ function FormTagsField({
     function optionToTag(options: Array<Option>): Array<Tag> {
         if (!options) return [];
 
-        return options.map(option => {
+        return options.map((option) => {
             return {
                 id: Number.parseInt(option.value, 10),
                 name: option.label,
@@ -87,35 +87,45 @@ function FormTagsField({
         setIsLoading(true);
         const tagRequest: TagRequest = { name: inputValue };
 
-        tagClient.add(tagRequest, currentSpace)
+        tagClient
+            .add(tagRequest, currentSpace)
             .then((response: AxiosResponse) => {
                 const newTag: Tag = response.data;
-                setAvailableTags(tags => [...tags, {
-                    id: newTag.id,
-                    name: newTag.name,
-                }] as Array<Tag>);
+                setAvailableTags(
+                    (tags) =>
+                        [
+                            ...tags,
+                            {
+                                id: newTag.id,
+                                name: newTag.name,
+                            },
+                        ] as Array<Tag>
+                );
                 updateSelectedTags([...selectedTags, newTag]);
                 setIsLoading(false);
             });
     }
 
     function updateSelectedTags(tags: Array<Tag>): void {
-        const selectedTags = (tags.length > 0) ? [...tags] : [];
+        const selectedTags = tags.length > 0 ? [...tags] : [];
         setSelectedTags(selectedTags);
     }
 
     const getOptions = (): Array<Option> => {
-        return availableTags.map((tag: Tag) => createTagOption(tag.name, tag.id));
+        return availableTags.map((tag: Tag) =>
+            createTagOption(tag.name, tag.id)
+        );
     };
 
-    const onChange = (option: unknown): void => updateSelectedTags(optionToTag(option as Option[]));
+    const onChange = (option: unknown): void =>
+        updateSelectedTags(optionToTag(option as Option[]));
 
     return (
         <SelectWithCreateOption
             isMulti
             metadata={tagsMetadata}
-            values={selectedTags.map(
-                tag => createTagOption(tag.name, tag.id)
+            values={selectedTags.map((tag) =>
+                createTagOption(tag.name, tag.id)
             )}
             options={getOptions()}
             onChange={onChange}
@@ -127,4 +137,3 @@ function FormTagsField({
 }
 
 export default FormTagsField;
-

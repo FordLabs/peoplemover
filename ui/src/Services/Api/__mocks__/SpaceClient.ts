@@ -19,12 +19,12 @@ import TestData from '../../../Utils/TestData';
 
 const SpaceClient = {
     getSpacesForUser: jest.fn().mockResolvedValue([TestData.space]),
-    getUsersForSpace:  jest.fn().mockResolvedValue(TestData.spaceMappingsArray),
+    getUsersForSpace: jest.fn().mockResolvedValue(TestData.spaceMappingsArray),
     changeOwner: jest.fn().mockResolvedValue({}),
-    removeUser: jest.fn().mockResolvedValue({data: {}}),
+    removeUser: jest.fn().mockResolvedValue({ data: {} }),
     deleteSpaceByUuid: jest.fn().mockResolvedValue({}),
-    getSpaceFromUuid: jest.fn().mockResolvedValue({data: TestData.space}),
-    inviteUsersToSpace: jest.fn().mockResolvedValue({})
-}
+    getSpaceFromUuid: jest.fn().mockResolvedValue({ data: TestData.space }),
+    inviteUsersToSpace: jest.fn().mockResolvedValue({}),
+};
 
 export default SpaceClient;
