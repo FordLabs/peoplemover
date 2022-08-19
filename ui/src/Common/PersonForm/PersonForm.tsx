@@ -234,12 +234,10 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                     selectedPersonTags={selectedPersonTags}
                     setSelectedPersonTags={setSelectedPersonTags}
                 />
-                <div className="formItem">
-                    <FormNotesTextArea
-                        note={person.notes}
-                        onChange={(notes): void => updatePersonField('notes', notes)}
-                    />
-                </div>
+                <FormNotesTextArea
+                    note={person.notes}
+                    onChange={(notes): void => updatePersonField('notes', notes)}
+                />
                 <div className="yesNoButtons">
                     <FormButton
                         buttonStyle="secondary"

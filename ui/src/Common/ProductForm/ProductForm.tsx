@@ -222,12 +222,10 @@ function ProductForm({ editing, product }: Props): JSX.Element {
                     currentProduct={currentProduct}
                     updateProductField={updateProductField}
                 />
-                <div className="formItem">
-                    <FormNotesTextArea
-                        note={currentProduct.notes}
-                        onChange={notesChanged}
-                    />
-                </div>
+                <FormNotesTextArea
+                    note={currentProduct.notes}
+                    onChange={notesChanged}
+                />
                 <div className="yesNoButtons">
                     <FormButton
                         onClick={closeModal}

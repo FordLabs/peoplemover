@@ -36,7 +36,7 @@ export default function FormNotesTextArea({ note = '', onChange, maxLength = 255
     };
 
     return (
-        <>
+        <div className="formItem">
             <label className="formItemLabel" htmlFor="notes">Notes</label>
             <textarea className="formInput formTextInput notes"
                 data-testid="formNotesToField"
@@ -50,6 +50,6 @@ export default function FormNotesTextArea({ note = '', onChange, maxLength = 255
             <span className={`notesFieldText ${notesState.length >= maxLength ? 'notesFieldTooLong' : ''}`} data-testid="notesFieldText">
                 {notesState.length}&nbsp;({maxLength} characters max)
             </span>
-        </>
+        </div>
     );
 }
