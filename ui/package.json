@@ -98,6 +98,7 @@
     "jest-axe": "^4.1.0",
     "jest-sonar-reporter": "^2.0.0",
     "lint-staged": "^12.4.1",
+    "prettier": "2.7.1",
     "react-scripts": "5.0.0",
     "react-select-event": "^5.5.0",
     "sass": "^1.42.0",
