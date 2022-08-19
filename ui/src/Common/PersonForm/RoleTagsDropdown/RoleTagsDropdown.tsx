@@ -59,7 +59,6 @@ function RoleTagsDropdown({ spaceRole, onChange, setIsLoading, isLoading }: Prop
         RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
             const newRole: RoleTag = response.data;
             fetchRoles();
-            // updatePersonField('spaceRole', newRole);
             onChange(newRole)
             setIsLoading(false);
         });
