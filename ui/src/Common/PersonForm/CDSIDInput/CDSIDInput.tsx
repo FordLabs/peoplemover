@@ -26,7 +26,8 @@ function CDSIDInput({ value = '', onChange }: Props) {
     return (
         <div className="formItem">
             <label className="formItemLabel" htmlFor="cdsid">CDSID</label>
-            <input className="formInput formTextInput"
+            <input
+                className="formInput formTextInput"
                 data-testid="personFormCustomField1"
                 type="text"
                 name="cdsid"
