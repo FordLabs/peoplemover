@@ -18,13 +18,8 @@
 import React, {FormEvent, useCallback, useEffect, useState} from 'react';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import PeopleClient from 'Services/Api/PeopleClient';
-import {emptyPerson, isArchived} from 'Services/PersonService';
-import {isActiveProduct, isUnassignedProduct} from 'Services/ProductService';
-import SelectWithNoCreateOption, {
-    MetadataMultiSelectProps,
-} from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';
+import {emptyPerson} from 'Services/PersonService';
 import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {Option} from 'Types/Option';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
@@ -52,6 +47,7 @@ import NameInput from "./NameInput/NameInput";
 import RoleTagsDropdown from "./RoleTagsDropdown/RoleTagsDropdown";
 
 import './PersonForm.scss';
+import AssignToProductDropdown from "./AssignToProductDropdown/AssignToProductDropdown";
 
 interface Props {
     isEditPersonForm: boolean
@@ -70,8 +66,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     const spaceUuid = currentSpace.uuid || '';
 
-    const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
-    const { ARCHIVED_PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
     const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
@@ -81,12 +75,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
-
-    const alphabetize = (products: Array<Product>): void => {
-        products.sort((product1: Product, product2: Product) => {
-            return product1.name.toLowerCase().localeCompare(product2.name.toLowerCase());
-        });
-    };
 
     const getUnassignedProductId = useCallback((): number => {
         const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
@@ -203,24 +191,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         }
     };
 
-    const getItemFromListWithName = (name: string, productsList: Array<Product>): Product | null => {
-        const product = productsList.find(x => x.name === name);
-        return product || null;
-    };
-
-    const changeProductName = (events: Array<{ value: string }>): void => {
-        const updatedProducts: Array<Product> = [];
-        (events || []).forEach(ev => {
-            if (ev.value !== 'unassigned') {
-                const product = getItemFromListWithName(ev.value, products);
-                if (product) updatedProducts.push(product);
-            }
-        });
-        setHasAssignmentChanged(true);
-        setSelectedProducts(updatedProducts.filter(product => product != null));
-        updatePersonField('archiveDate', undefined);
-    };
-
     const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
@@ -237,13 +207,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
         setConfirmDeleteModal(deleteConfirmationModal);
     };
 
-    const getAssignToOptions = (): Array<Option> => {
-        const filteredProducts: Array<Product> = products
-            .filter(product => isActiveProduct(product, viewingDate) && !isUnassignedProduct(product));
-        alphabetize(filteredProducts);
-        return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
-    };
-
     const toolTipContent = (): JSX.Element => {
         return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
     };
@@ -254,9 +217,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     return (
         <div className="formContainer">
-            <form className="form"
-                data-testid="personForm"
-                onSubmit={(event): Promise<void> => handleSubmit(event)}>
+            <form className="form" data-testid="personForm" onSubmit={handleSubmit}>
                 <div className="formItem">
                     <NameInput
                         value={person.name}
@@ -284,11 +245,13 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}
                 />
-                <SelectWithNoCreateOption
-                    metadata={isArchived(person, viewingDate) ? ARCHIVED_PERSON_ASSIGN_TO : PERSON_ASSIGN_TO}
-                    values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                    options={getAssignToOptions()}
-                    onChange={changeProductName}
+                <AssignToProductDropdown
+                    person={person}
+                    selectedProducts={selectedProducts}
+                    onChange={(updatedProducts) => {
+                        setHasAssignmentChanged(true);
+                        setSelectedProducts(updatedProducts);
+                    }}
                 />
                 {isEditPersonForm && <div className="formItem">{getAssignmentHistoryContent()}</div>}
                 <FormTagsField
