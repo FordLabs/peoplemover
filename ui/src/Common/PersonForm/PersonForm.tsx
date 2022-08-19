@@ -236,8 +236,8 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                 />
                 <div className="formItem">
                     <FormNotesTextArea
-                        notes={person.notes}
-                        callBack={(notes): void => updatePersonField('notes', notes)}
+                        note={person.notes}
+                        onChange={(notes): void => updatePersonField('notes', notes)}
                     />
                 </div>
                 <div className="yesNoButtons">

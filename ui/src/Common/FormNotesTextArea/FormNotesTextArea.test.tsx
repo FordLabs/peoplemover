@@ -22,13 +22,13 @@ import FormNotesTextArea from './FormNotesTextArea';
 describe('notes input', () => {
     it('should count the number of characters', () => {
         const callback = jest.fn();
-        const notes = render(<FormNotesTextArea notes={'this string is 17'} callBack={callback}/>);
+        const notes = render(<FormNotesTextArea note={'this string is 17'} onChange={callback}/>);
         notes.getByText('17 (255 characters max)');
     });
 
     it('should update character count when notes is typed in', function() {
         const callback = jest.fn();
-        const notes = render(<FormNotesTextArea callBack={callback}/>);
+        const notes = render(<FormNotesTextArea onChange={callback}/>);
         notes.getByText('0 (255 characters max)');
         const input = notes.getByLabelText('Notes');
         fireEvent.change(input, { target: { value: 'Good' } });
@@ -37,7 +37,7 @@ describe('notes input', () => {
 
     it('should send update to parent when text changes', function() {
         const callback = jest.fn();
-        const notes = render(<FormNotesTextArea callBack={callback}/>);
+        const notes = render(<FormNotesTextArea onChange={callback}/>);
         const input = notes.getByLabelText('Notes');
         fireEvent.change(input, { target: { value: 'Good' } });
         expect(callback).toHaveBeenCalledWith('Good');
@@ -45,7 +45,7 @@ describe('notes input', () => {
 
     it('should change the max value allowed in the input', function() {
         const callback = jest.fn();
-        const notes = render(<FormNotesTextArea callBack={callback} maxLength={5}/>);
+        const notes = render(<FormNotesTextArea onChange={callback} maxLength={5}/>);
         notes.getByText('0 (5 characters max)');
     });
 });

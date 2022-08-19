@@ -224,8 +224,8 @@ function ProductForm({ editing, product }: Props): JSX.Element {
                 />
                 <div className="formItem">
                     <FormNotesTextArea
-                        notes={currentProduct.notes}
-                        callBack={notesChanged}
+                        note={currentProduct.notes}
+                        onChange={notesChanged}
                     />
                 </div>
                 <div className="yesNoButtons">
