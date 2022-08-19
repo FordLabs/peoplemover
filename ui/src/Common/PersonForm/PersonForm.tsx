@@ -19,7 +19,6 @@ import React, {FormEvent, useCallback, useEffect, useState} from 'react';
 import AssignmentClient from 'Services/Api/AssignmentClient';
 import PeopleClient from 'Services/Api/PeopleClient';
 import {emptyPerson} from 'Services/PersonService';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
@@ -48,6 +47,7 @@ import RoleTagsDropdown from "./RoleTagsDropdown/RoleTagsDropdown";
 
 import './PersonForm.scss';
 import AssignToProductDropdown from "./AssignToProductDropdown/AssignToProductDropdown";
+import DeleteButton from "./DeleteButton/DeleteButton";
 
 interface Props {
     isEditPersonForm: boolean
@@ -66,7 +66,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     const spaceUuid = currentSpace.uuid || '';
 
-    const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
@@ -184,27 +183,8 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     const closeModal = () => setModalContents(null);
 
-    const removePerson = (): void => {
-        const assignmentId = personEdited && personEdited.id;
-        if (assignmentId) {
-            PeopleClient.removePerson(spaceUuid, assignmentId).then(closeModal);
-        }
-    };
-
     const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
-    };
-
-    const displayRemovePersonModal = (): void => {
-        const propsForDeleteConfirmationModal: ConfirmationModalProps = {
-            submit: removePerson,
-            close: () => {
-                setConfirmDeleteModal(null);
-            },
-            content: <div>Removing this person will remove all instances of them from your entire space.</div>,
-        };
-        const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
-        setConfirmDeleteModal(deleteConfirmationModal);
     };
 
     const toolTipContent = (): JSX.Element => {
@@ -284,19 +264,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                     </FormButton>
                 </div>
             </form>
-            {isEditPersonForm && (
-                <button className="deleteButtonContainer alignSelfCenter deleteLinkColor"
-                    data-testid="deletePersonButton"
-                    onClick={displayRemovePersonModal}
-                >
-                    <i className="material-icons" aria-hidden>delete</i>
-                    <div className="trashCanSpacer"/>
-                    <span className="obliterateLink">
-                            Delete
-                    </span>
-                </button>
-            )}
-            {confirmDeleteModal}
+            {isEditPersonForm && <DeleteButton personEdited={personEdited} />}
         </div>
     );
 }
