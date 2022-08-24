@@ -64,16 +64,16 @@ const TagsModalContent = ({
         setEditTagIndex(INACTIVE_EDIT_STATE_INDEX);
     };
 
-    const editTag = async (tagToEdit: TagRequest): Promise<unknown> => {
-        return await tagClient.edit(tagToEdit, currentSpace)
+    const editTag = (tagToEdit: TagRequest): Promise<void> => {
+        return tagClient.edit(tagToEdit, currentSpace)
             .then(() => {
                 fetchCommand();
                 returnToViewState();
             });
     };
 
-    const addTag = async (tagToAdd: TagRequest): Promise<unknown> => {
-        return await tagClient.add(tagToAdd, currentSpace)
+    const addTag = (tagToAdd: TagRequest): Promise<void> => {
+        return tagClient.add(tagToAdd, currentSpace)
             .then(() => {
                 fetchCommand();
                 returnToViewState();

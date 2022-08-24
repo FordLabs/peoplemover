@@ -58,8 +58,8 @@ const AddNewTagRow = ({
         updateViewState(false);
     };
 
-    const onSaveTag = async (value: TagRequest): Promise<unknown> => {
-        return await onSave(value).then(() => {
+    const onSaveTag = (value: TagRequest): Promise<void> => {
+        return onSave(value).then(() => {
             updateViewState(false);
         });
     };
