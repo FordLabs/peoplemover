@@ -85,6 +85,12 @@
     grid-template-rows: 52px;
     align-items: center;
     padding: 0;
+    cursor: pointer;
+    background: none;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
 
     .addNewTraitText {
       color: $prime-1;
@@ -177,15 +183,6 @@
     box-shadow:
             0 0 0 1px white,
             0 0 0 3px $gray-3;
-  }
-
-  .addNewTagRow {
-    cursor: pointer;
-    background: none;
-
-    &:disabled {
-      cursor: not-allowed;
-    }
   }
 
   .selectRoleCircles {
