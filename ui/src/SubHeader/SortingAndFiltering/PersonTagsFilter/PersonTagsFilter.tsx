@@ -24,10 +24,10 @@ import {
     setLocalStorageFiltersByType,
 } from '../FilterLibraries';
 import {useRecoilValue} from 'recoil';
-import {PersonTagsState} from '../../../State/PersonTagsState';
+import {PersonTagsState} from 'State/PersonTagsState';
 import Filter from '../Filter';
-import MyTagsForm from '../../../Tags/MyTagsForm';
-import {PersonTag} from '../../../Types/Tag';
+import MyTagsForm from '../MyTagsForm/MyTagsForm';
+import {PersonTag} from 'Types/Tag';
 
 function PersonTagsFilter() {
     const personTags = useRecoilValue(PersonTagsState);

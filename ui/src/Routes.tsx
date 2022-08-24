@@ -18,14 +18,13 @@
 import React from 'react';
 import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
-import {OAuthRedirect} from './Common/OAuthRedirect/OAuthRedirect';
-import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
+import {OAuthRedirect} from './Auth/OAuthRedirect/OAuthRedirect';
+import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
 import RedirectWrapper from './RedirectWrapper';
-import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
-import AuthorizedRoute from './Auth/AuthorizedRoute';
-import PeopleMover from './PeopleMover/PeopleMover';
+import DashboardPage from './DashboardPage/DashboardPage';
+import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
+import SpacePage from './SpacePage/SpacePage';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
-import Header from './Header/Header';
 import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
 import ContactUsPage from './ContactUsPage/ContactUsPage';
 import NotFoundErrorPage from './ErrorPages/NotFoundErrorPage';
@@ -41,7 +40,6 @@ function Routes(): JSX.Element {
     return (
         <Router>
             <AnnouncementBanner/>
-            <Header/>
             <ReactRoutes>
                 <Route path="/" element={<LandingPage/>} />
                 <Route path="/adfs/catch" element={<OAuthRedirect/>} />
@@ -52,13 +50,13 @@ function Routes(): JSX.Element {
                 } />
                 <Route path={dashboardUrl} element={
                     <AuthenticatedRoute>
-                        <SpaceDashboard/>
+                        <DashboardPage/>
                     </AuthenticatedRoute>
                 } />
                 <Route path="/:teamUUID">
                     <Route path="" element={
                         <AuthorizedRoute>
-                            <PeopleMover/>
+                            <SpacePage/>
                         </AuthorizedRoute>
                     } />
                     <Route path="timeonproduct" element={

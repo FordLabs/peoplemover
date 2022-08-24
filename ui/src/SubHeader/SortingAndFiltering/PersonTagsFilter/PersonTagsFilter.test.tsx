@@ -23,7 +23,7 @@ import {LocalStorageFilters} from '../FilterLibraries';
 import {ModalContents, ModalContentsState} from '../../../State/ModalContentsState';
 import {RecoilObserver} from '../../../Utils/RecoilObserver';
 import {localStorageEventListenerKey} from '../../../Hooks/useOnStorageChange/useOnStorageChange';
-import MyTagsForm from '../../../Tags/MyTagsForm';
+import MyTagsForm from '../MyTagsForm/MyTagsForm';
 import PersonTagsFilter from './PersonTagsFilter';
 import {PersonTagsState} from '../../../State/PersonTagsState';
 

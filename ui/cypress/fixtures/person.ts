@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,17 +18,21 @@
 export interface Person {
     name: string;
     isNew: boolean;
+    cdsid: string;
     role: string;
     assignTo: string;
     notes: string;
+    tags: string[]
 }
 
 const person: Person = {
     name: 'Person Name',
+    cdsid: 'fake-cdsid',
     isNew: true,
     role: 'Product Owner',
     assignTo: 'My Product',
     notes: 'Person Note.',
+    tags: []
 };
 
 export default person;

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.MediaType
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.MockMvc
@@ -52,7 +53,10 @@ class AuthControllerTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
-    final var uuid: String = "spaceUUID"
+    val spaceUUID = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    val validateTokenUrl = "/api/access_token/validate"
+    val authenticateTokenUrl = "/api/access_token/authenticate"
+    val fakeAccessToken = "fake_access_token"
 
     @BeforeEach
     fun setUp() {
@@ -65,10 +69,10 @@ class AuthControllerTest {
         val request = ValidateTokenRequest(accessToken = "access_token")
         `when`(jwtDecoder.decode(request.accessToken)).thenReturn(createMockJwt(true))
 
-        mockMvc.perform(post("/api/access_token/validate")
+        mockMvc.perform(post(validateTokenUrl)
                 .header("Authorization", "Bearer access_token")
                 .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
     }
 
@@ -76,65 +80,63 @@ class AuthControllerTest {
     fun `POST validate access token - should return UNAUTHORIZED if access token is invalid in validator`() {
         val request = ValidateTokenRequest(accessToken = "INVALID_ACCESS_TOKEN")
 
-        mockMvc.perform(post("/api/access_token/validate")
+        mockMvc.perform(post(validateTokenUrl)
                 .with(jwt().jwt { it.tokenValue("INVALID_ACCESS_TOKEN") })
                 .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `POST validateAndAuthenticateAccessToken should return 200 ok if space uuid is found in database for user from ADFS`() {
-        val accessToken = "fake_access_token"
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(createMockJwt(true))
+        val uuid = "spaceUUID"
+        `when`(jwtDecoder.decode(fakeAccessToken)).thenReturn(createMockJwt(true))
 
         val savedSpace = spaceRepository.save(Space(name = "spaceThree", uuid = uuid))
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = savedSpace.uuid, permission = PERMISSION_OWNER))
 
         val request = AuthCheckScopesRequest(
-                accessToken = accessToken,
+                accessToken = fakeAccessToken,
                 uuid = uuid
         )
 
-        mockMvc.perform(post("/api/access_token/authenticate")
-                .header("Authorization", "Bearer fake_access_token")
+        mockMvc.perform(post(authenticateTokenUrl)
+                .header("Authorization", "Bearer $fakeAccessToken")
                 .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
     }
 
     @Test
     fun `POST validateAndAuthenticateAccessToken should return 403 if space not mapped to user`() {
-        val accessToken = "fake_access_token"
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(createMockJwt(true))
+        `when`(jwtDecoder.decode(fakeAccessToken)).thenReturn(createMockJwt(true))
 
-        spaceRepository.save(Space(name = "spaceThree", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
+        spaceRepository.save(Space(name = "spaceThree", uuid = spaceUUID))
 
         val request = AuthCheckScopesRequest(
-                accessToken = accessToken,
-                uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                accessToken = fakeAccessToken,
+                uuid = spaceUUID)
 
-        mockMvc.perform(post("/api/access_token/authenticate")
-                .header("Authorization", "Bearer fake_access_token")
+        mockMvc.perform(post(authenticateTokenUrl)
+                .header("Authorization", "Bearer $fakeAccessToken")
                 .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden)
     }
 
     @Test
     fun `POST validateAndAuthenticateAccessToken should return 404 if space does not exist`() {
-        val accessToken = "fake_access_token"
-        `when`(jwtDecoder.decode(accessToken)).thenReturn(createMockJwt(true))
+        `when`(jwtDecoder.decode(fakeAccessToken)).thenReturn(createMockJwt(true))
 
         val request = AuthCheckScopesRequest(
-                accessToken = accessToken,
-                uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+                accessToken = fakeAccessToken,
+                uuid = spaceUUID)
 
-        mockMvc.perform(post("/api/access_token/authenticate")
-                .header("Authorization", "Bearer fake_access_token")
+        mockMvc.perform(post(authenticateTokenUrl)
+                .header("Authorization", "Bearer $fakeAccessToken")
                 .content(objectMapper.writeValueAsString(request))
-                .contentType("application/json"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound)
     }
 }

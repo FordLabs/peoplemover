@@ -2,7 +2,6 @@ package com.ford.internalprojects.peoplemover
 
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.space.SpaceService
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm

@@ -17,21 +17,22 @@
 
 import React, {useEffect, useState} from 'react';
 
-import {UNASSIGNED_PRODUCT_NAME} from 'Products/ProductService';
-import {calculateDuration} from 'Assignments/AssignmentService';
+import {UNASSIGNED_PRODUCT_NAME} from 'Services/ProductService';
+import {calculateDuration} from 'Services/AssignmentService';
 import SubHeader from 'SubHeader/SubHeader';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsReadOnlyState} from 'State/IsReadOnlyState';
 import useFetchProducts from 'Hooks/useFetchProducts/useFetchProducts';
 import {ModalContentsState} from 'State/ModalContentsState';
-import PersonForm from 'People/PersonForm';
+import PersonForm from 'Common/PersonForm/PersonForm';
 import Modal from 'Modal/Modal';
 import useFetchCurrentSpace from 'Hooks/useFetchCurrentSpace/useFetchCurrentSpace';
 import {useParams} from 'react-router-dom';
 import {Product} from 'Types/Product';
 import {Assignment} from 'Types/Assignment';
 import Branding from 'Common/Branding/Branding';
+import TimeOnProductHeader from './TimeOnProductHeader/TimeOnProductHeader';
 
 import './TimeOnProduct.scss';
 
@@ -162,31 +163,34 @@ function TimeOnProduct(): JSX.Element {
     };
 
     return (
-        currentSpace && (
-            <div className="App">
-                <Modal />
-                <SubHeader
-                    showFilters={false}
-                    showSortBy={false}
-                    message={
-                        <div className="timeOnProductHeaderMessage">
-                            <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
-                        </div>
+        <>
+            <TimeOnProductHeader />
+            { currentSpace && (
+                <div className="time-on-product-page">
+                    <Modal />
+                    <SubHeader
+                        showFilters={false}
+                        showSortBy={false}
+                        message={
+                            <div className="timeOnProductHeaderMessage">
+                                <span className="newBadge" data-testid="newBadge">BETA</span>View People by Time On Product
+                            </div>
+                        }
+                    />
+                    {isLoading ?
+                        <div className="timeOnProductLoading">{LOADING}</div>
+                        : (
+                            <div className="timeOnProductTable">
+                                {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
+                            </div>
+                        )
                     }
-                />
-                {isLoading ?
-                    <div className="timeOnProductLoading">{LOADING}</div>
-                    : (
-                        <div className="timeOnProductTable">
-                            {convertToTable(generateTimeOnProductItems(products, viewingDate).sort(sortTimeOnProductItems))}
-                        </div>
-                    )
-                }
-                <footer>
-                    <Branding/>
-                </footer>
-            </div>
-        )
+                    <footer>
+                        <Branding/>
+                    </footer>
+                </div>
+            )}
+        </>
     );
 }
 

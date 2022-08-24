@@ -1,6 +1,5 @@
 package com.ford.internalprojects.peoplemover.customfield
 
-import com.ford.internalprojects.peoplemover.space.Space
 import javax.persistence.*
 
 @Entity

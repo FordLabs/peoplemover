@@ -88,6 +88,7 @@ const person1: Person = {
     notes: 'I love the theater',
     newPerson: false,
     tags: [personTag1],
+    customField1: 'mockCdsid'
 };
 
 const hank: Person = {
