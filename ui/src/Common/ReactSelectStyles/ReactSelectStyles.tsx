@@ -136,16 +136,18 @@ export const reactSelectStyles = {
     }),
 };
 
-export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>): JSX.Element => (
-    <components.DropdownIndicator {...props}>
-        {
-            props.options.length === 0
-                ? <i style={{display: 'none'}}/>
-                : (
-                    props.selectProps.menuIsOpen
-                        ? <i className="material-icons greyIcon" data-testid={`upArrow_${props.selectProps.name}`}>arrow_drop_up</i>
-                        : <i className="material-icons greyIcon" data-testid={`downArrow_${props.selectProps.name}`}>arrow_drop_down</i>
-                )
-        }
-    </components.DropdownIndicator>
-);
+export const CustomIndicator = (props: IndicatorProps<OptionTypeBase, boolean>): JSX.Element => {
+    function getArrowIcon() {
+        return props.selectProps.menuIsOpen
+            ? <i className="material-icons greyIcon"
+                data-testid={`upArrow_${props.selectProps.name}`}>arrow_drop_up</i>
+            : <i className="material-icons greyIcon"
+                data-testid={`downArrow_${props.selectProps.name}`}>arrow_drop_down</i>
+    }
+
+    return (
+        <components.DropdownIndicator {...props}>
+            {props.options.length === 0 ? <i style={{display: 'none'}}/> : getArrowIcon()}
+        </components.DropdownIndicator>
+    )
+};
