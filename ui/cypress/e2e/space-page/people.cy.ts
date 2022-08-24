@@ -81,6 +81,7 @@ describe('People', () => {
                     .to.equal('@postNewPerson status: ' + 200);
                 const personData = postNewPersonXhr.response.body || {};
                 expect(personData.name).to.equal(assignedPerson.name);
+                expect(personData.customField1).to.equal(assignedPerson.cdsid);
                 expect(personData.newPerson).to.equal(assignedPerson.isNew);
                 expect(personData.notes).to.equal(assignedPerson.notes);
                 expect(personData.spaceRole.name).to.equal(assignedPerson.role);
@@ -193,9 +194,10 @@ describe('People', () => {
     it('Edit a person', () => {
         cy.route('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
 
-        const editedPerson = {
+        const editedPerson: Person = {
             name: 'Jane Bob',
             isNew: false,
+            cdsid: 'jbob',
             role: 'The medium',
             assignTo: 'My Product',
             notes: 'BOB',
@@ -339,7 +341,7 @@ describe('People', () => {
     });
 });
 
-const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags = [] }): void => {
+const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags = [], cdsid }): void => {
     cy.get('[data-testid=personForm]').as('personForm');
     cy.get('@personForm').should('be.visible');
 
@@ -354,6 +356,8 @@ const populatePersonForm = ({ name, isNew = false, role, assignTo, notes, tags =
             .check()
             .should('be.checked');
     }
+
+    if (cdsid) cy.get('[data-testid="personFormCustomField1"]').type(cdsid);
 
     cy.get('@personForm')
         .find('[id=role]')

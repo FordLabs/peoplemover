@@ -15,24 +15,11 @@
  * limitations under the License.
  */
 
-export interface Person {
-    name: string;
-    isNew: boolean;
-    cdsid: string;
-    role: string;
-    assignTo: string;
-    notes: string;
-    tags: string[]
+@import '../../../Styles/Colors';
+
+.personNameWarning {
+  color: $error-message;
+  font-size: 12px;
+  padding-top: 6px;
+  font-style: italic;
 }
-
-const person: Person = {
-    name: 'Person Name',
-    cdsid: 'fake-cdsid',
-    isNew: true,
-    role: 'Product Owner',
-    assignTo: 'My Product',
-    notes: 'Person Note.',
-    tags: []
-};
-
-export default person;

@@ -17,39 +17,32 @@
 
 import React, {FormEvent, useCallback, useEffect, useState} from 'react';
 import AssignmentClient from 'Services/Api/AssignmentClient';
-import RoleClient from 'Services/Api/RoleClient';
 import PeopleClient from 'Services/Api/PeopleClient';
-import {AxiosResponse} from 'axios';
-import {emptyPerson, isArchived} from 'Services/PersonService';
-import {isActiveProduct, isUnassignedProduct} from 'Services/ProductService';
-import SelectWithNoCreateOption, {
-    MetadataMultiSelectProps,
-} from 'Common/SelectWithNoCreateOption/SelectWithNoCreateOption';
-import ConfirmationModal, {ConfirmationModalProps} from 'Modal/ConfirmationModal/ConfirmationModal';
-import {Option} from 'Types/Option';
+import {emptyPerson} from 'Services/PersonService';
 import {JSX} from '@babel/types';
 import {ProductPlaceholderPair} from 'Types/CreateAssignmentRequest';
 import moment from 'moment';
 import FormNotesTextArea from 'Common/FormNotesTextArea/FormNotesTextArea';
 import FormButton from 'Common/FormButton/FormButton';
-import SelectWithCreateOption, {MetadataReactSelectProps} from 'Common/SelectWithCreateOption/SelectWithCreateOption';
-import FormTagsField from 'Common/FormTagsField/FormTagsField';
-import PersonTagClient from 'Services/Api/PersonTagClient';
 import {RoleTag, Tag} from 'Types/Tag';
-import ToolTip from 'Common/ToolTips/ToolTip';
 import {AssignmentHistory} from 'Common/PersonForm/AssignmentHistory/AssignmentHistory';
 import {useRecoilValue, useSetRecoilState} from 'recoil';
 import {ViewingDateState} from 'State/ViewingDateState';
 import {IsUnassignedDrawerOpenState} from 'State/IsUnassignedDrawerOpenState';
 import {ProductsState} from 'State/ProductsState';
 import {PeopleState} from 'State/PeopleState';
-import useFetchRoles from 'Hooks/useFetchRoles/useFetchRoles';
 import {ModalContentsState} from 'State/ModalContentsState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
-import {RoleTagRequest} from 'Types/TagRequest';
 import {Product} from 'Types/Product';
 import {Person} from 'Types/Person';
 import {Assignment} from 'Types/Assignment';
+import CDSIDInput from "./CDSIDInput/CDSIDInput";
+import MarkAsNewCheckbox from "./MarkAsNewCheckbox/MarkAsNewCheckbox";
+import NameInput from "./NameInput/NameInput";
+import RoleTagsDropdown from "./RoleTagsDropdown/RoleTagsDropdown";
+import AssignToProductDropdown from "./AssignToProductDropdown/AssignToProductDropdown";
+import DeleteButton from "./DeleteButton/DeleteButton";
+import PersonTagsDropdown from "./PersonTagsDropdown/PersonTagsDropdown";
 
 import './PersonForm.scss';
 
@@ -69,12 +62,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
     const setModalContents = useSetRecoilState(ModalContentsState);
 
     const spaceUuid = currentSpace.uuid || '';
-    const { fetchRoles, roles } = useFetchRoles(spaceUuid);
 
-    const { ROLE_TAGS } = MetadataReactSelectProps;
-    const { PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
-    const { ARCHIVED_PERSON_ASSIGN_TO } = MetadataMultiSelectProps;
-    const [confirmDeleteModal, setConfirmDeleteModal] = useState<JSX.Element | null>(null);
     const [isPersonNameInvalid, setIsPersonNameInvalid] = useState<boolean>(false);
     const [person, setPerson] = useState<Person>(emptyPerson());
     const [selectedProducts, setSelectedProducts] = useState<Array<Product>>([]);
@@ -83,12 +71,6 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
     const [hasAssignmentChanged, setHasAssignmentChanged] = useState<boolean>(false);
     const [hasNewPersonChanged, setHasNewPersonChanged] = useState<boolean>(false);
     const [initialNewPersonFlag, setInitialNewPersonFlag] = useState<boolean>(false);
-
-    const alphabetize = (products: Array<Product>): void => {
-        products.sort((product1: Product, product2: Product) => {
-            return product1.name.toLowerCase().localeCompare(product2.name.toLowerCase());
-        });
-    };
 
     const getUnassignedProductId = useCallback((): number => {
         const unassignedProduct: Product | undefined = products.find((product: Product) => product.name === 'unassigned');
@@ -198,172 +180,64 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
 
     const closeModal = () => setModalContents(null);
 
-    const removePerson = (): void => {
-        const assignmentId = personEdited && personEdited.id;
-        if (assignmentId) {
-            PeopleClient.removePerson(spaceUuid, assignmentId).then(closeModal);
-        }
-    };
-
-    const getItemFromListWithName = (name: string, productsList: Array<Product>): Product | null => {
-        const product = productsList.find(x => x.name === name);
-        return product || null;
-    };
-
-    const changeProductName = (events: Array<{ value: string }>): void => {
-        const updatedProducts: Array<Product> = [];
-        (events || []).forEach(ev => {
-            if (ev.value !== 'unassigned') {
-                const product = getItemFromListWithName(ev.value, products);
-                if (product) updatedProducts.push(product);
-            }
-        });
-        setHasAssignmentChanged(true);
-        setSelectedProducts(updatedProducts.filter(product => product != null));
-        updatePersonField('archiveDate', undefined);
-    };
-
     const updatePersonField = (fieldName: string, fieldValue: string | boolean | RoleTag | Date | undefined): void => {
         setPerson((updatingPerson: Person) => ({...updatingPerson, [fieldName]: fieldValue}));
     };
 
-    const updateSpaceRole = (input: string): void => {
-        const roleMatch: RoleTag | undefined = roles.find((role: RoleTag) => role.name === input);
-        updatePersonField('spaceRole', roleMatch);
-    };
-
-    const createOption = (role: RoleTag): Option => {
-        return ({
-            label: role.name,
-            value: role.name,
-            color: role.color?.color,
-        });
-    };
-
-    const handleCreateRole = (inputValue: string): void => {
-        setIsLoading(true);
-        const roleAddRequest: RoleTagRequest = {name: inputValue};
-        RoleClient.add(roleAddRequest, currentSpace).then((response: AxiosResponse) => {
-            const newRole: RoleTag = response.data;
-            fetchRoles();
-            updatePersonField('spaceRole', newRole);
-            setIsLoading(false);
-        });
-    };
-
-    const displayRemovePersonModal = (): void => {
-        const propsForDeleteConfirmationModal: ConfirmationModalProps = {
-            submit: removePerson,
-            close: () => {
-                setConfirmDeleteModal(null);
-            },
-            content: <div>Removing this person will remove all instances of them from your entire space.</div>,
-        };
-        const deleteConfirmationModal: JSX.Element = ConfirmationModal(propsForDeleteConfirmationModal);
-        setConfirmDeleteModal(deleteConfirmationModal);
-    };
-
-    const getAssignToOptions = (): Array<Option> => {
-        const filteredProducts: Array<Product> = products
-            .filter(product => isActiveProduct(product, viewingDate) && !isUnassignedProduct(product));
-        alphabetize(filteredProducts);
-        return filteredProducts.map(selectable => {return {value: selectable.name, label: selectable.name};});
-    };
-
-    const toolTipContent = (): JSX.Element => {
-        return <span className="toolTipContent">Create tags based on your people. Example, skills, education, employee status, etc. Anything on which you would like to filter.</span>;
-    };
-
-    const getAssignmentHistoryContent = (): JSX.Element => {
-        return (personEdited ? (<AssignmentHistory person={personEdited}/>) : <></>);
-    };
-
     return (
         <div className="formContainer">
-            <form className="form"
-                data-testid="personForm"
-                onSubmit={(event): Promise<void> => handleSubmit(event)}>
+            <form className="form" data-testid="personForm" onSubmit={handleSubmit}>
                 <div className="formItem">
-                    <label className="formItemLabel" htmlFor="name">Name</label>
-                    <input className="formInput formTextInput"
-                        data-testid="personFormNameField"
-                        type="text"
-                        name="name"
-                        id="name"
+                    <NameInput
                         value={person.name}
-                        onChange={(event): void => {
-                            updatePersonField('name', event.target.value);
-                        }}
-                        autoComplete="off"
-                        placeholder="e.g. Jane Smith"
+                        onChange={(event): void => updatePersonField('name', event.target.value)}
+                        isPersonNameInvalid={isPersonNameInvalid}
                     />
-                    {isPersonNameInvalid && <span className="personNameWarning">Please enter a person name.</span>}
-                    <div className="isNewContainer">
-                        <input className="checkbox"
-                            data-testid="personFormIsNewCheckbox"
-                            id="isNew"
-                            type="checkbox"
-                            checked={person.newPerson}
-                            onChange={(): void => {
-                                const newPersonFlag = !person.newPerson;
-                                updatePersonField('newPerson', newPersonFlag);
-                                if (newPersonFlag === initialNewPersonFlag) {
-                                    setHasNewPersonChanged(false);
-                                } else {
-                                    setHasNewPersonChanged(true);
-                                }
-                            }}
-                        />
-                        <label className="formInputLabel" htmlFor="isNew">Mark as New</label>
-                    </div>
-                </div>
-                <div className="formItem">
-                    <label className="formItemLabel" htmlFor="cdsid">CDSID</label>
-                    <input className="formInput formTextInput"
-                        data-testid="personFormCustomField1"
-                        type="text"
-                        name="cdsid"
-                        id="cdsid"
-                        value={person.customField1 || ''}
-                        onChange={(event): void => {
-                            updatePersonField('customField1', event.target.value);
+                    <MarkAsNewCheckbox
+                        isChecked={person.newPerson}
+                        onChange={(): void => {
+                            const newPersonFlag = !person.newPerson;
+                            updatePersonField('newPerson', newPersonFlag);
+                            setHasNewPersonChanged(!(newPersonFlag === initialNewPersonFlag));
                         }}
-                        autoComplete="off"
-                        placeholder="e.g. jsmith12"
                     />
                 </div>
-                <SelectWithCreateOption
-                    metadata={ROLE_TAGS}
-                    useColorBadge
-                    value={person.spaceRole && person.spaceRole.name !== '' ? createOption(person.spaceRole) : undefined}
-                    options={roles.map(role => createOption(role))}
-                    onChange={(e): void => updateSpaceRole(e ? (e as Option).value : '')}
-                    onSave={handleCreateRole}
+                <CDSIDInput
+                    value={person.customField1}
+                    onChange={(event): void => {
+                        updatePersonField('customField1', event.target.value);
+                    }}
+                />
+                <RoleTagsDropdown
+                    spaceRole={person?.spaceRole}
+                    onChange={(role) => updatePersonField('spaceRole', role)}
                     isLoading={isLoading}
+                    setIsLoading={setIsLoading}
                 />
-                <SelectWithNoCreateOption
-                    metadata={isArchived(person, viewingDate) ? ARCHIVED_PERSON_ASSIGN_TO : PERSON_ASSIGN_TO}
-                    values={selectedProducts.map(x => {return {value:x.name, label:x.name};})}
-                    options={getAssignToOptions()}
-                    onChange={changeProductName}
+                <AssignToProductDropdown
+                    person={person}
+                    selectedProducts={selectedProducts}
+                    onChange={(updatedProducts) => {
+                        setHasAssignmentChanged(true);
+                        setSelectedProducts(updatedProducts);
+                    }}
                 />
-                {isEditPersonForm && <div className="formItem">{getAssignmentHistoryContent()}</div>}
-                <FormTagsField
-                    tagsMetadata={MetadataReactSelectProps.PERSON_TAGS}
-                    tagClient={PersonTagClient}
-                    currentTagsState={{currentTags: person.tags}}
-                    selectedTagsState={{selectedTags: selectedPersonTags, setSelectedTags: setSelectedPersonTags}}
-                    loadingState={{isLoading, setIsLoading}}
-                    toolTip={<ToolTip toolTipLabel="What's this?" contentElement={toolTipContent()}/>}
+                {isEditPersonForm && personEdited && (
+                    <div className="formItem">
+                        <AssignmentHistory person={personEdited}/>
+                    </div>
+                )}
+                <PersonTagsDropdown
+                    value={person.tags}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    selectedPersonTags={selectedPersonTags}
+                    setSelectedPersonTags={setSelectedPersonTags}
                 />
-                <div className="formItem">
-                    <FormNotesTextArea
-                        notes={person.notes}
-                        callBack={(notes): void => {
-                            updatePersonField('notes', notes);
-                        }}
-                    />
-                </div>
+                <FormNotesTextArea
+                    note={person.notes}
+                    onChange={(notes): void => updatePersonField('notes', notes)}
+                />
                 <div className="yesNoButtons">
                     <FormButton
                         buttonStyle="secondary"
@@ -378,20 +252,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                     </FormButton>
                 </div>
             </form>
-
-            {isEditPersonForm && (
-                <button className="deleteButtonContainer alignSelfCenter deleteLinkColor"
-                    data-testid="deletePersonButton"
-                    onClick={displayRemovePersonModal}
-                >
-                    <i className="material-icons" aria-hidden>delete</i>
-                    <div className="trashCanSpacer"/>
-                    <span className="obliterateLink">
-                            Delete
-                    </span>
-                </button>
-            )}
-            {confirmDeleteModal}
+            {isEditPersonForm && <DeleteButton personEdited={personEdited} />}
         </div>
     );
 }
