@@ -63,6 +63,17 @@
       border-right: 2px solid white !important;
     }
   }
+
+  &:hover {
+    .personEditIcon {
+      margin-left: 0;
+      visibility: visible;
+    }
+
+    .personNameAndRoleContainer {
+      border-color: $white;
+    }
+  }
 }
 
 .notPlaceholder {
@@ -80,19 +91,6 @@
         margin-left: 0;
         visibility: visible;
       }
-    }
-  }
-}
-
-.personContainer {
-  &:hover {
-    .personEditIcon {
-      margin-left: 0;
-      visibility: visible;
-    }
-
-    .personNameAndRoleContainer {
-      border-color: $white;
     }
   }
 }
