@@ -198,7 +198,7 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
                         onChange={(): void => {
                             const newPersonFlag = !person.newPerson;
                             updatePersonField('newPerson', newPersonFlag);
-                            setHasNewPersonChanged(!(newPersonFlag === initialNewPersonFlag));
+                            setHasNewPersonChanged((newPersonFlag !== initialNewPersonFlag));
                         }}
                     />
                 </div>
