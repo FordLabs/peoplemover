@@ -18,6 +18,6 @@ well suited for the product at hand – because we understand that a great team 
 - Run ```docker-compose -f docker-compose-evaluation.yml up```
 - Visit <http://localhost:3001/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa> in Chrome or Firefox
 
-## Setting up a development environment
-- Start with the [backend](./api/Readme.md)
+# Running the project
+- Start with the [backend](./api/README.md)
 - After the backend is running start the [frontend](./ui/README.md)

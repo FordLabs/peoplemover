@@ -27,26 +27,25 @@ import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.utilities.ANONYMOUS_TOKEN
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 class RoleControllerApiTest {
@@ -79,7 +78,9 @@ class RoleControllerApiTest {
 
     fun getBaseRolesUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/roles"
 
-    @Before
+    val roleRequestBody = RoleRequest("Not a blank")
+
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
@@ -88,7 +89,7 @@ class RoleControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         personRepository.deleteAll()
         spaceRolesRepository.deleteAll()
@@ -102,7 +103,7 @@ class RoleControllerApiTest {
         val role2: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Astronaut", spaceUuid = space.uuid))
 
         val result = mockMvc.perform(get(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -118,7 +119,7 @@ class RoleControllerApiTest {
     @Test
     fun `GET should return 400 when space does not exist`() {
         mockMvc.perform(get(getBaseRolesUrl("doesNotExist"))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -126,7 +127,7 @@ class RoleControllerApiTest {
     fun `GET should return empty set when space has no roles`() {
         val result = mockMvc
                 .perform(get(baseRolesUrl)
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                        .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -141,7 +142,7 @@ class RoleControllerApiTest {
     fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
         mockMvc.perform(
             get(baseRolesUrl)
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         ).andExpect(status().isForbidden)
     }
 
@@ -151,7 +152,7 @@ class RoleControllerApiTest {
         val role1: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "Fireman", spaceUuid = anonymousUserReadOnlySpace.uuid))
 
         mockMvc.perform(get(getBaseRolesUrl(anonymousUserReadOnlySpace.uuid))
-            .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+            .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(role1)))
             .andExpect(status().isOk)
@@ -164,7 +165,7 @@ class RoleControllerApiTest {
         val newRole = RoleRequest(name = spaceRole.name)
 
         mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newRole)))
                 .andExpect(status().isConflict)
@@ -176,7 +177,7 @@ class RoleControllerApiTest {
 
         val newRole = RoleRequest(name = "Firefighter")
         val result = mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newRole)))
                 .andExpect(status().isOk)
@@ -189,7 +190,7 @@ class RoleControllerApiTest {
         assertThat(addedSpaceRole.name).isEqualTo(newRole.name)
         assertThat(addedSpaceRole.color).isNotNull()
 
-        val spaceRolesTiedToSpace: Set<SpaceRole> = spaceRolesRepository.findAllBySpaceUuid(space.uuid);
+        val spaceRolesTiedToSpace: Set<SpaceRole> = spaceRolesRepository.findAllBySpaceUuid(space.uuid)
         assertThat(spaceRolesTiedToSpace).containsExactly(addedSpaceRole)
     }
 
@@ -200,7 +201,7 @@ class RoleControllerApiTest {
 
         val newRole = RoleRequest(name = "Firefighter")
         val result = mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newRole)))
                 .andExpect(status().isOk)
@@ -222,7 +223,7 @@ class RoleControllerApiTest {
         val newRole = RoleRequest(name = "Firefighter", colorId = usedColor.id)
 
         val result = mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newRole)))
                 .andExpect(status().isOk)
@@ -237,12 +238,10 @@ class RoleControllerApiTest {
 
     @Test
     fun `POST should return 403 when trying to add a role without write authorization`() {
-        val requestBodyObject = RoleRequest("Not a blank")
-
         mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .content(objectMapper.writeValueAsString(roleRequestBody)))
                 .andExpect(status().isForbidden)
 
     }
@@ -258,7 +257,7 @@ class RoleControllerApiTest {
         val roleEditRequest = RoleRequest( name = updatedRoleName)
 
         mockMvc.perform(put("$baseRolesUrl/${originalSpaceRole.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(roleEditRequest)))
                 .andExpect(status().isOk)
@@ -277,7 +276,7 @@ class RoleControllerApiTest {
         val roleEditRequest = RoleRequest(name = spaceRole1.name)
 
         mockMvc.perform(put("$baseRolesUrl/${spaceRole2.id!!}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(roleEditRequest)))
                 .andExpect(status().isConflict)
@@ -286,7 +285,7 @@ class RoleControllerApiTest {
     @Test
     fun `PUT should return 400 when trying to edit non existent role`() {
         mockMvc.perform(put("$baseRolesUrl/0")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(RoleRequest(name = "role1"))))
                 .andExpect(status().isBadRequest)
@@ -302,7 +301,7 @@ class RoleControllerApiTest {
         val roleEditRequest = RoleRequest(name = updatedRoleName, colorId = greenColor.id)
 
         val result = mockMvc.perform(put("$baseRolesUrl/${spaceRole.id!!}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(roleEditRequest)))
                 .andExpect(status().isOk)
@@ -325,12 +324,10 @@ class RoleControllerApiTest {
 
     @Test
     fun `PUT should return 403 when trying to edit a role without write authorization`() {
-        val requestBodyObject = RoleRequest("Not a blank")
-
         mockMvc.perform(put("$baseRolesUrl/99999")
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .content(objectMapper.writeValueAsString(roleRequestBody)))
                 .andExpect(status().isForbidden)
 
     }
@@ -338,12 +335,11 @@ class RoleControllerApiTest {
     @Test
     fun `PUT should return 400 when trying to edit a role in a space you do not have access to`() {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "role1", spaceUuid = spaceWithoutAccess.uuid))
-        val requestBodyObject = RoleRequest("Not a blank")
 
         mockMvc.perform(put("$baseRolesUrl/${spaceRole.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestBodyObject)))
+                .content(objectMapper.writeValueAsString(roleRequestBody)))
                 .andExpect(status().isBadRequest)
 
     }
@@ -353,7 +349,7 @@ class RoleControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "role1", spaceUuid = space.uuid))
 
         mockMvc.perform(delete("$baseRolesUrl/${spaceRole.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
 
@@ -370,7 +366,7 @@ class RoleControllerApiTest {
         ))
 
         mockMvc.perform(delete("$baseRolesUrl/${spaceRole.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
 
@@ -383,7 +379,7 @@ class RoleControllerApiTest {
         val spaceRole: SpaceRole = spaceRolesRepository.save(SpaceRole(name = "role1", spaceUuid = spaceWithoutAccess.uuid))
 
         mockMvc.perform(delete("$baseRolesUrl/${spaceRole.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest)
     }
@@ -392,7 +388,7 @@ class RoleControllerApiTest {
     @Test
     fun `DELETE should return 403 when trying to delete a role without write authorization`() {
         mockMvc.perform(delete("$baseRolesUrl/111")
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 
@@ -400,14 +396,14 @@ class RoleControllerApiTest {
     fun `POST should disallow invalid TagRequest inputs`() {
         val nameTooLong = SpaceRole(name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val emptyName = SpaceRole(name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(post(baseRolesUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyName)))
                 .andExpect(status().isBadRequest)
@@ -419,14 +415,14 @@ class RoleControllerApiTest {
         val roleTag = spaceRolesRepository.save(SpaceRole(name = "test", spaceUuid = space.uuid))
         val nameTooLong = SpaceRole(id = roleTag.id!!, name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(put(baseRolesUrl + "/${roleTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val emptyName = SpaceRole(id = roleTag.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(put(baseRolesUrl + "/${roleTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyName)))
                 .andExpect(status().isBadRequest)

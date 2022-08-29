@@ -2,11 +2,11 @@ package com.ford.internalprojects.peoplemover.assignment
 
 import com.ford.internalprojects.peoplemover.person.Person
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.springframework.context.annotation.Description
 import java.time.LocalDate
 
 class AssignmentDateHandlerTest {
-
     val person = Person(name = "name", spaceUuid = "space")
     val jun1 = "2020-06-01"
     val jul1 = "2020-07-01"
@@ -19,7 +19,8 @@ class AssignmentDateHandlerTest {
     var assignmentDateHandler = AssignmentDateHandler()
 
     @Test
-    fun `findUniqueDates should return a unique date when one assignment supplied`() {
+    @Description("findUniqueDates should return a unique date when one assignment supplied")
+    fun findUniqueDatesOneAssignment() {
         effectiveDate = LocalDate.parse(jun1)
         val assignmentList: List<AssignmentV1> = listOf(AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate))
 
@@ -31,7 +32,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findUniqueDates should return a unique date when two assignments with the same date are supplied`() {
+    @Description("findUniqueDates should return a unique date when two assignments with the same date are supplied")
+    fun findUniqueDatesTwoAssignmentsSameDates() {
         effectiveDate = LocalDate.parse(jun1)
         val assignmentList: List<AssignmentV1> = listOf(
                 AssignmentV1(person = person, spaceUuid = "space", productId = 1, effectiveDate = effectiveDate),
@@ -46,7 +48,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findUniqueDates should return two unique dates when two assignments with different dates are supplied`() {
+    @Description("findUniqueDates should return two unique dates when two assignments with different dates are supplied")
+    fun findUniqueDatesTwoAssignmentsDifferentDates() {
         val effectiveDate1 = LocalDate.parse(jun1)
         val effectiveDate2 = LocalDate.parse(jul1)
         val assignmentList: List<AssignmentV1> = listOf(
@@ -62,7 +65,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findUniqueDates should return two unique dates when three assignments with two different dates are supplied`() {
+    @Description("findUniqueDates should return two unique dates when three assignments with two different dates are supplied")
+    fun findUniqueDatesThreeAssignmentsDifferentDates() {
         val effectiveDate1 = LocalDate.parse(jun1)
         val effectiveDate2 = LocalDate.parse(jul1)
         val effectiveDate3 = LocalDate.parse(jul1)
@@ -80,7 +84,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findUniqueDates should handle assignments with empty effective dates by giving them today's date`() {
+    @Description("findUniqueDates should handle assignments with empty effective dates by giving them today's date")
+    fun findUniqueDatesAssignTodaysDate() {
         val assignmentList: List<AssignmentV1> = listOf(
                 AssignmentV1(person = person, spaceUuid = "space", productId = 1)
         )
@@ -93,7 +98,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findUniqueDates should return the dates in the order they were sent`() {
+    @Description("findUniqueDates should return the dates in the order they were sent")
+    fun findUniqueDatesReturnInOrder() {
         val effectiveDate1 = LocalDate.parse(jun1)
         val effectiveDate2 = LocalDate.parse(oct1)
         val effectiveDate3 = LocalDate.parse(jul1)
@@ -119,7 +125,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findStartDate should return the last date in uniqueDatesForAllAssignments list as a default`() {
+    @Description("findStartDate should return the last date in uniqueDatesForAllAssignments list as a default")
+    fun findStartDate() {
         val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
         val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
 
@@ -132,7 +139,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list when both lists are equal`() {
+    @Description("findStartDate should return the oldest of two dates in uniqueDatesForAllAssignments list when both lists are equal")
+    fun findStartDateReturnOldestFirst() {
         val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
         val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
 
@@ -144,7 +152,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findStartDate should return newest of 2 dates when lists are not equal`() {
+    @Description("findStartDate should return newest of 2 dates when lists are not equal")
+    fun findStartDateReturnNewest() {
         val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(jul1))
         val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(jun1), LocalDate.parse(jul1))
 
@@ -156,7 +165,8 @@ class AssignmentDateHandlerTest {
     }
 
     @Test
-    fun `findStartDate should return first non missing date`() {
+    @Description("findStartDate should return first non missing date")
+    fun findStartDateReturnFirstNonMissingDate() {
         val uniqueDatesForAssignment: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(aug1))
         val uniqueDatesForAllAssignment: List<LocalDate> = listOf(LocalDate.parse(sep1), LocalDate.parse(jul1), LocalDate.parse(aug1))
 

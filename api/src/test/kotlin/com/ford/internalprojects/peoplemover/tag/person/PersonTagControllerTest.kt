@@ -26,23 +26,22 @@ import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.utilities.ANONYMOUS_TOKEN
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -70,7 +69,9 @@ class PersonTagControllerTest {
     private lateinit var space: Space
     private fun getBasePersonTagsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/person-tags"
 
-    @Before
+    private val tagName = "Top Achiever"
+
+    @BeforeEach
     fun setUp() {
         personTagRepository.deleteAll()
         spaceRepository.deleteAll()
@@ -94,7 +95,7 @@ class PersonTagControllerTest {
 
         val result = mockMvc.perform(
             get(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -113,7 +114,7 @@ class PersonTagControllerTest {
     fun `GET should return 403 if unauthorized`() {
         mockMvc.perform(
             get(basePersonTagsUrl)
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         )
             .andExpect(status().isForbidden)
             .andReturn()
@@ -125,7 +126,7 @@ class PersonTagControllerTest {
 
         val result = mockMvc.perform(
             post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate))
         )
@@ -145,7 +146,7 @@ class PersonTagControllerTest {
 
         mockMvc.perform(
             post(basePersonTagsUrl)
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate))
         )
@@ -157,7 +158,7 @@ class PersonTagControllerTest {
     fun `POST should return 409 when creating person tag with already existing name`() {
         val actualTag: PersonTag = personTagRepository.save(PersonTag(name = "Agency", spaceUuid = space.uuid))
         mockMvc.perform(post(basePersonTagsUrl)
-            .header("Authorization", "Bearer GOOD_TOKEN")
+            .header("Authorization", "Bearer $GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(actualTag)))
             .andExpect(status().isConflict)
@@ -165,12 +166,11 @@ class PersonTagControllerTest {
 
     @Test
     fun `PUT should update person tag`() {
-        val expectedInitialState = "Top Achiever"
-        val tagToCreate = TagRequest(name = expectedInitialState)
+        val tagToCreate = TagRequest(name = tagName)
 
         val creationResponse = mockMvc.perform(
             post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate))
         )
@@ -181,14 +181,14 @@ class PersonTagControllerTest {
             PersonTag::class.java
         )
 
-        assertThat(createdTag.name).isEqualTo(expectedInitialState);
+        assertThat(createdTag.name).isEqualTo(tagName)
 
         val expectedUpdateValue = "Under-achiever"
         val tagToUpdate = TagRequest(name = expectedUpdateValue)
 
         val updatedResponse = mockMvc.perform(
             put("$basePersonTagsUrl/${createdTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToUpdate))
         )
@@ -198,17 +198,16 @@ class PersonTagControllerTest {
             updatedResponse.response.contentAsString,
             PersonTag::class.java
         )
-        assertThat(updatedTag.name).isEqualTo(expectedUpdateValue);
+        assertThat(updatedTag.name).isEqualTo(expectedUpdateValue)
     }
 
     @Test
     fun `PUT should return 403 if unauthorized`() {
-        val expectedInitialState = "Top Achiever"
-        val tagToCreate = TagRequest(name = expectedInitialState)
+        val tagToCreate = TagRequest(name = tagName)
 
         val creationResponse = mockMvc.perform(
             post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate))
         )
@@ -219,14 +218,14 @@ class PersonTagControllerTest {
             PersonTag::class.java
         )
 
-        assertThat(createdTag.name).isEqualTo(expectedInitialState);
+        assertThat(createdTag.name).isEqualTo(tagName)
 
         val expectedUpdateValue = "Under-achiever"
         val tagToUpdate = TagRequest(name = expectedUpdateValue)
 
         mockMvc.perform(
             put("$basePersonTagsUrl/${createdTag.id}")
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToUpdate))
         )
@@ -243,7 +242,7 @@ class PersonTagControllerTest {
 
         val attemptedEditRequest = TagRequest(name = conflictingTagName)
         mockMvc.perform(put("$basePersonTagsUrl/${initialTag.id}")
-            .header("Authorization", "Bearer GOOD_TOKEN")
+            .header("Authorization", "Bearer $GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(attemptedEditRequest)))
             .andExpect(status().isConflict)
@@ -263,7 +262,7 @@ class PersonTagControllerTest {
 
         mockMvc.perform(
             delete("$basePersonTagsUrl/${personTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -275,12 +274,11 @@ class PersonTagControllerTest {
 
     @Test
     fun `DELETE should return 403 if unauthorized`() {
-        val expectedInitialState = "Top Achiever"
-        val tagToCreate = TagRequest(name = expectedInitialState)
+        val tagToCreate = TagRequest(name = tagName)
 
         val creationResponse = mockMvc.perform(
             post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate))
         )
@@ -291,11 +289,11 @@ class PersonTagControllerTest {
             PersonTag::class.java
         )
 
-        assertThat(createdTag.name).isEqualTo(expectedInitialState);
+        assertThat(createdTag.name).isEqualTo(tagName)
 
         mockMvc.perform(
             delete("$basePersonTagsUrl/${createdTag.id}")
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN"))
             .andExpect(status().isForbidden)
             .andReturn()
     }
@@ -309,14 +307,14 @@ class PersonTagControllerTest {
         )
 
         mockMvc.perform(delete("$basePersonTagsUrl/${personTag.id!!}")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
+            .header("Authorization", "Bearer $GOOD_TOKEN"))
             .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `DELETE should return 400 when person tag does not exist`() {
         mockMvc.perform(delete("$basePersonTagsUrl/700")
-            .header("Authorization", "Bearer GOOD_TOKEN"))
+            .header("Authorization", "Bearer $GOOD_TOKEN"))
             .andExpect(status().isBadRequest)
     }
 
@@ -324,14 +322,14 @@ class PersonTagControllerTest {
     fun `POST should disallow invalid TagRequest inputs`() {
         val nameTooLong = PersonTag(name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val emptyName = PersonTag(name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(post(basePersonTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyName)))
                 .andExpect(status().isBadRequest)
@@ -343,14 +341,14 @@ class PersonTagControllerTest {
         val personTag = personTagRepository.save(PersonTag(name = "test", spaceUuid = space.uuid))
         val nameTooLong = PersonTag(id = personTag.id!!, name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(put(basePersonTagsUrl + "/${personTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val emptyName = PersonTag(id = personTag.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(put(basePersonTagsUrl + "/${personTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyName)))
                 .andExpect(status().isBadRequest)

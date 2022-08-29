@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 
 package com.ford.internalprojects.peoplemover.tag.role
 
-import com.ford.internalprojects.peoplemover.utilities.BasicLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -27,13 +26,11 @@ import javax.validation.Valid
 @RequestMapping("/api/spaces/{spaceUuid}/roles")
 class RoleController(
     private val roleService: RoleService,
-    private val logger: BasicLogger
 ) {
     @PreAuthorize("hasPermission(#spaceUuid, 'read')")
     @GetMapping
     fun getRolesForSpace(@PathVariable spaceUuid: String): ResponseEntity<Set<SpaceRole>> {
         val rolesForSpace = roleService.getRolesForSpace(spaceUuid)
-        logger.logInfoMessage("All role retrieved for space: [$spaceUuid].")
         return ResponseEntity.ok(rolesForSpace)
     }
 
@@ -48,7 +45,6 @@ class RoleController(
             request.name,
             request.colorId
         )
-        logger.logInfoMessage("Role [${request.name}] created for space: [$spaceUuid].")
         return ResponseEntity.ok(spaceRole)
     }
 
@@ -59,7 +55,6 @@ class RoleController(
         @PathVariable roleId: Int
     ): ResponseEntity<Unit> {
         roleService.deleteRole(roleId, spaceUuid)
-        logger.logInfoMessage("Role id [$roleId] deleted.")
         return ResponseEntity.ok().build()
     }
 
@@ -71,8 +66,6 @@ class RoleController(
         @Valid @RequestBody roleEditRequest: RoleRequest
     ): ResponseEntity<SpaceRole> {
         val updatedRole: SpaceRole = roleService.editRole(spaceUuid, roleId, roleEditRequest)
-        logger.logInfoMessage("Role with id [${roleId}] edited to: " +
-                        "[${roleEditRequest.name}] in space [$spaceUuid].")
         return ResponseEntity.ok(updatedRole)
     }
 }

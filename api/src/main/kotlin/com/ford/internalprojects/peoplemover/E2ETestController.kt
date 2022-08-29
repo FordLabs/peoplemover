@@ -1,6 +1,7 @@
 package com.ford.internalprojects.peoplemover
 
-import com.ford.internalprojects.peoplemover.space.SpaceService
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import io.jsonwebtoken.JwtBuilder
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -18,9 +19,10 @@ import java.util.*
 @Controller
 @RequestMapping("/")
 class E2ETestController(
-        private val spaceService: SpaceService,
-        private val localDataGenerator: LocalDataGenerator,
-        private val mockJwtDecoder: JwtDecoder
+    private val spaceRepository: SpaceRepository,
+    private val userSpaceMappingRepository: UserSpaceMappingRepository,
+    private val localDataGenerator: LocalDataGenerator,
+    private val mockJwtDecoder: JwtDecoder
 ) {
 
     @GetMapping
@@ -29,8 +31,14 @@ class E2ETestController(
     }
 
     @DeleteMapping("/api/reset/{uuid}")
-    fun deleteTestSpace(@PathVariable uuid: String): ResponseEntity<Unit> {
-        spaceService.deleteSpace(uuid)
+    fun deleteTestSpaces(@PathVariable uuid: String): ResponseEntity<Unit> {
+        spaceRepository.deleteByUuid(uuid)
+
+        userSpaceMappingRepository.findAllByUserId("USER_ID").let { userSpaceMappings ->
+            for (space in userSpaceMappings) {
+                spaceRepository.deleteByUuid(space.spaceUuid)
+            }
+        }
         localDataGenerator.resetSpace(uuid)
         return ResponseEntity.ok()
                 .header("Set-Cookie", "accessToken=${createJWT()}")
@@ -43,10 +51,10 @@ class E2ETestController(
 
         val builder: JwtBuilder = Jwts.builder().setId(jwt.id)
                 .setIssuedAt(Date(jwt.issuedAt?.toEpochMilli() ?: 0))
-                .setSubject(jwt.subject.toUpperCase())
+                .setSubject(jwt.subject.uppercase())
                 .setIssuer(jwt.issuer.toString())
                 .signWith(signatureAlgorithm, "sig".toByteArray())
-                .setExpiration(Date(jwt.expiresAt?.toEpochMilli() ?: Date().time + 6000))
+                .setExpiration(Date(jwt.expiresAt?.toEpochMilli() ?: (Date().time + 6000)))
 
         return builder.compact()
     }

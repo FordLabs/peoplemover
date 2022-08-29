@@ -18,8 +18,8 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
@@ -27,17 +27,16 @@ import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -45,7 +44,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -93,7 +91,7 @@ class ProductControllerInTimeApiTest {
     private fun getBaseProductsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/products"
     val readOnlySpaceUuid = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         spaceWithEditAccess = spaceRepository.save(Space(name = "tik", uuid = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
         spaceWithReadOnlyAccess = spaceRepository.save(Space(name = "tok", uuid = readOnlySpaceUuid, todayViewIsPublic = true))
@@ -122,7 +120,7 @@ class ProductControllerInTimeApiTest {
 
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
@@ -133,7 +131,7 @@ class ProductControllerInTimeApiTest {
     @Test
     fun `GET should return all products given date when they are both active`() {
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$may1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -155,7 +153,7 @@ class ProductControllerInTimeApiTest {
         val assignment = assignmentRepository.save(AssignmentV1(person=person, productId=product1.id ?: 0, spaceUuid=spaceWithEditAccess.uuid, effectiveDate = LocalDate.parse("1999-01-01")))
 
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$may1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -167,7 +165,7 @@ class ProductControllerInTimeApiTest {
         val actualProduct1: Product = actualProducts[0]
         assertThat(actualProduct1.id).isEqualTo(product1.id)
         assertThat(actualProduct1.assignments.size).isOne()
-        assertThat(actualProduct1.assignments.first().id).isEqualTo(assignment.id);
+        assertThat(actualProduct1.assignments.first().id).isEqualTo(assignment.id)
         assertThat(actualProduct1.assignments.first().person.archiveDate).isEqualTo(LocalDate.parse("1066-10-14"))
     }
 
@@ -175,7 +173,7 @@ class ProductControllerInTimeApiTest {
     fun `GET should return FORBIDDEN when accessing products without edit permission for a date that is not today`() {
         val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         mockMvc.perform(get("$baseUrl?requestedDate=$may1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 
@@ -184,7 +182,7 @@ class ProductControllerInTimeApiTest {
         val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         val tomorrow = LocalDate.now().plusDays(1L).format(DateTimeFormatter.ISO_DATE)
         mockMvc.perform(get("$baseUrl?requestedDate=$tomorrow")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
     }
 
@@ -193,7 +191,7 @@ class ProductControllerInTimeApiTest {
         val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         val yesterday = LocalDate.now().minusDays(1L).format(DateTimeFormatter.ISO_DATE)
         mockMvc.perform(get("$baseUrl?requestedDate=$yesterday")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
     }
 
@@ -209,7 +207,7 @@ class ProductControllerInTimeApiTest {
     fun `GET should return products for read only space when requesting today's data`() {
         val baseUrl = getBaseProductsUrl(spaceWithReadOnlyAccess.uuid)
         val result = mockMvc.perform(get("$baseUrl?requestedDate=$today")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -225,7 +223,7 @@ class ProductControllerInTimeApiTest {
     @Test
     fun `GET should return all products even after end date has passed`() {
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$sep1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -243,7 +241,7 @@ class ProductControllerInTimeApiTest {
     @Test
     fun `GET should return only first product given date when only first product is active`() {
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$apr1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -280,7 +278,7 @@ class ProductControllerInTimeApiTest {
         ))
 
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$apr2")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -300,7 +298,7 @@ class ProductControllerInTimeApiTest {
     @Test
     fun `GET should return no products for date that is before both start dates`() {
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$mar1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -321,7 +319,7 @@ class ProductControllerInTimeApiTest {
         ))
 
         val result = mockMvc.perform(get("$baseProductsUrl?requestedDate=$sep1")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -348,7 +346,7 @@ class ProductControllerInTimeApiTest {
         )
 
         val result = mockMvc.perform(put(baseProductsUrl + "/" + product1.id)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -358,7 +356,10 @@ class ProductControllerInTimeApiTest {
         val actualAssignment = assignmentRepository.findAll().first()
 
         assertThat(assignmentRepository.count()).isOne()
-        assertThat(actualAssignment).isEqualToIgnoringGivenFields(expectedAssignment, "id")
+        assertThat(actualAssignment)
+            .usingRecursiveComparison()
+            .ignoringFields("id")
+            .isEqualTo(expectedAssignment)
 
         val actualProduct: Product = objectMapper.readValue(
                 result.response.contentAsString,
@@ -385,7 +386,7 @@ class ProductControllerInTimeApiTest {
         )
 
         mockMvc.perform(put(baseProductsUrl + "/" + product2.id)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -396,9 +397,16 @@ class ProductControllerInTimeApiTest {
         val actualAssignments = assignmentRepository.findAll().toList()
 
         assertThat(assignmentRepository.count()).isEqualTo(3)
+
         assertThat(actualAssignments[0]).isEqualTo(untouchedAssignment)
-        assertThat(actualAssignments[1]).isEqualToIgnoringGivenFields(expectedSameAssignment, "id")
-        assertThat(actualAssignments[2]).isEqualToIgnoringGivenFields(expectedNewAssignment, "id")
+        assertThat(actualAssignments[1])
+            .usingRecursiveComparison()
+            .ignoringFields("id")
+            .isEqualTo(expectedSameAssignment)
+        assertThat(actualAssignments[2])
+            .usingRecursiveComparison()
+            .ignoringFields("id")
+            .isEqualTo(expectedNewAssignment)
     }
 
     @Test
@@ -414,7 +422,7 @@ class ProductControllerInTimeApiTest {
         )
 
         mockMvc.perform(put(baseProductsUrl + "/" + product1.id)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)

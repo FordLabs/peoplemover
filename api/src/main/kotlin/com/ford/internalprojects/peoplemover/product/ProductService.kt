@@ -54,15 +54,16 @@ class ProductService(
     }
 
     private fun ensureValidUrlScheme(productRequest: ProductRequest) {
+        val urlPrefix = "https://"
         if (!productRequest.url.isNullOrEmpty()) {
-            if ((productRequest.url!!.startsWith("https://", true) || productRequest.url!!.startsWith("http:", true))) {
+            if ((productRequest.url!!.startsWith(urlPrefix, true) || productRequest.url!!.startsWith("http:", true))) {
                return
             }
             else if (productRequest.url!!.startsWith("https:", true)) {
-                productRequest.url = productRequest.url!!.replace("https:", "https://")
+                productRequest.url = productRequest.url!!.replace("https:", urlPrefix)
             }
             else {
-                productRequest.url = "https://" + productRequest.url
+                productRequest.url = urlPrefix + productRequest.url
             }
         }
     }

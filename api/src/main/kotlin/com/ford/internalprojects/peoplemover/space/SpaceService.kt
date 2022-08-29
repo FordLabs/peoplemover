@@ -25,8 +25,6 @@ import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
-import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
@@ -68,7 +66,7 @@ class SpaceService(
         createSpaceWithName(spaceName, userId).let { createdSpace ->
             userSpaceMappingRepository.save(
                     UserSpaceMapping(
-                            userId = userId.toUpperCase().trim(),
+                            userId = userId.uppercase().trim(),
                             spaceUuid = createdSpace.uuid,
                             permission = PERMISSION_OWNER
                     )

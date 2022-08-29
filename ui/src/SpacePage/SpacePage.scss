@@ -1,0 +1,192 @@
+/*
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../Styles/Colors.scss';
+@import '../Styles/Breakpoints.scss';
+
+.spaceButtons button {
+  margin: 0 12px;
+}
+
+.logo-image {
+  height: 25px;
+  width: 25px;
+}
+
+.productAndAccordionContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  @include phone {
+    flex-direction: column;
+  }
+}
+
+.accordionContainer {
+  flex-grow: 0;
+  min-width: 204px;
+  max-height: 82vh;
+  margin-top: 2px;
+  font-size: 14px;
+  color: $gray-1;
+}
+
+.unassignedContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerContainerTitleAndIcon {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.drawerCaret {
+  margin-right: 14px;
+}
+
+.archivedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 46px;
+  flex-grow: 1;
+}
+
+.accordionHeaderContainer {
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.3);
+  border: 2px solid $gray-5;
+  border-bottom: 0;
+  border-radius: 2px;
+  font-weight: bold;
+  box-sizing: border-box;
+}
+
+.accordionText {
+  padding-left: 5px;
+}
+
+.addtionalFilterMultiValue {
+  background-color: $gray-5;
+  border-radius: 6px;
+  display: flex;
+  margin: 3px;
+  padding: 6px 4px;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  height: 22px;
+  font-style: italic;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 10vw;
+  white-space: nowrap;
+}
+
+.time-on-product-page,
+.peoplemover-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  footer {
+    margin-top: auto;
+  }
+}
+
+button.addPersonButton {
+  padding: 3px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $prime-1;
+  color: $white;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 18px;
+  white-space: nowrap;
+
+  margin: 15px 11px 5px 11px;
+
+  min-width: 90%;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  text-align: center;
+
+  @include phone {
+    min-width: unset;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 15px 0;
+    padding: 8px 0;
+  }
+
+  i {
+    padding-right: 8px;
+    font-weight: bold;
+  }
+
+  &:focus {
+    border: 2px solid white;
+  }
+}
+
+.skipToContent {
+  z-index: 9;
+  position: absolute;
+  background: $prime-1;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  font: 18px Helvetica, sans-serif;
+  color: white;
+  text-decoration: none;
+
+  transform: translateX(-9001%);
+
+  &:focus {
+    transform: translateX(0%);
+    border: 2px solid white;
+  }
+}
+
+.skipToProducts {
+  @extend .skipToContent;
+  margin: 5px;
+  padding: 26px;
+}
+
+.skipToNextProduct {
+  @extend .skipToContent;
+
+  padding: 9px 12px;
+  max-width: 184px;
+  overflow-wrap: break-word;
+
+  &:focus {
+    transform: translate(0, -80%);
+  }
+}
+
+.productCardSpan {
+  @include phone {
+    width: 100%;
+  }
+}

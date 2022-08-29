@@ -18,8 +18,8 @@
 package com.ford.internalprojects.peoplemover.product
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
@@ -31,28 +31,22 @@ import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocationRepository
 import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
-import com.ford.internalprojects.peoplemover.utilities.CHAR_260
-import com.ford.internalprojects.peoplemover.utilities.CHAR_520
-import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
+import com.ford.internalprojects.peoplemover.utilities.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
-import kotlin.collections.HashSet
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -89,12 +83,16 @@ class ProductControllerApiTest {
     private lateinit var tag: ProductTag
     private lateinit var location: SpaceLocation
 
+    private val productNameOne = "product one"
+    private val productNameTwo = "product two"
+    private val labsUrlWithHttps = "https://www.fordlabs.com"
+
     var baseProductsUrl: String = ""
 
     private fun getBaseProductUrl(spaceUuid: String) = "/api/spaces/${spaceUuid}/products"
     private fun getSingleProductUrl(productId: Int) = baseProductsUrl + "/${productId}"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "tok"))
         spaceWithoutAccess = spaceRepository.save(Space(name = "tik"))
@@ -104,7 +102,7 @@ class ProductControllerApiTest {
         location = spaceLocationRepository.save(SpaceLocation(spaceUuid = space.uuid, name = "Mars"))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
@@ -117,13 +115,13 @@ class ProductControllerApiTest {
     @Test
     fun `POST should create new Product`() {
         val productAddRequest = ProductRequest(
-                name = "product one",
+                name = productNameOne,
                 tags = setOf(tag),
                 spaceLocation = location
         )
 
         val result = mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isOk)
@@ -133,7 +131,7 @@ class ProductControllerApiTest {
                 result.response.contentAsString,
                 Product::class.java
         )
-        val productInDB: Product = productRepository.findByName("product one")!!
+        val productInDB: Product = productRepository.findByName(productNameOne)!!
 
         assertThat(actualProduct.name).isEqualTo(productAddRequest.name)
         assertThat(actualProduct.spaceUuid).isEqualTo(space.uuid)
@@ -148,7 +146,7 @@ class ProductControllerApiTest {
 
         val result = mockMvc.perform(
                 post(baseProductsUrl)
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productAddRequest))
         )
@@ -161,11 +159,11 @@ class ProductControllerApiTest {
 
     @Test
     fun `POST should return 409 when trying to create product of the same name`() {
-        productRepository.save(Product(name = "product one", spaceUuid = space.uuid))
-        val productAddRequest = ProductRequest(name = "product one")
+        productRepository.save(Product(name = productNameOne, spaceUuid = space.uuid))
+        val productAddRequest = ProductRequest(name = productNameOne)
 
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequest)))
                 .andExpect(status().isConflict)
@@ -176,7 +174,7 @@ class ProductControllerApiTest {
         val requestBodyObject = ProductRequest("Not blank")
 
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -199,7 +197,7 @@ class ProductControllerApiTest {
                         "789012345678901234567890"
         )
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isBadRequest)
@@ -211,18 +209,18 @@ class ProductControllerApiTest {
         val person: Person = personRepository.save(Person(name = "bob", spaceUuid = space.uuid))
         assignmentRepository.save(AssignmentV1(person = person, productId = product.id!!, spaceUuid = space.uuid))
         val productEditRequest = ProductRequest(
-                name = "product two"
+                name = productNameTwo
         )
 
         val result = mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
                 .andReturn()
 
         val expectedProduct: Product = product.copy(
-                name = "product two"
+                name = productNameTwo
         )
         val actualProduct: Product = objectMapper.readValue(
                 result.response.contentAsString,
@@ -231,17 +229,20 @@ class ProductControllerApiTest {
         // should actualProduct have the assignment in it? productInDb will have it
         val productInDb: Product = productRepository.findByIdOrNull(product.id!!)!!
         assertThat(actualProduct).isEqualTo(expectedProduct)
-        assertThat(actualProduct).isEqualToIgnoringGivenFields(productInDb, "assignments")
+        assertThat(actualProduct)
+            .usingRecursiveComparison()
+            .ignoringFields("assignments")
+            .isEqualTo(productInDb)
     }
 
     @Test
     fun `PUT should return 409 when updating product with an already existing product name`() {
-        val product1: Product = productRepository.save(Product(name = "product one", spaceUuid = space.uuid))
-        val product2: Product = productRepository.save(Product(name = "product two", spaceUuid = space.uuid))
+        val product1: Product = productRepository.save(Product(name = productNameOne, spaceUuid = space.uuid))
+        val product2: Product = productRepository.save(Product(name = productNameTwo, spaceUuid = space.uuid))
         product1.name = product2.name
 
         mockMvc.perform(put(getSingleProductUrl(product1.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(product1)))
                 .andExpect(status().isConflict)
@@ -250,7 +251,7 @@ class ProductControllerApiTest {
     @Test
     fun `PUT should return 400 when trying to update non existing product`() {
         val result = mockMvc.perform(put(getSingleProductUrl(700))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Product(name = "", spaceUuid = space.uuid))))
                 .andExpect(status().isBadRequest)
@@ -265,7 +266,7 @@ class ProductControllerApiTest {
         val requestBodyObject = ProductRequest("newName", HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -277,7 +278,7 @@ class ProductControllerApiTest {
         val requestBodyObject = ProductRequest("newName", HashSet())
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isBadRequest)
@@ -288,7 +289,7 @@ class ProductControllerApiTest {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
 
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -303,7 +304,7 @@ class ProductControllerApiTest {
         assignmentRepository.save(AssignmentV1(person = person, productId = product.id!!, spaceUuid = space.uuid))
 
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -322,7 +323,7 @@ class ProductControllerApiTest {
         assignmentRepository.save(AssignmentV1(person = person, productId = unassignedProduct.id!!, spaceUuid = space.uuid))
 
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -335,7 +336,7 @@ class ProductControllerApiTest {
     @Test
     fun `DELETE should return 400 when trying to delete non existing product`() {
         mockMvc.perform(delete(getSingleProductUrl(700))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -343,7 +344,7 @@ class ProductControllerApiTest {
     fun `DELETE should return 400 when trying to delete a product in a space you don not have access to`() {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = spaceWithoutAccess.uuid))
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -351,58 +352,62 @@ class ProductControllerApiTest {
     fun `DELETE should return 403 when trying to delete a product without write authorization`() {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         mockMvc.perform(delete(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 
     @Test
     fun `post should validate the url send with the product`() {
+        val productNameWithHttp = "product with http"
+        val productNameWithHttps = "product with https"
+        val productNameWithoutHttps = "product without https"
+
         val productAddRequestWithoutHttps = ProductRequest(
-                name = "product without https",
+                name = productNameWithoutHttps,
                 url = "www.fordlabs.com"
         )
 
         val productAddRequestWithHttpsAndNoSlash = ProductRequest(
-                name = "product with https",
+                name = productNameWithHttps,
                 url = "https:www.fordlabs.com"
         )
 
         val productAddRequestWithHttp = ProductRequest(
-                name = "product with http",
+                name = productNameWithHttp,
                 url = "http:www.fordlabs.com"
         )
 
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequestWithoutHttps)))
                 .andExpect(status().isOk)
                 .andReturn()
 
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequestWithHttpsAndNoSlash)))
                 .andExpect(status().isOk)
                 .andReturn()
 
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productAddRequestWithHttp)))
                 .andExpect(status().isOk)
                 .andReturn()
 
-        val productWithoutHttpsInDB: Product = productRepository.findByName("product without https")!!
-        assertThat(productWithoutHttpsInDB.name).isEqualTo("product without https")
-        assertThat(productWithoutHttpsInDB.url).isEqualTo("https://www.fordlabs.com")
+        val productWithoutHttpsInDB: Product = productRepository.findByName(productNameWithoutHttps)!!
+        assertThat(productWithoutHttpsInDB.name).isEqualTo(productNameWithoutHttps)
+        assertThat(productWithoutHttpsInDB.url).isEqualTo(labsUrlWithHttps)
 
-        val productWithHttpsInDB: Product = productRepository.findByName("product with https")!!
-        assertThat(productWithHttpsInDB.name).isEqualTo("product with https")
-        assertThat(productWithHttpsInDB.url).isEqualTo("https://www.fordlabs.com")
+        val productWithHttpsInDB: Product = productRepository.findByName(productNameWithHttps)!!
+        assertThat(productWithHttpsInDB.name).isEqualTo(productNameWithHttps)
+        assertThat(productWithHttpsInDB.url).isEqualTo(labsUrlWithHttps)
 
-        val productWithHttpInDB: Product = productRepository.findByName("product with http")!!
-        assertThat(productWithHttpInDB.name).isEqualTo("product with http")
+        val productWithHttpInDB: Product = productRepository.findByName(productNameWithHttp)!!
+        assertThat(productWithHttpInDB.name).isEqualTo(productNameWithHttp)
         assertThat(productWithHttpInDB.url).isEqualTo("http:www.fordlabs.com")
     }
 
@@ -411,12 +416,12 @@ class ProductControllerApiTest {
 
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val productEditRequest = ProductRequest(
-                name = "product one",
+                name = productNameOne,
                 url = "www.fordlabs.com"
         )
 
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(productEditRequest)))
                 .andExpect(status().isOk)
@@ -424,36 +429,37 @@ class ProductControllerApiTest {
 
         val productInDB: Optional<Product> = productRepository.findById(product.id!!)
 
-        assertThat(productInDB.get().name).isEqualTo("product one")
-        assertThat(productInDB.get().url).isEqualTo("https://www.fordlabs.com")
+        assertThat(productInDB.get().name).isEqualTo(productNameOne)
+        assertThat(productInDB.get().url).isEqualTo(labsUrlWithHttps)
     }
 
     @Test
     fun `POST should disallow invalid ProductRequest inputs`() {
         val nameTooLong = Product(name = CHAR_260, spaceUuid = space.uuid)
+        val name = "person name"
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val nameBlank = Product(name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameBlank)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
-        val notesTooLong = Product(name = "person name", spaceUuid = space.uuid, notes = CHAR_520)
+        val notesTooLong = Product(name = name, spaceUuid = space.uuid, notes = CHAR_520)
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notesTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
-        val dorfTooLong = Product(name = "person name", spaceUuid = space.uuid, dorf = CHAR_260)
+        val dorfTooLong = Product(name = name, spaceUuid = space.uuid, dorf = CHAR_260)
         mockMvc.perform(post(baseProductsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dorfTooLong)))
                 .andExpect(status().isBadRequest)
@@ -465,28 +471,28 @@ class ProductControllerApiTest {
         val product: Product = productRepository.save(Product(name = "test", spaceUuid = space.uuid))
         val nameTooLong = Product(id = product.id, name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val nameBlank = Product(id = product.id, name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameBlank)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val notesTooLong = Product(id = product.id, name = "product name", spaceUuid = space.uuid, notes = CHAR_520)
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(notesTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val dorfTooLong = Product(id = product.id, name = "person name", spaceUuid = space.uuid, dorf = CHAR_260)
         mockMvc.perform(put(getSingleProductUrl(product.id!!))
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dorfTooLong)))
                 .andExpect(status().isBadRequest)

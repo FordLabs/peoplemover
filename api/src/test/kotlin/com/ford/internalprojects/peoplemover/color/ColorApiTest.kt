@@ -18,25 +18,21 @@
 package com.ford.internalprojects.peoplemover.color
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 class ColorApiTest {
@@ -48,8 +44,9 @@ class ColorApiTest {
     private lateinit var colorRepository: ColorRepository
 
     private val colors = listOf("33", "66")
+    private val postColorUrl = "/api/color"
 
-    @Before
+    @BeforeEach
     fun setUp() {
         colorRepository.deleteAll()
     }
@@ -57,8 +54,8 @@ class ColorApiTest {
     @Test
     fun `POST should add all the colors to the repository`() {
         assertThat(colorRepository.count()).isZero()
-        mockMvc.perform(post("/api/color")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(postColorUrl)
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isOk)
@@ -69,8 +66,8 @@ class ColorApiTest {
     fun `POST should 409 when trying to add the same color twice`() {
         assertThat(colorRepository.count()).isZero()
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
-        mockMvc.perform(post("/api/color")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        mockMvc.perform(post(postColorUrl)
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(colors)))
                 .andExpect(status().isConflict)
@@ -80,8 +77,8 @@ class ColorApiTest {
     fun `GET should return all the colors in the repository in ascending ID order`() {
         colors.forEach{ color: String -> colorRepository.save(Color(color = color)) }
         assertThat(colorRepository.count()).isNotZero()
-        val result = mockMvc.perform(get("/api/color")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+        val result = mockMvc.perform(get(postColorUrl)
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
                 .andReturn()

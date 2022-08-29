@@ -19,27 +19,29 @@ package com.ford.internalprojects.peoplemover.user
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.auth.*
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
+import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.utilities.ANONYMOUS_TOKEN
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 internal class UserControllerApiTest {
@@ -63,7 +65,7 @@ internal class UserControllerApiTest {
 
     var baseSpaceUrl: String = "/api/spaces"
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
@@ -82,9 +84,9 @@ internal class UserControllerApiTest {
 
         val result = mockMvc.perform(
                 MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .content(objectMapper.writeValueAsString(request))
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isOk
         ).andReturn()
@@ -110,9 +112,9 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .content(objectMapper.writeValueAsString(request))
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isBadRequest
         )
@@ -127,7 +129,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBodyObject))
         )
@@ -145,9 +147,9 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("$baseSpaceUrl/${space.uuid}/users")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .content(objectMapper.writeValueAsString(request))
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isBadRequest
         )
@@ -161,7 +163,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}/users/USER_ID")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isForbidden)
     }
@@ -175,7 +177,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}/users/EDITOR_ID")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isOk)
 
@@ -192,7 +194,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("$baseSpaceUrl/${space.uuid}/users/INVALID_ID")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
 
@@ -209,7 +211,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get(baseSpaceUrl + "/${space1.uuid}/users")
-                        .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                        .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isForbidden)
                 .andReturn()
@@ -219,7 +221,7 @@ internal class UserControllerApiTest {
     fun `GET should return 403 if the space does not exist`() {
         mockMvc.perform(
                 MockMvcRequestBuilders.get(baseSpaceUrl + "/aaaaaaaa-aaaa-aaaa-aaaa-badspace1234/users")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isForbidden)
                 .andReturn()
@@ -240,7 +242,7 @@ internal class UserControllerApiTest {
 
         val result = mockMvc.perform(
                 MockMvcRequestBuilders.get(baseSpaceUrl + "/${space1.uuid}/users")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andReturn()
@@ -251,10 +253,10 @@ internal class UserControllerApiTest {
         )
 
         Assertions.assertThat(returnedEditors).hasSize(4)
-        Assertions.assertThat(returnedEditors).contains(user1);
-        Assertions.assertThat(returnedEditors).contains(user2);
-        Assertions.assertThat(returnedEditors).contains(user3);
-        Assertions.assertThat(returnedEditors).contains(user4);
+        Assertions.assertThat(returnedEditors).contains(user1)
+        Assertions.assertThat(returnedEditors).contains(user2)
+        Assertions.assertThat(returnedEditors).contains(user3)
+        Assertions.assertThat(returnedEditors).contains(user4)
 
     }
 
@@ -270,15 +272,15 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isOk)
 
         val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
 
         Assertions.assertThat(users).hasSize(1)
-        Assertions.assertThat(users).contains(user1);
-        Assertions.assertThat(users).doesNotContain(user2);
+        Assertions.assertThat(users).contains(user1)
+        Assertions.assertThat(users).doesNotContain(user2)
     }
 
     @Test
@@ -292,7 +294,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
-                        .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                        .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isForbidden)
                 .andReturn()
@@ -300,8 +302,8 @@ internal class UserControllerApiTest {
         val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
 
         Assertions.assertThat(users).hasSize(2)
-        Assertions.assertThat(users).contains(user1);
-        Assertions.assertThat(users).contains(user2);
+        Assertions.assertThat(users).contains(user1)
+        Assertions.assertThat(users).contains(user2)
     }
 
     @Test
@@ -315,7 +317,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete(baseSpaceUrl + "/${space1.uuid}/users/${user1.userId}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isNotAcceptable)
                 .andReturn()
@@ -323,8 +325,8 @@ internal class UserControllerApiTest {
         val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
 
         Assertions.assertThat(users).hasSize(2)
-        Assertions.assertThat(users).contains(user1);
-        Assertions.assertThat(users).contains(user2);
+        Assertions.assertThat(users).contains(user1)
+        Assertions.assertThat(users).contains(user2)
     }
 
     @Test
@@ -337,7 +339,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
                 .andReturn()
@@ -345,7 +347,7 @@ internal class UserControllerApiTest {
         val users = userSpaceMappingRepository.findAllBySpaceUuid(space1.uuid)
 
         Assertions.assertThat(users).hasSize(1)
-        Assertions.assertThat(users).contains(user1);
+        Assertions.assertThat(users).contains(user1)
     }
 
     @Test
@@ -360,7 +362,7 @@ internal class UserControllerApiTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete(baseSpaceUrl + "/${space1.uuid}/users/${user2.userId}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
                 .andReturn()
@@ -368,6 +370,6 @@ internal class UserControllerApiTest {
         val users = userSpaceMappingRepository.findAllBySpaceUuid(space2.uuid)
 
         Assertions.assertThat(users).hasSize(1)
-        Assertions.assertThat(users).contains(user2);
+        Assertions.assertThat(users).contains(user2)
     }
 }

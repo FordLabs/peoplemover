@@ -16,10 +16,6 @@
  */
 
 import '@testing-library/jest-dom';
+import {toHaveNoViolations} from 'jest-axe';
 
-import {configure} from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-
-configure({adapter: new Adapter()});
-
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+expect.extend(toHaveNoViolations);

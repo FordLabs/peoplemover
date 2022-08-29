@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +15,21 @@
  * limitations under the License.
  */
 
-/// <reference types="Cypress" />
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare namespace Cypress {
     interface Chainable {
-        visitSpace(): Chainable<any>;
-        getModal(): Chainable<any>;
-        closeModal(): Chainable<any>;
+        visitSpace(mockData?: { locationData: any[]; productTagsData: any[] }, hash?: string, date?: Date): Chainable<void>;
 
-        resetSpace(uuid: string): Chainable<any>;
+        getModal(): Chainable<Element>;
 
-        selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: string): Chainable<any>;
+        closeModal(): Chainable;
+
+        getCalendarDate(dateToSelect: string): Chainable;
+
+        spyOnGetProductsByDate(dateToSelect: string): Chainable;
+
+        resetSpace(uuid: string): Chainable;
+
+        selectOptionFromReactSelect(parentSelector: string, checkboxTextToSelect: string): Chainable;
     }
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
+

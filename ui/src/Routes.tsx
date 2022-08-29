@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ford Motor Company
+ * Copyright (c) 2022 Ford Motor Company
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,68 +16,63 @@
  */
 
 import React from 'react';
-import {BrowserRouter as Router, Redirect} from 'react-router-dom';
-import {Route, Switch} from 'react-router';
+import {BrowserRouter as Router, Navigate, Route, Routes as ReactRoutes} from 'react-router-dom';
 import LandingPage from './LandingPage/LandingPage';
-import {OAuthRedirect} from './ReusableComponents/OAuthRedirect';
-import {AuthenticatedRoute} from './Auth/AuthenticatedRoute';
-import RedirectWrapper from './ReusableComponents/RedirectWrapper';
-import SpaceDashboard from './SpaceDashboard/SpaceDashboard';
-import AuthorizedRoute from './Auth/AuthorizedRoute';
-import PeopleMover from './Application/PeopleMover';
-import ErrorPageTemplate from './Application/ErrorPageTemplate';
+import {OAuthRedirect} from './Auth/OAuthRedirect/OAuthRedirect';
+import {AuthenticatedRoute} from './Auth/AuthenticatedRoute/AuthenticatedRoute';
+import RedirectWrapper from './RedirectWrapper';
+import DashboardPage from './DashboardPage/DashboardPage';
+import AuthorizedRoute from './Auth/AuthorizedRoute/AuthorizedRoute';
+import SpacePage from './SpacePage/SpacePage';
 import TimeOnProduct from './TimeOnProductPage/TimeOnProduct';
-import AnimatedImageSrc from './Application/Assets/404.gif';
-import errorImageSrc from './Application/Assets/403.png';
-import Header from './Header/Header';
-import AnnouncementBanner from './Header/AnnouncementBanner';
+import AnnouncementBanner from './AnnouncementBanner/AnnouncementBanner';
+import ContactUsPage from './ContactUsPage/ContactUsPage';
+import NotFoundErrorPage from './ErrorPages/NotFoundErrorPage';
+import ForbiddenErrorPage from './ErrorPages/ForbiddenErrorPage';
 
+export const contactUsPath = '/contact-us';
 export const dashboardUrl = '/user/dashboard';
-const notFoundUrl = '/error/404';
-const forbiddenUrl = '/error/403';
+const NOT_FOUND = '404';
+const FORBIDDEN = '403'
+const notFoundUrl = `/error/${NOT_FOUND}`;
 
 function Routes(): JSX.Element {
     return (
         <Router>
             <AnnouncementBanner/>
-            <Header/>
-            <Switch>
-                <Route exact path="/">
-                    <LandingPage/>
+            <ReactRoutes>
+                <Route path="/" element={<LandingPage/>} />
+                <Route path="/adfs/catch" element={<OAuthRedirect/>} />
+                <Route path="/user/login" element={
+                    <AuthenticatedRoute>
+                        <RedirectWrapper redirectUrl={dashboardUrl}/>
+                    </AuthenticatedRoute>
+                } />
+                <Route path={dashboardUrl} element={
+                    <AuthenticatedRoute>
+                        <DashboardPage/>
+                    </AuthenticatedRoute>
+                } />
+                <Route path="/:teamUUID">
+                    <Route path="" element={
+                        <AuthorizedRoute>
+                            <SpacePage/>
+                        </AuthorizedRoute>
+                    } />
+                    <Route path="timeonproduct" element={
+                        <AuthorizedRoute>
+                            <TimeOnProduct/>
+                        </AuthorizedRoute>
+                    } />
                 </Route>
-
-                <Route exact path="/adfs/catch">
-                    <OAuthRedirect/>
+                <Route path={contactUsPath} element={<ContactUsPage />} />
+                <Route path="/error">
+                    <Route path="" element={<Navigate to={NOT_FOUND} />} />
+                    <Route path={NOT_FOUND} element={<NotFoundErrorPage />} />
+                    <Route path={FORBIDDEN} element={<ForbiddenErrorPage />} />
                 </Route>
-
-                <AuthenticatedRoute exact path="/user/login">
-                    <RedirectWrapper redirectUrl={dashboardUrl}/>
-                </AuthenticatedRoute>
-
-                <AuthenticatedRoute exact path={dashboardUrl}>
-                    <SpaceDashboard/>
-                </AuthenticatedRoute>
-
-                <AuthorizedRoute exact path="/:teamName">
-                    <PeopleMover/>
-                </AuthorizedRoute>
-
-                <AuthorizedRoute exact path="/:teamName/timeonproduct">
-                    <TimeOnProduct/>
-                </AuthorizedRoute>
-
-                <Route path={notFoundUrl}>
-                    <ErrorPageTemplate errorGraphic={AnimatedImageSrc} errorText="We can&apos;t seem to find the page you&apos;re looking for. Please double check your link."/>
-                </Route>
-
-                <Route path={forbiddenUrl}>
-                    <ErrorPageTemplate errorGraphic={errorImageSrc} errorText="You don&apos;t have access to this page. Please request access."/>
-                </Route>
-
-                <Route>
-                    <Redirect to={notFoundUrl}/>
-                </Route>
-            </Switch>
+                <Route element={<Navigate replace to={notFoundUrl} />} />
+            </ReactRoutes>
         </Router>
     );
 }

@@ -18,8 +18,8 @@
 package com.ford.internalprojects.peoplemover.report
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_EDITOR
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
@@ -28,8 +28,6 @@ import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
-import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
@@ -38,23 +36,23 @@ import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
+import com.ford.internalprojects.peoplemover.tag.role.SpaceRolesRepository
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.time.Month
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -117,7 +115,7 @@ class ReportGeneratorControllerTest {
     private final val baseSpaceReportsUrl = "$baseReportsUrl/space"
     private final val baseUserReportsUrl = "$baseReportsUrl/user"
 
-    @Before
+    @BeforeEach
     fun setup() {
         space1 = spaceRepository.save(Space(name = "Undersea Pineapple", createdDate = LocalDate.of(2020, Month.FEBRUARY, 22).atTime(0, 0)))
         space2 = spaceRepository.save(Space(name = "Krusty Krabb", createdDate = LocalDate.now().atTime(0, 0)))
@@ -144,7 +142,7 @@ class ReportGeneratorControllerTest {
         assignmentRepository.save(AssignmentV1(person = person3, productId = productA.id!!, effectiveDate = LocalDate.parse(mar2), spaceUuid = space1.uuid))
     }
 
-    @After
+    @AfterEach
     fun teardown() {
         assignmentRepository.deleteAll()
         personRepository.deleteAll()
@@ -161,7 +159,7 @@ class ReportGeneratorControllerTest {
     fun `GET should return people, products, roles, and tags for a space and omit future assignments given a date`() {
         val result = mockMvc
                 .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar1}")
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                        .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -182,7 +180,7 @@ class ReportGeneratorControllerTest {
     fun `GET should ignore case and alphabetically sort by product name then person name given a date`() {
         val result = mockMvc
                 .perform(get("$basePeopleReportsUrl?spaceUuid=${space1.uuid}&requestedDate=${mar2}")
-                        .header("Authorization", "Bearer GOOD_TOKEN"))
+                        .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -213,7 +211,7 @@ class ReportGeneratorControllerTest {
 
     @Test
     fun `GET should return all space names, who created the space, when it was created, and all users related to that space if users is authorized`() {
-        val request = get(baseSpaceReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
+        val request = get(baseSpaceReportsUrl).header("Authorization", "Bearer $GOOD_TOKEN")
         val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
                 .andReturn()
@@ -235,7 +233,7 @@ class ReportGeneratorControllerTest {
 
     @Test
     fun `GET user should return all user ids`() {
-        val request = get(baseUserReportsUrl).header("Authorization", "Bearer GOOD_TOKEN")
+        val request = get(baseUserReportsUrl).header("Authorization", "Bearer $GOOD_TOKEN")
         val result = mockMvc.perform(request)
                 .andExpect(status().isOk)
                 .andReturn()

@@ -23,16 +23,15 @@ import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMappingRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -41,7 +40,6 @@ import java.sql.Timestamp
 import java.time.Instant
 
 @AutoConfigureMockMvc
-@RunWith(SpringRunner::class)
 @ActiveProfiles("test")
 @SpringBootTest
 class SpaceControllerApiTest {
@@ -68,7 +66,7 @@ class SpaceControllerApiTest {
 
     var baseSpaceUrl: String = "/api/spaces"
 
-    @After
+    @AfterEach
     fun tearDown() {
         assignmentRepository.deleteAll()
         productRepository.deleteAll()
@@ -80,13 +78,12 @@ class SpaceControllerApiTest {
     @Test
     fun `POST should create Space and Add Current User to Space`() {
         val request = SpaceCreationRequest(spaceName = "New Space")
-        val accessToken = "TOKEN"
         val expectedUserId = "USER_ID"
 
         val result = mockMvc.perform(
             post("$baseSpaceUrl/user")
                 .content(objectMapper.writeValueAsString(request))
-                .header("Authorization", "Bearer $accessToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
@@ -109,12 +106,11 @@ class SpaceControllerApiTest {
     @Test
     fun `POST should throw exception when name is just ' '`() {
         val request = SpaceCreationRequest(spaceName = " ")
-        val accessToken = "TOKEN"
 
         mockMvc.perform(
             post("$baseSpaceUrl/user")
                 .content(objectMapper.writeValueAsString(request))
-                .header("Authorization", "Bearer $accessToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest)
@@ -134,11 +130,9 @@ class SpaceControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space1.uuid, permission = PERMISSION_OWNER))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space2.uuid, permission = PERMISSION_OWNER))
 
-        val accessToken = "TOKEN"
-
         val result = mockMvc.perform(
             get("$baseSpaceUrl/user")
-                .header("Authorization", "Bearer $accessToken")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -177,7 +171,7 @@ class SpaceControllerApiTest {
 
         val result = mockMvc.perform(
             get(baseSpaceUrl + "/" + space1.uuid)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -246,7 +240,7 @@ class SpaceControllerApiTest {
     fun `GET should return 400 if space does not exist`() {
         mockMvc.perform(
             get("$baseSpaceUrl/badSpace")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
         )
             .andExpect(status().isBadRequest)
     }
@@ -262,7 +256,7 @@ class SpaceControllerApiTest {
 
         val result = mockMvc.perform(
                 put("$baseSpaceUrl/${space.uuid}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(editedSpace))
         )
@@ -287,7 +281,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(spaceRequest))
         )
@@ -309,7 +303,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(spaceRequest))
         )
@@ -331,7 +325,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(spaceRequest))
         )
@@ -359,7 +353,7 @@ class SpaceControllerApiTest {
 
         val result = mockMvc.perform(
                 put("$baseSpaceUrl/${space.uuid}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(spaceRequest))
         )
@@ -382,7 +376,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             post("$baseSpaceUrl/user")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace)))
                 .andExpect(status().isBadRequest)
@@ -397,7 +391,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-            .header("Authorization", "Bearer GOOD_TOKEN")
+            .header("Authorization", "Bearer $GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(editedSpace)))
             .andExpect(status().isBadRequest)
@@ -411,7 +405,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject))
         )
@@ -427,7 +421,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
             put("$baseSpaceUrl/${space.uuid}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(editedSpace))
         )
@@ -447,11 +441,11 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
                 delete("$baseSpaceUrl/${space.uuid}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(status().isOk)
 
-        assertThat(spaceRepository.count()).isZero();
+        assertThat(spaceRepository.count()).isZero()
     }
 
     @Test
@@ -460,7 +454,7 @@ class SpaceControllerApiTest {
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_EDITOR))
         mockMvc.perform(
                 delete("$baseSpaceUrl/${space.uuid}")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(status().isForbidden)
     }
@@ -484,7 +478,7 @@ class SpaceControllerApiTest {
 
         mockMvc.perform(
                 delete("$baseSpaceUrl/badSpace")
-                        .header("Authorization", "Bearer GOOD_TOKEN")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(status().isBadRequest)
     }

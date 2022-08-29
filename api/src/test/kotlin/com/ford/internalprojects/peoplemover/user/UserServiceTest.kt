@@ -17,43 +17,27 @@
 
 package com.ford.internalprojects.peoplemover.user
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
-import com.ford.internalprojects.peoplemover.auth.*
-import com.ford.internalprojects.peoplemover.product.ProductRepository
-import com.ford.internalprojects.peoplemover.space.Space
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
+import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.utilities.BasicLogger
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.*
-import org.mockito.junit.MockitoJUnitRunner
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.http.MediaType
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-
-@RunWith(MockitoJUnitRunner::class)
+@ExtendWith(MockKExtension::class)
 internal class UserServiceTest {
     private lateinit var userService: UserService
 
-    @Mock
+    @MockK
     private lateinit var userSpaceMappingRepository: UserSpaceMappingRepository
 
-    @Before
+    @BeforeEach
     fun setUp() {
         userService = UserService(BasicLogger(), userSpaceMappingRepository)
     }
@@ -62,13 +46,14 @@ internal class UserServiceTest {
     fun `Invite Users Request should return Ok and an empty list with a valid emails in request`() {
         val emails = listOf("userid1", "userid2", "userid3")
 
-        `when`(userSpaceMappingRepository.save(any(UserSpaceMapping::class.java)))
-                .thenReturn(UserSpaceMapping(spaceUuid = "", permission = "", userId = ""))
-                .thenThrow(DataIntegrityViolationException(""))
-                .thenThrow(RuntimeException())
+        every { userSpaceMappingRepository.save(ofType(UserSpaceMapping::class)) } returns UserSpaceMapping(
+            spaceUuid = "",
+            permission = "",
+            userId = ""
+        ) andThenThrows DataIntegrityViolationException("") andThenThrows RuntimeException()
 
         val exceptionEmails = userService.addUsersToSpace(emails, "")
         Assertions.assertThat(exceptionEmails).containsExactly("userid3")
-        verify(userSpaceMappingRepository, times(3)).save(any(UserSpaceMapping::class.java))
+        verify(exactly = 3) { userSpaceMappingRepository.save(ofType(UserSpaceMapping::class)) }
     }
 }

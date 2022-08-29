@@ -26,25 +26,24 @@ import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.space.Space
 import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.utilities.ANONYMOUS_TOKEN
 import com.ford.internalprojects.peoplemover.utilities.CHAR_260
 import com.ford.internalprojects.peoplemover.utilities.EMPTY_NAME
+import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -73,14 +72,16 @@ class ProductTagControllerTest {
 
     private fun getBaseProductTagsUrl(spaceUuid: String) = "/api/spaces/$spaceUuid/product-tags"
 
-    @Before
+    private val productTagName = "Fin Tech"
+
+    @BeforeEach
     fun setUp() {
         space = spaceRepository.save(Space(name = "anotherSpaceName1"))
         baseProductTagsUrl = getBaseProductTagsUrl(space.uuid)
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         productTagRepository.deleteAll()
         productRepository.deleteAll()
@@ -89,10 +90,10 @@ class ProductTagControllerTest {
 
     @Test
     fun `POST should create product tag`() {
-        val tagToCreate = TagRequest(name = "Fin Tech")
+        val tagToCreate = TagRequest(name = productTagName)
 
         val result = mockMvc.perform(post(baseProductTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(tagToCreate)))
                 .andExpect(status().isOk)
@@ -107,9 +108,9 @@ class ProductTagControllerTest {
 
     @Test
     fun `POST should return 409 when creating product tag with already existing name`() {
-        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
+        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = productTagName, spaceUuid = space.uuid))
         mockMvc.perform(post(baseProductTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(actualTag)))
                 .andExpect(status().isConflict)
@@ -120,7 +121,7 @@ class ProductTagControllerTest {
         val requestBodyObject = TagRequest("Not a blank")
 
         mockMvc.perform(post(getBaseProductTagsUrl(space.uuid))
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -128,11 +129,11 @@ class ProductTagControllerTest {
 
     @Test
     fun `PUT should return 409 when editing product tag with already existing name in different case (name check is case insensitive)`() {
-        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
+        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = productTagName, spaceUuid = space.uuid))
         mockMvc.perform(put("$baseProductTagsUrl/${actualTag.id}")
-            .header("Authorization", "Bearer GOOD_TOKEN")
+            .header("Authorization", "Bearer $GOOD_TOKEN")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(actualTag.copy(name = actualTag.name.toLowerCase()))))
+            .content(objectMapper.writeValueAsString(actualTag.copy(name = actualTag.name.lowercase()))))
             .andExpect(status().isConflict)
     }
 
@@ -144,7 +145,7 @@ class ProductTagControllerTest {
         val productTag3: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech 3", spaceUuid = space.uuid))
 
         val result = mockMvc.perform(get(baseProductTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
                 .andReturn()
 
@@ -161,7 +162,7 @@ class ProductTagControllerTest {
     @Test
     fun `GET should return 403 when valid token does not have read access and the space's read-only flag is off`() {
         mockMvc.perform(get(baseProductTagsUrl)
-            .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+            .header("Authorization", "Bearer $ANONYMOUS_TOKEN"))
             .andExpect(status().isForbidden)
             .andReturn()
     }
@@ -171,14 +172,14 @@ class ProductTagControllerTest {
     @Test
     fun `GET should return 400 when space does not exist`() {
         mockMvc.perform(get(getBaseProductTagsUrl("doesNotExist"))
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `DELETE product tag and remove product tag from associated product`() {
         val productTag: ProductTag = productTagRepository.save(
-                ProductTag(name = "Fin Tech", spaceUuid = space.uuid)
+                ProductTag(name = productTagName, spaceUuid = space.uuid)
         )
         val product: Product = productRepository.save(Product(
                 name = "P1",
@@ -189,7 +190,7 @@ class ProductTagControllerTest {
         assertThat(productTagRepository.count()).isOne()
 
         mockMvc.perform(delete("$baseProductTagsUrl/${productTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isOk)
 
         assertThat(productTagRepository.count()).isZero()
@@ -201,7 +202,7 @@ class ProductTagControllerTest {
     @Test
     fun `DELETE should return 400 when product tag does not exist`() {
         mockMvc.perform(delete("$baseProductTagsUrl/700")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -210,11 +211,11 @@ class ProductTagControllerTest {
         val spaceNotAssociatedWithUser = spaceRepository.save(Space(name = "spaceNotAssociatedWithUser"))
 
         val productTag: ProductTag = productTagRepository.save(
-                ProductTag(name = "Fin Tech", spaceUuid = spaceNotAssociatedWithUser.uuid)
+                ProductTag(name = productTagName, spaceUuid = spaceNotAssociatedWithUser.uuid)
         )
 
         mockMvc.perform(delete("$baseProductTagsUrl/${productTag.id!!}")
-                .header("Authorization", "Bearer GOOD_TOKEN"))
+                .header("Authorization", "Bearer $GOOD_TOKEN"))
                 .andExpect(status().isBadRequest)
     }
 
@@ -224,16 +225,16 @@ class ProductTagControllerTest {
         val productTag: ProductTag = productTagRepository.save(ProductTag(name = "Spongebob", spaceUuid = space.uuid))
 
         mockMvc.perform(delete("$baseProductTagsUrl/${productTag.id!!}")
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN"))
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN"))
                 .andExpect(status().isForbidden)
     }
 
     @Test
     fun `PUT should update product tag`() {
         val productTag: ProductTag = productTagRepository.save(ProductTag(name = "FordX", spaceUuid = space.uuid))
-        val updatedTag = TagRequest(name = "Fin Tech")
+        val updatedTag = TagRequest(name = productTagName)
         val result = mockMvc.perform(put("$baseProductTagsUrl/${productTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedTag)))
                 .andExpect(status().isOk)
@@ -249,7 +250,7 @@ class ProductTagControllerTest {
     fun `PUT should return 400 when trying to edit non existent product tag`() {
         val attemptedEditRequest = TagRequest(name = "")
         mockMvc.perform(put("$baseProductTagsUrl/700")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
                 .andExpect(status().isBadRequest)
@@ -260,12 +261,12 @@ class ProductTagControllerTest {
         val spaceNotAssociatedWithUser = spaceRepository.save(Space(name = "spaceNotAssociatedWithUser"))
 
         val productTag: ProductTag = productTagRepository.save(
-                ProductTag(name = "Fin Tech", spaceUuid = spaceNotAssociatedWithUser.uuid)
+                ProductTag(name = productTagName, spaceUuid = spaceNotAssociatedWithUser.uuid)
         )
         val attemptedEditRequest = TagRequest(name = "different name")
 
         mockMvc.perform(put("$baseProductTagsUrl/${productTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
                 .andExpect(status().isBadRequest)
@@ -277,7 +278,7 @@ class ProductTagControllerTest {
         val requestBodyObject = TagRequest("Liz")
 
         mockMvc.perform(put("$baseProductTagsUrl/${productTag.id}")
-                .header("Authorization", "Bearer ANONYMOUS_TOKEN")
+                .header("Authorization", "Bearer $ANONYMOUS_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBodyObject)))
                 .andExpect(status().isForbidden)
@@ -286,10 +287,10 @@ class ProductTagControllerTest {
     @Test
     fun `PUT should return 409 when editing product tag to an already existing name`() {
         productTagRepository.save(ProductTag(name = "Cool Tech", spaceUuid = space.uuid))
-        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = "Fin Tech", spaceUuid = space.uuid))
+        val actualTag: ProductTag = productTagRepository.save(ProductTag(name = productTagName, spaceUuid = space.uuid))
         val attemptedEditRequest = TagRequest(name = "Cool Tech")
         mockMvc.perform(put("$baseProductTagsUrl/${actualTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(attemptedEditRequest)))
                 .andExpect(status().isConflict)
@@ -299,14 +300,14 @@ class ProductTagControllerTest {
     fun `POST should disallow invalid TagRequest inputs`() {
         val nameTooLong = ProductTag(name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(post(baseProductTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val emptyName = ProductTag(name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(post(baseProductTagsUrl)
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyName)))
                 .andExpect(status().isBadRequest)
@@ -318,14 +319,14 @@ class ProductTagControllerTest {
         val productTag = productTagRepository.save(ProductTag(name = "test", spaceUuid = space.uuid))
         val nameTooLong = ProductTag(id = productTag.id!!, name = CHAR_260, spaceUuid = space.uuid)
         mockMvc.perform(put(baseProductTagsUrl + "/${productTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nameTooLong)))
                 .andExpect(status().isBadRequest)
                 .andReturn()
         val emptyName = ProductTag(id = productTag.id!!, name = EMPTY_NAME, spaceUuid = space.uuid)
         mockMvc.perform(put(baseProductTagsUrl + "/${productTag.id}")
-                .header("Authorization", "Bearer GOOD_TOKEN")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(emptyName)))
                 .andExpect(status().isBadRequest)

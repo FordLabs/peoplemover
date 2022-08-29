@@ -7,7 +7,6 @@ import com.ford.internalprojects.peoplemover.person.Person
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import kotlin.streams.toList
-import org.springframework.stereotype.Service
 
 @Component
 class AssignmentV1ToAssignmentV2Converter {
@@ -72,7 +71,7 @@ class AssignmentV1ToAssignmentV2Converter {
 
     fun createNewAssignments(newAssignmentV1Request: CreateAssignmentsRequest, person: Person, personAssignmentsV2: List<AssignmentV2>): List<AssignmentV2> {
         var newAssignmentsV2 = mutableListOf<AssignmentV2>()
-        var earliestStartDate = personAssignmentsV2.minBy { it.startDate }?.startDate
+        var earliestStartDate = personAssignmentsV2.minByOrNull { it.startDate }?.startDate
         var endDate: LocalDate? = null
         if (earliestStartDate != null && newAssignmentV1Request.requestedDate.isBefore(earliestStartDate)) {
             endDate = earliestStartDate

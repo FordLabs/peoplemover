@@ -25,23 +25,22 @@ import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.color.ColorService
-import com.ford.internalprojects.peoplemover.tag.location.LocationService
-import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonService
 import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.product.ProductService
-import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.space.Space
+import com.ford.internalprojects.peoplemover.space.SpaceRepository
 import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.tag.location.LocationService
+import com.ford.internalprojects.peoplemover.tag.location.SpaceLocation
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
 import com.ford.internalprojects.peoplemover.tag.product.ProductTagService
 import com.ford.internalprojects.peoplemover.tag.role.RoleService
 import com.ford.internalprojects.peoplemover.tag.role.SpaceRole
-import com.ford.internalprojects.peoplemover.space.Space
-import com.ford.internalprojects.peoplemover.space.SpaceRepository
-import com.ford.internalprojects.peoplemover.tag.person.PersonTag
-import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
-import com.google.common.collect.Sets
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import java.sql.Timestamp
@@ -83,7 +82,7 @@ class LocalDataGenerator(
         val createdSpace: Space = spaceRepository.save(
             Space(name = spaceName, uuid = uuid, lastModifiedDate = Timestamp(Date().time), createdBy = createdBy)
         )
-        productService.createDefaultProducts(createdSpace);
+        productService.createDefaultProducts(createdSpace)
 
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = createdSpace.uuid, permission = PERMISSION_OWNER))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "BBARKER", spaceUuid = createdSpace.uuid, permission = PERMISSION_EDITOR))
@@ -152,17 +151,26 @@ class LocalDataGenerator(
 
         val productTags: Set<ProductTag> = HashSet(listOf(productTag))
         val personTags: Set<PersonTag> = HashSet(listOf(personTag))
+        val productStartDate = "2019-01-01"
+        val productEndDate = "2019-01-10"
 
         productRepository.save(Product(
             name = "My Product",
             tags = productTags,
-            startDate = LocalDate.parse("2019-01-01"),
+            startDate = LocalDate.parse(productStartDate),
             spaceUuid =  createdSpace.uuid
         ))
         productRepository.save(Product(
             name = "Baguette Bakery",
             spaceLocation = location,
-            startDate = LocalDate.parse("2019-01-01"),
+            startDate = LocalDate.parse(productStartDate),
+            spaceUuid =  createdSpace.uuid
+        ))
+        productRepository.save(Product(
+            name = "Archived Product",
+            spaceLocation = location,
+            startDate = LocalDate.parse(productStartDate),
+            endDate = LocalDate.parse(productEndDate),
             spaceUuid =  createdSpace.uuid
         ))
 
@@ -177,22 +185,22 @@ class LocalDataGenerator(
             )
         )
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
-            requestedDate = LocalDate.parse("2019-01-01"),
-            products = Sets.newHashSet(ProductPlaceholderPair(
+            requestedDate = LocalDate.parse(productStartDate),
+            products = setOf(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = false
             ))
         ), createdSpace.uuid, jane.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.now(),
-            products = Sets.newHashSet(ProductPlaceholderPair(
+            products = setOf(ProductPlaceholderPair(
                 productId = savedProducts[1].id!!,
                 placeholder = true
             ))
         ), createdSpace.uuid, bob.id!!)
         assignmentService.createAssignmentFromCreateAssignmentsRequestForDate(CreateAssignmentsRequest(
             requestedDate = LocalDate.parse("2020-06-01"),
-            products = Sets.newHashSet()
+            products = setOf()
         ), createdSpace.uuid, adam.id!!)
     }
 

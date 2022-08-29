@@ -1,0 +1,208 @@
+/*!
+ * Copyright (c) 2021 Ford Motor Company
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../../Styles/Colors';
+
+.dropdownContainer {
+  display: flex;
+  padding-left: 46px;
+
+  .indicator-icon {
+    align-self: center;
+    padding-right: .625rem;
+  }
+
+  .dropdown-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    font-size: 0.875rem;
+    color: $gray-1 !important;
+    min-width: 50px;
+    font-weight: 400;
+  }
+
+  .dropdown_filter_count_style_default, .dropdown_filter_count_style_badge {
+    font-weight: bold;
+    margin-right: 30px;
+    min-width: 22px;
+  }
+
+  .dropdown_filter_count_style_badge {
+    height: 22px;
+    border-radius: 50%;
+    background-color: $purple-title;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropdown-group {
+    position: relative;
+
+    .clear-filter-button {
+      position: absolute;
+      background-color: white;
+      height: 20px;
+      padding: 0 2px;
+      right: 38px;
+      top: 19px;
+    }
+
+    .dropdown-button {
+      border: 1px solid transparent;
+      color: $gray-1;
+      width: fit-content;
+      flex-wrap: unset;
+      background-color: white;
+      margin: .6875rem .3125rem;
+      height: 2.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 0 .75rem;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .dropdown {
+      width: auto;
+      font-size: 14px;
+      font-weight: 700;
+      color: $gray-1;
+      padding-right: 30px;
+      margin: auto;
+    }
+
+    .dropdown-contents-container {
+      position: relative;
+
+      .sortby-dropdown {
+        position: absolute;
+        width: max-content;
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        border-radius: 6px;
+        border: 1px solid $gray-5;
+        left: 4px;
+        top: -4px;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
+        padding: 0 0 0 0;
+        box-sizing: border-box;
+        font-family: Helvetica, sans-serif;
+        font-size: 12px;
+
+        .sortby-option-container {
+          overflow-y: auto;
+          max-height: 250px;
+          min-width: 150px;
+          max-width: 250px;
+
+          .sortby-option {
+            height: unset;
+            padding: 5px 4px 5px 14px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            &:hover {
+              background-color: $gray-6;
+              color: $purple;
+              border-radius: 2px;
+            }
+
+            .sortby-option-input {
+              cursor: pointer;
+            }
+
+            .sortby-option-label {
+              padding: 0 10px;
+              cursor: pointer;
+              word-break: break-all;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+  .add-edit-tags-dropdown-button {
+    padding: 10px 10px;
+    display: flex;
+    justify-content: center;
+    font-style: normal;
+    font-weight: normal;
+    font-size: inherit;
+    color: #5463B0;
+    background: transparent;
+    line-height: 20px;
+  }
+
+  .sortDropdownOption {
+    list-style-type: none;
+    text-align: left;
+    padding: 4px 6px;
+    color: $gray-1;
+    background-color: transparent;
+    font-family: inherit;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: .75rem;
+    height: 1.5rem;
+
+    &:hover {
+      background-color: $gray-6;
+      color: $purple;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .sortby-option-check {
+      padding-left: 1rem;
+      font-size: 1.125rem;
+      margin-left: auto;
+    }
+  }
+
+.filter-option {
+  margin-top: 6px;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.filter-option > .checkbox {
+  margin: 0;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.filter-option > .filter-label-name {
+  word-break: break-word;
+  padding-right: 16px;
+}
