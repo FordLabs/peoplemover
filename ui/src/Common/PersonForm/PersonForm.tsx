@@ -45,6 +45,7 @@ import DeleteButton from "./DeleteButton/DeleteButton";
 import PersonTagsDropdown from "./PersonTagsDropdown/PersonTagsDropdown";
 
 import './PersonForm.scss';
+import { Space } from 'Types/Space';
 
 interface Props {
     isEditPersonForm: boolean
@@ -118,64 +119,60 @@ function PersonForm({ isEditPersonForm, initiallySelectedProduct, initialPersonN
             } as ProductPlaceholderPair;
         });
     };
+    const createAssignment = async(personToAssign:Person, spaceToAddAssignmentTo:Space) => {
+        AssignmentClient.createAssignmentForDate(
+            moment(viewingDate).format('YYYY-MM-DD'),
+            getSelectedProductPairs(),
+            spaceToAddAssignmentTo,
+            personToAssign
+        );
+    }
+    const createNewPerson = async(personToSend:Person, spaceToAddPersonTo:Space) => {
+        const response = await PeopleClient.createPersonForSpace(spaceToAddPersonTo, personToSend);
+        const newPerson: Person = response.data;
+        setPeople(currentPeople => [...currentPeople, newPerson])
+        await createAssignment(newPerson, spaceToAddPersonTo);
+    }
+    const editPerson = async(personToEdit:Person, spaceToEditPersonIn:Space) => {
+        const response = await PeopleClient.updatePerson(spaceToEditPersonIn, personToEdit);
+        const updatedPerson: Person = response.data;
+        setPeople(currentPeople => currentPeople.map((p) => {
+            return (p.id === updatedPerson.id) ? updatedPerson : p;
+        }))
 
+        if (hasAssignmentChanged) {
+            await createAssignment(updatedPerson, spaceToEditPersonIn)
+        }
+    }
     const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
 
         if (person.name.trim() === '') {
             setIsPersonNameInvalid(true);
-        } else {
-            setIsPersonNameInvalid(false);
+            return
+        } 
 
-            if (selectedProducts.length === 0) {
-                setIsUnassignedDrawerOpen(true);
-            }
+        setIsPersonNameInvalid(false);
 
-            if (hasNewPersonChanged) {
-                if (person.newPerson) {
-                    person.newPersonDate = viewingDate;
-                } else {
-                    person.newPersonDate = undefined;
-                }
-            }
-
-            const personToSend = {
-                ...person,
-                name: person.name.trim(),
-                customField1: person.customField1?.trim(),
-                notes:  person.notes?.trim(),
-                tags: selectedPersonTags
-            };
-
-            if (isEditPersonForm) {
-                const response = await PeopleClient.updatePerson(currentSpace, personToSend);
-                const updatedPerson: Person = response.data;
-                setPeople(currentPeople => currentPeople.map((p) => {
-                    return (p.id === updatedPerson.id) ? updatedPerson : p;
-                }))
-
-                if (hasAssignmentChanged) {
-                    await AssignmentClient.createAssignmentForDate(
-                        moment(viewingDate).format('YYYY-MM-DD'),
-                        getSelectedProductPairs(),
-                        currentSpace,
-                        updatedPerson
-                    );
-                }
-
-            } else {
-                const response = await PeopleClient.createPersonForSpace(currentSpace, personToSend);
-                const newPerson: Person = response.data;
-                setPeople(currentPeople => [...currentPeople, newPerson])
-                await AssignmentClient.createAssignmentForDate(
-                    moment(viewingDate).format('YYYY-MM-DD'),
-                    getSelectedProductPairs(),
-                    currentSpace,
-                    newPerson
-                );
-            }
-            closeModal();
+        if (selectedProducts.length === 0) {
+            setIsUnassignedDrawerOpen(true);
         }
+
+        const personToSend = {
+            ...person,
+            name: person.name.trim(),
+            customField1: person.customField1?.trim(),
+            notes:  person.notes?.trim(),
+            tags: selectedPersonTags,
+            newPersonDate: person.newPerson && hasNewPersonChanged ? viewingDate : undefined
+        };
+
+        if (isEditPersonForm) {
+            editPerson(personToSend, currentSpace)
+        } else {
+            createNewPerson(personToSend, currentSpace);
+        }
+        closeModal();
     };
 
     const closeModal = () => setModalContents(null);
