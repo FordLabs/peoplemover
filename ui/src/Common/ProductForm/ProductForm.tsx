@@ -37,6 +37,7 @@ import {ViewingDateState} from 'State/ViewingDateState';
 import {ModalContentsState} from 'State/ModalContentsState';
 import {CurrentSpaceState} from 'State/CurrentSpaceState';
 import {Product} from 'Types/Product';
+import {AxiosError} from "axios";
 
 interface Props {
     editing: boolean;
@@ -64,10 +65,32 @@ function ProductForm({ editing, product }: Props): JSX.Element {
             ...emptyProduct(currentSpace.uuid),
             ...product,
         }
-        if(returnProduct.startDate === '') {
-            returnProduct.startDate = moment(startDate).format('YYYY-MM-DD');
-        }
+
+        returnProduct.startDate = returnProduct.startDate || moment(startDate).format('YYYY-MM-DD');
+
         return returnProduct;
+    }
+
+    function presentErrorOn409(error: AxiosError) {
+        if (error.response?.status === 409) {
+            setNameWarningMessage(duplicateProductNameWarningMessage);
+        }
+    }
+
+    function editProductOnSubmit(productToSend: Product ){
+        ProductClient.editProduct(currentSpace, productToSend)
+            .then(closeModal)
+            .catch(error => {
+                presentErrorOn409(error);
+            });
+    }
+
+    function createProductOnSubmit(productToSend: Product) {
+        ProductClient.createProduct(currentSpace, productToSend)
+            .then(closeModal)
+            .catch(error => {
+                presentErrorOn409(error);
+            });
     }
 
     function handleSubmit(event: FormEvent): void {
@@ -94,22 +117,9 @@ function ProductForm({ editing, product }: Props): JSX.Element {
         };
 
         if (editing) {
-            ProductClient.editProduct(currentSpace, productToSend)
-                .then(closeModal)
-                .catch(error => {
-                    if (error.response.status === 409) {
-                        setNameWarningMessage(duplicateProductNameWarningMessage);
-                    }
-                });
-
+            editProductOnSubmit(productToSend);
         } else {
-            ProductClient.createProduct(currentSpace, productToSend)
-                .then(closeModal)
-                .catch(error => {
-                    if (error.response.status === 409) {
-                        setNameWarningMessage(duplicateProductNameWarningMessage);
-                    }
-                });
+            createProductOnSubmit(productToSend);
         }
     }
 
