@@ -61,5 +61,28 @@ class SpaceController(
     fun deleteSpace(@RequestHeader(name = "Authorization") accessToken: String, @PathVariable uuid: String): ResponseEntity<Unit> {
         return if (spaceService.deleteSpace(uuid)) { ResponseEntity(HttpStatus.OK) } else{ ResponseEntity(HttpStatus.BAD_REQUEST)}
     }
+
+    @PostMapping("/duplicate/{uuid}")
+    fun duplicateSpace(@RequestHeader(name = "Authorization") accessToken: String, @PathVariable uuid: String): SpaceResponse? {
+        return spaceService.duplicateSpace(uuid)
+    }
+
+    /*
+        1. Create a new space
+        2. Figure out which order we need to create things in for relationships
+            2.a. Create space first
+            2.b. Copy all tags (product and people tags)
+            2.c. Copy people
+            2.d. Associate people tags with people
+                1. service.getAllPeopleInSpace < -- get all people
+                2.
+            2.e. Copy products
+            2.e. Associate product tags with products
+            2.d. Associate people to products with assignments
+        3. Once we have the order, duplicate all entities from the to-be-duplicated space
+            3.a. As part of this process, as we are creating entities, assign them to the new space
+
+
+     */
 }
 

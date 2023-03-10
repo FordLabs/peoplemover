@@ -21,10 +21,14 @@ import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.getUsernameOrAppName
+import com.ford.internalprojects.peoplemover.person.Person
+import com.ford.internalprojects.peoplemover.person.PersonService
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
+import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
@@ -37,7 +41,9 @@ import java.util.*
 class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
-        private val userSpaceMappingRepository: UserSpaceMappingRepository
+        private val userSpaceMappingRepository: UserSpaceMappingRepository,
+        private val personTagService: PersonTagService,
+        private val personService: PersonService
 ) {
 
     fun createSpaceWithName(spaceName: String, createdBy: String): Space {
@@ -52,7 +58,7 @@ class SpaceService(
                             createdDate = LocalDateTime.now()
                     )
             )
-            productService.createDefaultProducts(savedSpace);
+            productService.createDefaultProducts(savedSpace)
             return savedSpace
         }
     }
@@ -62,6 +68,7 @@ class SpaceService(
     }
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
+
         val userId: String = SecurityContextHolder.getContext().authentication.name
         createSpaceWithName(spaceName, userId).let { createdSpace ->
             userSpaceMappingRepository.save(
@@ -123,4 +130,44 @@ class SpaceService(
         return spacesForUser.contains(spaceUuid)
     }
 
+    fun duplicateSpace(spaceUuid: String): SpaceResponse? {
+        val space = getSpace(spaceUuid)
+        val newSpaceName = space.name + " - Duplicate"
+        val userId: String = SecurityContextHolder.getContext().authentication.name
+        // create new space
+        val newSpace = createSpaceWithName(newSpaceName, userId)
+
+        // duplicate tags
+        val tagsFromSpace = personTagService.getAllPersonTags(space.uuid)
+        tagsFromSpace.forEach {
+            personTagService.createPersonTagForSpace(TagRequest(it.name), newSpace.uuid)
+        }
+
+        // duplicate userSpaceMappings
+        val userSpaceMappingsInSpace = userSpaceMappingRepository.findAllBySpaceUuid(space.uuid)
+        userSpaceMappingsInSpace.forEach {
+            userSpaceMappingRepository.save(UserSpaceMapping(
+                    userId = it.userId,
+                    spaceUuid = newSpace.uuid,
+                    permission = it.permission
+
+            ))
+        }
+
+        // duplicate persons
+        val peopleInSpace = personService.getPeopleInSpace(space.uuid)
+        peopleInSpace.forEach {
+            personService.createPerson(Person(
+                    name = it.name,
+                    spaceRole = it.spaceRole,
+                    tags = HashSet(it.tags),
+                    spaceUuid = newSpace.uuid,
+                    notes = it.notes,
+                    archiveDate = it.archiveDate,
+                    newPerson = it.newPerson,
+                    newPersonDate = it.newPersonDate
+            ))
+        }
+        return SpaceResponse(newSpace)
+    }
 }

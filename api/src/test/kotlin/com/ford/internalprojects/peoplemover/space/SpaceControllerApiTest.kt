@@ -22,10 +22,15 @@ import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
 import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMappingRepository
+import com.ford.internalprojects.peoplemover.person.Person
+import com.ford.internalprojects.peoplemover.person.PersonRepository
 import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTag
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
 import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -53,6 +58,12 @@ class SpaceControllerApiTest {
     private lateinit var assignmentRepository: AssignmentRepository
 
     @Autowired
+    private lateinit var personTagRepository: PersonTagRepository
+
+    @Autowired
+    private lateinit var personRepository: PersonRepository
+
+    @Autowired
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
@@ -73,6 +84,8 @@ class SpaceControllerApiTest {
         customFieldMappingRepository.deleteAll()
         spaceRepository.deleteAll()
         userSpaceMappingRepository.deleteAll()
+        personRepository.deleteAll()
+        personTagRepository.deleteAll()
     }
 
     @Test
@@ -481,6 +494,40 @@ class SpaceControllerApiTest {
                         .header("Authorization", "Bearer $GOOD_TOKEN")
         )
                 .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `POST Duplicate space request should return 200 if successful` () {
+        val space = spaceRepository.save(Space(name = "spacespacespace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+        val personTag = PersonTag(null, space.uuid, "big brain")
+        personTagRepository.save(personTag)
+
+        val person = Person(name = "test person", spaceUuid = space.uuid, tags = setOf(personTag))
+        personRepository.save(person)
+
+        val mvcResult = mockMvc.perform(
+                post("$baseSpaceUrl/duplicate/${space.uuid}")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
+        )
+                .andExpect(status().isOk)
+                .andReturn()
+
+        val body: SpaceResponse = objectMapper.readValue(mvcResult.response.contentAsString, SpaceResponse::class.java)
+
+        val newSpaceUuid = body.space.uuid
+        val newSpace = spaceRepository.findByUuid(newSpaceUuid)
+        assertNotNull(newSpace)
+
+        val newSpaceTag = personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(newSpaceUuid, personTag.name)
+        assertNotNull(newSpaceTag)
+
+        val userInNewSpace = userSpaceMappingRepository.findByUserIdAndSpaceUuid("USER_ID", newSpaceUuid)
+        assertTrue(userInNewSpace.isPresent)
+
+        val peopleInNewSpace = personRepository.findAllBySpaceUuid(newSpaceUuid)
+        assertFalse(peopleInNewSpace.isEmpty())
+        assertTrue(peopleInNewSpace[0].name == person.name)
     }
 
     //endregion
