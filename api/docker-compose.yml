@@ -2,6 +2,7 @@ version: '2.1'
 services:
   mysql:
     image: docker.io/library/mysql:5.7
+    platform: linux/x86_64
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: 'true'
       MYSQL_USER: "user"

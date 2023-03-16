@@ -19,14 +19,18 @@ package com.ford.internalprojects.peoplemover.space
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.*
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMapping
 import com.ford.internalprojects.peoplemover.customfield.CustomFieldMappingRepository
 import com.ford.internalprojects.peoplemover.person.Person
 import com.ford.internalprojects.peoplemover.person.PersonRepository
+import com.ford.internalprojects.peoplemover.product.Product
 import com.ford.internalprojects.peoplemover.product.ProductRepository
 import com.ford.internalprojects.peoplemover.tag.person.PersonTag
 import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
 import com.ford.internalprojects.peoplemover.utilities.GOOD_TOKEN
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -62,6 +66,9 @@ class SpaceControllerApiTest {
 
     @Autowired
     private lateinit var personRepository: PersonRepository
+
+    @Autowired
+    private lateinit var productTagRepository: ProductTagRepository;
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -500,11 +507,21 @@ class SpaceControllerApiTest {
     fun `POST Duplicate space request should return 200 if successful` () {
         val space = spaceRepository.save(Space(name = "spacespacespace"))
         userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
         val personTag = PersonTag(null, space.uuid, "big brain")
         personTagRepository.save(personTag)
 
         val person = Person(name = "test person", spaceUuid = space.uuid, tags = setOf(personTag))
         personRepository.save(person)
+
+        val productTag = ProductTag(spaceUuid = space.uuid, name = "fake product tag")
+        productTagRepository.save(productTag)
+
+        val product = Product(name = "fake product", spaceUuid = space.uuid, tags = setOf(productTag))
+        productRepository.save(product)
+
+        val assignment = AssignmentV1(person = person, spaceUuid = space.uuid, productId = product.id!!)
+        assignmentRepository.save(assignment)
 
         val mvcResult = mockMvc.perform(
                 post("$baseSpaceUrl/duplicate/${space.uuid}")
@@ -527,7 +544,32 @@ class SpaceControllerApiTest {
 
         val peopleInNewSpace = personRepository.findAllBySpaceUuid(newSpaceUuid)
         assertFalse(peopleInNewSpace.isEmpty())
-        assertTrue(peopleInNewSpace[0].name == person.name)
+        assertEquals(peopleInNewSpace[0].name, person.name)
+
+        val productInNewSpace = productRepository.findProductByNameAndSpaceUuid(product.name, newSpaceUuid)
+        assertNotNull(productInNewSpace)
+
+        val productTagInNewSpace = productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(newSpaceUuid, productTag.name)
+        assertNotNull(productTagInNewSpace)
+
+        val assignmentsInNewSpace = assignmentRepository.findAllBySpaceUuid(newSpaceUuid)
+        assertTrue(assignmentsInNewSpace.size == 1)
+    }
+
+    @Test
+    fun `POST duplicate space should return 409 if space name duplicate already exists` () {
+        val space = spaceRepository.save(Space(name = "spacespacespace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        // Create fake duplicate
+        spaceRepository.save(Space(name = "spacespacespace - Duplicate"))
+
+        mockMvc.perform(
+                post("$baseSpaceUrl/duplicate/${space.uuid}")
+                        .header("Authorization", "Bearer $GOOD_TOKEN")
+        )
+                .andExpect(status().isConflict)
+                .andReturn()
     }
 
     //endregion

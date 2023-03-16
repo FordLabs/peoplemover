@@ -29,6 +29,7 @@ import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipFor
 import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
 
 import './SpaceTile.scss';
+import DuplicateSpaceForm from "../DuplicateSpaceForm/DuplicateSpaceForm";
 
 interface Props {
     space: Space;
@@ -94,6 +95,13 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
         });
     }
 
+    function openDuplicateModal(): void {
+        setModalContents({
+            title: "Are you sure?",
+            component: <DuplicateSpaceForm space={space}/>
+        });
+    }
+
     const ActionsDropdownContent = (): JSX.Element => {
         const showLeaveSpaceButton = usersData?.isUserOwner && usersData?.spaceHasEditors;
         const showDeleteSpaceButton = usersData?.isUserOwner;
@@ -136,6 +144,14 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                         Delete Space
                     </button>
                 )}
+                <button
+                    data-testid="duplicateSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openDuplicateModal}
+                >
+                    Duplicate Space
+                </button>
             </AccessibleDropdownContainer>
         );
     };
