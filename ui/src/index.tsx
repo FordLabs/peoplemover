@@ -36,6 +36,8 @@ import reactDomRender from './Utils/reactDomRender';
 import EnvironmentConfigService from './Services/Api/EnvironmentConfigService';
 
 if (process.env.NODE_ENV !== 'production') {
+
+    // testing
     axe(React, ReactDOM, 1000);
 }
 
