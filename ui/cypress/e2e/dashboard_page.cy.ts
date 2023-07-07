@@ -69,6 +69,24 @@ describe('The Space Dashboard', () => {
         cy.contains(flippingSweetSpaceName).should('not.exist');
     });
 
+    it('Duplicate a space', () => {
+        cy.get('[data-testid="spaceDashboardTile"]').should('have.length', 1);
+        openDuplicateSpaceModal(flippingSweetSpaceName);
+        cy.contains('Are you sure?').should('exist');
+        cy.contains('Duplicating this space will create a copy of the space and everything in it.').should('exist');
+        cy.get('[data-testid="confirmDeleteButton"]').contains('Duplicate').click();
+
+        cy.wait(['@getSpacesForUser']);
+
+        cy.get('[data-testid="spaceDashboardTile"]').as('spaces')
+            .should('have.length', 2);
+
+        cy.get('@spaces').eq(0).should('contain.text', 'Flipping Sweet - Duplicate');
+        cy.get('@spaces').eq(1)
+            .should('contain.text', 'Flipping Sweet')
+            .should('not.contain.text', '- Duplicate');
+    });
+
     it('Leave a space (transfer ownership of a space)', () => {
         checkPresenceOfDashboardWelcomeMessage(false);
 
@@ -109,4 +127,9 @@ function openSpaceActionsDropdown(spaceName: string) {
 function openDeleteSpaceModal(spaceName: string) {
     openSpaceActionsDropdown(spaceName);
     cy.contains('Delete Space').click();
+}
+
+function openDuplicateSpaceModal(spaceName: string) {
+    openSpaceActionsDropdown(spaceName);
+    cy.contains('Duplicate Space').click();
 }
