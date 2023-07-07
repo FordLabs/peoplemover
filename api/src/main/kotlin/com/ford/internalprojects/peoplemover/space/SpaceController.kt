@@ -61,5 +61,10 @@ class SpaceController(
     fun deleteSpace(@RequestHeader(name = "Authorization") accessToken: String, @PathVariable uuid: String): ResponseEntity<Unit> {
         return if (spaceService.deleteSpace(uuid)) { ResponseEntity(HttpStatus.OK) } else{ ResponseEntity(HttpStatus.BAD_REQUEST)}
     }
+
+    @PostMapping("/duplicate/{uuid}")
+    fun duplicateSpace(@RequestHeader(name = "Authorization") accessToken: String, @PathVariable uuid: String): SpaceResponse? {
+        return spaceService.duplicateSpace(uuid)
+    }
 }
 

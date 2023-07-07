@@ -27,7 +27,7 @@ import java.time.LocalDate
 @Service
 class ProductService(
         private val productRepository: ProductRepository,
-        private val assignmentService: AssignmentService
+        private val assignmentService: AssignmentService,
 ) {
     fun findAll(): List<Product> =
             productRepository.findAll().map { it!! }
