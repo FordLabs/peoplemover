@@ -122,6 +122,15 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                     <i className="material-icons" aria-hidden>edit</i>
                     Edit
                 </button>
+                <button
+                    data-testid="duplicateSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openDuplicateModal}
+                >
+                    <i className="material-icons" aria-hidden>content_copy</i>
+                    Duplicate Space
+                </button>
                 {showLeaveSpaceButton && (
                     <button
                         data-testid="leaveSpace"
@@ -144,15 +153,6 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                         Delete Space
                     </button>
                 )}
-                <button
-                    data-testid="duplicateSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={openDuplicateModal}
-                >
-                    <i className="material-icons" aria-hidden>content_copy</i>
-                    Duplicate Space
-                </button>
             </AccessibleDropdownContainer>
         );
     };
