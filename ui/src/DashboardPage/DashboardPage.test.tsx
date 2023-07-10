@@ -139,8 +139,9 @@ describe('Dashboard Page', () => {
 
         it('should sort spaces alphabetically', function () {
             const tiles = screen.getAllByTestId('spaceDashboardTile');
-            expect(tiles[0]).toHaveTextContent('Space1Last modified Tuesday, April 14, 2020 at 2:06 pm');
-            expect(tiles[1]).toHaveTextContent('Space2Last modified Tuesday, April 14, 2020 at 2:06 pm');
+            const timestamp = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
+            expect(tiles[0]).toHaveTextContent(`Space1Last modified ${timestamp}`);
+            expect(tiles[1]).toHaveTextContent(`Space2Last modified ${timestamp}`);
         });
     });
 
