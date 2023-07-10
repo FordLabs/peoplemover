@@ -30,6 +30,7 @@ import {CurrentSpaceState} from '../State/CurrentSpaceState';
 import TestData from '../Utils/TestData';
 import {axe} from 'jest-axe';
 import {shouldOnlyShowSignoutButtonInAccountDropdown, shouldRenderStaticLogo} from '../Utils/HeaderTestUtils';
+import resetAllMocks = jest.resetAllMocks;
 
 class MockDate extends Date {
     constructor() {
@@ -108,7 +109,7 @@ describe('Dashboard Page', () => {
             const space1 = await screen.findByText('Space1');
             fireEvent.click(space1);
             expect(SpaceClient.getSpacesForUser).toHaveBeenCalled();
-            expect(mockedUsedNavigate).toHaveBeenCalledWith('/SpaceUUID');
+            expect(mockedUsedNavigate).toHaveBeenCalledWith('/SpaceUUID-1');
         });
 
         it('should display space name on a space', async () => {
@@ -117,14 +118,15 @@ describe('Dashboard Page', () => {
 
         it('should display space last modified date and time on a space', async () => {
             const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('dddd, MMMM D, Y [at] h:mm a');
-            expect(screen.getByText(`Last modified ${localTime}`)).not.toBeNull();
+            expect(screen.getAllByText(`Last modified ${localTime}`)).not.toBeNull();
         });
 
         it('should display today and last modified time on a space', async () => {
             Date.now = jest.fn(() => 1586887571000);
             await renderDashboard();
             const localTime = moment.utc('2020-04-14T18:06:11.791+0000').local().format('h:mm a');
-            expect(await screen.findByText(`Last modified today at ${localTime}`)).not.toBeNull();
+            expect(await screen.findAllByText(`Last modified today at ${localTime}`)).not.toBeNull();
+            resetAllMocks();
         });
 
         it('should NOT show welcome message if no spaces are present', async () => {
@@ -133,6 +135,12 @@ describe('Dashboard Page', () => {
 
         it('should show "Create New Space" button', async () => {
             await screen.findByText(`Create New Space`);
+        });
+
+        it('should sort spaces alphabetically', function () {
+            const tiles = screen.getAllByTestId('spaceDashboardTile');
+            expect(tiles[0]).toHaveTextContent('Space1Last modified Tuesday, April 14, 2020 at 2:06 pm');
+            expect(tiles[1]).toHaveTextContent('Space2Last modified Tuesday, April 14, 2020 at 2:06 pm');
         });
     });
 
@@ -192,8 +200,12 @@ describe('Dashboard Page', () => {
         const cookies = new Cookies();
         cookies.set('accessToken', fakeAccessToken);
         const responseData = hasSpaces ? [{
+            name: 'Space2',
+            uuid: 'SpaceUUID-2',
+            lastModifiedDate: '2020-04-14T18:06:11.791+0000',
+        },{
             name: 'Space1',
-            uuid: 'SpaceUUID',
+            uuid: 'SpaceUUID-1',
             lastModifiedDate: '2020-04-14T18:06:11.791+0000',
         }] : [];
         SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue(responseData);

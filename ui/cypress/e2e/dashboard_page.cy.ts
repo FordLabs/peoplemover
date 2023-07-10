@@ -81,10 +81,10 @@ describe('The Space Dashboard', () => {
         cy.get('[data-testid="spaceDashboardTile"]').as('spaces')
             .should('have.length', 2);
 
-        cy.get('@spaces').eq(0).should('contain.text', 'Flipping Sweet - Duplicate');
-        cy.get('@spaces').eq(1)
+        cy.get('@spaces').eq(0)
             .should('contain.text', 'Flipping Sweet')
             .should('not.contain.text', '- Duplicate');
+        cy.get('@spaces').eq(1).should('contain.text', 'Flipping Sweet - Duplicate');
     });
 
     it('Leave a space (transfer ownership of a space)', () => {

@@ -29,8 +29,16 @@ interface UseFetchUserSpaces {
 function useFetchUserSpaces(): UseFetchUserSpaces {
     const [userSpaces, setUserSpaces] = useRecoilState(UserSpacesState);
 
+    const sortAlphabetically = (a: Space, b: Space) => {
+        if(a.name < b.name) return -1;
+        if(a.name > b.name) return 1;
+        return 0;
+    }
+
     const fetchUserSpaces = useCallback(() => {
-        return SpaceClient.getSpacesForUser().then(setUserSpaces).catch();
+        return SpaceClient.getSpacesForUser().then((spaces) => {
+            setUserSpaces(spaces.sort(sortAlphabetically))
+        }).catch();
     }, [setUserSpaces])
 
     return {
