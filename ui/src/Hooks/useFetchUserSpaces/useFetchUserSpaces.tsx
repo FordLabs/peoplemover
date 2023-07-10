@@ -30,8 +30,11 @@ function useFetchUserSpaces(): UseFetchUserSpaces {
     const [userSpaces, setUserSpaces] = useRecoilState(UserSpacesState);
 
     const sortAlphabetically = (a: Space, b: Space) => {
-        if(a.name < b.name) return -1;
-        if(a.name > b.name) return 1;
+        const spaceNameA = a.name.toLowerCase();
+        const spaceNameB = b.name.toLowerCase();
+
+        if(spaceNameA < spaceNameB) return -1;
+        if(spaceNameA > spaceNameB) return 1;
         return 0;
     }
 
