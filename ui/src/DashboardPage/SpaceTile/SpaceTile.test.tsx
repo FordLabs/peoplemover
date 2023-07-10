@@ -29,6 +29,7 @@ import SpaceForm from '../SpaceForm/SpaceForm';
 import DeleteSpaceForm from '../DeleteSpaceForm/DeleteSpaceForm';
 import TransferOwnershipForm from '../TransferOwnershipForm/TransferOwnershipForm';
 import {renderWithRecoil} from 'Utils/TestUtils';
+import DuplicateSpaceForm from "../DuplicateSpaceForm/DuplicateSpaceForm";
 
 let modalContent: ModalContents | null;
 
@@ -159,6 +160,22 @@ describe('Space Tile', () => {
         spaceTileDropdownButton.click();
         await waitFor(() => expect(screen.getByTestId('editSpace')).toHaveFocus());
     });
+
+    describe('duplicating a space', () => {
+        it('should show the duplicate space menu item', async () => {
+            await renderSpaceDashboardList(onClick);
+            const spaceEllipsis = await screen.findByTestId('ellipsisButton');
+            fireEvent.click(spaceEllipsis);
+            const duplicateSpaceTile = await screen.findByText('Duplicate Space');
+            fireEvent.click(duplicateSpaceTile);
+
+            expect(modalContent).toEqual({
+                title: 'Are you sure?',
+                component: <DuplicateSpaceForm space={TestData.space}/>
+            });
+
+        });
+    })
 });
 
 async function renderSpaceDashboardList(onClick: () => void) {

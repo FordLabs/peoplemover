@@ -39,6 +39,8 @@ describe('Delete Space Form', () => {
 
     describe('Space has no editors', () => {
         beforeEach(() => {
+            SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue([]);
+
             renderWithRecoil(
                 <DeleteSpaceForm space={TestData.space} spaceHasEditors={false}/>,
                 initialRecoilState

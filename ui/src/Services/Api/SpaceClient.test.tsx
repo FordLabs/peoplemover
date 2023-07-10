@@ -155,4 +155,16 @@ describe('Space Client', function() {
             done();
         });
     });
+
+    it('should duplicate a space by uuid', (done) => {
+        //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        SpaceClient.duplicateSpaceByUuid(TestData.space.uuid!).then(() => {
+            expect(Axios.post).toHaveBeenCalledWith(
+                `/api/spaces/duplicate/${TestData.space.uuid}`,
+                undefined,
+                {headers: {Authorization: 'Bearer 123456', "Content-Type": "application/json"}}
+            );
+            done();
+        });
+    });
 });
