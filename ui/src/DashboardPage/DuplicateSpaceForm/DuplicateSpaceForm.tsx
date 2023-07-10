@@ -50,7 +50,7 @@ function DuplicateSpaceForm({ space }: Props): JSX.Element {
         containerClassname: 'leaveSpaceModal',
         content: <>
             <div>
-                Duplicating this space will create a copy of the space and everything in it
+                Duplicating this space will create a copy of the space and everything in it.
             </div>
             { errorOccurred &&
                 <div className='errorText'>

@@ -572,5 +572,44 @@ class SpaceControllerApiTest {
                 .andReturn()
     }
 
+    @Test
+    fun `POST Duplicate space request should return 200 if successful and user has editor permissions` () {
+        val space = spaceRepository.save(Space(name = "spacespacespace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_EDITOR))
+
+        mockMvc.perform(
+            post("$baseSpaceUrl/duplicate/${space.uuid}")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
+        )
+            .andExpect(status().isOk)
+            .andReturn()
+    }
+
+    @Test
+    fun `POST Duplicate space request should return 200 if successful and user has owner permissions` () {
+        val space = spaceRepository.save(Space(name = "spacespacespace"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID", spaceUuid = space.uuid, permission = PERMISSION_OWNER))
+
+        mockMvc.perform(
+            post("$baseSpaceUrl/duplicate/${space.uuid}")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
+        )
+            .andExpect(status().isOk)
+            .andReturn()
+    }
+
+    @Test
+    fun `POST duplicate space request should return 403 when trying to duplicate space without editor or owner authorization`() {
+        val space = spaceRepository.save(Space(name = "space_that_nobody_has_write_access_to"))
+        userSpaceMappingRepository.save(UserSpaceMapping(userId = "USER_ID_WITH_NO_WRITE_ACCESS", spaceUuid = space.uuid, permission = ""))
+
+        mockMvc.perform(
+            post("$baseSpaceUrl/duplicate/${space.uuid}")
+                .header("Authorization", "Bearer $GOOD_TOKEN")
+        )
+            .andExpect(status().isForbidden)
+            .andReturn()
+    }
+
     //endregion
 }

@@ -119,8 +119,17 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                     role="menuitem"
                     onClick={openEditModal}
                 >
-                    <i className="material-icons">edit</i>
+                    <i className="material-icons" aria-hidden>edit</i>
                     Edit
+                </button>
+                <button
+                    data-testid="duplicateSpace"
+                    className="dropdownOptions"
+                    role="menuitem"
+                    onClick={openDuplicateModal}
+                >
+                    <i className="material-icons" aria-hidden>content_copy</i>
+                    Duplicate Space
                 </button>
                 {showLeaveSpaceButton && (
                     <button
@@ -129,7 +138,7 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                         role="menuitem"
                         onClick={openLeaveModal}
                     >
-                        <img src={LeaveIcon} alt={'Door ajar with arrow leading out'}/>
+                        <img src={LeaveIcon} alt="" role="presentation" />
                         Leave Space
                     </button>
                 )}
@@ -140,18 +149,10 @@ function SpaceTile({space, onClick: openSpace}: Props): JSX.Element {
                         role="menuitem"
                         onClick={() => openDeleteModal(usersData?.spaceHasEditors)}
                     >
-                        <i className="material-icons">delete</i>
+                        <i className="material-icons" aria-hidden>delete</i>
                         Delete Space
                     </button>
                 )}
-                <button
-                    data-testid="duplicateSpace"
-                    className="dropdownOptions"
-                    role="menuitem"
-                    onClick={openDuplicateModal}
-                >
-                    Duplicate Space
-                </button>
             </AccessibleDropdownContainer>
         );
     };

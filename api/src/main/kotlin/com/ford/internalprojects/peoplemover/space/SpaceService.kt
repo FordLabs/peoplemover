@@ -155,14 +155,14 @@ class SpaceService(
         checkIfSpaceWithNameExists(newSpaceName)
 
         val newSpace = spaceRepository.save(
-                Space(
-                        name = newSpaceName,
-                        createdBy = originalSpace.createdBy,
-                        createdDate = originalSpace.createdDate,
-                        lastModifiedDate = originalSpace.lastModifiedDate,
-                        customFieldLabels = originalSpace.customFieldLabels,
-                        todayViewIsPublic = originalSpace.todayViewIsPublic
-                )
+            Space(
+                name = newSpaceName,
+                createdBy = originalSpace.createdBy,
+                createdDate = originalSpace.createdDate,
+                lastModifiedDate = originalSpace.lastModifiedDate,
+                customFieldLabels = originalSpace.customFieldLabels.ifEmpty { emptyList() },
+                todayViewIsPublic = originalSpace.todayViewIsPublic
+            )
         )
 
         duplicatePersonTags(originalSpace.uuid, newSpace.uuid)

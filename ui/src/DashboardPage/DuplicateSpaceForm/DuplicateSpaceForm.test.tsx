@@ -21,6 +21,8 @@ describe('Delete Space Form', () => {
     };
 
     beforeEach(() => {
+        SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue([]);
+
         modalContent = null;
         renderWithRecoil(
             <>
