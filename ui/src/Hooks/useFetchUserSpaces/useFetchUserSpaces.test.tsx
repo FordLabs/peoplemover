@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React from 'react';
 import {act, renderHook} from '@testing-library/react-hooks';
 import TestData from 'Utils/TestData';
 import SpaceClient from 'Services/Api/SpaceClient';
@@ -27,7 +25,12 @@ const wrapper = TestUtils.hookWrapper;
 jest.mock('Services/Api/SpaceClient');
 
 describe('useFetchUserSpaces Hook', () => {
-    it('should fetch all spaces and store them in recoil', async () => {
+    it('should fetch all spaces and store them in recoil alphabetically by name (ignoring case)', async () => {
+        const space1 = {...TestData.space, name: 'A Space 1'};
+        const space2 = {...TestData.space, name: 'a Space 2'};
+        const space3 = {...TestData.space, name: 'Space 3'};
+        const space4 = {...TestData.space, name: 'Space 4'};
+        SpaceClient.getSpacesForUser = jest.fn().mockResolvedValue([space3, space2, space4, space1]);
         const { result } = renderHook(() => useFetchUserSpaces(), { wrapper });
 
         expect(SpaceClient.getSpacesForUser).not.toHaveBeenCalled()
@@ -37,6 +40,6 @@ describe('useFetchUserSpaces Hook', () => {
             await result.current.fetchUserSpaces()
         });
         expect(SpaceClient.getSpacesForUser).toHaveBeenCalledWith();
-        expect(result.current.userSpaces).toEqual([TestData.space]);
+        expect(result.current.userSpaces).toEqual([space1, space2, space3, space4]);
     });
 });
