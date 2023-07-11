@@ -17,14 +17,28 @@
 
 package com.ford.internalprojects.peoplemover.space
 
+import com.ford.internalprojects.peoplemover.assignment.AssignmentRepository
+import com.ford.internalprojects.peoplemover.assignment.AssignmentService
+import com.ford.internalprojects.peoplemover.assignment.AssignmentV1
 import com.ford.internalprojects.peoplemover.auth.PERMISSION_OWNER
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMapping
 import com.ford.internalprojects.peoplemover.auth.UserSpaceMappingRepository
 import com.ford.internalprojects.peoplemover.auth.getUsernameOrAppName
+import com.ford.internalprojects.peoplemover.baserepository.exceptions.EntityAlreadyExistsException
+import com.ford.internalprojects.peoplemover.person.Person
+import com.ford.internalprojects.peoplemover.person.PersonService
+import com.ford.internalprojects.peoplemover.product.ProductRepository
+import com.ford.internalprojects.peoplemover.product.ProductRequest
 import com.ford.internalprojects.peoplemover.product.ProductService
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceIsReadOnlyException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNameInvalidException
 import com.ford.internalprojects.peoplemover.space.exceptions.SpaceNotExistsException
+import com.ford.internalprojects.peoplemover.tag.TagRequest
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagRepository
+import com.ford.internalprojects.peoplemover.tag.person.PersonTagService
+import com.ford.internalprojects.peoplemover.tag.product.ProductTag
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagRepository
+import com.ford.internalprojects.peoplemover.tag.product.ProductTagService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
@@ -32,12 +46,21 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import javax.transaction.Transactional
 
 @Service
 class SpaceService(
         private val spaceRepository: SpaceRepository,
         private val productService: ProductService,
-        private val userSpaceMappingRepository: UserSpaceMappingRepository
+        private val productRepository: ProductRepository,
+        private val userSpaceMappingRepository: UserSpaceMappingRepository,
+        private val personTagService: PersonTagService,
+        private val personTagRepository: PersonTagRepository,
+        private val productTagService: ProductTagService,
+        private val productTagRepository: ProductTagRepository,
+        private val assignmentService: AssignmentService,
+        private val assignmentRepository: AssignmentRepository,
+        private val personService: PersonService,
 ) {
 
     fun createSpaceWithName(spaceName: String, createdBy: String): Space {
@@ -52,7 +75,7 @@ class SpaceService(
                             createdDate = LocalDateTime.now()
                     )
             )
-            productService.createDefaultProducts(savedSpace);
+            productService.createDefaultProducts(savedSpace)
             return savedSpace
         }
     }
@@ -62,6 +85,7 @@ class SpaceService(
     }
 
     fun createSpaceWithUser(accessToken: String, spaceName: String): SpaceResponse {
+
         val userId: String = SecurityContextHolder.getContext().authentication.name
         createSpaceWithName(spaceName, userId).let { createdSpace ->
             userSpaceMappingRepository.save(
@@ -123,4 +147,153 @@ class SpaceService(
         return spacesForUser.contains(spaceUuid)
     }
 
+    @Transactional
+    fun duplicateSpace(spaceUuid: String): SpaceResponse? {
+        val originalSpace = getSpace(spaceUuid)
+        val newSpaceName = originalSpace.name + " - Duplicate"
+
+        checkIfSpaceWithNameExists(newSpaceName)
+
+        val newSpace = spaceRepository.save(
+            Space(
+                name = newSpaceName,
+                createdBy = originalSpace.createdBy,
+                createdDate = originalSpace.createdDate,
+                lastModifiedDate = originalSpace.lastModifiedDate,
+                customFieldLabels = originalSpace.customFieldLabels.ifEmpty { emptyList() },
+                todayViewIsPublic = originalSpace.todayViewIsPublic
+            )
+        )
+
+        duplicatePersonTags(originalSpace.uuid, newSpace.uuid)
+
+        duplicateUserSpaceMappings(originalSpace.uuid, newSpace.uuid)
+
+        duplicatePeople(originalSpace.uuid, newSpace.uuid)
+
+        duplicateProductTags(originalSpace, newSpace)
+
+        duplicateProducts(originalSpace.uuid, newSpace.uuid)
+
+        duplicateAssignments(originalSpace, newSpace)
+
+        return SpaceResponse(newSpace)
+    }
+
+    private fun checkIfSpaceWithNameExists(newSpaceName: String) {
+        val newSpaceNameExists = spaceRepository.existsByName(newSpaceName);
+        if (newSpaceNameExists) {
+            throw EntityAlreadyExistsException()
+        }
+    }
+
+    private fun duplicateAssignments(originalSpace: Space, newSpace: Space) {
+        val originalAssignments = assignmentService.getAssignmentsForSpace(originalSpace.uuid)
+        val peopleInNewSpace = personService.getPeopleInSpace(newSpace.uuid)
+        originalAssignments.forEach { assignment ->
+            duplicateAssignment(assignment, newSpace, peopleInNewSpace)
+        }
+    }
+
+    private fun duplicateAssignment(assignment: AssignmentV1, newSpace: Space, peopleInNewSpace: List<Person>) {
+        val productInOldSpace = productRepository.findById(assignment.productId)
+        val productInNewSpace = productRepository.findProductByNameAndSpaceUuid(productInOldSpace.get().name, newSpace.uuid)
+
+        if (productInNewSpace != null) {
+            val personOnAssignment = getPersonOnAssignment(peopleInNewSpace, assignment)
+            val newSpaceAssignment = AssignmentV1(
+                    productId = productInNewSpace.id!!,
+                    placeholder = assignment.placeholder,
+                    effectiveDate = assignment.effectiveDate,
+                    spaceUuid = newSpace.uuid,
+                    startDate = assignment.startDate,
+                    person = personOnAssignment!!
+            )
+            assignmentRepository.save(newSpaceAssignment)
+        }
+    }
+
+
+    private fun getPersonOnAssignment(peopleInNewSpace: List<Person>, assignment: AssignmentV1): Person? {
+        val peopleInNewSpaceFiltered = peopleInNewSpace.filter { personInNewSpace ->
+            val personOnAssignment = assignment.person
+            personInNewSpace.name == personOnAssignment.name &&
+                    personInNewSpace.newPersonDate == personOnAssignment.newPersonDate &&
+                    personInNewSpace.notes == personOnAssignment.notes
+        }
+        if (peopleInNewSpaceFiltered.isNotEmpty()) {
+            return peopleInNewSpaceFiltered[0]
+        }
+        return null
+    }
+
+    private fun duplicatePersonTags(originalSpaceUuid: String, newSpaceUuid: String) {
+        val tagsFromSpace = personTagService.getAllPersonTags(originalSpaceUuid)
+        tagsFromSpace.forEach {
+            personTagService.createPersonTagForSpace(TagRequest(it.name), newSpaceUuid)
+        }
+    }
+
+    private fun duplicateUserSpaceMappings(originalSpaceUuid: String, newSpaceUuid: String) {
+        val userSpaceMappingsInSpace = userSpaceMappingRepository.findAllBySpaceUuid(originalSpaceUuid)
+        userSpaceMappingsInSpace.forEach {
+            val newSpaceUserSpaceMapping = UserSpaceMapping(
+                    userId = it.userId,
+                    spaceUuid = newSpaceUuid,
+                    permission = it.permission
+
+            )
+            userSpaceMappingRepository.save(newSpaceUserSpaceMapping)
+        }
+    }
+
+    private fun duplicatePeople(originalSpaceUuid: String, newSpaceUuid: String) {
+        val peopleInSpace = personService.getPeopleInSpace(originalSpaceUuid)
+        peopleInSpace.forEach { person ->
+            val newPersonTags = person.tags.mapNotNull {
+                personTagRepository.findAllBySpaceUuidAndNameIgnoreCase(newSpaceUuid, it.name)
+            }
+            val newSpacePerson = Person(
+                    name = person.name,
+                    spaceRole = person.spaceRole,
+                    tags = newPersonTags.toSet(),
+                    spaceUuid = newSpaceUuid,
+                    notes = person.notes,
+                    archiveDate = person.archiveDate,
+                    newPerson = person.newPerson,
+                    newPersonDate = person.newPersonDate
+            )
+            personService.createPerson(newSpacePerson)
+        }
+    }
+
+    private fun duplicateProducts(originalSpaceUuid: String, newSpaceUuid: String) {
+        val products = productService.findAllBySpaceUuid(originalSpaceUuid)
+        products.forEach { product ->
+            val newProductTags: List<ProductTag> = product.tags.mapNotNull {
+                productTagRepository.findAllBySpaceUuidAndNameIgnoreCase(newSpaceUuid, it.name)
+            }
+            val newSpaceProduct = ProductRequest(
+                    name = product.name,
+                    tags = newProductTags.toSet(),
+                    startDate = product.startDate,
+                    endDate = product.endDate,
+                    dorf = product.dorf,
+                    spaceLocation = product.spaceLocation,
+                    archived = product.archived,
+                    notes = product.notes,
+                    url = product.url
+            )
+            productService.create(newSpaceProduct, newSpaceUuid)
+        }
+    }
+
+    private fun duplicateProductTags(originalSpace: Space, newSpace: Space) {
+        val productTags = productTagService.getAllProductTags(originalSpace.uuid)
+        productTags.forEach {
+            productTagService.createProductTagForSpace(TagRequest(
+                    name = it.name
+            ), newSpace.uuid)
+        }
+    }
 }
