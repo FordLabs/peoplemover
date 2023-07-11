@@ -32,6 +32,11 @@ async function deleteSpaceByUuid(uuid: string): Promise<void> {
     return Axios.delete(url, getAxiosConfig());
 }
 
+async function duplicateSpaceByUuid(uuid: string): Promise<void> {
+    const url = `${baseSpaceUrl}/duplicate/${uuid}`;
+    return Axios.post(url, undefined, getAxiosConfig());
+}
+
 async function getSpacesForUser(): Promise<Space[]> {
     const url = baseSpaceUrl + '/user';
     return Axios.get(url, getAxiosConfig()).then(res => res.data);
@@ -96,6 +101,7 @@ async function changeOwner(space: Space, currentOwner: UserSpaceMapping, newOwne
 
 const SpaceClient = {
     deleteSpaceByUuid,
+    duplicateSpaceByUuid,
     getSpacesForUser,
     getSpaceFromUuid,
     getUsersForSpace,
