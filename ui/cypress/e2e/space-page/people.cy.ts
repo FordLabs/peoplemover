@@ -72,8 +72,6 @@ describe('People', () => {
 
         cy.wait(['@postNewPerson', '@getProductsByDate', '@getPeople'])
             .spread((postNewPersonXhr: Interception, getUpdatedProductXhr: Interception) => {
-                console.log("POST NEW PERSON: ", postNewPersonXhr);
-                console.log("GET UPDATED PRODUCT: ",  getUpdatedProductXhr);
                 expect('@getUpdatedProduct status: '+ getUpdatedProductXhr?.response.statusCode)
                     .to.equal('@getUpdatedProduct status: ' + 200);
                 expect('@postNewPerson status: ' + postNewPersonXhr.response.statusCode)
@@ -388,7 +386,6 @@ const submitPersonForm = (expectedSubmitButtonText: string): void => {
 };
 
 const ensureNewAssignmentIsPresentInReassignmentDrawer = (assignedPerson: Person): void => {
-    console.log("ASSIGNED PERSON: ", assignedPerson);
     cy.get('@reassignmentDrawer')
         .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
         .should('have.length', 1)
