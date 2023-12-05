@@ -18,7 +18,6 @@
 describe('Filter', () => {
     beforeEach(() => {
         cy.visitSpace();
-        cy.server();
     });
 
     it('Filter people by role', () => {

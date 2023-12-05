@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  db:
+    image: registry.ford.com/fordlabs/postgres:13.2-alpine
+    container_name: pg_local
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: PEOPLEMOVER_DB

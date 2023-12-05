@@ -16,6 +16,7 @@
  */
 
 import person from '../../fixtures/person';
+import {Interception} from "cypress/types/net-stubbing";
 
 describe('Roles', () => {
     const mockRole = person.role;
@@ -24,8 +25,7 @@ describe('Roles', () => {
 
     it('Add a new role', () => {
         cy.visitSpace();
-        cy.server();
-        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
+        cy.intercept('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
 
         cy.get('[data-testid=dropdownButton__role]').click();
 
@@ -58,8 +58,8 @@ describe('Roles', () => {
 
         cy.get('[data-testid=saveTagButton]').click();
 
-        cy.wait('@postNewRole').should((xhr: Cypress.ObjectLike) => {
-            expect(xhr?.status).to.equal(200);
+        cy.wait('@postNewRole').then((xhr: Interception) => {
+            expect(xhr?.response?.statusCode).to.equal(200);
             expect(xhr?.response?.body.name).to.equal(mockRole);
             expect(xhr?.response?.body.color.color).to.equal(mockColor.color);
         });

@@ -34,7 +34,7 @@ class SlackServiceTest {
     }
 
     @Test
-    fun `should return 400 with "Missing Webhook Url" message when no webhook url was provided`() {
+    fun `should return 400 with Missing Webhook Url message when no webhook url was provided`() {
         val contactForm = ContactFormDTO("TestName", "test@test.com", "Other", "Hello There");
 
         val slackService = SlackService(slack);

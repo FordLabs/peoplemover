@@ -25,16 +25,12 @@ describe('Tags',  () => {
     });
 
     context('Add new', () => {
-        beforeEach(() => {
-            cy.server();
-        });
-
         it('location tag',  () => {
             cy.get('[data-testid=dropdownButton__product_location]').click();
             cy.get('[data-testid=openModalButton__product_location]').click();
             cy.getModal().should('contain', 'Product Location');
 
-            cy.route('POST', Cypress.env('API_LOCATION_PATH')).as('postLocation');
+            cy.intercept('POST', Cypress.env('API_LOCATION_PATH')).as('postLocation');
             cy.get('[data-testid=tagsModalContainer__location]')
                 .find('[data-testid=viewTagRow]')
                 .should('have.length', 1);
@@ -65,7 +61,7 @@ describe('Tags',  () => {
             cy.get('[data-testid=openModalButton__product_tags]').click();
             cy.getModal().should('contain', 'Product Tags');
 
-            cy.route('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postProductTag');
+            cy.intercept('POST', Cypress.env('API_PRODUCT_TAG_PATH')).as('postProductTag');
             cy.get('[data-testid=tagsModalContainer__product_tag]')
                 .find('[data-testid=viewTagRow]').should('have.length', 1);
 
@@ -93,7 +89,7 @@ describe('Tags',  () => {
             cy.get('[data-testid=openModalButton__person_tags]').click();
             cy.getModal().should('contain', 'Person Tags');
 
-            cy.route('POST', Cypress.env('API_PERSON_TAG_PATH')).as('postPersonTag');
+            cy.intercept('POST', Cypress.env('API_PERSON_TAG_PATH')).as('postPersonTag');
             cy.get('[data-testid=tagsModalContainer__person_tag]')
                 .find('[data-testid=viewTagRow]').should('have.length', 1);
 

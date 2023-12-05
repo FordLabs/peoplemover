@@ -1,0 +1,12 @@
+version: '2.1'
+services:
+  mysql:
+    image: registry.ford.com/fordlabs/mysql:8.0.20
+    container_name: mysql_local
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: user
+      MYSQL_PASSWORD: PASSWORD
+      MYSQL_DATABASE: PEOPLEMOVER_DB
+    ports:
+      - 3306:3306

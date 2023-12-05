@@ -29,22 +29,23 @@ const spaceUuid = Cypress.env('SPACE_UUID');
 const BASE_API_URL = Cypress.env('BASE_API_URL');
 
 Cypress.Commands.add('visitSpace', ({ locationData, productTagsData } = {}, hash = '', date = new Date()) => {
-    cy.server();
     cy.spyOnGetProductsByDate(date);
-    cy.route('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
+    cy.intercept('GET', Cypress.env('API_ROLE_PATH')).as('getRoles');
     const locationRoute = {
         method: 'GET',
         url: Cypress.env('API_LOCATION_PATH'),
     };
-    if (locationData) locationRoute.response = locationData;
-    cy.route(locationRoute).as('getLocations');
+    let locationDataResponse;
+    if (locationData) locationDataResponse = { body: locationData };
+    cy.intercept(locationRoute, locationDataResponse).as('getLocations');
 
     const productTagsRoute = {
         method: 'GET',
         url: Cypress.env('API_PRODUCT_TAG_PATH'),
     };
-    if (productTagsData) productTagsRoute.response = productTagsData;
-    cy.route(productTagsRoute).as('getProductTags');
+    let productTagResponse;
+    if (productTagsData) productTagResponse = {body: productTagsData};
+    cy.intercept(productTagsRoute, productTagResponse).as('getProductTags');
 
     cy.visit(`/${spaceUuid}${hash}`);
 
@@ -95,5 +96,5 @@ Cypress.Commands.add('resetSpace', () => {
 
 Cypress.Commands.add('spyOnGetProductsByDate', (expectedDate) => {
     const activeDate = moment(expectedDate).format('yyyy-MM-DD');
-    cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
+    cy.intercept('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${activeDate}`).as('getProductsByDate');
 })

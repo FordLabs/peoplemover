@@ -58,8 +58,7 @@ describe('Share Access Form', () => {
         });
 
         it('Invite editors to a space should show link to space url', () => {
-            cy.server();
-            cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
+            cy.intercept('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
             const spaceUuid = Cypress.env('SPACE_UUID');
             const baseUrl = Cypress.config().baseUrl;
 
@@ -71,10 +70,7 @@ describe('Share Access Form', () => {
             cy.get('[id=employeeIdTextArea]').focus().clear().type('Elise', {force: true});
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
-            cy.wait('@postAddPersonToSpace')
-                .should((xhr: Cypress.ObjectLike) => {
-                    expect(xhr.status).to.equal(200);
-                });
+            cy.wait('@postAddPersonToSpace').its('response.statusCode').should('eq', 200);
 
             cy.get('[data-testid=grantEditAccessConfirmationFormLinkToSpace]')
                 .should('contain', baseUrl + '/' + spaceUuid);
@@ -105,20 +101,16 @@ describe('Share Access Form', () => {
         });
 
         it('Transferring ownership', () => {
-            cy.server();
-            cy.route('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
-            cy.route('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
-            cy.route('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
+            cy.intercept('POST', Cypress.env('API_USERS_PATH')).as('postAddPersonToSpace');
+            cy.intercept('PUT', `${Cypress.env('API_USERS_PATH')}/ELISE`).as('putChangeOwner');
+            cy.intercept('GET', Cypress.env('API_USERS_PATH')).as('getAllUsers');
 
             cy.log('**Transferring ownership to an editor should change current owner to editor**');
 
             cy.get('[id=employeeIdTextArea]').focus().type('Elise', {force: true});
             cy.get('[data-testid=inviteEditorsFormSubmitButton]').should('not.be.disabled').click();
 
-            cy.wait('@postAddPersonToSpace')
-                .should((xhr: Cypress.ObjectLike) => {
-                    expect(xhr.status).to.equal(200);
-                });
+            cy.wait('@postAddPersonToSpace').its('response.statusCode').should('eq', 200);
 
             cy.get('[data-testid=grantEditAccessConfirmationFormDoneButton]').click();
             cy.get('[data-testid=modalPopupContainer]').should('not.exist');
@@ -140,15 +132,9 @@ describe('Share Access Form', () => {
 
             cy.get('[data-testid=confirmDeleteButton]').should('contain.text', 'Yes').click();
 
-            cy.wait('@putChangeOwner')
-                .should((xhr: Cypress.ObjectLike) => {
-                    expect(xhr.status).to.equal(200);
-                });
+            cy.wait('@putChangeOwner').its('response.statusCode').should('eq', 200);
 
-            cy.wait('@getAllUsers')
-                .should((xhr: Cypress.ObjectLike) => {
-                    expect(xhr.status).to.equal(200);
-                });
+            cy.wait('@getAllUsers').its('response.statusCode').should('eq', 200);
 
             cy.get('[data-testid=userListItem__USER_ID]')
                 .should('contain.text', 'USER_ID');
@@ -179,7 +165,7 @@ describe('Share Access Form', () => {
 
 const openShareAccessForm = (): void => {
     cy.get('[data-testid=accountDropdownToggle]').click();
-    cy.get('[data-testid=shareAccess]').click();
+    cy.get('[data-testid=shareAccess]').click({force: true});
     cy.get('[data-testid=modalContent]').should('exist');
 };
 

@@ -20,7 +20,6 @@ import Chainable = Cypress.Chainable;
 describe('Sort', () => {
     beforeEach(() => {
         cy.visitSpace();
-        cy.server();
 
         cy.get('[data-testid=productCardContainer__my_product]').should('exist');
         cy.get('[data-testid=productCardContainer__baguette_bakery]').should('exist');

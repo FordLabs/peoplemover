@@ -16,6 +16,7 @@
  */
 import * as moment from 'moment';
 import person, {Person} from '../../fixtures/person';
+import {Interception} from "cypress/types/net-stubbing";
 
 const activeDateString = '07/13/2022';
 const notActiveDateString = '07/20/2022';
@@ -30,10 +31,9 @@ describe('People', () => {
     const highlightClass = 'react-datepicker__day--highlighted';
 
     beforeEach(() => {
-        cy.server();
-        cy.route('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
-        cy.route('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
-        cy.route('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
+        cy.intercept('POST', Cypress.env('API_ROLE_PATH')).as('postNewRole');
+        cy.intercept('POST', Cypress.env('API_PERSON_PATH')).as('postNewPerson');
+        cy.intercept('GET', Cypress.env('API_PERSON_PATH')).as('getPeople');
 
         cy.clock(activeDate);
         cy.visitSpace(undefined, '', activeDate);
@@ -50,7 +50,7 @@ describe('People', () => {
         cy.getCalendarDate(activeDateString).should('have.class', 'react-datepicker__day--today');
         cy.getCalendarDate(notActiveDateString).should('not.have.class', highlightClass).click();
 
-        cy.route('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${moment(notActiveDateString).format('yyyy-MM-DD')}`).as('getProductsByDate');
+        cy.intercept('GET', `${Cypress.env('API_PRODUCTS_PATH')}?requestedDate=${moment(notActiveDateString).format('yyyy-MM-DD')}`).as('getProductsByDate');
 
         cy.get('[data-testid=reassignmentDrawer]').as('reassignmentDrawer');
 
@@ -71,13 +71,12 @@ describe('People', () => {
         submitPersonForm('Add');
 
         cy.wait(['@postNewPerson', '@getProductsByDate', '@getPeople'])
-            .should((xhrs: Cypress.ObjectLike[]) => {
-                const postNewPersonXhr = xhrs[0];
-                const getUpdatedProductXhr = xhrs[1];
-
-                expect('@getUpdatedProduct status: ' + getUpdatedProductXhr?.status)
+            .spread((postNewPersonXhr: Interception, getUpdatedProductXhr: Interception) => {
+                console.log("POST NEW PERSON: ", postNewPersonXhr);
+                console.log("GET UPDATED PRODUCT: ",  getUpdatedProductXhr);
+                expect('@getUpdatedProduct status: '+ getUpdatedProductXhr?.response.statusCode)
                     .to.equal('@getUpdatedProduct status: ' + 200);
-                expect('@postNewPerson status: ' + postNewPersonXhr.status)
+                expect('@postNewPerson status: ' + postNewPersonXhr.response.statusCode)
                     .to.equal('@postNewPerson status: ' + 200);
                 const personData = postNewPersonXhr.response.body || {};
                 expect(personData.name).to.equal(assignedPerson.name);
@@ -118,7 +117,7 @@ describe('People', () => {
 
         cy.getModal().contains(existingPersonName).should('exist');
 
-        cy.route('POST', '**/assignment/create').as('postReassignPerson');
+        cy.intercept('POST', '**/assignment/create').as('postReassignPerson');
 
         cy.getModal().contains('[data-testid="assignButton"]', 'Assign').click();
 
@@ -154,13 +153,11 @@ describe('People', () => {
         submitPersonForm('Add');
 
         cy.wait(['@postNewPerson', '@getProductsByDate', '@getPeople'])
-            .should((xhrs: Cypress.ObjectLike[]) => {
-                const postNewPersonXhr = xhrs[0];
-                const getUpdatedProductXhr = xhrs[1];
+            .spread((postNewPersonXhr: Interception, getUpdatedProductXhr: Interception) => {
 
-                expect('@getUpdatedProduct status: ' + getUpdatedProductXhr?.status)
+                expect('@getUpdatedProduct status: ' + getUpdatedProductXhr?.response.statusCode)
                     .to.equal('@getUpdatedProduct status: ' + 200);
-                expect('@postNewPerson status: ' + postNewPersonXhr.status)
+                expect('@postNewPerson status: ' + postNewPersonXhr.response.statusCode)
                     .to.equal('@postNewPerson status: ' + 200);
                 const personData = postNewPersonXhr.response.body || {};
                 expect(personData.name).to.equal(unassignedPerson.name);
@@ -192,7 +189,7 @@ describe('People', () => {
     });
 
     it('Edit a person', () => {
-        cy.route('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
+        cy.intercept('PUT', Cypress.env('API_PERSON_PATH') + '/**').as('updatePerson');
 
         const editedPerson: Person = {
             name: 'Jane Bob',
@@ -209,9 +206,9 @@ describe('People', () => {
         submitPersonForm('Save');
 
         cy.wait('@updatePerson')
-            .should((xhr: Cypress.ObjectLike) => {
+            .then((xhr: Interception) => {
                 const personData = xhr.response.body || {};
-                expect('@updatedPersonXHR status: ' + xhr?.status).to.equal('@updatedPersonXHR status: ' + 200);
+                expect('@updatedPersonXHR status: ' + xhr?.response.statusCode).to.equal('@updatedPersonXHR status: ' + 200);
                 expect(personData.name).to.equal(editedPerson.name);
                 expect(personData.newPerson).to.equal(editedPerson.isNew);
                 expect(personData.notes).to.equal(editedPerson.notes);
@@ -227,7 +224,7 @@ describe('People', () => {
     });
 
     it('Delete a person', () => {
-        cy.route('DELETE', Cypress.env('API_PERSON_PATH') + '/**').as('deletePerson');
+        cy.intercept('DELETE', Cypress.env('API_PERSON_PATH') + '/**').as('deletePerson');
 
         cy.get('[data-testid=editPersonIconContainer__jane_smith]').click();
         cy.get('[data-testid=editMenuOption__edit_person]').click();
@@ -235,8 +232,8 @@ describe('People', () => {
         cy.get('[data-testid=confirmDeleteButton]').click();
 
         cy.wait('@deletePerson')
-            .should((xhr: Cypress.ObjectLike) => {
-                expect(xhr?.status).to.equal(200);
+            .then((xhr: Interception) => {
+                expect(xhr?.response.statusCode).to.equal(200);
             });
         cy.get('[data-testid=editPersonIconContainer__jane_smith]').should('not.exist');
     });
@@ -251,14 +248,14 @@ describe('People', () => {
 
             moveAssignment(janeSmithSelector, keycodes.arrowLeft);
 
-            cy.wait('@getProductsByDate').should(() => {
+            cy.wait('@getProductsByDate').then(() => {
                 checkIfPersonIsInProductBaguetteBakery(assignmentName, true);
                 checkIfPersonIsInProductMyProduct(assignmentName, false);
             });
 
             moveAssignment(janeSmithSelector, keycodes.arrowRight);
 
-            cy.wait('@getProductsByDate').should(() => {
+            cy.wait('@getProductsByDate').then(() => {
                 checkIfPersonIsInProductBaguetteBakery(assignmentName, false);
                 checkIfPersonIsInProductMyProduct(assignmentName, true);
             });
@@ -275,14 +272,14 @@ describe('People', () => {
 
             moveAssignment(adamSandlerSelector, keycodes.arrowLeft);
 
-            cy.wait('@getProductsByDate').should(() => {
+            cy.wait('@getProductsByDate').then(() => {
                 checkIfPersonIsInUnassignedDrawer(assignmentName, false);
                 checkIfPersonIsInProductMyProduct(assignmentName, true);
             });
 
             moveAssignment(adamSandlerSelector, keycodes.arrowRight);
 
-            cy.wait('@getProductsByDate').should(() => {
+            cy.wait('@getProductsByDate').then(() => {
                 checkIfPersonIsInUnassignedDrawer(assignmentName, true);
                 checkIfPersonIsInProductMyProduct(assignmentName, false);
             });
@@ -391,6 +388,7 @@ const submitPersonForm = (expectedSubmitButtonText: string): void => {
 };
 
 const ensureNewAssignmentIsPresentInReassignmentDrawer = (assignedPerson: Person): void => {
+    console.log("ASSIGNED PERSON: ", assignedPerson);
     cy.get('@reassignmentDrawer')
         .find('[data-testid=reassignmentContainer] [data-testid=reassignmentSection]')
         .should('have.length', 1)
