@@ -64,6 +64,7 @@ dependencies {
 
   runtimeOnly 'mysql:mysql-connector-java:8.0.25'
   runtimeOnly 'com.h2database:h2:1.4.200'
+  runtimeOnly 'org.postgresql:postgresql'
 
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'org.springframework.security:spring-security-test'

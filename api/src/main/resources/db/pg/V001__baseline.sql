@@ -2,7 +2,7 @@ create table color
 (
     id    serial not null primary key,
     color varchar(255) null,
-    constraint color
+    constraint UQ_Color
         unique (color)
 );
 
@@ -13,7 +13,7 @@ create table space
     uuid                 varchar(36)      not null
         primary key,
     CREATED_BY           varchar(40)      null,
-    today_view_is_public bit default b'0' null,
+    today_view_is_public boolean          null,
     created_date         timestamptz      null,
     constraint space_uuid_index
         unique (uuid)
@@ -77,7 +77,7 @@ create table space_locations
 create table product
 (
     id                serial not null primary key,
-    archived          bit          not null,
+    archived          boolean      not null,
     dorf              varchar(255) null,
     end_date          date         null,
     name              varchar(255) null,
@@ -130,7 +130,7 @@ create table person
     id              serial not null primary key,
     name            varchar(255)     null,
     notes           varchar(255)     null,
-    new_person      bit default b'0' not null,
+    new_person      boolean          not null,
     space_role_id   int              null,
     space_uuid      varchar(36)      not null,
     custom_field1   varchar(255)     null,
@@ -148,7 +148,7 @@ create table assignment
 (
     id             serial not null primary key,
     effective_date date        null,
-    placeholder    bit         not null,
+    placeholder    boolean     not null,
     product_id     int         null,
     person_id      int         null,
     space_uuid     varchar(36) not null,
