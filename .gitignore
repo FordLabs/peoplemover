@@ -49,3 +49,7 @@ ui/cypress/screenshots
 ui/cypress/videos
 ui/reports
 ui/coverage
+
+### Key files ###
+*.pem
+*.pkcs8
