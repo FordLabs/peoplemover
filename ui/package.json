@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@types/react-beautiful-dnd": "^13.1.2",
-    "axios": "^0.21.2",
+    "axios": "^1.6.0",
     "env-cmd": "^8.0.2",
     "flagsmith": "^1.6.0",
     "focus-trap-react": "^8.4.1",
