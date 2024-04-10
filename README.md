@@ -1,4 +1,7 @@
-# PeopleMover
+
+# DEPRECATED: PeopleMover
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
 > ![sample image](./ui/src/LandingPage/LandingPageImage.svg)
 
